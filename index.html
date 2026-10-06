@@ -2,2168 +2,1897 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>جامعة الأفق | Al-Ufuq University</title>
-<meta name="description" content="الموقع الرسمي لجامعة الأفق - كليات، برامج أكاديمية، قبول وتسجيل، خدمات إلكترونية، وأخبار الجامعة.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>مُساعد الجامعة | نظّم دراستك</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d9488'/><text y='72' x='50' text-anchor='middle' font-size='58'>🎓</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230B5C4B'/><path d='M50 22 82 38 50 54 18 38z' fill='%23D4A537'/><path d='M30 46v18c0 6 9 11 20 11s20-5 20-11V46' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-/* ============ RESET & VARIABLES ============ */
+/* ============ RESET & TOKENS ============ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --green:#0B5C4B;
-  --green-dark:#063A2F;
-  --green-light:#12806A;
-  --green-soft:#E6F1EE;
-  --gold:#D4A537;
-  --gold-light:#F2D388;
-  --dark:#081A16;
-  --text:#1B2A27;
-  --muted:#637875;
-  --line:#E3EAE8;
-  --bg:#F5F8F7;
-  --white:#fff;
-  --r:18px;
-  --r-sm:12px;
-  --shadow:0 8px 28px rgba(11,92,75,.07);
-  --shadow-lg:0 24px 60px rgba(11,92,75,.15);
-  --container:1200px;
-  --t:.35s cubic-bezier(.4,0,.2,1);
+  --p:#0d9488; --p-dark:#0f766e; --p-light:#ccfbf1;
+  --accent:#f59e0b;
+  --danger:#dc2626; --danger-bg:#fee2e2;
+  --warn:#d97706; --warn-bg:#fef3c7;
+  --ok:#059669; --ok-bg:#d1fae5;
+  --bg:#f4f7f8;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --hover:#f1f5f9;
+  --shadow:0 2px 10px rgba(15,23,42,.05);
+  --shadow-lg:0 18px 45px rgba(15,23,42,.12);
+  --r:16px; --r-sm:11px;
+  --t:.25s cubic-bezier(.4,0,.2,1);
+  --sidebar:250px;
+}
+html[data-theme="dark"]{
+  --bg:#0b1220; --card:#131c2e; --text:#e6edf5; --muted:#8fa1b8;
+  --border:#22314a; --hover:#1b273d; --p-light:#0f3d38;
+  --shadow:0 2px 10px rgba(0,0,0,.35);
+  --shadow-lg:0 18px 45px rgba(0,0,0,.5);
+  --danger-bg:#3b1414; --warn-bg:#3a2a09; --ok-bg:#0d2f24;
 }
 html{scroll-behavior:smooth}
 body{
-  font-family:'Cairo',system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  line-height:1.8;
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
+  font-family:'Cairo','Tajawal',system-ui,sans-serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.7; -webkit-font-smoothing:antialiased;
+  transition:background .3s,color .3s;
 }
-h1,h2,h3,h4,h5{font-family:'Tajawal','Cairo',sans-serif;line-height:1.35;font-weight:800;color:var(--dark)}
-a{text-decoration:none;color:inherit}
-img{max-width:100%;display:block}
+h1,h2,h3,h4{font-family:'Tajawal','Cairo',sans-serif;font-weight:800;line-height:1.35}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
 ul{list-style:none}
-button,input,select,textarea{font-family:inherit;font-size:inherit}
-::selection{background:var(--gold);color:var(--dark)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:20px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+::selection{background:var(--p);color:#fff}
 
-.container{width:100%;max-width:var(--container);margin-inline:auto;padding-inline:22px}
+/* ============ LAYOUT ============ */
+.app{display:flex;min-height:100vh}
 
-/* ============ SCROLLBAR ============ */
-::-webkit-scrollbar{width:11px}
-::-webkit-scrollbar-track{background:var(--green-soft)}
-::-webkit-scrollbar-thumb{background:var(--green);border-radius:10px;border:3px solid var(--green-soft)}
-::-webkit-scrollbar-thumb:hover{background:var(--green-dark)}
+/* ---- SIDEBAR ---- */
+.sidebar{
+  width:var(--sidebar);flex-shrink:0;background:var(--card);
+  border-left:1px solid var(--border);
+  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+  transition:var(--t);z-index:60;
+}
+.brand{padding:22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.brand-logo{
+  width:44px;height:44px;border-radius:13px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--p),#0f766e);
+  display:grid;place-items:center;font-size:22px;
+  box-shadow:0 8px 20px rgba(13,148,136,.3);
+}
+.brand-txt b{display:block;font-family:'Tajawal';font-size:17px;font-weight:800;line-height:1.2}
+.brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
 
-/* ============ TOP BAR ============ */
+.nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+.nav-btn{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
+  font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right;
+}
+.nav-btn:hover{background:var(--hover);color:var(--text)}
+.nav-btn.active{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
+.nav-btn .ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.nav-btn .badge{
+  margin-inline-start:auto;background:var(--danger);color:#fff;
+  font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;min-width:22px;text-align:center;
+}
+.nav-btn.active .badge{background:rgba(255,255,255,.28)}
+
+.sidebar-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px}
+.icon-btn{
+  width:40px;height:40px;border-radius:11px;background:var(--hover);
+  display:grid;place-items:center;font-size:17px;transition:var(--t);flex:1;
+}
+.icon-btn:hover{background:var(--p);transform:translateY(-2px)}
+
+/* ---- MAIN ---- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
 .topbar{
-  background:var(--green-dark);
-  color:#bfe0d8;
-  font-size:13.5px;
-  padding:9px 0;
+  position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:0 22px;height:70px;display:flex;align-items:center;gap:16px;
 }
-.topbar .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.topbar-info{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
-.topbar-info span{display:flex;align-items:center;gap:7px}
-.topbar-info svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:2}
-.topbar-social{display:flex;gap:8px}
-.topbar-social a{
-  width:30px;height:30px;display:grid;place-items:center;border-radius:8px;
-  background:rgba(255,255,255,.08);transition:var(--t)
+.hamburger{display:none;width:42px;height:42px;border-radius:11px;background:var(--hover);place-items:center;font-size:20px}
+.page-title{font-size:19px;font-weight:800}
+.page-sub{font-size:12.5px;color:var(--muted);font-weight:600}
+.topbar-spacer{flex:1}
+.topbar-date{
+  font-size:13px;color:var(--muted);font-weight:700;background:var(--hover);
+  padding:8px 14px;border-radius:11px;white-space:nowrap;
 }
-.topbar-social a:hover{background:var(--gold);transform:translateY(-2px)}
-.topbar-social svg{width:15px;height:15px;fill:#cfe8e2;transition:var(--t)}
-.topbar-social a:hover svg{fill:var(--dark)}
+.content{padding:24px 22px 90px;max-width:1400px;width:100%;margin-inline:auto}
 
-/* ============ HEADER ============ */
-.header{
-  position:sticky;top:0;z-index:900;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
-  transition:var(--t);
-}
-.header.scrolled{box-shadow:0 6px 30px rgba(8,26,22,.09)}
-.header .container{display:flex;align-items:center;justify-content:space-between;height:78px;gap:20px}
+/* ---- VIEWS ---- */
+.view{display:none;animation:fade .35s ease both}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-.logo{display:flex;align-items:center;gap:12px;cursor:pointer;flex-shrink:0}
-.logo-mark{
-  width:46px;height:46px;border-radius:13px;
-  background:linear-gradient(135deg,var(--green),var(--green-light));
-  display:grid;place-items:center;box-shadow:0 8px 20px rgba(11,92,75,.28);
-  position:relative;overflow:hidden;flex-shrink:0;
-}
-.logo-mark::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,transparent 45%,rgba(212,165,55,.55));
-}
-.logo-mark svg{width:26px;height:26px;position:relative;z-index:1}
-.logo-text b{font-family:'Tajawal';font-size:20px;font-weight:900;color:var(--green-dark);display:block;line-height:1.2}
-.logo-text small{font-size:10.5px;letter-spacing:2.2px;color:var(--gold);font-weight:700;text-transform:uppercase}
+/* ============ COMPONENTS ============ */
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.sec-head h2{font-size:21px}
+.sec-head p{font-size:13.5px;color:var(--muted);font-weight:600}
 
-.nav{display:flex;align-items:center;gap:4px}
-.nav-link{
-  padding:10px 15px;border-radius:11px;font-weight:600;font-size:15px;
-  color:var(--text);cursor:pointer;transition:var(--t);position:relative;white-space:nowrap;
-}
-.nav-link:hover{background:var(--green-soft);color:var(--green)}
-.nav-link.active{color:var(--green);background:var(--green-soft)}
-.nav-link.active::after{
-  content:'';position:absolute;bottom:4px;right:50%;transform:translateX(50%);
-  width:20px;height:3px;border-radius:3px;background:var(--gold)
-}
-
-.header-actions{display:flex;align-items:center;gap:10px}
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  padding:13px 26px;border-radius:13px;font-weight:700;font-size:15px;
-  cursor:pointer;border:none;transition:var(--t);font-family:'Cairo';white-space:nowrap;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;
+  transition:var(--t);white-space:nowrap;
 }
-.btn svg{width:18px;height:18px}
-.btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 22px rgba(11,92,75,.26)}
-.btn-primary:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(11,92,75,.34)}
-.btn-gold{background:var(--gold);color:var(--dark);box-shadow:0 8px 22px rgba(212,165,55,.32)}
-.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px)}
-.btn-outline{background:transparent;color:var(--green);border:2px solid var(--green)}
-.btn-outline:hover{background:var(--green);color:#fff;transform:translateY(-2px)}
-.btn-ghost-light{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35)}
-.btn-ghost-light:hover{background:#fff;color:var(--green-dark)}
-.btn-sm{padding:10px 18px;font-size:14px;border-radius:11px}
+.btn-primary{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.26)}
+.btn-primary:hover{background:var(--p-dark);transform:translateY(-2px)}
+.btn-ghost{background:var(--hover);color:var(--text)}
+.btn-ghost:hover{background:var(--border)}
+.btn-danger{background:var(--danger-bg);color:var(--danger)}
+.btn-danger:hover{background:var(--danger);color:#fff}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
 .btn-block{width:100%}
 
-.burger{
-  display:none;width:46px;height:46px;border-radius:12px;background:var(--green-soft);
-  border:none;cursor:pointer;place-items:center;flex-shrink:0;
-}
-.burger span{display:block;width:20px;height:2.4px;background:var(--green);border-radius:2px;margin:3px auto;transition:var(--t)}
-.burger.open span:nth-child(1){transform:translateY(5.4px) rotate(45deg)}
-.burger.open span:nth-child(2){opacity:0}
-.burger.open span:nth-child(3){transform:translateY(-5.4px) rotate(-45deg)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
 
-/* ============ PAGES ============ */
-.page{display:none}
-.page.active{display:block;animation:fadeUp .5s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-/* ============ SECTION HELPERS ============ */
-.section{padding:80px 0}
-.section-sm{padding:56px 0}
-.sec-head{text-align:center;max-width:720px;margin:0 auto 52px}
-.eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--green-soft);color:var(--green);
-  padding:7px 18px;border-radius:100px;font-size:13.5px;font-weight:700;
-  margin-bottom:16px;letter-spacing:.3px;
-}
-.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold)}
-.sec-title{font-size:clamp(26px,4vw,42px);margin-bottom:14px;letter-spacing:-.5px}
-.sec-title span{color:var(--green);position:relative}
-.sec-title span::after{
-  content:'';position:absolute;bottom:2px;right:0;left:0;height:9px;
-  background:rgba(212,165,55,.28);border-radius:6px;z-index:-1;
-}
-.sec-desc{color:var(--muted);font-size:16.5px}
-.bg-white{background:#fff}
-.bg-soft{background:linear-gradient(180deg,#fff,var(--bg))}
-
-/* ============ HERO ============ */
-.hero{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 55%,var(--green-light) 100%);
-  color:#fff;padding:96px 0 110px;
-}
-.hero::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle at 18% 22%,rgba(212,165,55,.20),transparent 42%),
-                   radial-gradient(circle at 82% 78%,rgba(255,255,255,.13),transparent 45%);
-}
-.hero::after{
-  content:'';position:absolute;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M0 0h60v60H0z'/%3E%3Cpath d='M30 0v60M0 30h60'/%3E%3C/g%3E%3C/svg%3E");
-}
-.hero .container{position:relative;z-index:2}
-.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
-.hero-badge{
-  display:inline-flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
-  padding:8px 18px;border-radius:100px;font-size:13.5px;font-weight:600;margin-bottom:24px;
-  backdrop-filter:blur(6px);
-}
-.hero-badge i{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,165,55,.7)}50%{box-shadow:0 0 0 9px rgba(212,165,55,0)}}
-.hero h1{font-size:clamp(32px,5vw,58px);color:#fff;line-height:1.24;margin-bottom:20px;letter-spacing:-1px}
-.hero h1 em{color:var(--gold-light);font-style:normal}
-.hero p{font-size:17.5px;color:rgba(255,255,255,.85);max-width:560px;margin-bottom:34px}
-.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
-.hero-mini{display:flex;gap:36px;flex-wrap:wrap}
-.hero-mini div strong{display:block;font-family:'Tajawal';font-size:28px;font-weight:900;color:var(--gold-light)}
-.hero-mini div span{font-size:13.5px;color:rgba(255,255,255,.72)}
-
-.hero-card{
-  background:rgba(255,255,255,.09);
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:26px;padding:30px;backdrop-filter:blur(16px);
-  box-shadow:0 30px 70px rgba(0,0,0,.25);
-}
-.hero-card h3{color:#fff;font-size:20px;margin-bottom:6px}
-.hero-card>p{font-size:14px;color:rgba(255,255,255,.72);margin-bottom:22px}
-.hero-links{display:grid;gap:11px}
-.hero-link{
-  display:flex;align-items:center;gap:14px;
-  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
-  padding:14px 16px;border-radius:14px;cursor:pointer;transition:var(--t);
-}
-.hero-link:hover{background:rgba(255,255,255,.19);transform:translateX(-6px);border-color:rgba(212,165,55,.5)}
-.hero-link .ic{
-  width:40px;height:40px;border-radius:11px;flex-shrink:0;
-  background:rgba(212,165,55,.2);display:grid;place-items:center;
-}
-.hero-link .ic svg{width:20px;height:20px;stroke:var(--gold-light);fill:none;stroke-width:2}
-.hero-link b{display:block;font-size:14.5px;font-weight:700;color:#fff}
-.hero-link span{font-size:12.5px;color:rgba(255,255,255,.65)}
-
-/* ============ QUICK BAR ============ */
-.quickbar{
-  margin-top:-56px;position:relative;z-index:5;
-}
-.quickbar-inner{
-  background:#fff;border-radius:24px;box-shadow:var(--shadow-lg);
-  display:grid;grid-template-columns:repeat(4,1fr);
-  padding:32px 20px;gap:14px;
-}
-.qb-item{text-align:center;padding:12px;border-radius:16px;transition:var(--t);cursor:default}
-.qb-item:hover{background:var(--green-soft)}
-.qb-item .icon{
-  width:56px;height:56px;margin:0 auto 12px;border-radius:16px;
-  background:linear-gradient(135deg,var(--green-soft),#d6ebe5);
-  display:grid;place-items:center;
-}
-.qb-item .icon svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:2}
-.qb-item b{display:block;font-family:'Tajawal';font-size:26px;font-weight:900;color:var(--green-dark)}
-.qb-item span{font-size:13.5px;color:var(--muted);font-weight:600}
-
-/* ============ CARDS / GRIDS ============ */
-.grid{display:grid;gap:26px}
-.grid-2{grid-template-columns:repeat(2,1fr)}
-.grid-3{grid-template-columns:repeat(3,1fr)}
-.grid-4{grid-template-columns:repeat(4,1fr)}
-
-.card{
-  background:#fff;border-radius:var(--r);padding:30px;
-  border:1px solid var(--line);box-shadow:var(--shadow);
+/* ---- STATS ---- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:24px}
+.stat{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);
   transition:var(--t);position:relative;overflow:hidden;
 }
-.card:hover{transform:translateY(-7px);box-shadow:var(--shadow-lg);border-color:#cfe4de}
-.card-icon{
-  width:58px;height:58px;border-radius:16px;margin-bottom:20px;
-  background:linear-gradient(135deg,var(--green),var(--green-light));
-  display:grid;place-items:center;box-shadow:0 10px 24px rgba(11,92,75,.25);
+.stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.stat-ico{
+  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+  font-size:22px;flex-shrink:0;
 }
-.card-icon svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:1.9}
-.card h3{font-size:19.5px;margin-bottom:10px}
-.card p{color:var(--muted);font-size:15px}
-.card .card-link{
-  display:inline-flex;align-items:center;gap:7px;margin-top:16px;
-  color:var(--green);font-weight:700;font-size:14.5px;transition:var(--t);
-}
-.card .card-link:hover{gap:12px;color:var(--gold)}
+.stat b{display:block;font-family:'Tajawal';font-size:26px;font-weight:800;line-height:1.1}
+.stat span{font-size:13px;color:var(--muted);font-weight:600}
 
-/* College card */
-.college-card{padding:0;overflow:hidden;cursor:pointer}
-.college-top{
-  height:130px;position:relative;
-  background:linear-gradient(135deg,var(--green-dark),var(--green-light));
-  display:grid;place-items:center;
-}
-.college-top::after{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle at 75% 20%,rgba(212,165,55,.35),transparent 55%);
-}
-.college-top svg{width:50px;height:50px;stroke:rgba(255,255,255,.92);fill:none;stroke-width:1.6;position:relative;z-index:1}
-.college-body{padding:24px 26px 28px}
-.college-body h3{font-size:19px;margin-bottom:8px}
-.college-body p{font-size:14.5px;color:var(--muted);min-height:52px}
-.college-meta{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-.tag{
-  background:var(--green-soft);color:var(--green);
-  padding:5px 13px;border-radius:100px;font-size:12.5px;font-weight:700;
-}
-.tag.gold{background:#FBF1D9;color:#96721A}
+/* ---- GRID ---- */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.g3{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
 
-/* ============ ABOUT SPLIT ============ */
-.split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-.visual{
-  border-radius:26px;overflow:hidden;position:relative;min-height:420px;
-  background:linear-gradient(140deg,var(--green-dark),var(--green) 60%,var(--green-light));
-  display:grid;place-items:center;box-shadow:var(--shadow-lg);
+/* ---- UPCOMING LIST ---- */
+.up-item{
+  display:flex;align-items:center;gap:14px;padding:14px;border-radius:13px;
+  background:var(--hover);margin-bottom:10px;transition:var(--t);
 }
-.visual::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle at 30% 25%,rgba(212,165,55,.28),transparent 50%),
-                   radial-gradient(circle at 75% 80%,rgba(255,255,255,.12),transparent 45%);
-}
-.visual svg{width:150px;height:150px;stroke:rgba(255,255,255,.9);fill:none;stroke-width:1.1;position:relative;z-index:1;opacity:.9}
-.visual-badge{
-  position:absolute;bottom:26px;right:26px;left:26px;z-index:2;
-  background:rgba(255,255,255,.13);backdrop-filter:blur(14px);
-  border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:20px 24px;
-  display:flex;gap:18px;align-items:center;
-}
-.visual-badge b{font-family:'Tajawal';font-size:34px;font-weight:900;color:var(--gold-light);line-height:1}
-.visual-badge span{font-size:13.5px;color:rgba(255,255,255,.82)}
-
-.check-list{display:grid;gap:14px;margin:26px 0 32px}
-.check-list li{display:flex;gap:13px;align-items:flex-start;font-size:15.5px;color:#33443f}
-.check-list li svg{
-  width:23px;height:23px;flex-shrink:0;margin-top:5px;
-  background:var(--green-soft);border-radius:50%;padding:4px;
-  stroke:var(--green);fill:none;stroke-width:3;
+.up-item:hover{transform:translateX(-5px)}
+.up-item:last-child{margin-bottom:0}
+.up-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.up-info{flex:1;min-width:0}
+.up-info b{display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up-info span{font-size:12.5px;color:var(--muted);font-weight:600}
+.up-time{
+  font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap;
 }
 
-/* ============ VISION / MISSION ============ */
-.vm-card{
-  background:#fff;border-radius:var(--r);padding:36px 30px;
-  border-top:4px solid var(--gold);box-shadow:var(--shadow);transition:var(--t);
+/* ---- EMPTY ---- */
+.empty{
+  text-align:center;padding:50px 20px;color:var(--muted);
 }
-.vm-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
-.vm-card .num{
-  font-family:'Tajawal';font-size:46px;font-weight:900;
-  color:var(--green-soft);line-height:1;margin-bottom:10px;
-}
-.vm-card h3{font-size:21px;margin-bottom:12px}
-.vm-card p{color:var(--muted);font-size:15.5px}
+.empty .e-ico{font-size:52px;margin-bottom:14px;opacity:.5}
+.empty b{display:block;font-size:17px;color:var(--text);margin-bottom:6px;font-family:'Tajawal'}
+.empty p{font-size:14px;margin-bottom:18px}
 
-/* ============ STATS BAND ============ */
-.stats-band{
-  background:linear-gradient(135deg,var(--green-dark),var(--green));
-  color:#fff;padding:70px 0;position:relative;overflow:hidden;
+/* ---- COURSE CARD ---- */
+.course-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  overflow:hidden;box-shadow:var(--shadow);transition:var(--t);position:relative;
 }
-.stats-band::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle at 15% 50%,rgba(212,165,55,.2),transparent 45%),
-                   radial-gradient(circle at 85% 30%,rgba(255,255,255,.1),transparent 40%);
+.course-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.course-bar{height:6px}
+.course-body{padding:18px}
+.course-body h3{font-size:17px;margin-bottom:4px}
+.course-body .code{font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:12px}
+.course-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pill{
+  font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:20px;
+  background:var(--hover);color:var(--muted);
 }
-.stats-band .container{position:relative;z-index:1}
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
-.stat b{
-  display:block;font-family:'Tajawal';font-size:clamp(34px,5vw,52px);
-  font-weight:900;color:var(--gold-light);line-height:1;
+.course-actions{display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
+.course-actions button{
+  flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:700;
+  background:var(--hover);transition:var(--t);
 }
-.stat span{font-size:15px;color:rgba(255,255,255,.82);margin-top:10px;display:block}
+.course-actions button:hover{background:var(--p);color:#fff}
 
-/* ============ NEWS ============ */
-.news-card{background:#fff;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:var(--t);cursor:pointer}
-.news-card:hover{transform:translateY(-7px);box-shadow:var(--shadow-lg)}
-.news-img{
-  height:175px;position:relative;display:grid;place-items:center;
-  background:linear-gradient(135deg,#0d4a3d,#1a8a72);
+/* ---- SCHEDULE ---- */
+.sched-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:auto;box-shadow:var(--shadow)}
+.sched-inner{min-width:900px}
+.sched-head{display:grid;grid-template-columns:64px 1fr;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--card);z-index:5}
+.sched-days{display:grid;grid-template-columns:repeat(7,1fr)}
+.sched-day{
+  padding:12px 6px;text-align:center;font-weight:800;font-size:13.5px;
+  font-family:'Tajawal';border-inline-start:1px solid var(--border);
 }
-.news-img.v2{background:linear-gradient(135deg,#123f5c,#2b7fa8)}
-.news-img.v3{background:linear-gradient(135deg,#5c3d12,#a8812b)}
-.news-img.v4{background:linear-gradient(135deg,#3d1259,#7a3fa8)}
-.news-img svg{width:52px;height:52px;stroke:rgba(255,255,255,.85);fill:none;stroke-width:1.5}
-.news-date{
-  position:absolute;top:16px;right:16px;background:rgba(255,255,255,.95);
-  border-radius:12px;padding:8px 13px;text-align:center;line-height:1.15;
+.sched-day.today{background:var(--p-light);color:var(--p-dark)}
+html[data-theme="dark"] .sched-day.today{color:#5eead4}
+.sched-body{display:grid;grid-template-columns:64px 1fr;position:relative}
+.sched-times{display:flex;flex-direction:column}
+.sched-time{
+  height:58px;font-size:11.5px;color:var(--muted);font-weight:700;
+  display:flex;align-items:flex-start;justify-content:center;padding-top:2px;
+  border-bottom:1px solid var(--border);
 }
-.news-date b{display:block;font-family:'Tajawal';font-size:19px;font-weight:900;color:var(--green-dark)}
-.news-date span{font-size:11px;color:var(--muted);font-weight:700}
-.news-body{padding:24px}
-.news-body .cat{font-size:12.5px;font-weight:800;color:var(--gold);letter-spacing:.5px}
-.news-body h3{font-size:18px;margin:9px 0 10px;line-height:1.5}
-.news-body p{font-size:14.5px;color:var(--muted)}
-.news-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.sched-cols{display:grid;grid-template-columns:repeat(7,1fr);position:relative}
+.sched-col{position:relative;border-inline-start:1px solid var(--border);min-height:870px}
+.sched-col .hour-line{position:absolute;left:0;right:0;height:1px;background:var(--border);opacity:.6}
+.cls{
+  position:absolute;left:3px;right:3px;border-radius:10px;padding:6px 9px;
+  color:#fff;font-size:12px;font-weight:700;overflow:hidden;cursor:pointer;
+  transition:var(--t);box-shadow:0 3px 10px rgba(0,0,0,.18);
+}
+.cls:hover{transform:scale(1.03);z-index:10;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.cls b{display:block;font-size:12.5px;line-height:1.3;margin-bottom:2px}
+.cls span{font-size:10.5px;opacity:.9;display:block}
 
-/* Filter chips */
-.filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+/* ---- TASK ---- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
 .chip{
-  padding:10px 22px;border-radius:100px;background:#fff;border:1.5px solid var(--line);
-  font-weight:700;font-size:14.5px;cursor:pointer;transition:var(--t);color:var(--muted);
+  padding:8px 16px;border-radius:20px;font-size:13.5px;font-weight:700;
+  background:var(--card);border:1.5px solid var(--border);color:var(--muted);transition:var(--t);
 }
-.chip:hover{border-color:var(--green);color:var(--green)}
-.chip.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 8px 20px rgba(11,92,75,.25)}
+.chip:hover{border-color:var(--p);color:var(--p)}
+.chip.active{background:var(--p);border-color:var(--p);color:#fff}
 
-/* ============ EVENTS ============ */
-.event{
-  display:flex;gap:22px;background:#fff;border-radius:var(--r);padding:24px 26px;
-  border:1px solid var(--line);box-shadow:var(--shadow);transition:var(--t);align-items:center;
+.task{
+  display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;
+  background:var(--card);border:1px solid var(--border);margin-bottom:10px;
+  transition:var(--t);box-shadow:var(--shadow);
 }
-.event:hover{transform:translateX(-7px);box-shadow:var(--shadow-lg);border-color:#cfe4de}
-.event-date{
-  width:76px;height:76px;flex-shrink:0;border-radius:18px;
-  background:linear-gradient(135deg,var(--green),var(--green-light));
-  display:grid;place-items:center;color:#fff;text-align:center;line-height:1.1;
+.task:hover{border-color:var(--p);transform:translateX(-4px)}
+.task.done{opacity:.55}
+.task.done .task-title{text-decoration:line-through}
+.chk{
+  width:24px;height:24px;border-radius:8px;border:2px solid var(--border);
+  flex-shrink:0;margin-top:2px;display:grid;place-items:center;transition:var(--t);
+  font-size:14px;color:transparent;
 }
-.event-date b{font-family:'Tajawal';font-size:26px;font-weight:900;display:block}
-.event-date span{font-size:12px;opacity:.85}
-.event-info h4{font-size:17.5px;margin-bottom:6px}
-.event-info p{font-size:14px;color:var(--muted);margin-bottom:8px}
-.event-info .meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--green);font-weight:600}
-.event-info .meta span{display:flex;align-items:center;gap:6px}
-.event-info .meta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+.chk:hover{border-color:var(--p)}
+.task.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
+.task-main{flex:1;min-width:0}
+.task-title{font-size:15.5px;font-weight:700;margin-bottom:5px;word-break:break-word}
+.task-sub{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);font-weight:600}
+.tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px}
+.task-actions{display:flex;gap:4px;flex-shrink:0}
+.mini-btn{
+  width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+  font-size:14px;background:var(--hover);transition:var(--t);
+}
+.mini-btn:hover{background:var(--p);color:#fff}
+.mini-btn.del:hover{background:var(--danger)}
 
-/* ============ TIMELINE / STEPS ============ */
-.steps{display:grid;gap:18px;counter-reset:s}
-.step{
-  display:flex;gap:20px;background:#fff;border:1px solid var(--line);
-  border-radius:var(--r);padding:24px 26px;box-shadow:var(--shadow);transition:var(--t);
+/* ---- EXAM ---- */
+.exam{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px;box-shadow:var(--shadow);transition:var(--t);position:relative;overflow:hidden;
 }
-.step:hover{border-color:var(--green);transform:translateX(-6px)}
-.step-num{
-  width:48px;height:48px;flex-shrink:0;border-radius:14px;
-  background:var(--green-soft);color:var(--green);
-  display:grid;place-items:center;font-family:'Tajawal';font-weight:900;font-size:21px;
+.exam:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.exam-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.exam-top h3{font-size:17px;flex:1}
+.countdown{
+  text-align:center;padding:8px 14px;border-radius:13px;font-weight:800;flex-shrink:0;min-width:76px;
 }
-.step h4{font-size:17.5px;margin-bottom:6px}
-.step p{font-size:14.5px;color:var(--muted)}
+.countdown b{display:block;font-family:'Tajawal';font-size:23px;line-height:1}
+.countdown span{font-size:10.5px;font-weight:700;opacity:.85}
+.exam-detail{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
+.exam-detail span{display:flex;align-items:center;gap:5px}
+.exam-actions{display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
 
-/* ============ TABLE ============ */
-.table-wrap{overflow-x:auto;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line);background:#fff}
-table{width:100%;border-collapse:collapse;min-width:520px}
-thead{background:linear-gradient(135deg,var(--green-dark),var(--green))}
-thead th{color:#fff;padding:17px 20px;text-align:right;font-family:'Tajawal';font-weight:800;font-size:15.5px}
-tbody td{padding:16px 20px;border-bottom:1px solid var(--line);font-size:15px}
-tbody tr:last-child td{border-bottom:none}
-tbody tr:hover{background:var(--green-soft)}
-td .status{background:#E6F7EE;color:#1B7A4B;padding:5px 13px;border-radius:100px;font-size:12.5px;font-weight:700}
-td .status.warn{background:#FDF3E0;color:#9A6B0E}
-
-/* ============ FORMS ============ */
-.form-card{
-  background:#fff;border-radius:24px;padding:40px;
-  box-shadow:var(--shadow-lg);border:1px solid var(--line);
+/* ---- POMODORO ---- */
+.pomo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.pomo-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px;box-shadow:var(--shadow);text-align:center}
+.ring-wrap{position:relative;width:230px;height:230px;margin:0 auto 22px}
+.ring{transform:rotate(-90deg);width:100%;height:100%}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .bg{stroke:var(--border)}
+.ring .fg{stroke:var(--p);transition:stroke-dashoffset .3s linear}
+.ring-txt{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.field{display:flex;flex-direction:column;gap:8px}
+.ring-txt b{font-family:'Tajawal';font-size:44px;font-weight:800;line-height:1;letter-spacing:1px}
+.ring-txt span{font-size:13px;color:var(--muted);font-weight:700;margin-top:6px}
+.pomo-modes{display:flex;gap:8px;justify-content:center;margin-bottom:22px}
+.pomo-ctrl{display:flex;gap:10px;justify-content:center}
+.pomo-ctrl .btn{padding:13px 30px;font-size:15px}
+
+.week-bars{display:flex;align-items:flex-end;gap:8px;height:150px;padding:10px 0;margin-top:10px}
+.wbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.wbar-fill{width:100%;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--p),var(--p-dark));min-height:4px;transition:height .5s ease}
+.wbar-lbl{font-size:11px;color:var(--muted);font-weight:700}
+.wbar-val{font-size:11px;font-weight:800;color:var(--p)}
+
+/* ---- GRADES ---- */
+.grade-course{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.gc-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.gc-head h3{font-size:17px}
+.gc-score{font-family:'Tajawal';font-size:26px;font-weight:800;color:var(--p)}
+.comp-row{display:grid;grid-template-columns:1fr 80px 80px 36px;gap:8px;align-items:center;margin-bottom:8px}
+.comp-row input{padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:13.5px;width:100%;transition:var(--t)}
+.comp-row input:focus{outline:none;border-color:var(--p);background:var(--card)}
+.comp-hd{font-size:12px;color:var(--muted);font-weight:800}
+
+/* ---- NOTES ---- */
+.note{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);transition:var(--t);position:relative}
+.note:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.note h4{font-size:16px;margin-bottom:8px;padding-inline-end:30px}
+.note p{font-size:13.5px;color:var(--muted);white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:hidden}
+.note .n-date{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:12px;display:block}
+
+/* ---- FORMS ---- */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:7px}
 .field.full{grid-column:1/-1}
-.field label{font-size:14px;font-weight:700;color:#33443f}
-.field label .req{color:#c0392b}
+.field label{font-size:13.5px;font-weight:700}
+.field label .req{color:var(--danger)}
 .field input,.field select,.field textarea{
-  padding:14px 16px;border-radius:13px;border:1.5px solid var(--line);
-  background:#FAFCFB;font-size:15px;transition:var(--t);color:var(--text);width:100%;
+  padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);
+  background:var(--bg);font-size:14.5px;transition:var(--t);width:100%;
 }
-.field textarea{resize:vertical;min-height:120px}
+.field textarea{resize:vertical;min-height:100px}
 .field input:focus,.field select:focus,.field textarea:focus{
-  outline:none;border-color:var(--green);background:#fff;
-  box-shadow:0 0 0 4px rgba(11,92,75,.09);
+  outline:none;border-color:var(--p);background:var(--card);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent);
 }
-.field input::placeholder,.field textarea::placeholder{color:#9aabа8}
-.field .err{font-size:12.5px;color:#c0392b;font-weight:600;display:none}
-.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#e07a6d;background:#FEF7F6}
-.field.invalid .err{display:block}
+.color-pick{display:flex;gap:9px;flex-wrap:wrap}
+.color-pick button{
+  width:34px;height:34px;border-radius:11px;border:3px solid transparent;transition:var(--t);
+}
+.color-pick button.sel{border-color:var(--text);transform:scale(1.12)}
 
-.alert{
-  display:none;gap:12px;align-items:center;
-  background:#E6F7EE;border:1.5px solid #9fd9bd;color:#1B7A4B;
-  padding:16px 20px;border-radius:14px;font-weight:700;font-size:15px;margin-bottom:24px;
+/* ---- MODAL ---- */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(8,20,35,.62);backdrop-filter:blur(5px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:18px;
 }
-.alert.show{display:flex;animation:fadeUp .35s both}
-.alert svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;flex-shrink:0}
+.modal-bg.open{display:flex;animation:fade .22s ease}
+.modal{
+  background:var(--card);border-radius:22px;width:100%;max-width:560px;
+  max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:pop .3s cubic-bezier(.34,1.4,.64,1);
+}
+@keyframes pop{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:none}}
+.modal-head{
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;
+  background:var(--card);z-index:2;border-radius:22px 22px 0 0;
+}
+.modal-head h3{font-size:19px}
+.modal-head button{width:36px;height:36px;border-radius:10px;background:var(--hover);display:grid;place-items:center;font-size:18px}
+.modal-head button:hover{background:var(--danger-bg);color:var(--danger)}
+.modal-body{padding:24px}
+.modal-foot{padding:16px 24px 24px;display:flex;gap:10px}
+.modal-foot .btn{flex:1}
 
-/* ============ ACCORDION ============ */
-.acc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;margin-bottom:12px;box-shadow:var(--shadow)}
-.acc-head{
-  display:flex;justify-content:space-between;align-items:center;gap:16px;
-  padding:20px 24px;cursor:pointer;font-weight:700;font-size:16.5px;transition:var(--t);
+/* ---- TOAST ---- */
+.toast{
+  position:fixed;bottom:26px;right:50%;transform:translate(50%,120px);
+  background:var(--text);color:var(--bg);padding:13px 26px;border-radius:14px;
+  font-weight:700;font-size:14.5px;z-index:500;transition:transform .4s cubic-bezier(.34,1.4,.64,1);
+  box-shadow:var(--shadow-lg);max-width:90vw;text-align:center;
 }
-.acc-head:hover{background:var(--green-soft)}
-.acc-head .plus{
-  width:30px;height:30px;flex-shrink:0;border-radius:9px;background:var(--green-soft);
-  display:grid;place-items:center;color:var(--green);font-size:19px;font-weight:700;
-  transition:var(--t);line-height:1;
-}
-.acc.open .acc-head{background:var(--green-soft);color:var(--green)}
-.acc.open .plus{background:var(--green);color:#fff;transform:rotate(135deg)}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.acc-body p{padding:0 24px 22px;color:var(--muted);font-size:15px}
-.acc.open .acc-body{max-height:340px}
+.toast.show{transform:translate(50%,0)}
 
-/* ============ SERVICES ============ */
-.service{
-  display:flex;gap:16px;align-items:flex-start;background:#fff;
-  border:1px solid var(--line);border-radius:var(--r);padding:24px;
-  box-shadow:var(--shadow);transition:var(--t);cursor:pointer;
+/* ---- FAB ---- */
+.fab{
+  position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;
+  background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;
+  box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t);
 }
-.service:hover{transform:translateY(-6px);border-color:var(--green);box-shadow:var(--shadow-lg)}
-.service .ic{
-  width:50px;height:50px;flex-shrink:0;border-radius:14px;
-  background:var(--green-soft);display:grid;place-items:center;
-}
-.service .ic svg{width:24px;height:24px;stroke:var(--green);fill:none;stroke-width:1.9}
-.service h4{font-size:16.5px;margin-bottom:5px}
-.service p{font-size:13.5px;color:var(--muted)}
+.fab:hover{transform:translateY(-4px) rotate(90deg);background:var(--p-dark)}
 
-/* ============ CTA ============ */
-.cta{
-  background:linear-gradient(135deg,var(--green-dark),var(--green-light));
-  border-radius:28px;padding:60px 50px;color:#fff;text-align:center;
-  position:relative;overflow:hidden;box-shadow:var(--shadow-lg);
-}
-.cta::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle at 20% 30%,rgba(212,165,55,.28),transparent 45%),
-                   radial-gradient(circle at 80% 70%,rgba(255,255,255,.12),transparent 45%);
-}
-.cta>*{position:relative;z-index:1}
-.cta h2{color:#fff;font-size:clamp(24px,3.5vw,36px);margin-bottom:14px}
-.cta p{color:rgba(255,255,255,.85);max-width:620px;margin:0 auto 30px;font-size:16.5px}
-.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-
-/* ============ CONTACT ============ */
-.contact-item{
-  display:flex;gap:16px;align-items:flex-start;padding:22px;
-  background:#fff;border:1px solid var(--line);border-radius:var(--r);transition:var(--t);
-}
-.contact-item:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:var(--shadow)}
-.contact-item .ic{
-  width:48px;height:48px;flex-shrink:0;border-radius:13px;
-  background:linear-gradient(135deg,var(--green),var(--green-light));
-  display:grid;place-items:center;
-}
-.contact-item .ic svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.9}
-.contact-item b{display:block;font-size:15.5px;margin-bottom:4px}
-.contact-item span{font-size:14px;color:var(--muted);line-height:1.7}
-
-.map-box{
-  border-radius:22px;overflow:hidden;height:340px;position:relative;
-  background:linear-gradient(135deg,#0e2f28,#155e4e);
-  display:grid;place-items:center;box-shadow:var(--shadow);
-}
-.map-box::before{
-  content:'';position:absolute;inset:0;
-  background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
-                   linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
-  background-size:44px 44px;
-}
-.map-box .pin{position:relative;z-index:1;text-align:center;color:#fff}
-.map-box .pin svg{width:56px;height:56px;stroke:var(--gold-light);fill:none;stroke-width:1.6;margin:0 auto 12px;animation:bob 2.4s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
-.map-box .pin b{font-family:'Tajawal';font-size:18px;display:block}
-.map-box .pin span{font-size:13.5px;opacity:.75}
-
-/* ============ FOOTER ============ */
-.footer{background:var(--dark);color:#9fb5b0;padding:70px 0 0;margin-top:0}
-.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:44px;padding-bottom:52px}
-.footer h4{color:#fff;font-size:17px;margin-bottom:22px;font-family:'Tajawal';position:relative;padding-bottom:12px}
-.footer h4::after{content:'';position:absolute;bottom:0;right:0;width:36px;height:3px;background:var(--gold);border-radius:3px}
-.footer p{font-size:14.5px;line-height:1.9}
-.footer-logo{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.footer-logo .logo-mark{width:44px;height:44px}
-.footer-logo b{font-family:'Tajawal';font-size:19px;font-weight:900;color:#fff;display:block;line-height:1.2}
-.footer-logo small{font-size:10px;letter-spacing:2px;color:var(--gold)}
-.footer ul li{margin-bottom:12px}
-.footer ul a{font-size:14.5px;transition:var(--t);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.footer ul a::before{content:'◂';font-size:10px;color:var(--gold);opacity:0;transition:var(--t)}
-.footer ul a:hover{color:var(--gold-light);transform:translateX(-5px)}
-.footer ul a:hover::before{opacity:1}
-
-.newsletter{display:flex;gap:9px;margin-top:16px}
-.newsletter input{
-  flex:1;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);color:#fff;font-size:14px;min-width:0;
-}
-.newsletter input::placeholder{color:#7d938e}
-.newsletter input:focus{outline:none;border-color:var(--gold);background:rgba(255,255,255,.1)}
-.newsletter button{
-  padding:13px 20px;border-radius:12px;border:none;background:var(--gold);
-  color:var(--dark);font-weight:800;cursor:pointer;transition:var(--t);font-size:14px;white-space:nowrap;
-}
-.newsletter button:hover{background:var(--gold-light);transform:translateY(-2px)}
-
-.footer-social{display:flex;gap:10px;margin-top:22px}
-.footer-social a{
-  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
-  background:rgba(255,255,255,.07);transition:var(--t);
-}
-.footer-social a:hover{background:var(--gold);transform:translateY(-4px)}
-.footer-social svg{width:18px;height:18px;fill:#9fb5b0;transition:var(--t)}
-.footer-social a:hover svg{fill:var(--dark)}
-
-.footer-bottom{
-  border-top:1px solid rgba(255,255,255,.09);padding:24px 0;
-  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
-  font-size:13.5px;
-}
-.footer-bottom a{transition:var(--t)}
-.footer-bottom a:hover{color:var(--gold-light)}
-.footer-bottom .links{display:flex;gap:22px;flex-wrap:wrap}
-
-/* ============ TO TOP ============ */
-.to-top{
-  position:fixed;bottom:28px;left:28px;width:50px;height:50px;border-radius:15px;
-  background:var(--green);color:#fff;border:none;display:grid;place-items:center;
-  cursor:pointer;box-shadow:0 12px 30px rgba(11,92,75,.35);z-index:800;
-  opacity:0;visibility:hidden;transition:var(--t);
-}
-.to-top.show{opacity:1;visibility:visible}
-.to-top:hover{background:var(--green-dark);transform:translateY(-4px)}
-.to-top svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.4}
-
-/* ============ PAGE HEADER ============ */
-.page-head{
-  background:linear-gradient(135deg,var(--green-dark),var(--green-light));
-  padding:70px 0 60px;color:#fff;position:relative;overflow:hidden;
-}
-.page-head::before{
-  content:'';position:absolute;inset:0;
-  background-image:radial-gradient(circle at 80% 30%,rgba(212,165,55,.22),transparent 45%);
-}
-.page-head .container{position:relative;z-index:1}
-.page-head h1{color:#fff;font-size:clamp(28px,4.5vw,46px);margin-bottom:12px}
-.page-head p{color:rgba(255,255,255,.82);max-width:640px;font-size:16.5px}
-.breadcrumb{display:flex;gap:10px;align-items:center;font-size:14px;margin-top:20px;color:rgba(255,255,255,.7)}
-.breadcrumb a{cursor:pointer;transition:var(--t)}
-.breadcrumb a:hover{color:var(--gold-light)}
-.breadcrumb span{color:var(--gold-light);font-weight:700}
+/* ---- PROGRESS ---- */
+.prog{height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:10px}
+.prog i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--p),#2dd4bf);transition:width .6s ease}
 
 /* ============ RESPONSIVE ============ */
-@media(max-width:1080px){
-  .nav{display:none}
-  .burger{display:grid}
-  .hero-grid{grid-template-columns:1fr;gap:44px}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:36px}
-  .grid-4{grid-template-columns:repeat(2,1fr)}
-  .quickbar-inner{grid-template-columns:repeat(2,1fr)}
+@media(max-width:980px){
+  .sidebar{position:fixed;right:0;top:0;transform:translateX(100%);box-shadow:var(--shadow-lg)}
+  .sidebar.open{transform:translateX(0)}
+  .hamburger{display:grid}
+  .pomo-wrap{grid-template-columns:1fr}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:55;display:none}
+  .overlay.show{display:block}
 }
-@media(max-width:900px){
-  .grid-3{grid-template-columns:repeat(2,1fr)}
-  .split{grid-template-columns:1fr;gap:40px}
-  .stats-grid{grid-template-columns:repeat(2,1fr);gap:36px}
-  .hero{padding:70px 0 90px}
-}
-@media(max-width:768px){
-  .nav{
-    display:flex;position:fixed;inset:78px 0 auto 0;flex-direction:column;gap:6px;
-    background:#fff;padding:20px;border-bottom:1px solid var(--line);
-    box-shadow:0 20px 40px rgba(8,26,22,.14);
-    transform:translateY(-130%);transition:var(--t);z-index:899;max-height:calc(100vh - 78px);overflow-y:auto;
-  }
-  .nav.open{transform:translateY(0)}
-  .nav-link{width:100%;padding:14px 18px;font-size:16px;text-align:right}
-  .nav-link.active::after{display:none}
-  .header-actions .btn{display:none}
-  .section{padding:56px 0}
-  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+@media(max-width:640px){
+  .content{padding:18px 14px 90px}
+  .topbar{padding:0 14px;height:64px}
+  .topbar-date{display:none}
   .form-grid{grid-template-columns:1fr}
-  .form-card{padding:26px 22px}
-  .cta{padding:44px 24px}
-  .footer-grid{grid-template-columns:1fr;gap:34px}
-  .topbar-info{font-size:12.5px;gap:14px}
-  .topbar-social{display:none}
-  .hero-mini{gap:26px}
-  .footer-bottom{justify-content:center;text-align:center}
-  .quickbar-inner{padding:24px 12px}
-  .visual{min-height:320px}
-  .event{flex-direction:column;text-align:center;align-items:center}
-  .event-info .meta{justify-content:center}
-  .to-top{bottom:18px;left:18px;width:44px;height:44px}
-}
-@media(max-width:420px){
-  .qb-item b{font-size:22px}
-  .stat b{font-size:32px}
-  .hero-btns .btn{width:100%}
+  .comp-row{grid-template-columns:1fr 66px 66px 34px;gap:6px}
+  .stats{grid-template-columns:1fr 1fr;gap:10px}
+  .stat{padding:14px;gap:10px}
+  .stat-ico{width:40px;height:40px;font-size:18px;border-radius:12px}
+  .stat b{font-size:21px}
+  .stat span{font-size:11.5px}
+  .ring-wrap{width:200px;height:200px}
+  .ring-txt b{font-size:38px}
+  .fab{bottom:20px;left:20px;width:52px;height:52px}
 }
 </style>
 </head>
 <body>
 
-<!-- ================= TOP BAR ================= -->
-<div class="topbar">
-  <div class="container">
-    <div class="topbar-info">
-      <span>
-        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        920001234
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
-        info@ufuq.edu.sa
-      </span>
-      <span>
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        الأحد - الخميس: 8:00 ص - 4:00 م
-      </span>
-    </div>
-    <div class="topbar-social">
-      <a href="#" aria-label="تويتر"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.4l8.1-9.3L1 2h7.2l5 6.6L18.9 2zm-1.1 18h1.7L7.3 3.8H5.5L17.8 20z"/></svg></a>
-      <a href="#" aria-label="انستغرام"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z"/></svg></a>
-      <a href="#" aria-label="لينكدإن"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21H9z"/></svg></a>
-      <a href="#" aria-label="يوتيوب"><svg viewBox="0 0 24 24"><path d="M23 12s0-3.4-.4-5c-.2-.9-.9-1.6-1.8-1.8C19.2 5 12 5 12 5s-7.2 0-8.8.2c-.9.2-1.6.9-1.8 1.8C1 8.6 1 12 1 12s0 3.4.4 5c.2.9.9 1.6 1.8 1.8 1.6.2 8.8.2 8.8.2s7.2 0 8.8-.2c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-5 .4-5zM9.7 15.2V8.8l5.7 3.2-5.7 3.2z"/></svg></a>
-    </div>
-  </div>
-</div>
-
-<!-- ================= HEADER ================= -->
-<header class="header" id="header">
-  <div class="container">
-    <div class="logo" data-page="home">
-      <div class="logo-mark">
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M12 3 22 8 12 13 2 8z" fill="#D4A537"/>
-          <path d="M6 10.5V16c0 2 2.7 3.6 6 3.6s6-1.6 6-3.6v-5.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="logo-text">
-        <b>جامعة الأفق</b>
-        <small>AL-UFUQ UNIVERSITY</small>
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">🎓</div>
+      <div class="brand-txt">
+        <b>مُساعد الجامعة</b>
+        <span>نظّم دراستك بذكاء</span>
       </div>
     </div>
 
-    <nav class="nav" id="nav">
-      <a class="nav-link active" data-page="home">الرئيسية</a>
-      <a class="nav-link" data-page="about">عن الجامعة</a>
-      <a class="nav-link" data-page="colleges">الكليات</a>
-      <a class="nav-link" data-page="admissions">القبول والتسجيل</a>
-      <a class="nav-link" data-page="services">الخدمات الإلكترونية</a>
-      <a class="nav-link" data-page="news">الأخبار والفعاليات</a>
-      <a class="nav-link" data-page="contact">تواصل معنا</a>
+    <nav class="nav">
+      <button class="nav-btn active" data-view="dashboard"><span class="ico">🏠</span> الرئيسية</button>
+      <button class="nav-btn" data-view="schedule"><span class="ico">📅</span> الجدول الدراسي</button>
+      <button class="nav-btn" data-view="courses"><span class="ico">📚</span> المقررات</button>
+      <button class="nav-btn" data-view="tasks"><span class="ico">✅</span> المهام والواجبات<span class="badge" id="badgeTasks" style="display:none">0</span></button>
+      <button class="nav-btn" data-view="exams"><span class="ico">⏰</span> الاختبارات<span class="badge" id="badgeExams" style="display:none">0</span></button>
+      <button class="nav-btn" data-view="study"><span class="ico">🍅</span> المذاكرة</button>
+      <button class="nav-btn" data-view="grades"><span class="ico">📊</span> الدرجات</button>
+      <button class="nav-btn" data-view="notes"><span class="ico">📝</span> الملاحظات</button>
+      <button class="nav-btn" data-view="settings"><span class="ico">⚙️</span> الإعدادات</button>
     </nav>
 
-    <div class="header-actions">
-      <button class="btn btn-primary btn-sm" data-page="admissions">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        قدّم الآن
-      </button>
-      <button class="burger" id="burger" aria-label="القائمة">
-        <span></span><span></span><span></span>
-      </button>
+    <div class="sidebar-foot">
+      <button class="icon-btn" id="themeBtn" title="الوضع الليلي">🌙</button>
+      <button class="icon-btn" id="quickAddBtn" title="إضافة سريعة">➕</button>
     </div>
-  </div>
-</header>
+  </aside>
+  <div class="overlay" id="overlay"></div>
 
-<main>
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger">☰</button>
+      <div>
+        <div class="page-title" id="pageTitle">الرئيسية</div>
+        <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
+      </div>
+      <div class="topbar-spacer"></div>
+      <div class="topbar-date" id="topDate"></div>
+    </header>
 
-<!-- ==================================================================
-     PAGE: HOME
-=================================================================== -->
-<section class="page active" id="home">
+    <div class="content">
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="container">
-      <div class="hero-grid">
-        <div>
-          <div class="hero-badge"><i></i> التسجيل مفتوح للفصل الدراسي القادم</div>
-          <h1>نبني <em>قادة المستقبل</em><br>بمعرفةٍ تُحدث الأثر</h1>
-          <p>
-            جامعة الأفق مؤسسة أكاديمية رائدة تجمع بين الأصالة والابتكار، وتقدم برامج
-            نوعية في الهندسة والطب وتقنية المعلومات وإدارة الأعمال، في بيئة بحثية
-            محفّزة وشراكات دولية واسعة.
-          </p>
-          <div class="hero-btns">
-            <button class="btn btn-gold" data-page="admissions">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-              ابدأ التقديم
-            </button>
-            <button class="btn btn-ghost-light" data-page="colleges">
-              استكشف الكليات
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
-          </div>
-          <div class="hero-mini">
-            <div><strong>+24</strong><span>ألف طالب وطالبة</span></div>
-            <div><strong>+180</strong><span>برنامج أكاديمي</span></div>
-            <div><strong>+320</strong><span>عضو هيئة تدريس</span></div>
-          </div>
-        </div>
+      <!-- ===== DASHBOARD ===== -->
+      <section class="view active" id="view-dashboard">
+        <div class="stats" id="dashStats"></div>
 
-        <div class="hero-card">
-          <h3>روابط سريعة</h3>
-          <p>أكثر الخدمات طلباً من طلابنا وأعضاء هيئة التدريس</p>
-          <div class="hero-links">
-            <div class="hero-link" data-page="services">
-              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-              <div><b>البوابة الأكاديمية</b><span>الدرجات، الجدول، التسجيل</span></div>
+        <div class="grid g2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="sec-head" style="margin-bottom:14px">
+              <h2 style="font-size:18px">🔔 القادم عليك</h2>
             </div>
-            <div class="hero-link" data-page="services">
-              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-              <div><b>المكتبة الرقمية</b><span>+120 ألف مصدر إلكتروني</span></div>
-            </div>
-            <div class="hero-link" data-page="admissions">
-              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></div>
-              <div><b>دليل القبول</b><span>الشروط والمواعيد</span></div>
-            </div>
-            <div class="hero-link" data-page="news">
-              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></div>
-              <div><b>التقويم الأكاديمي</b><span>مواعيد الفصل الدراسي</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- QUICK BAR -->
-  <div class="quickbar">
-    <div class="container">
-      <div class="quickbar-inner">
-        <div class="qb-item">
-          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
-          <b>8</b><span>كليات أكاديمية</span>
-        </div>
-        <div class="qb-item">
-          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-          <b>180</b><span>برنامج دراسي</span>
-        </div>
-        <div class="qb-item">
-          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
-          <b>96%</b><span>نسبة التوظيف</span>
-        </div>
-        <div class="qb-item">
-          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg></div>
-          <b>45</b><span>شراكة دولية</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ABOUT BRIEF -->
-  <div class="section">
-    <div class="container">
-      <div class="split">
-        <div class="visual">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-          </svg>
-          <div class="visual-badge">
-            <b>1995</b>
-            <span>سنة التأسيس — أكثر من ثلاثة عقود من الريادة الأكاديمية والبحث العلمي</span>
-          </div>
-        </div>
-        <div>
-          <div class="eyebrow">عن جامعة الأفق</div>
-          <h2 class="sec-title">بيئة أكاديمية <span>متكاملة</span> تصنع الفرق</h2>
-          <p style="color:var(--muted);font-size:16.5px">
-            تأسست جامعة الأفق عام 1995 لتكون منارة علمية تجمع بين عراقة التعليم
-            الجامعي ومتطلبات سوق العمل الحديث، وتضم اليوم ثماني كليات ومراكز بحثية
-            متخصصة تعمل على إنتاج المعرفة وخدمة المجتمع.
-          </p>
-          <ul class="check-list">
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> اعتماد أكاديمي محلي ودولي لجميع البرامج</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> حرم جامعي ذكي بمساحة تتجاوز 2 مليون م²</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> مراكز ابتكار وريادة أعمال وحاضنات تقنية</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> برامج تبادل طلابي مع 45 جامعة عالمية</li>
-          </ul>
-          <button class="btn btn-primary" data-page="about">
-            تعرّف على الجامعة
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats-band">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat"><b class="count" data-target="24">0</b><span>ألف طالب وطالبة</span></div>
-        <div class="stat"><b class="count" data-target="320" data-suffix="+">0</b><span>عضو هيئة تدريس</span></div>
-        <div class="stat"><b class="count" data-target="180">0</b><span>برنامج أكاديمي</span></div>
-        <div class="stat"><b class="count" data-target="96" data-suffix="%">0</b><span>نسبة توظيف الخريجين</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- COLLEGES PREVIEW -->
-  <div class="section bg-soft">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">الكليات</div>
-        <h2 class="sec-title">كليات <span>متنوعة</span> وبرامج نوعية</h2>
-        <p class="sec-desc">ثماني كليات تغطي التخصصات الصحية والهندسية والتقنية والإنسانية والإدارية</p>
-      </div>
-      <div class="grid grid-4" id="homeColleges"></div>
-      <div style="text-align:center;margin-top:44px">
-        <button class="btn btn-outline" data-page="colleges">
-          عرض جميع الكليات
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- WHY US -->
-  <div class="section">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">لماذا الأفق؟</div>
-        <h2 class="sec-title">مزايا <span>تصنع تجربتك</span> الجامعية</h2>
-        <p class="sec-desc">نوفر منظومة تعليمية متكاملة تدعم الطالب أكاديمياً ومهنياً واجتماعياً</p>
-      </div>
-      <div class="grid grid-3">
-        <div class="card">
-          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-          <h3>برامج معتمدة</h3>
-          <p>جميع برامجنا حاصلة على الاعتماد الأكاديمي من الجهات المحلية والدولية المختصة.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
-          <h3>حياة جامعية غنية</h3>
-          <p>أكثر من 60 نادياً طلابياً وأنشطة ثقافية ورياضية وتطوعية على مدار العام.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <h3>منح ومساعدات</h3>
-          <p>برامج منح دراسية للطلاب المتفوقين ومحفظي القرآن والفئات المستحقة.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-          <h3>إرشاد أكاديمي</h3>
-          <p>مرشد أكاديمي لكل طالب لمتابعة مساره الدراسي وتقديم الدعم المستمر.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-          <h3>مختبرات متقدمة</h3>
-          <p>مختبرات مجهزة بأحدث التقنيات في الهندسة والطب والذكاء الاصطناعي.</p>
-        </div>
-        <div class="card">
-          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg></div>
-          <h3>شراكات عالمية</h3>
-          <p>اتفاقيات تبادل طلابي وبحثي مع جامعات مرموقة في أوروبا وآسيا وأمريكا.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- NEWS PREVIEW -->
-  <div class="section bg-soft">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">آخر المستجدات</div>
-        <h2 class="sec-title">أخبار <span>وفعاليات</span> الجامعة</h2>
-        <p class="sec-desc">تابع أحدث الأنشطة والإنجازات والإعلانات الأكاديمية</p>
-      </div>
-      <div class="grid grid-3" id="homeNews"></div>
-      <div style="text-align:center;margin-top:44px">
-        <button class="btn btn-outline" data-page="news">
-          كل الأخبار
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- CTA -->
-  <div class="section">
-    <div class="container">
-      <div class="cta">
-        <h2>انضم إلى مجتمع جامعة الأفق</h2>
-        <p>باب القبول مفتوح الآن لجميع المراحل. ابدأ رحلتك الأكاديمية واحصل على فرص لا محدودة للنمو والتميز.</p>
-        <div class="cta-btns">
-          <button class="btn btn-gold" data-page="admissions">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            تقدّم بطلبك الآن
-          </button>
-          <button class="btn btn-ghost-light" data-page="contact">تواصل مع القبول</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</section>
-
-<!-- ==================================================================
-     PAGE: ABOUT
-=================================================================== -->
-<section class="page" id="about">
-  <div class="page-head">
-    <div class="container">
-      <h1>عن جامعة الأفق</h1>
-      <p>ثلاثة عقود من الريادة في التعليم العالي والبحث العلمي وخدمة المجتمع</p>
-      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>عن الجامعة</span></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="split">
-        <div>
-          <div class="eyebrow">قصتنا</div>
-          <h2 class="sec-title">من فكرة طموحة إلى <span>صرح أكاديمي</span></h2>
-          <p style="color:var(--muted);font-size:16.5px;margin-bottom:16px">
-            انطلقت جامعة الأفق عام 1995 بثلاث كليات فقط وعدد محدود من الطلاب،
-            لتتحول اليوم إلى واحدة من أبرز المؤسسات التعليمية في المنطقة، تضم
-            ثماني كليات ومراكز بحثية متخصصة، وتخرّج آلاف الكفاءات التي تشغل
-            مواقع قيادية في مختلف القطاعات.
-          </p>
-          <p style="color:var(--muted);font-size:16.5px">
-            واصلت الجامعة تطوير برامجها الأكاديمية وبنيتها التحتية لتواكب
-            التحولات التقنية والاقتصادية، مع الحفاظ على قيمها الأصيلة ورسالتها
-            في خدمة المجتمع وإنتاج المعرفة.
-          </p>
-          <ul class="check-list">
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1995 — تأسيس الجامعة بثلاث كليات</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 2006 — افتتاح كلية الطب والعلوم الصحية</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 2015 — الحصول على الاعتماد الدولي الشامل</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 2023 — إطلاق مركز الذكاء الاصطناعي والابتكار</li>
-          </ul>
-        </div>
-        <div class="visual">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 11h.01M15 11h.01"/>
-          </svg>
-          <div class="visual-badge">
-            <b>8</b>
-            <span>كليات ومراكز بحثية متخصصة داخل الحرم الجامعي</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section bg-white">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">هويتنا</div>
-        <h2 class="sec-title">الرؤية والرسالة <span>والقيم</span></h2>
-      </div>
-      <div class="grid grid-3">
-        <div class="vm-card">
-          <div class="num">01</div>
-          <h3>رؤيتنا</h3>
-          <p>أن نكون جامعة رائدة عالمياً في التعليم والبحث العلمي والابتكار، ومساهماً فاعلاً في بناء اقتصاد المعرفة وتحقيق التنمية المستدامة.</p>
-        </div>
-        <div class="vm-card">
-          <div class="num">02</div>
-          <h3>رسالتنا</h3>
-          <p>تقديم تعليم جامعي نوعي وفق أفضل المعايير العالمية، وإنتاج بحث علمي مؤثر، وبناء شراكات مجتمعية تسهم في خدمة الوطن والإنسانية.</p>
-        </div>
-        <div class="vm-card">
-          <div class="num">03</div>
-          <h3>قيمنا</h3>
-          <p>الإتقان، النزاهة، الشفافية، العمل الجماعي، الإبداع، احترام التنوع، والمسؤولية المجتمعية في جميع أعمالنا وقراراتنا.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">القيادة</div>
-        <h2 class="sec-title">كلمة <span>مدير الجامعة</span></h2>
-      </div>
-      <div class="split">
-        <div class="visual" style="min-height:380px">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
-          </svg>
-          <div class="visual-badge">
-            <div>
-              <b style="font-size:20px">أ.د. عبدالله بن محمد الحربي</b>
-              <span>مدير جامعة الأفق</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <p style="font-size:17px;color:#33443f;line-height:2;margin-bottom:20px">
-            «في جامعة الأفق، نؤمن بأن التعليم ليس مجرد شهادة، بل رحلة متكاملة
-            لبناء الإنسان وصقل مهاراته. نعمل على تهيئة بيئة أكاديمية محفزة
-            تجمع بين الأصالة والابتكار، وتمكّن طلابنا من المنافسة محلياً
-            وعالمياً.»
-          </p>
-          <p style="font-size:17px;color:#33443f;line-height:2">
-            «نستثمر في البحث العلمي والشراكات الدولية والتحول الرقمي، لنقدم
-            تجربة جامعية استثنائية تخرج كفاءات قادرة على قيادة التغيير
-            وخدمة مجتمعها بتميز واقتدار.»
-          </p>
-          <div style="margin-top:30px;display:flex;gap:14px;flex-wrap:wrap">
-            <button class="btn btn-primary" data-page="contact">تواصل مع الإدارة</button>
-            <button class="btn btn-outline" data-page="colleges">استكشف الكليات</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="stats-band">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat"><b class="count" data-target="30" data-suffix="+">0</b><span>عاماً من العطاء</span></div>
-        <div class="stat"><b class="count" data-target="65" data-suffix="+">0</b><span>ألف خريج وخريجة</span></div>
-        <div class="stat"><b class="count" data-target="45">0</b><span>شراكة دولية</span></div>
-        <div class="stat"><b class="count" data-target="1200" data-suffix="+">0</b><span>بحث علمي منشور</span></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section bg-white">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">الجودة</div>
-        <h2 class="sec-title">الاعتمادات <span>والجوائز</span></h2>
-      </div>
-      <div class="grid grid-4">
-        <div class="card" style="text-align:center">
-          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
-          <h3>الاعتماد المؤسسي</h3>
-          <p>اعتماد كامل لجميع البرامج الأكاديمية</p>
-        </div>
-        <div class="card" style="text-align:center">
-          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5"/></svg></div>
-          <h3>تصنيف QS</h3>
-          <p>ضمن أفضل 500 جامعة عالمياً</p>
-        </div>
-        <div class="card" style="text-align:center">
-          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <h3>جائزة التميز</h3>
-          <p>جائزة التميز في التعليم الجامعي</p>
-        </div>
-        <div class="card" style="text-align:center">
-          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-          <h3>مركز الابتكار</h3>
-          <p>معتمد كحاضنة أعمال جامعية</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================
-     PAGE: COLLEGES
-=================================================================== -->
-<section class="page" id="colleges">
-  <div class="page-head">
-    <div class="container">
-      <h1>الكليات والبرامج</h1>
-      <p>ثماني كليات تقدم أكثر من 180 برنامجاً أكاديمياً في مراحل البكالوريوس والدراسات العليا</p>
-      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>الكليات</span></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="filters" id="collegeFilters">
-        <button class="chip active" data-filter="all">جميع الكليات</button>
-        <button class="chip" data-filter="health">الكليات الصحية</button>
-        <button class="chip" data-filter="eng">الهندسة والتقنية</button>
-        <button class="chip" data-filter="biz">الأعمال والعلوم</button>
-        <button class="chip" data-filter="hum">الإنسانية والتربوية</button>
-      </div>
-      <div class="grid grid-3" id="collegesGrid"></div>
-    </div>
-  </div>
-
-  <div class="section bg-white">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">معلومات سريعة</div>
-        <h2 class="sec-title">نظرة عامة على <span>الكليات</span></h2>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>الكلية</th>
-              <th>عدد الأقسام</th>
-              <th>الدرجات الممنوحة</th>
-              <th>مدة الدراسة</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>كلية الطب والعلوم الصحية</td><td>6</td><td>بكالوريوس / ماجستير / دكتوراه</td><td>6 سنوات + سنة امتياز</td></tr>
-            <tr><td>كلية الهندسة</td><td>5</td><td>بكالوريوس / ماجستير</td><td>5 سنوات</td></tr>
-            <tr><td>كلية علوم الحاسب والذكاء الاصطناعي</td><td>4</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
-            <tr><td>كلية إدارة الأعمال</td><td>5</td><td>بكالوريوس / ماجستير / دكتوراه</td><td>4 سنوات</td></tr>
-            <tr><td>كلية العلوم</td><td>4</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
-            <tr><td>كلية الآداب والعلوم الإنسانية</td><td>5</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
-            <tr><td>كلية التربية</td><td>4</td><td>بكالوريوس / ماجستير / دكتوراه</td><td>4 سنوات</td></tr>
-            <tr><td>كلية الشريعة والدراسات الإسلامية</td><td>3</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="cta">
-        <h2>لم تجد تخصصك المناسب؟</h2>
-        <p>تواصل مع فريق الإرشاد الأكاديمي لمساعدتك في اختيار التخصص الأنسب لطموحك وقدراتك.</p>
-        <div class="cta-btns">
-          <button class="btn btn-gold" data-page="contact">تحدث مع مرشد أكاديمي</button>
-          <button class="btn btn-ghost-light" data-page="admissions">دليل القبول</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================
-     PAGE: ADMISSIONS
-=================================================================== -->
-<section class="page" id="admissions">
-  <div class="page-head">
-    <div class="container">
-      <h1>القبول والتسجيل</h1>
-      <p>كل ما تحتاجه للانضمام إلى جامعة الأفق — الشروط، المواعيد، وخطوات التقديم</p>
-      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>القبول والتسجيل</span></div>
-    </div>
-  </div>
-
-  <!-- STEPS -->
-  <div class="section">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">خطوات التقديم</div>
-        <h2 class="sec-title">كيف <span>تقدّم</span> على الجامعة؟</h2>
-        <p class="sec-desc">ست خطوات واضحة من إنشاء الحساب حتى التسجيل النهائي</p>
-      </div>
-      <div class="grid grid-2">
-        <div class="steps">
-          <div class="step"><div class="step-num">1</div><div><h4>إنشاء حساب في بوابة القبول</h4><p>سجّل بياناتك الأساسية عبر البوابة الإلكترونية واحصل على رقم طلبك.</p></div></div>
-          <div class="step"><div class="step-num">2</div><div><h4>تعبئة طلب الالتحاق</h4><p>اختر الكلية والتخصص المطلوب وأدخل بياناتك الأكاديمية بدقة.</p></div></div>
-          <div class="step"><div class="step-num">3</div><div><h4>رفع المستندات المطلوبة</h4><p>أرفق صورة الهوية، شهادة الثانوية، ونتائج الاختبارات المطلوبة.</p></div></div>
-          <div class="step"><div class="step-num">4</div><div><h4>سدّاد رسوم التقديم</h4><p>ادفع رسوم التقديم (200 ريال) إلكترونياً عبر نظام سداد.</p></div></div>
-          <div class="step"><div class="step-num">5</div><div><h4>المفاضلة والترشيح</h4><p>يتم ترتيب المتقدمين حسب النسبة الموزونة وإعلان النتائج.</p></div></div>
-          <div class="step"><div class="step-num">6</div><div><h4>التسجيل النهائي</h4><p>أكمل إجراءات التسجيل واستلم الرقم الجامعي والجدول الدراسي.</p></div></div>
-        </div>
-
-        <div>
-          <div class="card" style="margin-bottom:24px">
-            <h3 style="margin-bottom:18px">شروط القبول — البكالوريوس</h3>
-            <ul class="check-list" style="margin:0">
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> شهادة الثانوية العامة بنسبة لا تقل عن 70%</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> اختبار القدرات العامة (قياس) بنسبة 25%</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> الاختبار التحصيلي بنسبة 25%</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> النسبة الموزونة: 50% ثانوية + 25% قدرات + 25% تحصيلي</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> اجتياز المقابلة الشخصية والفحص الطبي للكليات الصحية</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> شهادة حسن سيرة وسلوك</li>
-            </ul>
+            <div id="dashUpcoming"></div>
           </div>
 
           <div class="card">
-            <h3 style="margin-bottom:18px">المستندات المطلوبة</h3>
-            <ul class="check-list" style="margin:0">
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> صورة واضحة من الهوية الوطنية / الإقامة</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> أصل شهادة الثانوية أو صورة مصدقة</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> كشف درجات الثانوية المفصّل</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> صورة شخصية حديثة بخلفية بيضاء</li>
-              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> نتيجة اختبار القدرات والتحصيلي</li>
-            </ul>
+            <div class="sec-head" style="margin-bottom:14px">
+              <h2 style="font-size:18px">📅 محاضرات اليوم</h2>
+            </div>
+            <div id="dashToday"></div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- DATES -->
-  <div class="section bg-white">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">التقويم</div>
-        <h2 class="sec-title">مواعيد <span>القبول</span> للعام الجامعي</h2>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>المرحلة</th><th>التاريخ</th><th>الملاحظات</th><th>الحالة</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>فتح باب التقديم</td><td>1 رجب 1447هـ</td><td>عبر البوابة الإلكترونية</td><td><span class="status">مفتوح</span></td></tr>
-            <tr><td>إغلاق باب التقديم</td><td>25 رجب 1447هـ</td><td>لا يُقبل أي طلب بعد هذا التاريخ</td><td><span class="status warn">قريباً</span></td></tr>
-            <tr><td>اختبارات القبول والمقابلات</td><td>28 رجب — 3 شعبان</td><td>للكليات الصحية والهندسية</td><td><span class="status warn">قريباً</span></td></tr>
-            <tr><td>إعلان نتائج الترشيح</td><td>5 شعبان 1447هـ</td><td>عبر البوابة والرسائل النصية</td><td><span class="status warn">قريباً</span></td></tr>
-            <tr><td>تأكيد القبول وسداد الرسوم</td><td>6 — 12 شعبان</td><td>إلكترونياً عبر نظام سداد</td><td><span class="status warn">قريباً</span></td></tr>
-            <tr><td>بدء الدراسة</td><td>1 رمضان 1447هـ</td><td>حسب الجدول الأكاديمي</td><td><span class="status warn">قريباً</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- APPLICATION FORM -->
-  <div class="section">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">طلب الالتحاق</div>
-        <h2 class="sec-title">قدّم <span>طلبك</span> إلكترونياً</h2>
-        <p class="sec-desc">عبّئ النموذج التالي وسيتواصل معك فريق القبول خلال 48 ساعة</p>
-      </div>
-
-      <div class="form-card" style="max-width:900px;margin-inline:auto">
-        <div class="alert" id="applyAlert">
-          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-          <span>تم استلام طلبك بنجاح! سيتواصل معك فريق القبول خلال 48 ساعة.</span>
-        </div>
-
-        <form id="applyForm" novalidate>
-          <div class="form-grid">
-            <div class="field">
-              <label>الاسم الأول <span class="req">*</span></label>
-              <input type="text" name="first" placeholder="أدخل الاسم الأول">
-              <span class="err">الرجاء إدخال الاسم الأول</span>
-            </div>
-            <div class="field">
-              <label>اسم العائلة <span class="req">*</span></label>
-              <input type="text" name="last" placeholder="أدخل اسم العائلة">
-              <span class="err">الرجاء إدخال اسم العائلة</span>
-            </div>
-            <div class="field">
-              <label>رقم الهوية / الإقامة <span class="req">*</span></label>
-              <input type="text" name="id" placeholder="10 أرقام" inputmode="numeric">
-              <span class="err">الرجاء إدخال رقم هوية صحيح (10 أرقام)</span>
-            </div>
-            <div class="field">
-              <label>رقم الجوال <span class="req">*</span></label>
-              <input type="tel" name="phone" placeholder="05xxxxxxxx" inputmode="numeric">
-              <span class="err">الرجاء إدخال رقم جوال صحيح يبدأ بـ 05</span>
-            </div>
-            <div class="field">
-              <label>البريد الإلكتروني <span class="req">*</span></label>
-              <input type="email" name="email" placeholder="example@email.com">
-              <span class="err">الرجاء إدخال بريد إلكتروني صحيح</span>
-            </div>
-            <div class="field">
-              <label>تاريخ الميلاد</label>
-              <input type="date" name="dob">
-              <span class="err"></span>
-            </div>
-            <div class="field">
-              <label>الكلية المرغوبة <span class="req">*</span></label>
-              <select name="college">
-                <option value="">— اختر الكلية —</option>
-                <option>كلية الطب والعلوم الصحية</option>
-                <option>كلية الهندسة</option>
-                <option>كلية علوم الحاسب والذكاء الاصطناعي</option>
-                <option>كلية إدارة الأعمال</option>
-                <option>كلية العلوم</option>
-                <option>كلية الآداب والعلوم الإنسانية</option>
-                <option>كلية التربية</option>
-                <option>كلية الشريعة والدراسات الإسلامية</option>
-              </select>
-              <span class="err">الرجاء اختيار الكلية</span>
-            </div>
-            <div class="field">
-              <label>نسبة الثانوية العامة (%) <span class="req">*</span></label>
-              <input type="number" name="gpa" placeholder="مثال: 92" min="0" max="100">
-              <span class="err">الرجاء إدخال نسبة صحيحة بين 0 و 100</span>
-            </div>
-            <div class="field full">
-              <label>ملاحظات إضافية</label>
-              <textarea name="notes" placeholder="أي معلومات إضافية ترغب في إضافتها..."></textarea>
-            </div>
-            <div class="field full" style="flex-direction:row;align-items:center;gap:12px">
-              <input type="checkbox" id="terms" style="width:20px;height:20px;accent-color:var(--green)">
-              <label for="terms" style="font-weight:600;font-size:14.5px;cursor:pointer">
-                أقرّ بصحة جميع البيانات المدخلة وأوافق على شروط وأحكام القبول
-              </label>
-            </div>
+        <div class="card">
+          <div class="sec-head" style="margin-bottom:14px">
+            <h2 style="font-size:18px">📈 تقدمك في المهام</h2>
+            <span id="dashProgTxt" style="font-size:13px;color:var(--muted);font-weight:700"></span>
           </div>
-          <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">
-            <button type="submit" class="btn btn-primary">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 2-7 20-4-9-9-4z"/></svg>
-              إرسال الطلب
-            </button>
-            <button type="reset" class="btn btn-outline">إعادة تعيين</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="section bg-white">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">الأسئلة الشائعة</div>
-        <h2 class="sec-title">أجوبة <span>لأكثر</span> ما يُسأل عنه</h2>
-      </div>
-      <div style="max-width:840px;margin-inline:auto">
-        <div class="acc">
-          <div class="acc-head">ما هي النسبة الموزونة المطلوبة للقبول؟ <span class="plus">+</span></div>
-          <div class="acc-body"><p>تُحسب النسبة الموزونة بواقع 50% لشهادة الثانوية العامة، و25% لاختبار القدرات العامة، و25% للاختبار التحصيلي. وتختلف النسبة المطلوبة من كلية لأخرى حسب التنافسية.</p></div>
-        </div>
-        <div class="acc">
-          <div class="acc-head">هل توجد منح دراسية؟ <span class="plus">+</span></div>
-          <div class="acc-body"><p>نعم، تقدم الجامعة منحاً جزئية وكاملة للطلاب المتفوقين علمياً، ولحفظة القرآن الكريم، وللفئات المستحقة اجتماعياً. يتم الإعلان عن المنح قبل بداية كل فصل دراسي.</p></div>
-        </div>
-        <div class="acc">
-          <div class="acc-head">هل يمكنني تغيير التخصص بعد القبول؟ <span class="plus">+</span></div>
-          <div class="acc-body"><p>نعم، يُسمح بطلب تغيير التخصص بعد إكمال فصلين دراسيين على الأقل، بشرط استيفاء شروط التخصص الجديد وتحقيق المعدل المطلوب، وموافقة عمادة القبول والتسجيل.</p></div>
-        </div>
-        <div class="acc">
-          <div class="acc-head">هل الدراسة حضورية أم عن بُعد؟ <span class="plus">+</span></div>
-          <div class="acc-body"><p>الدراسة حضورية في الحرم الجامعي لجميع البرامج، مع إتاحة بعض المقررات العامة بنظام التعليم المدمج وفقاً لسياسات الجامعة.</p></div>
-        </div>
-        <div class="acc">
-          <div class="acc-head">ما هي رسوم الدراسة؟ <span class="plus">+</span></div>
-          <div class="acc-body"><p>تختلف الرسوم حسب الكلية والبرنامج. تبدأ من 25,000 ريال سنوياً للبرامج النظرية، وتصل إلى 75,000 ريال للبرامج الصحية. يمكن تقسيط الرسوم على دفعتين أو ثلاث دفعات.</p></div>
-        </div>
-        <div class="acc">
-          <div class="acc-head">هل توفر الجامعة سكناً طلابياً؟ <span class="plus">+</span></div>
-          <div class="acc-body"><p>نعم، توفر الجامعة سكناً طلابياً مجهزاً بالكامل للطلاب والطالبات، مع خدمات النقل والإنترنت والمرافق الرياضية والترفيهية، وذلك وفق شروط وأولوية التسجيل.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================
-     PAGE: SERVICES
-=================================================================== -->
-<section class="page" id="services">
-  <div class="page-head">
-    <div class="container">
-      <h1>الخدمات الإلكترونية</h1>
-      <p>منظومة رقمية متكاملة تخدم الطلاب وأعضاء هيئة التدريس والموظفين على مدار الساعة</p>
-      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>الخدمات الإلكترونية</span></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">الخدمات</div>
-        <h2 class="sec-title">كل ما تحتاجه <span>في مكان واحد</span></h2>
-        <p class="sec-desc">اضغط على أي خدمة للوصول إليها مباشرة</p>
-      </div>
-      <div class="grid grid-3">
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <div><h4>البوابة الأكاديمية</h4><p>الدرجات، الجدول الدراسي، التسجيل والحذف</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></div>
-          <div><h4>البريد الجامعي</h4><p>حساب بريد رسمي بسعة تخزين كبيرة</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-          <div><h4>المكتبة الرقمية</h4><p>أكثر من 120 ألف مصدر ومرجع إلكتروني</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
-          <div><h4>نظام سداد الرسوم</h4><p>سداد الرسوم الدراسية إلكترونياً</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
-          <div><h4>الجدول الدراسي</h4><p>استعراض الجدول ومواعيد الاختبارات</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></div>
-          <div><h4>طلب وثيقة تخرج</h4><p>إصدار الشهادات والسجلات الأكاديمية</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
-          <div><h4>الدعم الفني</h4><p>مساعدة تقنية على مدار الساعة</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v6M16 6v6M2 12h20M5 18h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg></div>
-          <div><h4>النقل الجامعي</h4><p>حجز مقعد وخطوط سير متعددة</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div>
-          <div><h4>السكن الطلابي</h4><p>تقديم طلب السكن والمرافق</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-          <div><h4>التدريب التعاوني</h4><p>التسجيل في برامج التدريب الميداني</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
-          <div><h4>المنح الدراسية</h4><p>التقديم على المنح والمساعدات</p></div>
-        </div>
-        <div class="service">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-          <div><h4>الأنشطة الطلابية</h4><p>التسجيل في الأندية والبرامج</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- LOGIN -->
-  <div class="section bg-white">
-    <div class="container">
-      <div class="split" style="align-items:center">
-        <div>
-          <div class="eyebrow">بوابة الدخول</div>
-          <h2 class="sec-title">سجّل دخولك إلى <span>النظام الأكاديمي</span></h2>
-          <p style="color:var(--muted);font-size:16.5px;margin-bottom:22px">
-            استخدم الرقم الجامعي وكلمة المرور للوصول إلى جميع الخدمات الإلكترونية
-            من أي جهاز وفي أي وقت. في حال نسيت كلمة المرور يمكنك استعادتها
-            عبر البريد الجامعي.
-          </p>
-          <ul class="check-list">
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> دخول آمن بتشفير كامل للبيانات</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> متاح على الجوال والحاسب</li>
-            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> إشعارات فورية بالدرجات والمواعيد</li>
-          </ul>
-        </div>
-        <div class="form-card">
-          <div class="alert" id="loginAlert">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-            <span>تم تسجيل الدخول بنجاح (عرض توضيحي).</span>
-          </div>
-          <h3 style="margin-bottom:22px;font-size:21px">دخول البوابة الأكاديمية</h3>
-          <form id="loginForm" novalidate>
-            <div class="field" style="margin-bottom:18px">
-              <label>الرقم الجامعي / الهوية</label>
-              <input type="text" name="uid" placeholder="مثال: 202412345">
-              <span class="err">الرجاء إدخال الرقم الجامعي</span>
-            </div>
-            <div class="field" style="margin-bottom:22px">
-              <label>كلمة المرور</label>
-              <input type="password" name="pwd" placeholder="••••••••">
-              <span class="err">كلمة المرور يجب ألا تقل عن 6 أحرف</span>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
-              تسجيل الدخول
-            </button>
-            <div style="text-align:center;margin-top:16px;font-size:14px">
-              <a style="color:var(--green);font-weight:700;cursor:pointer">نسيت كلمة المرور؟</a>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================
-     PAGE: NEWS
-=================================================================== -->
-<section class="page" id="news">
-  <div class="page-head">
-    <div class="container">
-      <h1>الأخبار والفعاليات</h1>
-      <p>تابع آخر مستجدات جامعة الأفق من إنجازات وأنشطة وإعلانات أكاديمية</p>
-      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>الأخبار والفعاليات</span></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="filters" id="newsFilters">
-        <button class="chip active" data-filter="all">الكل</button>
-        <button class="chip" data-filter="academic">أكاديمي</button>
-        <button class="chip" data-filter="research">بحث علمي</button>
-        <button class="chip" data-filter="events">فعاليات</button>
-        <button class="chip" data-filter="partners">شراكات</button>
-      </div>
-      <div class="grid grid-3" id="newsGrid"></div>
-    </div>
-  </div>
-
-  <div class="section bg-white">
-    <div class="container">
-      <div class="sec-head">
-        <div class="eyebrow">التقويم</div>
-        <h2 class="sec-title">الفعاليات <span>القادمة</span></h2>
-      </div>
-      <div class="grid" style="gap:16px">
-        <div class="event">
-          <div class="event-date"><b>12</b><span>رجب</span></div>
-          <div class="event-info">
-            <h4>معرض التوظيف السنوي 2026</h4>
-            <p>أكثر من 80 شركة ومؤسسة وطنية تشارك بعروض وظيفية وتدريبية لخريجي الجامعة.</p>
-            <div class="meta">
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 9:00 ص — 4:00 م</span>
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> قاعة المؤتمرات الكبرى</span>
-            </div>
+          <div class="prog"><i id="dashProgBar" style="width:0%"></i></div>
+          <div style="margin-top:16px;display:flex;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:600">
+            <span>✅ منجزة: <b id="dashDone" style="color:var(--ok)">0</b></span>
+            <span>⏳ متبقية: <b id="dashLeft" style="color:var(--warn)">0</b></span>
+            <span>🚨 متأخرة: <b id="dashLate" style="color:var(--danger)">0</b></span>
           </div>
         </div>
-        <div class="event">
-          <div class="event-date"><b>20</b><span>رجب</span></div>
-          <div class="event-info">
-            <h4>المؤتمر الدولي للذكاء الاصطناعي وتطبيقاته</h4>
-            <p>يستضيف نخبة من الباحثين والخبراء العالميين لمناقشة أحدث تطورات الذكاء الاصطناعي.</p>
-            <div class="meta">
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 8:30 ص — 5:00 م</span>
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> مركز الابتكار</span>
-            </div>
-          </div>
-        </div>
-        <div class="event">
-          <div class="event-date"><b>3</b><span>شعبان</span></div>
-          <div class="event-info">
-            <h4>أسبوع البحث العلمي</h4>
-            <p>عرض مشاريع التخرج وأوراق بحثية لطلاب الدراسات العليا مع جلسات نقاش متخصصة.</p>
-            <div class="meta">
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> طوال الأسبوع</span>
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> مبنى الكليات العلمية</span>
-            </div>
-          </div>
-        </div>
-        <div class="event">
-          <div class="event-date"><b>15</b><span>شعبان</span></div>
-          <div class="event-info">
-            <h4>يوم المهنة والإرشاد الوظيفي</h4>
-            <p>ورش عمل في كتابة السيرة الذاتية ومهارات المقابلات الشخصية مع مرشدين مهنيين.</p>
-            <div class="meta">
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 10:00 ص — 3:00 م</span>
-              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> قاعة النخبة</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+      </section>
 
-  <div class="section">
-    <div class="container">
-      <div class="cta">
-        <h2>اشترك في النشرة الإخبارية</h2>
-        <p>كن أول من يعرف بأخبار الجامعة والفعاليات والمواعيد الأكاديمية المهمة.</p>
-        <div class="newsletter" style="max-width:480px;margin-inline:auto">
-          <input type="email" placeholder="بريدك الإلكتروني" id="newsEmail">
-          <button type="button" onclick="subscribeNews(event)">اشترك</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================================================================
-     PAGE: CONTACT
-=================================================================== -->
-<section class="page" id="contact">
-  <div class="page-head">
-    <div class="container">
-      <h1>تواصل معنا</h1>
-      <p>فريقنا جاهز للإجابة على استفساراتك ومساعدتك في كل ما يتعلق بالقبول والدراسة</p>
-      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>تواصل معنا</span></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="grid grid-4" style="margin-bottom:56px">
-        <div class="contact-item">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
-          <div><b>العنوان</b><span>طريق الملك عبدالله، حي الجامعة، الرياض 12345، المملكة العربية السعودية</span></div>
-        </div>
-        <div class="contact-item">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
-          <div><b>الهاتف</b><span>920001234<br>011 456 7890</span></div>
-        </div>
-        <div class="contact-item">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></div>
-          <div><b>البريد الإلكتروني</b><span>info@ufuq.edu.sa<br>admission@ufuq.edu.sa</span></div>
-        </div>
-        <div class="contact-item">
-          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-          <div><b>ساعات العمل</b><span>الأحد — الخميس<br>8:00 ص — 4:00 م</span></div>
-        </div>
-      </div>
-
-      <div class="split" style="align-items:flex-start">
-        <div class="form-card">
-          <div class="alert" id="contactAlert">
-            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
-            <span>تم إرسال رسالتك بنجاح! سنرد عليك في أقرب وقت.</span>
-          </div>
-          <h3 style="margin-bottom:8px;font-size:22px">أرسل لنا رسالة</h3>
-          <p style="color:var(--muted);font-size:14.5px;margin-bottom:26px">سنقوم بالرد على استفسارك خلال 24 ساعة عمل</p>
-          <form id="contactForm" novalidate>
-            <div class="form-grid">
-              <div class="field">
-                <label>الاسم الكامل <span class="req">*</span></label>
-                <input type="text" name="name" placeholder="أدخل اسمك">
-                <span class="err">الرجاء إدخال الاسم</span>
-              </div>
-              <div class="field">
-                <label>رقم الجوال <span class="req">*</span></label>
-                <input type="tel" name="phone" placeholder="05xxxxxxxx">
-                <span class="err">الرجاء إدخال رقم جوال صحيح</span>
-              </div>
-              <div class="field full">
-                <label>البريد الإلكتروني <span class="req">*</span></label>
-                <input type="email" name="email" placeholder="example@email.com">
-                <span class="err">الرجاء إدخال بريد إلكتروني صحيح</span>
-              </div>
-              <div class="field full">
-                <label>الموضوع <span class="req">*</span></label>
-                <select name="subject">
-                  <option value="">— اختر الموضوع —</option>
-                  <option>استفسار عن القبول</option>
-                  <option>استفسار عن البرامج الأكاديمية</option>
-                  <option>الرسوم والمنح الدراسية</option>
-                  <option>الخدمات الإلكترونية</option>
-                  <option>شكوى أو اقتراح</option>
-                  <option>أخرى</option>
-                </select>
-                <span class="err">الرجاء اختيار الموضوع</span>
-              </div>
-              <div class="field full">
-                <label>الرسالة <span class="req">*</span></label>
-                <textarea name="message" placeholder="اكتب رسالتك هنا..."></textarea>
-                <span class="err">الرجاء كتابة رسالة (10 أحرف على الأقل)</span>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary" style="margin-top:24px">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 2-7 20-4-9-9-4z"/></svg>
-              إرسال الرسالة
-            </button>
-          </form>
-        </div>
-
-        <div>
-          <div class="map-box">
-            <div class="pin">
-              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              <b>جامعة الأفق — الحرم الرئيسي</b>
-              <span>الرياض، المملكة العربية السعودية</span>
-            </div>
-          </div>
-          <div class="card" style="margin-top:24px">
-            <h3 style="font-size:18px;margin-bottom:16px">أرقام التواصل المباشر</h3>
-            <div style="display:grid;gap:14px">
-              <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)">
-                <span style="font-size:14.5px;color:var(--muted)">عمادة القبول والتسجيل</span>
-                <b style="color:var(--green);font-size:14.5px">011 456 7801</b>
-              </div>
-              <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)">
-                <span style="font-size:14.5px;color:var(--muted)">عمادة شؤون الطلاب</span>
-                <b style="color:var(--green);font-size:14.5px">011 456 7802</b>
-              </div>
-              <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)">
-                <span style="font-size:14.5px;color:var(--muted)">الدعم الفني</span>
-                <b style="color:var(--green);font-size:14.5px">011 456 7803</b>
-              </div>
-              <div style="display:flex;justify-content:space-between">
-                <span style="font-size:14.5px;color:var(--muted)">العلاقات العامة</span>
-                <b style="color:var(--green);font-size:14.5px">011 456 7804</b>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<!-- ================= FOOTER ================= -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <div class="footer-logo">
-          <div class="logo-mark">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 3 22 8 12 13 2 8z" fill="#D4A537"/>
-              <path d="M6 10.5V16c0 2 2.7 3.6 6 3.6s6-1.6 6-3.6v-5.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </div>
+      <!-- ===== SCHEDULE ===== -->
+      <section class="view" id="view-schedule">
+        <div class="sec-head">
           <div>
-            <b>جامعة الأفق</b>
-            <small>AL-UFUQ UNIVERSITY</small>
+            <h2>📅 الجدول الدراسي الأسبوعي</h2>
+            <p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
+        </div>
+        <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
+      </section>
+
+      <!-- ===== COURSES ===== -->
+      <section class="view" id="view-courses">
+        <div class="sec-head">
+          <div>
+            <h2>📚 المقررات الدراسية</h2>
+            <p id="coursesCount"></p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openCourseForm()">➕ إضافة مقرر</button>
+        </div>
+        <div class="grid g3" id="coursesGrid"></div>
+      </section>
+
+      <!-- ===== TASKS ===== -->
+      <section class="view" id="view-tasks">
+        <div class="sec-head">
+          <div>
+            <h2>✅ المهام والواجبات</h2>
+            <p id="tasksCount"></p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openTaskForm()">➕ مهمة جديدة</button>
+        </div>
+        <div class="filters" id="taskFilters">
+          <button class="chip active" data-f="all">الكل</button>
+          <button class="chip" data-f="today">اليوم</button>
+          <button class="chip" data-f="week">هذا الأسبوع</button>
+          <button class="chip" data-f="late">متأخرة</button>
+          <button class="chip" data-f="open">غير منجزة</button>
+          <button class="chip" data-f="done">منجزة</button>
+        </div>
+        <div id="tasksList"></div>
+      </section>
+
+      <!-- ===== EXAMS ===== -->
+      <section class="view" id="view-exams">
+        <div class="sec-head">
+          <div>
+            <h2>⏰ الاختبارات والكويزات</h2>
+            <p id="examsCount"></p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openExamForm()">➕ إضافة اختبار</button>
+        </div>
+        <div class="grid g3" id="examsGrid"></div>
+      </section>
+
+      <!-- ===== STUDY ===== -->
+      <section class="view" id="view-study">
+        <div class="sec-head">
+          <div>
+            <h2>🍅 مؤقّت المذاكرة</h2>
+            <p>تقنية بومودورو: ركّز 25 دقيقة ثم ارتح 5 دقائق</p>
           </div>
         </div>
-        <p>
-          جامعة رائدة تجمع بين الأصالة والابتكار، تسعى لبناء قادة المستقبل
-          وإنتاج المعرفة وخدمة المجتمع منذ عام 1995.
-        </p>
-        <div class="footer-social">
-          <a href="#" aria-label="تويتر"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.4l8.1-9.3L1 2h7.2l5 6.6L18.9 2z"/></svg></a>
-          <a href="#" aria-label="انستغرام"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z"/></svg></a>
-          <a href="#" aria-label="لينكدإن"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21H9z"/></svg></a>
-          <a href="#" aria-label="يوتيوب"><svg viewBox="0 0 24 24"><path d="M23 12s0-3.4-.4-5c-.2-.9-.9-1.6-1.8-1.8C19.2 5 12 5 12 5s-7.2 0-8.8.2c-.9.2-1.6.9-1.8 1.8C1 8.6 1 12 1 12s0 3.4.4 5c.2.9.9 1.6 1.8 1.8 1.6.2 8.8.2 8.8.2s7.2 0 8.8-.2c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-5 .4-5zM9.7 15.2V8.8l5.7 3.2-5.7 3.2z"/></svg></a>
+        <div class="pomo-wrap">
+          <div class="pomo-card">
+            <div class="pomo-modes">
+              <button class="chip active" data-mode="work">🎯 تركيز</button>
+              <button class="chip" data-mode="short">☕ راحة قصيرة</button>
+              <button class="chip" data-mode="long">🛋️ راحة طويلة</button>
+            </div>
+            <div class="ring-wrap">
+              <svg class="ring" viewBox="0 0 200 200">
+                <circle class="bg" cx="100" cy="100" r="88"/>
+                <circle class="fg" id="ringFg" cx="100" cy="100" r="88"
+                        stroke-dasharray="552.92" stroke-dashoffset="0"/>
+              </svg>
+              <div class="ring-txt">
+                <b id="pomoTime">25:00</b>
+                <span id="pomoLabel">وقت التركيز</span>
+              </div>
+            </div>
+            <div class="pomo-ctrl">
+              <button class="btn btn-primary" id="pomoStart">▶ ابدأ</button>
+              <button class="btn btn-ghost" id="pomoReset">↺ تصفير</button>
+            </div>
+            <div class="field" style="margin-top:22px;text-align:right">
+              <label>المقرر الذي تذاكره الآن</label>
+              <select id="pomoCourse"></select>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="sec-head" style="margin-bottom:6px">
+              <h2 style="font-size:18px">📊 إحصائيات المذاكرة</h2>
+            </div>
+            <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:8px">
+              <div><b style="font-family:'Tajawal';font-size:24px;color:var(--p)" id="studyToday">0</b><div style="font-size:12px;color:var(--muted);font-weight:700">دقيقة اليوم</div></div>
+              <div><b style="font-family:'Tajawal';font-size:24px;color:var(--p)" id="studyWeek">0</b><div style="font-size:12px;color:var(--muted);font-weight:700">دقيقة هذا الأسبوع</div></div>
+              <div><b style="font-family:'Tajawal';font-size:24px;color:var(--p)" id="studyTotal">0</b><div style="font-size:12px;color:var(--muted);font-weight:700">دقيقة إجمالاً</div></div>
+            </div>
+            <div class="week-bars" id="weekBars"></div>
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+              <button class="btn btn-ghost btn-sm btn-block" onclick="openManualLog()">➕ إضافة وقت مذاكرة يدوياً</button>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div>
-        <h4>روابط سريعة</h4>
-        <ul>
-          <li><a data-page="home">الرئيسية</a></li>
-          <li><a data-page="about">عن الجامعة</a></li>
-          <li><a data-page="colleges">الكليات والبرامج</a></li>
-          <li><a data-page="admissions">القبول والتسجيل</a></li>
-          <li><a data-page="news">الأخبار والفعاليات</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4>خدمات الطلاب</h4>
-        <ul>
-          <li><a data-page="services">البوابة الأكاديمية</a></li>
-          <li><a data-page="services">المكتبة الرقمية</a></li>
-          <li><a data-page="services">المنح الدراسية</a></li>
-          <li><a data-page="services">السكن الطلابي</a></li>
-          <li><a data-page="contact">الدعم الفني</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h4>النشرة البريدية</h4>
-        <p>اشترك لتصلك آخر أخبار الجامعة والفعاليات والمواعيد المهمة.</p>
-        <div class="newsletter">
-          <input type="email" placeholder="بريدك الإلكتروني" id="footerEmail">
-          <button type="button" onclick="subscribeNews(event,'footerEmail')">اشترك</button>
+      <!-- ===== GRADES ===== -->
+      <section class="view" id="view-grades">
+        <div class="sec-head">
+          <div>
+            <h2>📊 الدرجات والمعدل</h2>
+            <p>أضف مكونات كل مقرر (كويز، واجب، ميدterm...) ووزنها ودرجتك</p>
+          </div>
         </div>
-      </div>
-    </div>
+        <div class="stats" id="gpaStats"></div>
+        <div id="gradesList"></div>
+      </section>
 
-    <div class="footer-bottom">
-      <span>© 2026 جامعة الأفق. جميع الحقوق محفوظة.</span>
-      <div class="links">
-        <a>سياسة الخصوصية</a>
-        <a>شروط الاستخدام</a>
-        <a>خريطة الموقع</a>
-      </div>
+      <!-- ===== NOTES ===== -->
+      <section class="view" id="view-notes">
+        <div class="sec-head">
+          <div>
+            <h2>📝 الملاحظات</h2>
+            <p id="notesCount"></p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openNoteForm()">➕ ملاحظة جديدة</button>
+        </div>
+        <div class="grid g3" id="notesGrid"></div>
+      </section>
+
+      <!-- ===== SETTINGS ===== -->
+      <section class="view" id="view-settings">
+        <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
+
+        <div class="grid g2">
+          <div class="card">
+            <h3 style="font-size:17px;margin-bottom:16px">🎨 المظهر</h3>
+            <div style="display:flex;gap:10px;margin-bottom:20px">
+              <button class="btn btn-ghost" onclick="setTheme('light')">☀️ نهاري</button>
+              <button class="btn btn-ghost" onclick="setTheme('dark')">🌙 ليلي</button>
+            </div>
+
+            <h3 style="font-size:17px;margin-bottom:16px">⏱️ مدد البومودورو (بالدقائق)</h3>
+            <div class="form-grid">
+              <div class="field"><label>التركيز</label><input type="number" id="setWork" min="1" max="120"></div>
+              <div class="field"><label>راحة قصيرة</label><input type="number" id="setShort" min="1" max="60"></div>
+              <div class="field"><label>راحة طويلة</label><input type="number" id="setLong" min="1" max="90"></div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="savePomoSettings()">💾 حفظ</button>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
+            <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
+              بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان. صدّرها كنسخة احتياطية.
+            </p>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-ghost btn-block" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
+              <button class="btn btn-ghost btn-block" onclick="document.getElementById('importFile').click()">📥 استيراد نسخة</button>
+              <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+              <button class="btn btn-ghost btn-block" onclick="loadSample()">🎁 تحميل بيانات تجريبية</button>
+              <button class="btn btn-danger btn-block" onclick="clearAll()">🗑️ حذف كل البيانات</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
+  </main>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">عنوان</h3>
+      <button onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
   </div>
-</footer>
+</div>
 
-<button class="to-top" id="toTop" aria-label="أعلى الصفحة">
-  <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-</button>
+<div class="toast" id="toast"></div>
+<button class="fab" id="fab" title="إضافة سريعة">＋</button>
 
 <script>
 /* ============================================================
-   DATA
+   CONSTANTS
 ============================================================ */
-const colleges = [
-  { name:'كلية الطب والعلوم الصحية', cat:'health', icon:'med', deps:6, desc:'برامج طبية متقدمة في الطب البشري والعلوم الصحية والتخصصات المساندة.' },
-  { name:'كلية الهندسة', cat:'eng', icon:'eng', deps:5, desc:'تخصصات هندسية شاملة في المدني والكهربائي والميكانيكي والكيميائي.' },
-  { name:'كلية علوم الحاسب والذكاء الاصطناعي', cat:'eng', icon:'ai', deps:4, desc:'برامج حديثة في علوم الحاسب والذكاء الاصطناعي والأمن السيبراني.' },
-  { name:'كلية إدارة الأعمال', cat:'biz', icon:'biz', deps:5, desc:'تخصصات في المحاسبة والتمويل والتسويق وإدارة الموارد البشرية.' },
-  { name:'كلية العلوم', cat:'biz', icon:'sci', deps:4, desc:'أقسام الرياضيات والفيزياء والكيمياء والأحياء والعلوم البيئية.' },
-  { name:'كلية الآداب والعلوم الإنسانية', cat:'hum', icon:'art', deps:5, desc:'برامج في اللغة العربية والإنجليزية والتاريخ والجغرافيا والإعلام.' },
-  { name:'كلية التربية', cat:'hum', icon:'edu', deps:4, desc:'إعداد المعلمين والقيادات التربوية وبرامج الطفولة المبكرة.' },
-  { name:'كلية الشريعة والدراسات الإسلامية', cat:'hum', icon:'isl', deps:3, desc:'دراسات في الفقه وأصوله والدراسات الإسلامية والعقيدة.' }
-];
+const DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const DAYS_SHORT = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+const COLORS = ['#0d9488','#4f46e5','#db2777','#ea580c','#0891b2','#7c3aed','#059669','#d97706','#dc2626','#2563eb'];
+const TASK_TYPES = ['واجب','كويز','مشروع','تقرير','عرض تقديمي','بحث','أخرى'];
+const EXAM_TYPES = ['كويز','ميدتيرم','فاينل','اختبار عملي','مناقشة مشروع'];
+const HOUR_START = 7, HOUR_END = 21, HOUR_H = 58;
+const STORE_KEY = 'uni_helper_v1';
 
-const icons = {
-  med:'<path d="M12 6v12M6 12h12"/><circle cx="12" cy="12" r="9"/>',
-  eng:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
-  ai:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9zM9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>',
-  biz:'<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>',
-  sci:'<path d="M9 3h6M10 3v7L5 19a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 19l-5-9V3"/>',
-  art:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
-  edu:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
-  isl:'<path d="M12 2 4 6v6c0 5 3.4 9.5 8 10 4.6-.5 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/>'
+/* ============================================================
+   STATE
+============================================================ */
+let state = loadState();
+let taskFilter = 'all';
+
+function defaultState(){
+  return {
+    courses: [], schedule: [], tasks: [], exams: [], notes: [],
+    studyLog: [], settings: { theme:'light', pomo:{ work:25, short:5, long:15 } }
+  };
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return defaultState();
+    const s = JSON.parse(raw);
+    return Object.assign(defaultState(), s);
+  }catch(e){ return defaultState(); }
+}
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+}
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function esc(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function todayISO(d = new Date()){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function daysUntil(iso){
+  const t = new Date(); t.setHours(0,0,0,0);
+  const d = new Date(iso + 'T00:00:00');
+  return Math.round((d - t) / 86400000);
+}
+function fmtDate(iso){
+  if(!iso) return '—';
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('ar-EG', { day:'numeric', month:'long' });
+}
+function getCourse(id){ return state.courses.find(c => c.id === id); }
+function courseName(id){ const c = getCourse(id); return c ? c.name : 'عام'; }
+function courseColor(id){ const c = getCourse(id); return c ? c.color : '#64748b'; }
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
+
+/* ============================================================
+   NAVIGATION
+============================================================ */
+const VIEW_META = {
+  dashboard: ['الرئيسية','نظرة عامة على يومك الدراسي'],
+  schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
+  courses:   ['المقررات','كل مقرراتك في مكان واحد'],
+  tasks:     ['المهام والواجبات','تابع كل ما عليك تسليمه'],
+  exams:     ['الاختبارات','مواعيد الكويزات والاختبارات'],
+  study:     ['المذاكرة','مؤقّت التركيز وسجل الساعات'],
+  grades:    ['الدرجات','احسب معدلك ومستواك'],
+  notes:     ['الملاحظات','دوّن كل ما يهمك'],
+  settings:  ['الإعدادات','تخصيص التطبيق والبيانات']
 };
-
-const news = [
-  { t:'بدء التسجيل للفصل الدراسي القادم لجميع المراحل', c:'academic', cat:'أكاديمي', d:'12', m:'رجب', v:'', p:'أعلنت عمادة القبول والتسجيل عن فتح باب التسجيل للفصل الدراسي القادم لجميع المراحل الدراسية عبر البوابة الإلكترونية.' },
-  { t:'جامعة الأفق تحقق المركز الأول في مسابقة الروبوتات الوطنية', c:'research', cat:'بحث علمي', d:'8', m:'رجب', v:'v2', p:'حقق فريق كلية الهندسة المركز الأول في المسابقة الوطنية للروبوتات بمشاركة أكثر من 40 جامعة.' },
-  { t:'توقيع اتفاقية تعاون أكاديمي مع جامعة دولية مرموقة', c:'partners', cat:'شراكات', d:'3', m:'رجب', v:'v3', p:'وقّعت الجامعة اتفاقية تعاون تشمل تبادل الطلاب وأعضاء هيئة التدريس والمشاريع البحثية المشتركة.' },
-  { t:'افتتاح مركز الابتكار وريادة الأعمال بحلته الجديدة', c:'events', cat:'فعاليات', d:'28', m:'جمادى', v:'v4', p:'افتتحت الجامعة مركز الابتكار المزود بأحدث التقنيات لدعم المشاريع الطلابية والشركات الناشئة.' },
-  { t:'حفل تخريج الدفعة الثلاثين من طلاب الجامعة', c:'events', cat:'فعاليات', d:'20', m:'جمادى', v:'', p:'احتفلت الجامعة بتخريج أكثر من 2400 طالب وطالبة من مختلف الكليات في حفل مهيب.' },
-  { t:'ورشة عمل عن الذكاء الاصطناعي في التعليم الجامعي', c:'academic', cat:'أكاديمي', d:'15', m:'جمادى', v:'v2', p:'نظمت كلية علوم الحاسب ورشة عمل متخصصة حول توظيف الذكاء الاصطناعي في تطوير العملية التعليمية.' },
-  { t:'حصول ثلاثة برامج أكاديمية على الاعتماد الدولي', c:'academic', cat:'أكاديمي', d:'9', m:'جمادى', v:'v3', p:'حصلت ثلاثة برامج في كليتي الهندسة وإدارة الأعمال على الاعتماد الدولي من هيئات معتمدة.' },
-  { t:'فريق طلابي يفوز بجائزة أفضل مشروع تقني مبتكر', c:'research', cat:'بحث علمي', d:'2', m:'جمادى', v:'v4', p:'فاز فريق من طلاب كلية علوم الحاسب بجائزة أفضل مشروع تقني في مسابقة الابتكار الإقليمية.' },
-  { t:'شراكة جديدة مع كبرى الشركات التقنية لتدريب الطلاب', c:'partners', cat:'شراكات', d:'25', m:'ربيع الآخر', v:'', p:'وقّعت الجامعة مذكرة تفاهم لتدريب طلاب السنوات الأخيرة وتوظيف المتميزين منهم.' }
-];
-
-/* ============================================================
-   RENDER HELPERS
-============================================================ */
-function collegeCard(c){
-  return `
-  <div class="college-card card" data-cat="${c.cat}">
-    <div class="college-top">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${icons[c.icon]}</svg>
-    </div>
-    <div class="college-body">
-      <h3>${c.name}</h3>
-      <p>${c.desc}</p>
-      <div class="college-meta">
-        <span class="tag">${c.deps} أقسام</span>
-        <span class="tag gold">بكالوريوس</span>
-      </div>
-    </div>
-  </div>`;
-}
-
-function newsCard(n){
-  return `
-  <div class="news-card" data-cat="${n.c}">
-    <div class="news-img ${n.v}">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
-        <path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/>
-      </svg>
-      <div class="news-date"><b>${n.d}</b><span>${n.m}</span></div>
-    </div>
-    <div class="news-body">
-      <div class="cat">${n.cat}</div>
-      <h3>${n.t}</h3>
-      <p>${n.p}</p>
-      <div class="news-foot">
-        <span>جامعة الأفق</span>
-        <span style="color:var(--green);font-weight:700">اقرأ المزيد ←</span>
-      </div>
-    </div>
-  </div>`;
-}
-
-/* Fill home previews */
-document.getElementById('homeColleges').innerHTML = colleges.slice(0,4).map(collegeCard).join('');
-document.getElementById('homeNews').innerHTML = news.slice(0,3).map(newsCard).join('');
-document.getElementById('collegesGrid').innerHTML = colleges.map(collegeCard).join('');
-document.getElementById('newsGrid').innerHTML = news.map(newsCard).join('');
-
-/* ============================================================
-   ROUTER
-============================================================ */
-const pages = document.querySelectorAll('.page');
-const nav = document.getElementById('nav');
-
-function navigate(id){
-  if(!document.getElementById(id)) id = 'home';
-  pages.forEach(p => p.classList.toggle('active', p.id === id));
-  document.querySelectorAll('.nav-link').forEach(a =>
-    a.classList.toggle('active', a.dataset.page === id)
-  );
-  nav.classList.remove('open');
-  document.getElementById('burger').classList.remove('open');
+function go(view){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view)?.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  const [t,s] = VIEW_META[view] || ['',''];
+  document.getElementById('pageTitle').textContent = t;
+  document.getElementById('pageSub').textContent = s;
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
   window.scrollTo({ top:0, behavior:'smooth' });
-  if(id === 'home') runCounters();
+  location.hash = view;
+}
+document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
+
+/* ============================================================
+   THEME
+============================================================ */
+function setTheme(t){
+  state.settings.theme = t;
+  document.documentElement.dataset.theme = t;
+  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+  save();
+}
+document.getElementById('themeBtn').addEventListener('click', () => {
+  setTheme(state.settings.theme === 'dark' ? 'light' : 'dark');
+});
+
+/* ============================================================
+   MODAL SYSTEM
+============================================================ */
+const modalBg = document.getElementById('modalBg');
+function openModal(title, bodyHTML, footHTML){
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHTML;
+  document.getElementById('modalFoot').innerHTML = footHTML || '';
+  modalBg.classList.add('open');
+}
+function closeModal(){ modalBg.classList.remove('open'); }
+modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+/* ============================================================
+   COURSE FORM
+============================================================ */
+let pickedColor = COLORS[0];
+function openCourseForm(id){
+  const c = id ? getCourse(id) : null;
+  pickedColor = c ? c.color : COLORS[state.courses.length % COLORS.length];
+  const colorBtns = COLORS.map(col =>
+    `<button type="button" data-c="${col}" style="background:${col}" class="${col===pickedColor?'sel':''}"></button>`
+  ).join('');
+
+  openModal(c ? 'تعديل مقرر' : 'إضافة مقرر جديد', `
+    <div class="form-grid">
+      <div class="field full"><label>اسم المقرر <span class="req">*</span></label>
+        <input id="cName" placeholder="مثال: تفاضل وتكامل" value="${esc(c?.name||'')}"></div>
+      <div class="field"><label>الرمز</label>
+        <input id="cCode" placeholder="MATH101" value="${esc(c?.code||'')}"></div>
+      <div class="field"><label>عدد الساعات</label>
+        <input id="cCredits" type="number" min="0" max="10" value="${c?.credits ?? 3}"></div>
+      <div class="field full"><label>اسم الدكتور</label>
+        <input id="cTeacher" placeholder="د. محمد أحمد" value="${esc(c?.teacher||'')}"></div>
+      <div class="field full"><label>اللون</label>
+        <div class="color-pick" id="colorPick">${colorBtns}</div></div>
+    </div>
+  `, `
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveCourse('${id||''}')">💾 حفظ</button>
+  `);
+
+  document.getElementById('colorPick').addEventListener('click', e => {
+    const b = e.target.closest('button[data-c]');
+    if(!b) return;
+    pickedColor = b.dataset.c;
+    document.querySelectorAll('#colorPick button').forEach(x => x.classList.toggle('sel', x === b));
+  });
 }
 
-document.addEventListener('click', e => {
-  const el = e.target.closest('[data-page]');
-  if(el){
-    e.preventDefault();
-    const id = el.dataset.page;
-    if(location.hash.slice(1) === id) navigate(id);
-    else location.hash = id;
+function saveCourse(id){
+  const name = document.getElementById('cName').value.trim();
+  if(!name){ toast('⚠️ اكتب اسم المقرر'); return; }
+  const data = {
+    name,
+    code: document.getElementById('cCode').value.trim(),
+    credits: +document.getElementById('cCredits').value || 0,
+    teacher: document.getElementById('cTeacher').value.trim(),
+    color: pickedColor
+  };
+  if(id){
+    const c = getCourse(id);
+    Object.assign(c, data);
+  }else{
+    state.courses.push({ id: uid(), ...data, grades: [] });
   }
-});
-
-window.addEventListener('hashchange', () => navigate(location.hash.slice(1) || 'home'));
-window.addEventListener('load', () => navigate(location.hash.slice(1) || 'home'));
-
-/* ============================================================
-   MOBILE MENU
-============================================================ */
-const burger = document.getElementById('burger');
-burger.addEventListener('click', () => {
-  nav.classList.toggle('open');
-  burger.classList.toggle('open');
-});
-
-/* ============================================================
-   HEADER SCROLL + TO TOP
-============================================================ */
-const header = document.getElementById('header');
-const toTop = document.getElementById('toTop');
-window.addEventListener('scroll', () => {
-  const y = window.scrollY;
-  header.classList.toggle('scrolled', y > 10);
-  toTop.classList.toggle('show', y > 500);
-});
-toTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
-
-/* ============================================================
-   COUNTERS
-============================================================ */
-let countersDone = false;
-function runCounters(){
-  if(countersDone) return;
-  const items = document.querySelectorAll('.page.active .count');
-  if(!items.length) return;
-  countersDone = true;
-  items.forEach(el => {
-    const target = +el.dataset.target;
-    const suffix = el.dataset.suffix || '';
-    const dur = 1600;
-    const start = performance.now();
-    function tick(now){
-      const p = Math.min((now - start) / dur, 1);
-      const eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased) + suffix;
-      if(p < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  });
-}
-/* reset counter flag when returning to home so it can re-run if needed */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(en => { if(en.isIntersecting) runCounters(); });
-}, { threshold:0.3 });
-document.querySelectorAll('.stats-band').forEach(s => observer.observe(s));
-
-/* ============================================================
-   FILTERS
-============================================================ */
-function setupFilter(containerId, gridId, itemSelector){
-  const wrap = document.getElementById(containerId);
-  if(!wrap) return;
-  wrap.addEventListener('click', e => {
-    const chip = e.target.closest('.chip');
-    if(!chip) return;
-    wrap.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-    const f = chip.dataset.filter;
-    document.querySelectorAll(`#${gridId} ${itemSelector}`).forEach(item => {
-      const show = f === 'all' || item.dataset.cat === f;
-      item.style.display = show ? '' : 'none';
-    });
-  });
-}
-setupFilter('collegeFilters', 'collegesGrid', '.college-card');
-setupFilter('newsFilters', 'newsGrid', '.news-card');
-
-/* ============================================================
-   ACCORDION
-============================================================ */
-document.querySelectorAll('.acc-head').forEach(head => {
-  head.addEventListener('click', () => {
-    const acc = head.parentElement;
-    const wasOpen = acc.classList.contains('open');
-    document.querySelectorAll('.acc').forEach(a => a.classList.remove('open'));
-    if(!wasOpen) acc.classList.add('open');
-  });
-});
-
-/* ============================================================
-   FORM VALIDATION
-============================================================ */
-const patterns = {
-  phone: /^05\d{8}$/,
-  id: /^\d{10}$/,
-  email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-};
-
-function setState(field, ok){
-  field.classList.toggle('invalid', !ok);
-  return ok;
+  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
 
-function validateField(input){
-  const field = input.closest('.field');
-  if(!field || !field.querySelector('.err')) return true;
-  const v = input.value.trim();
-  const n = input.name;
-
-  if(input.type === 'checkbox') return true;
-
-  if(n === 'id')       return setState(field, patterns.id.test(v));
-  if(n === 'phone')    return setState(field, patterns.phone.test(v.replace(/\s/g,'')));
-  if(n === 'email')    return setState(field, patterns.email.test(v));
-  if(n === 'uid')      return setState(field, v.length >= 6);
-  if(n === 'pwd')      return setState(field, v.length >= 6);
-  if(n === 'gpa')      return setState(field, v !== '' && +v >= 0 && +v <= 100);
-  if(n === 'message')  return setState(field, v.length >= 10);
-  if(n === 'dob')      return true;
-  return setState(field, v.length >= 2);
+function deleteCourse(id){
+  if(!confirm('سيتم حذف المقرر وكل ما يتعلق به (محاضرات، مهام، اختبارات). متابعة؟')) return;
+  state.courses = state.courses.filter(c => c.id !== id);
+  state.schedule = state.schedule.filter(s => s.courseId !== id);
+  state.tasks = state.tasks.filter(t => t.courseId !== id);
+  state.exams = state.exams.filter(e => e.courseId !== id);
+  state.notes = state.notes.filter(n => n.courseId !== id);
+  save(); renderAll(); toast('🗑️ تم الحذف');
 }
-
-function attachValidation(formId, alertId, requiredNames){
-  const form = document.getElementById(formId);
-  if(!form) return;
-  const alertBox = document.getElementById(alertId);
-
-  form.querySelectorAll('input, select, textarea').forEach(el => {
-    el.addEventListener('blur', () => validateField(el));
-    el.addEventListener('input', () => {
-      const field = el.closest('.field');
-      if(field && field.classList.contains('invalid')) validateField(el);
-    });
-  });
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    let ok = true;
-    requiredNames.forEach(name => {
-      const el = form.querySelector(`[name="${name}"]`);
-      if(el && !validateField(el)) ok = false;
-    });
-
-    const terms = form.querySelector('#terms');
-    if(terms && !terms.checked){
-      ok = false;
-      terms.parentElement.style.color = '#c0392b';
-      setTimeout(() => terms.parentElement.style.color = '', 2500);
-    }
-
-    if(!ok){
-      const first = form.querySelector('.field.invalid input, .field.invalid select, .field.invalid textarea');
-      if(first) first.focus();
-      return;
-    }
-
-    alertBox.classList.add('show');
-    form.reset();
-    form.querySelectorAll('.field').forEach(f => f.classList.remove('invalid'));
-    alertBox.scrollIntoView({ behavior:'smooth', block:'center' });
-    setTimeout(() => alertBox.classList.remove('show'), 6000);
-  });
-
-  form.addEventListener('reset', () => {
-    form.querySelectorAll('.field').forEach(f => f.classList.remove('invalid'));
-    alertBox.classList.remove('show');
-  });
-}
-
-attachValidation('applyForm', 'applyAlert', ['first','last','id','phone','email','college','gpa']);
-attachValidation('contactForm', 'contactAlert', ['name','phone','email','subject','message']);
-attachValidation('loginForm', 'loginAlert', ['uid','pwd']);
 
 /* ============================================================
-   NEWSLETTER
+   SCHEDULE / CLASS FORM
 ============================================================ */
-function subscribeNews(e, inputId = 'newsEmail'){
-  const btn = e.target;
-  const input = document.getElementById(inputId);
-  if(!input) return;
-  const val = input.value.trim();
-  if(!patterns.email.test(val)){
-    input.style.borderColor = '#e07a6d';
-    input.style.background = 'rgba(224,122,109,.12)';
-    input.focus();
-    setTimeout(() => {
-      input.style.borderColor = '';
-      input.style.background = '';
-    }, 2200);
+function courseOptions(sel){
+  if(!state.courses.length) return `<option value="">— أضف مقرراً أولاً —</option>`;
+  return state.courses.map(c =>
+    `<option value="${c.id}" ${c.id===sel?'selected':''}>${esc(c.name)}</option>`
+  ).join('');
+}
+
+function openClassForm(id, presetDay){
+  if(!state.courses.length){ toast('⚠️ أضف مقرراً أولاً'); go('courses'); return; }
+  const s = id ? state.schedule.find(x => x.id === id) : null;
+  const dayOpts = DAYS.map((d,i) =>
+    `<option value="${i}" ${(s?.day ?? presetDay ?? 0) == i ? 'selected':''}>${d}</option>`
+  ).join('');
+
+  openModal(s ? 'تعديل محاضرة' : 'إضافة محاضرة', `
+    <div class="form-grid">
+      <div class="field full"><label>المقرر <span class="req">*</span></label>
+        <select id="clCourse">${courseOptions(s?.courseId)}</select></div>
+      <div class="field"><label>اليوم <span class="req">*</span></label>
+        <select id="clDay">${dayOpts}</select></div>
+      <div class="field"><label>القاعة</label>
+        <input id="clRoom" placeholder="قاعة 204" value="${esc(s?.room||'')}"></div>
+      <div class="field"><label>من <span class="req">*</span></label>
+        <input type="time" id="clStart" value="${s?.start||'08:00'}"></div>
+      <div class="field"><label>إلى <span class="req">*</span></label>
+        <input type="time" id="clEnd" value="${s?.end||'09:00'}"></div>
+    </div>
+  `, `
+    ${s ? `<button class="btn btn-danger" onclick="deleteClass('${id}')">🗑️</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveClass('${id||''}')">💾 حفظ</button>
+  `);
+}
+
+function saveClass(id){
+  const courseId = document.getElementById('clCourse').value;
+  const day = +document.getElementById('clDay').value;
+  const start = document.getElementById('clStart').value;
+  const end = document.getElementById('clEnd').value;
+  const room = document.getElementById('clRoom').value.trim();
+
+  if(!courseId){ toast('⚠️ اختر المقرر'); return; }
+  if(toMin(end) <= toMin(start)){ toast('⚠️ وقت النهاية يجب أن يكون بعد البداية'); return; }
+
+  if(id){
+    const s = state.schedule.find(x => x.id === id);
+    Object.assign(s, { courseId, day, start, end, room });
+  }else{
+    state.schedule.push({ id: uid(), courseId, day, start, end, room });
+  }
+  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+}
+
+function deleteClass(id){
+  state.schedule = state.schedule.filter(s => s.id !== id);
+  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
+}
+
+/* ============================================================
+   TASK FORM
+============================================================ */
+function openTaskForm(id, presetType){
+  const t = id ? state.tasks.find(x => x.id === id) : null;
+  const typeOpts = TASK_TYPES.map(x => `<option ${t?.type===x?'selected':''}>${x}</option>`).join('');
+
+  openModal(t ? 'تعديل مهمة' : 'إضافة مهمة', `
+    <div class="form-grid">
+      <div class="field full"><label>عنوان المهمة <span class="req">*</span></label>
+        <input id="tTitle" placeholder="مثال: حل واجب الفصل الثالث" value="${esc(t?.title||'')}"></div>
+      <div class="field"><label>المقرر</label>
+        <select id="tCourse"><option value="">— عام —</option>${courseOptions(t?.courseId)}</select></div>
+      <div class="field"><label>النوع</label>
+        <select id="tType">${typeOpts}</select></div>
+      <div class="field"><label>تاريخ التسليم <span class="req">*</span></label>
+        <input type="date" id="tDue" value="${t?.due || todayISO()}"></div>
+      <div class="field"><label>الأولوية</label>
+        <select id="tPriority">
+          <option value="high" ${t?.priority==='high'?'selected':''}>🔴 عالية</option>
+          <option value="med" ${t?.priority==='med'?'selected':''}>🟡 متوسطة</option>
+          <option value="low" ${t?.priority==='low'?'selected':''}>🟢 منخفضة</option>
+        </select></div>
+      <div class="field full"><label>ملاحظات</label>
+        <textarea id="tNotes" placeholder="تفاصيل إضافية...">${esc(t?.notes||'')}</textarea></div>
+    </div>
+  `, `
+    ${t ? `<button class="btn btn-danger" onclick="deleteTask('${id}')">🗑️</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveTask('${id||''}')">💾 حفظ</button>
+  `);
+}
+
+function saveTask(id){
+  const title = document.getElementById('tTitle').value.trim();
+  const due = document.getElementById('tDue').value;
+  if(!title){ toast('⚠️ اكتب عنوان المهمة'); return; }
+  if(!due){ toast('⚠️ حدد تاريخ التسليم'); return; }
+
+  const data = {
+    title, due,
+    courseId: document.getElementById('tCourse').value,
+    type: document.getElementById('tType').value,
+    priority: document.getElementById('tPriority').value,
+    notes: document.getElementById('tNotes').value.trim()
+  };
+  if(id){
+    Object.assign(state.tasks.find(x => x.id === id), data);
+  }else{
+    state.tasks.push({ id: uid(), ...data, done:false, created: todayISO() });
+  }
+  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+}
+function deleteTask(id){
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
+}
+function toggleTask(id){
+  const t = state.tasks.find(x => x.id === id);
+  if(t){ t.done = !t.done; save(); renderAll(); }
+}
+
+/* ============================================================
+   EXAM FORM
+============================================================ */
+function openExamForm(id){
+  const e = id ? state.exams.find(x => x.id === id) : null;
+  const typeOpts = EXAM_TYPES.map(x => `<option ${e?.type===x?'selected':''}>${x}</option>`).join('');
+
+  openModal(e ? 'تعديل اختبار' : 'إضافة اختبار', `
+    <div class="form-grid">
+      <div class="field full"><label>عنوان الاختبار <span class="req">*</span></label>
+        <input id="eTitle" placeholder="مثال: ميدتيرم الفصل الأول" value="${esc(e?.title||'')}"></div>
+      <div class="field"><label>المقرر</label>
+        <select id="eCourse"><option value="">— عام —</option>${courseOptions(e?.courseId)}</select></div>
+      <div class="field"><label>النوع</label>
+        <select id="eType">${typeOpts}</select></div>
+      <div class="field"><label>التاريخ <span class="req">*</span></label>
+        <input type="date" id="eDate" value="${e?.date || todayISO()}"></div>
+      <div class="field"><label>الوقت</label>
+        <input type="time" id="eTime" value="${e?.time||'08:00'}"></div>
+      <div class="field full"><label>المكان / القاعة</label>
+        <input id="ePlace" placeholder="مبنى 5 - قاعة 102" value="${esc(e?.place||'')}"></div>
+      <div class="field full"><label>ملاحظات / مواضيع المذاكرة</label>
+        <textarea id="eNotes" placeholder="الفصول المطلوبة...">${esc(e?.notes||'')}</textarea></div>
+    </div>
+  `, `
+    ${e ? `<button class="btn btn-danger" onclick="deleteExam('${id}')">🗑️</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveExam('${id||''}')">💾 حفظ</button>
+  `);
+}
+function saveExam(id){
+  const title = document.getElementById('eTitle').value.trim();
+  const date = document.getElementById('eDate').value;
+  if(!title){ toast('⚠️ اكتب عنوان الاختبار'); return; }
+  if(!date){ toast('⚠️ حدد التاريخ'); return; }
+
+  const data = {
+    title, date,
+    courseId: document.getElementById('eCourse').value,
+    type: document.getElementById('eType').value,
+    time: document.getElementById('eTime').value,
+    place: document.getElementById('ePlace').value.trim(),
+    notes: document.getElementById('eNotes').value.trim()
+  };
+  if(id){ Object.assign(state.exams.find(x => x.id === id), data); }
+  else{ state.exams.push({ id: uid(), ...data }); }
+  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+}
+function deleteExam(id){
+  state.exams = state.exams.filter(e => e.id !== id);
+  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
+}
+
+/* ============================================================
+   NOTE FORM
+============================================================ */
+function openNoteForm(id){
+  const n = id ? state.notes.find(x => x.id === id) : null;
+  openModal(n ? 'تعديل ملاحظة' : 'ملاحظة جديدة', `
+    <div class="form-grid">
+      <div class="field full"><label>العنوان <span class="req">*</span></label>
+        <input id="nTitle" placeholder="عنوان الملاحظة" value="${esc(n?.title||'')}"></div>
+      <div class="field full"><label>المقرر</label>
+        <select id="nCourse"><option value="">— عام —</option>${courseOptions(n?.courseId)}</select></div>
+      <div class="field full"><label>المحتوى</label>
+        <textarea id="nBody" style="min-height:160px" placeholder="اكتب هنا...">${esc(n?.body||'')}</textarea></div>
+    </div>
+  `, `
+    ${n ? `<button class="btn btn-danger" onclick="deleteNote('${id}')">🗑️</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveNote('${id||''}')">💾 حفظ</button>
+  `);
+}
+function saveNote(id){
+  const title = document.getElementById('nTitle').value.trim();
+  if(!title){ toast('⚠️ اكتب عنوان الملاحظة'); return; }
+  const data = {
+    title,
+    courseId: document.getElementById('nCourse').value,
+    body: document.getElementById('nBody').value
+  };
+  if(id){ Object.assign(state.notes.find(x => x.id === id), data, { updated: todayISO() }); }
+  else{ state.notes.push({ id: uid(), ...data, updated: todayISO() }); }
+  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+}
+function deleteNote(id){
+  state.notes = state.notes.filter(n => n.id !== id);
+  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
+}
+
+/* ============================================================
+   RENDER: DASHBOARD
+============================================================ */
+function renderDashboard(){
+  const today = todayISO();
+  const openTasks = state.tasks.filter(t => !t.done);
+  const late = openTasks.filter(t => daysUntil(t.due) < 0);
+  const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0);
+  const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
+
+  // stats
+  const statsHTML = [
+    { ico:'📚', bg:'var(--p-light)', val:state.courses.length, lbl:'مقرر مسجّل' },
+    { ico:'✅', bg:'var(--warn-bg)', val:openTasks.length, lbl:'مهمة متبقية' },
+    { ico:'⏰', bg:'var(--danger-bg)', val:upcomingExams.length, lbl:'اختبار قادم' },
+    { ico:'🍅', bg:'var(--ok-bg)', val:Math.round(totalMin/60) + 'h', lbl:'ساعات المذاكرة' }
+  ].map(s => `
+    <div class="stat">
+      <div class="stat-ico" style="background:${s.bg}">${s.ico}</div>
+      <div><b>${s.val}</b><span>${s.lbl}</span></div>
+    </div>`).join('');
+  document.getElementById('dashStats').innerHTML = statsHTML;
+
+  // progress
+  const total = state.tasks.length;
+  const done = state.tasks.filter(t => t.done).length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('dashProgBar').style.width = pct + '%';
+  document.getElementById('dashProgTxt').textContent = total ? pct + '%' : '';
+  document.getElementById('dashDone').textContent = done;
+  document.getElementById('dashLeft').textContent = total - done;
+  document.getElementById('dashLate').textContent = late.length;
+
+  // upcoming
+  const items = [
+    ...openTasks.map(t => ({ kind:'مهمة', ico:'✅', title:t.title, date:t.due, courseId:t.courseId, color:'var(--warn)' })),
+    ...upcomingExams.map(e => ({ kind:'اختبار', ico:'⏰', title:e.title, date:e.date, courseId:e.courseId, color:'var(--danger)' }))
+  ].sort((a,b) => a.date.localeCompare(b.date)).slice(0,6);
+
+  const upEl = document.getElementById('dashUpcoming');
+  if(!items.length){
+    upEl.innerHTML = `<div class="empty" style="padding:28px 10px">
+      <div class="e-ico">🎉</div><b>ما عندك شي قريب</b>
+      <p>استمتع بوقتك أو أضف مهاماً جديدة</p></div>`;
+  }else{
+    upEl.innerHTML = items.map(it => {
+      const d = daysUntil(it.date);
+      let txt, bg;
+      if(d < 0){ txt = `متأخر ${Math.abs(d)} يوم`; bg = 'var(--danger-bg)'; }
+      else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; }
+      else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; }
+      else { txt = `بعد ${d} يوم`; bg = 'var(--ok-bg)'; }
+      return `<div class="up-item">
+        <div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
+        <div class="up-info">
+          <b>${it.ico} ${esc(it.title)}</b>
+          <span>${it.kind} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span>
+        </div>
+        <div class="up-time" style="background:${bg}">${txt}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // today's classes
+  const nowDay = new Date().getDay();
+  const todays = state.schedule
+    .filter(s => s.day === nowDay)
+    .sort((a,b) => toMin(a.start) - toMin(b.start));
+
+  const tdEl = document.getElementById('dashToday');
+  if(!todays.length){
+    tdEl.innerHTML = `<div class="empty" style="padding:28px 10px">
+      <div class="e-ico">🛌</div><b>ما فيه محاضرات اليوم</b>
+      <p>${DAYS[nowDay]} — يوم مريح!</p></div>`;
+  }else{
+    tdEl.innerHTML = todays.map(s => {
+      const c = getCourse(s.courseId);
+      return `<div class="up-item">
+        <div class="up-dot" style="background:${courseColor(s.courseId)}"></div>
+        <div class="up-info">
+          <b>${esc(courseName(s.courseId))}</b>
+          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
+        </div>
+        <div class="up-time" style="background:var(--hover);color:var(--muted)">${c?.teacher ? esc(c.teacher) : ''}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ============================================================
+   RENDER: SCHEDULE
+============================================================ */
+function renderSchedule(){
+  const nowDay = new Date().getDay();
+  const hours = [];
+  for(let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
+
+  const head = `<div class="sched-head">
+    <div></div>
+    <div class="sched-days">
+      ${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}
+    </div>
+  </div>`;
+
+  const times = `<div class="sched-times">
+    ${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}
+  </div>`;
+
+  const cols = `<div class="sched-cols">
+    ${DAYS.map((_,di) => {
+      const lines = hours.map((_,i) => `<div class="hour-line" style="top:${i*HOUR_H}px"></div>`).join('');
+      const blocks = state.schedule.filter(s => s.day === di).map(s => {
+        const startMin = toMin(s.start), endMin = toMin(s.end);
+        const top = (startMin - HOUR_START*60) / 60 * HOUR_H;
+        const hgt = (endMin - startMin) / 60 * HOUR_H - 4;
+        if(top < -50 || top > (HOUR_END-HOUR_START)*HOUR_H) return '';
+        const col = courseColor(s.courseId);
+        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${col}"
+                     onclick="event.stopPropagation();openClassForm('${s.id}')">
+          <b>${esc(courseName(s.courseId))}</b>
+          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
+        </div>`;
+      }).join('');
+      return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
+    }).join('')}
+  </div>`;
+
+  document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
+}
+
+/* ============================================================
+   RENDER: COURSES
+============================================================ */
+function renderCourses(){
+  const grid = document.getElementById('coursesGrid');
+  document.getElementById('coursesCount').textContent = state.courses.length
+    ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة`
+    : 'لم تضف أي مقرر بعد';
+
+  if(!state.courses.length){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="e-ico">📚</div><b>لا توجد مقررات</b>
+      <p>ابدأ بإضافة مقرراتك لهذا الفصل</p>
+      <button class="btn btn-primary" onclick="openCourseForm()">➕ إضافة مقرر</button>
+    </div>`;
     return;
   }
-  const original = btn.textContent;
-  btn.textContent = '✓ تم';
-  btn.style.background = '#1B7A4B';
-  btn.style.color = '#fff';
-  input.value = '';
-  setTimeout(() => {
-    btn.textContent = original;
-    btn.style.background = '';
-    btn.style.color = '';
-  }, 2600);
+
+  grid.innerHTML = state.courses.map(c => {
+    const classes = state.schedule.filter(s => s.courseId === c.id).length;
+    const tasks = state.tasks.filter(t => t.courseId === c.id && !t.done).length;
+    return `<div class="course-card">
+      <div class="course-bar" style="background:${c.color}"></div>
+      <div class="course-body">
+        <h3>${esc(c.name)}</h3>
+        <div class="code">${esc(c.code || '—')}${c.teacher ? ' · ' + esc(c.teacher) : ''}</div>
+        <div class="course-meta">
+          <span class="pill">${c.credits || 0} ساعات</span>
+          <span class="pill">${classes} محاضرة</span>
+          ${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn)">${tasks} مهمة</span>` : ''}
+        </div>
+        <div class="course-actions">
+          <button onclick="openCourseForm('${c.id}')">✏️ تعديل</button>
+          <button onclick="deleteCourse('${c.id}')">🗑️ حذف</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 /* ============================================================
-   SMOOTH REVEAL ON SCROLL
+   RENDER: TASKS
 ============================================================ */
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if(en.isIntersecting){
-      en.target.style.opacity = '1';
-      en.target.style.transform = 'translateY(0)';
-      revealObserver.unobserve(en.target);
-    }
-  });
-}, { threshold:0.08, rootMargin:'0px 0px -40px 0px' });
+function renderTasks(){
+  const list = document.getElementById('tasksList');
+  const open = state.tasks.filter(t => !t.done);
+  document.getElementById('tasksCount').textContent =
+    `${state.tasks.length} مهمة · ${open.length} متبقية`;
 
-function observeReveals(){
-  document.querySelectorAll('.page.active .card, .page.active .news-card, .page.active .service, .page.active .step, .page.active .event, .page.active .vm-card')
-    .forEach((el, i) => {
-      if(el.dataset.revealed) return;
-      el.dataset.revealed = '1';
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(22px)';
-      el.style.transition = `opacity .55s ease ${Math.min(i * 45, 400)}ms, transform .55s ease ${Math.min(i * 45, 400)}ms`;
-      revealObserver.observe(el);
-    });
-}
-document.addEventListener('DOMContentLoaded', observeReveals);
-window.addEventListener('hashchange', () => setTimeout(observeReveals, 60));
-setTimeout(observeReveals, 300);
+  // badge
+  const lateCount = open.filter(t => daysUntil(t.due) < 0).length;
+  const badge = document.getElementById('badgeTasks');
+  if(open.length){ badge.style.display = ''; badge.textContent = lateCount || open.length; }
+  else badge.style.display = 'none';
 
-/* ============================================================
-   KEYBOARD SHORTCUTS
-============================================================ */
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape'){
-    nav.classList.remove('open');
-    burger.classList.remove('open');
+  let arr = state.tasks.slice();
+  const td = todayISO();
+
+  if(taskFilter === 'today') arr = arr.filter(t => t.due === td);
+  else if(taskFilter === 'week'){
+    arr = arr.filter(t => { const d = daysUntil(t.due); return d >= 0 && d <= 7; });
   }
+  else if(taskFilter === 'late') arr = arr.filter(t => !t.done && daysUntil(t.due) < 0);
+  else if(taskFilter === 'open') arr = arr.filter(t => !t.done);
+  else if(taskFilter === 'done') arr = arr.filter(t => t.done);
+
+  arr.sort((a,b) => {
+    if(a.done !== b.done) return a.done ? 1 : -1;
+    return a.due.localeCompare(b.due);
+  });
+
+  if(!arr.length){
+    list.innerHTML = `<div class="empty">
+      <div class="e-ico">✅</div><b>لا توجد مهام هنا</b>
+      <p>أضف مهمة جديدة أو غيّر الفلتر</p>
+      <button class="btn btn-primary" onclick="openTaskForm()">➕ مهمة جديدة</button>
+    </div>`;
+    return;
+  }
+
+  const prioMap = {
+    high: { t:'🔴 عالية', bg:'var(--danger-bg)', c:'var(--danger)' },
+    med:  { t:'🟡 متوسطة', bg:'var(--warn-bg)', c:'var(--warn)' },
+    low:  { t:'🟢 منخفضة', bg:'var(--ok-bg)', c:'var(--ok)' }
+  };
+
+  list.innerHTML = arr.map(t => {
+    const d = daysUntil(t.due);
+    let dueTxt, dueBg;
+    if(t.done){ dueTxt = 'منجزة'; dueBg = 'var(--ok-bg)'; }
+    else if(d < 0){ dueTxt = `متأخر ${Math.abs(d)} يوم`; dueBg = 'var(--danger-bg)'; }
+    else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; }
+    else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; }
+    else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; }
+    const p = prioMap[t.priority] || prioMap.med;
+
+    return `<div class="task ${t.done?'done':''}">
+      <div class="chk" onclick="toggleTask('${t.id}')">✓</div>
+      <div class="task-main">
+        <div class="task-title">${esc(t.title)}</div>
+        <div class="task-sub">
+          <span class="tag" style="background:${courseColor(t.courseId)}22;color:${courseColor(t.courseId)}">${esc(courseName(t.courseId))}</span>
+          <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(t.type)}</span>
+          <span class="tag" style="background:${p.bg};color:${p.c}">${p.t}</span>
+          <span class="tag" style="background:${dueBg}">📅 ${fmtDate(t.due)}</span>
+        </div>
+        ${t.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(t.notes)}</div>` : ''}
+      </div>
+      <div class="task-actions">
+        <button class="mini-btn" onclick="openTaskForm('${t.id}')">✏️</button>
+        <button class="mini-btn del" onclick="deleteTask('${t.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   RENDER: EXAMS
+============================================================ */
+function renderExams(){
+  const grid = document.getElementById('examsGrid');
+  const upcoming = state.exams.filter(e => daysUntil(e.date) >= 0);
+  document.getElementById('examsCount').textContent =
+    `${state.exams.length} اختبار · ${upcoming.length} قادم`;
+
+  const badge = document.getElementById('badgeExams');
+  const soon = upcoming.filter(e => daysUntil(e.date) <= 7).length;
+  if(soon){ badge.style.display = ''; badge.textContent = soon; }
+  else badge.style.display = 'none';
+
+  if(!state.exams.length){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="e-ico">⏰</div><b>لا توجد اختبارات</b>
+      <p>أضف مواعيد الكويزات والاختبارات لتصلك التنبيهات</p>
+      <button class="btn btn-primary" onclick="openExamForm()">➕ إضافة اختبار</button>
+    </div>`;
+    return;
+  }
+
+  const sorted = state.exams.slice().sort((a,b) => a.date.localeCompare(b.date));
+
+  grid.innerHTML = sorted.map(e => {
+    const d = daysUntil(e.date);
+    let num, lbl, bg, col;
+    if(d < 0){ num = '✓'; lbl = 'انتهى'; bg = 'var(--hover)'; col = 'var(--muted)'; }
+    else if(d === 0){ num = 'اليوم'; lbl = ''; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+    else if(d === 1){ num = '1'; lbl = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+    else if(d <= 7){ num = d; lbl = 'يوم'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
+    else { num = d; lbl = 'يوم'; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
+
+    return `<div class="exam">
+      <div class="exam-top">
+        <h3>${esc(e.title)}</h3>
+        <div class="countdown" style="background:${bg};color:${col}">
+          <b style="font-size:${d===0?'15px':'23px'}">${num}</b>
+          ${lbl ? `<span>${lbl}</span>` : ''}
+        </div>
+      </div>
+      <div class="exam-detail">
+        <span>📚 ${esc(courseName(e.courseId))}</span>
+        <span>🏷️ ${esc(e.type)}</span>
+        <span>📅 ${fmtDate(e.date)}</span>
+        ${e.time ? `<span>🕐 ${e.time}</span>` : ''}
+        ${e.place ? `<span>📍 ${esc(e.place)}</span>` : ''}
+      </div>
+      ${e.notes ? `<div style="font-size:13px;color:var(--muted);background:var(--hover);padding:10px 12px;border-radius:10px;margin-bottom:12px">${esc(e.notes)}</div>` : ''}
+      <div class="exam-actions">
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="openExamForm('${e.id}')">✏️ تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteExam('${e.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ============================================================
+   RENDER: NOTES
+============================================================ */
+function renderNotes(){
+  const grid = document.getElementById('notesGrid');
+  document.getElementById('notesCount').textContent = state.notes.length
+    ? `${state.notes.length} ملاحظة` : 'لم تضف أي ملاحظة بعد';
+
+  if(!state.notes.length){
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="e-ico">📝</div><b>لا توجد ملاحظات</b>
+      <p>دوّن أفكارك ونقاط المذاكرة المهمة</p>
+      <button class="btn btn-primary" onclick="openNoteForm()">➕ ملاحظة جديدة</button>
+    </div>`;
+    return;
+  }
+
+  const sorted = state.notes.slice().sort((a,b) => (b.updated||'').localeCompare(a.updated||''));
+  grid.innerHTML = sorted.map(n => `
+    <div class="note">
+      <h4>${esc(n.title)}</h4>
+      ${n.courseId ? `<span class="tag" style="background:${courseColor(n.courseId)}22;color:${courseColor(n.courseId)}">${esc(courseName(n.courseId))}</span>` : ''}
+      <p style="margin-top:10px">${esc(n.body)}</p>
+      <span class="n-date">آخر تحديث: ${fmtDate(n.updated)}</span>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <button class="mini-btn" onclick="openNoteForm('${n.id}')">✏️</button>
+        <button class="mini-btn del" onclick="deleteNote('${n.id}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ============================================================
+   RENDER: GRADES
+============================================================ */
+function scoreToPoints(p){
+  if(p >= 95) return 5.00;
+  if(p >= 90) return 4.75;
+  if(p >= 85) return 4.50;
+  if(p >= 80) return 4.00;
+  if(p >= 75) return 3.50;
+  if(p >= 70) return 3.00;
+  if(p >= 65) return 2.50;
+  if(p >= 60) return 2.00;
+  return 0;
+}
+function scoreToLetter(p){
+  if(p >= 95) return 'A+'; if(p >= 90) return 'A';
+  if(p >= 85) return 'B+'; if(p >= 80) return 'B';
+  if(p >= 75) return 'C+'; if(p >= 70) return 'C';
+  if(p >= 65) return 'D+'; if(p >= 60) return 'D';
+  return 'F';
+}
+function courseTotal(c){
+  const g = c.grades || [];
+  if(!g.length) return null;
+  const totalW = g.reduce((a,x) => a + (+x.weight||0), 0);
+  if(!totalW) return null;
+  const sum = g.reduce((a,x) => a + (+x.score||0) * (+x.weight||0), 0);
+  return sum / totalW;
+}
+
+function renderGrades(){
+  const statsEl = document.getElementById('gpaStats');
+  const listEl = document.getElementById('gradesList');
+
+  const graded = state.courses.filter(c => courseTotal(c) !== null);
+  let gpa = null, totalCredits = 0;
+  if(graded.length){
+    let pts = 0, cr = 0;
+    graded.forEach(c => {
+      const t = courseTotal(c);
+      const credit = +c.credits || 0;
+      if(credit > 0){ pts += scoreToPoints(t) * credit; cr += credit; }
+    });
+    if(cr > 0){ gpa = pts / cr; totalCredits = cr; }
+  }
+
+  statsEl.innerHTML = `
+    <div class="stat">
+      <div class="stat-ico" style="background:var(--p-light)">🎯</div>
+      <div><b>${gpa !== null ? gpa.toFixed(2) : '—'}</b><span>المعدل التقديري (من 5)</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat-ico" style="background:var(--ok-bg)">📖</div>
+      <div><b>${totalCredits}</b><span>ساعة محسوبة</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat-ico" style="background:var(--warn-bg)">📝</div>
+      <div><b>${graded.length}/${state.courses.length}</b><span>مقررات مُقيّمة</span></div>
+    </div>
+  `;
+
+  if(!state.courses.length){
+    listEl.innerHTML = `<div class="empty">
+      <div class="e-ico">📊</div><b>لا توجد مقررات</b>
+      <p>أضف مقرراتك أولاً ثم أدخل درجاتك</p>
+      <button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button>
+    </div>`;
+    return;
+  }
+
+  listEl.innerHTML = state.courses.map(c => {
+    const g = c.grades || [];
+    const total = courseTotal(c);
+    const totalW = g.reduce((a,x) => a + (+x.weight||0), 0);
+
+    const rows = g.map((x,i) => `
+      <div class="comp-row">
+        <input value="${esc(x.name)}" onchange="updateComp('${c.id}',${i},'name',this.value)" placeholder="اسم المكوّن">
+        <input type="number" value="${x.weight}" min="0" max="100" onchange="updateComp('${c.id}',${i},'weight',this.value)" placeholder="الوزن">
+        <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${c.id}',${i},'score',this.value)" placeholder="الدرجة">
+        <button class="mini-btn del" onclick="removeComp('${c.id}',${i})">✕</button>
+      </div>`).join('');
+
+    return `<div class="grade-course">
+      <div class="gc-head">
+        <div>
+          <h3 style="color:${c.color}">${esc(c.name)}</h3>
+          <span style="font-size:12.5px;color:var(--muted);font-weight:700">${c.credits||0} ساعات · مجموع الأوزان ${totalW}%</span>
+        </div>
+        <div style="text-align:center">
+          <div class="gc-score">${total !== null ? total.toFixed(1) + '%' : '—'}</div>
+          <div style="font-size:12.5px;font-weight:800;color:var(--muted)">${total !== null ? scoreToLetter(total) : ''}</div>
+        </div>
+      </div>
+      ${g.length ? `<div class="comp-row comp-hd">
+        <div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div>
+      </div>` : ''}
+      ${rows}
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addComp(cid){
+  const c = getCourse(cid);
+  c.grades = c.grades || [];
+  c.grades.push({ name:'', weight:10, score:0 });
+  save(); renderGrades();
+}
+function removeComp(cid, i){
+  const c = getCourse(cid);
+  c.grades.splice(i,1);
+  save(); renderGrades();
+}
+function updateComp(cid, i, field, val){
+  const c = getCourse(cid);
+  if(!c.grades[i]) return;
+  c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
+  save(); renderGrades();
+}
+
+/* ============================================================
+   POMODORO
+============================================================ */
+let pomo = {
+  mode: 'work',
+  running: false,
+  remaining: 25 * 60,
+  total: 25 * 60,
+  timer: null,
+  sessionStart: null
+};
+const RING_C = 552.92;
+
+function pomoDuration(mode){
+  const p = state.settings.pomo;
+  return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60;
+}
+function pomoLabel(mode){
+  return mode === 'work' ? 'وقت التركيز' : mode === 'short' ? 'راحة قصيرة' : 'راحة طويلة';
+}
+function pomoRender(){
+  const m = Math.floor(pomo.remaining / 60);
+  const s = pomo.remaining % 60;
+  document.getElementById('pomoTime').textContent =
+    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('pomoLabel').textContent = pomoLabel(pomo.mode);
+  const prog = pomo.total ? (pomo.total - pomo.remaining) / pomo.total : 0;
+  document.getElementById('ringFg').style.strokeDashoffset = (RING_C * prog).toFixed(2);
+  document.getElementById('pomoStart').textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
+}
+function pomoSetMode(mode){
+  pomo.mode = mode;
+  pomo.running = false;
+  clearInterval(pomo.timer);
+  pomo.total = pomoDuration(mode);
+  pomo.remaining = pomo.total;
+  document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.mode === mode));
+  pomoRender();
+}
+function pomoTick(){
+  if(pomo.remaining <= 0){
+    clearInterval(pomo.timer);
+    pomo.running = false;
+    // log study session
+    if(pomo.mode === 'work'){
+      const cid = document.getElementById('pomoCourse').value;
+      const mins = Math.round(pomo.total / 60);
+      state.studyLog.push({ id: uid(), date: todayISO(), courseId: cid, minutes: mins });
+      save();
+      renderStudy();
+      toast(`🎉 أنهيت ${mins} دقيقة تركيز!`);
+      try{ new Notification('انتهى وقت التركيز', { body:'خذ راحة الآن 👏' }); }catch(e){}
+    }else{
+      toast('☕ انتهت الراحة، يلا نرجع!');
+    }
+    pomoSetMode(pomo.mode === 'work' ? 'short' : 'work');
+    return;
+  }
+  pomo.remaining--;
+  pomoRender();
+}
+document.getElementById('pomoStart').addEventListener('click', () => {
+  if(pomo.running){
+    clearInterval(pomo.timer);
+    pomo.running = false;
+  }else{
+    if(pomo.remaining <= 0) pomo.remaining = pomoDuration(pomo.mode);
+    if(!pomo.total) pomo.total = pomoDuration(pomo.mode);
+    pomo.running = true;
+    pomo.timer = setInterval(pomoTick, 1000);
+    if('Notification' in window && Notification.permission === 'default'){
+      Notification.requestPermission();
+    }
+  }
+  pomoRender();
+});
+document.getElementById('pomoReset').addEventListener('click', () => pomoSetMode(pomo.mode));
+document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c =>
+  c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
+
+function renderStudy(){
+  // course dropdown
+  const sel = document.getElementById('pomoCourse');
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">— بدون تحديد —</option>` +
+    state.courses.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  if(cur) sel.value = cur;
+
+  const today = todayISO();
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
+  const weekStart = todayISO(weekAgo);
+
+  const todayMin = state.studyLog.filter(l => l.date === today).reduce((a,b) => a + b.minutes, 0);
+  const weekMin = state.studyLog.filter(l => l.date >= weekStart).reduce((a,b) => a + b.minutes, 0);
+  const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
+
+  document.getElementById('studyToday').textContent = todayMin;
+  document.getElementById('studyWeek').textContent = weekMin;
+  document.getElementById('studyTotal').textContent = totalMin;
+
+  // week bars
+  const bars = [];
+  for(let i = 6; i >= 0; i--){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const iso = todayISO(d);
+    const mins = state.studyLog.filter(l => l.date === iso).reduce((a,b) => a + b.minutes, 0);
+    bars.push({ iso, mins, day: DAYS_SHORT[d.getDay()] });
+  }
+  const max = Math.max(...bars.map(b => b.mins), 60);
+  document.getElementById('weekBars').innerHTML = bars.map(b => `
+    <div class="wbar">
+      <span class="wbar-val">${b.mins || ''}</span>
+      <div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div>
+      <span class="wbar-lbl">${b.day}</span>
+    </div>`).join('');
+}
+
+function openManualLog(){
+  openModal('إضافة وقت مذاكرة', `
+    <div class="form-grid">
+      <div class="field full"><label>المقرر</label>
+        <select id="mlCourse"><option value="">— بدون تحديد —</option>${courseOptions()}</select></div>
+      <div class="field"><label>التاريخ</label>
+        <input type="date" id="mlDate" value="${todayISO()}"></div>
+      <div class="field"><label>عدد الدقائق</label>
+        <input type="number" id="mlMin" value="60" min="1" max="600"></div>
+    </div>
+  `, `
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveManualLog()">💾 حفظ</button>
+  `);
+}
+function saveManualLog(){
+  const minutes = +document.getElementById('mlMin').value || 0;
+  if(minutes <= 0){ toast('⚠️ أدخل عدد دقائق صحيح'); return; }
+  state.studyLog.push({
+    id: uid(),
+    date: document.getElementById('mlDate').value || todayISO(),
+    courseId: document.getElementById('mlCourse').value,
+    minutes
+  });
+  save(); closeModal(); renderStudy(); renderDashboard(); toast('✅ تم الحفظ');
+}
+
+/* ============================================================
+   SETTINGS ACTIONS
+============================================================ */
+function savePomoSettings(){
+  state.settings.pomo = {
+    work: Math.max(1, +document.getElementById('setWork').value || 25),
+    short: Math.max(1, +document.getElementById('setShort').value || 5),
+    long: Math.max(1, +document.getElementById('setLong').value || 15)
+  };
+  save(); pomoSetMode(pomo.mode);
+  toast('✅ تم حفظ الإعدادات');
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `university-backup-${todayISO()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('📤 تم تصدير النسخة');
+}
+function importData(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(!data || typeof data !== 'object') throw new Error();
+      state = Object.assign(defaultState(), data);
+      save(); applySettings(); renderAll(); closeModal();
+      toast('📥 تم استيراد البيانات');
+    }catch(err){ toast('⚠️ الملف غير صالح'); }
+  };
+  r.readAsText(f);
+  e.target.value = '';
+}
+function clearAll(){
+  if(!confirm('سيتم حذف كل بياناتك نهائياً. متأكد؟')) return;
+  state = defaultState();
+  save(); applySettings(); renderAll(); closeModal();
+  toast('🗑️ تم حذف كل البيانات');
+}
+function applySettings(){
+  document.documentElement.dataset.theme = state.settings.theme || 'light';
+  document.getElementById('themeBtn').textContent = state.settings.theme === 'dark' ? '☀️' : '🌙';
+  const p = state.settings.pomo;
+  document.getElementById('setWork').value = p.work;
+  document.getElementById('setShort').value = p.short;
+  document.getElementById('setLong').value = p.long;
+  pomo.total = pomoDuration(pomo.mode);
+  pomo.remaining = pomo.total;
+  pomoRender();
+}
+
+/* ============================================================
+   SAMPLE DATA
+============================================================ */
+function loadSample(){
+  if(!confirm('سيتم استبدال بياناتك الحالية ببيانات تجريبية. متابعة؟')) return;
+  const c1 = uid(), c2 = uid(), c3 = uid(), c4 = uid(), c5 = uid();
+  state.courses = [
+    { id:c1, name:'تفاضل وتكامل 1', code:'MATH101', credits:4, teacher:'د. سارة العتيبي', color:COLORS[0], grades:[{name:'كويز 1',weight:10,score:8},{name:'واجبات',weight:20,score:18}] },
+    { id:c2, name:'مقدمة في البرمجة', code:'CS101', credits:3, teacher:'د. خالد الشمري', color:COLORS[1], grades:[{name:'مشروع',weight:25,score:23}] },
+    { id:c3, name:'الفيزياء العامة', code:'PHYS101', credits:3, teacher:'د. منى القحطاني', color:COLORS[2], grades:[] },
+    { id:c4, name:'مهارات التواصل', code:'COMM101', credits:2, teacher:'د. أحمد الغامدي', color:COLORS[3], grades:[] },
+    { id:c5, name:'اللغة الإنجليزية', code:'ENG101', credits:3, teacher:'د. نورة السالم', color:COLORS[4], grades:[] }
+  ];
+  const d = new Date();
+  state.schedule = [
+    { id:uid(), courseId:c1, day:0, start:'08:00', end:'09:30', room:'مبنى 3 - قاعة 12' },
+    { id:uid(), courseId:c2, day:0, start:'10:00', end:'11:00', room:'معمل الحاسب 2' },
+    { id:uid(), courseId:c3, day:1, start:'09:00', end:'10:30', room:'مبنى العلوم' },
+    { id:uid(), courseId:c4, day:1, start:'11:00', end:'12:00', room:'قاعة 105' },
+    { id:uid(), courseId:c5, day:2, start:'08:00', end:'09:30', room:'مركز اللغات' },
+    { id:uid(), courseId:c1, day:2, start:'10:00', end:'11:30', room:'مبنى 3 - قاعة 12' },
+    { id:uid(), courseId:c2, day:3, start:'09:00', end:'10:00', room:'معمل الحاسب 2' },
+    { id:uid(), courseId:c3, day:3, start:'11:00', end:'12:30', room:'مختبر الفيزياء' },
+    { id:uid(), courseId:c5, day:4, start:'08:00', end:'09:30', room:'مركز اللغات' }
+  ];
+  const plus = n => { const x = new Date(); x.setDate(x.getDate()+n); return todayISO(x); };
+  state.tasks = [
+    { id:uid(), title:'حل واجب الفصل الثالث', courseId:c1, type:'واجب', due:plus(1), priority:'high', done:false, notes:'التمارين 1-15', created:todayISO() },
+    { id:uid(), title:'مشروع البرمجة - المرحلة الأولى', courseId:c2, type:'مشروع', due:plus(4), priority:'high', done:false, notes:'تسليم التصميم المبدئي', created:todayISO() },
+    { id:uid(), title:'تقرير تجربة الفيزياء', courseId:c3, type:'تقرير', due:plus(2), priority:'med', done:false, notes:'', created:todayISO() },
+    { id:uid(), title:'قراءة الفصل الخامس', courseId:c5, type:'أخرى', due:plus(6), priority:'low', done:false, notes:'', created:todayISO() },
+    { id:uid(), title:'عرض تقديمي عن مهارات الاستماع', courseId:c4, type:'عرض تقديمي', due:plus(8), priority:'med', done:false, notes:'5 دقائق', created:todayISO() },
+    { id:uid(), title:'كويز الرياضيات القصير', courseId:c1, type:'كويز', due:plus(-1), priority:'high', done:false, notes:'تأخر!', created:todayISO() }
+  ];
+  state.exams = [
+    { id:uid(), title:'ميدتيرم تفاضل وتكامل', courseId:c1, type:'ميدتيرم', date:plus(9), time:'09:00', place:'قاعة الامتحانات الكبرى', notes:'الفصول 1-5' },
+    { id:uid(), title:'كويز البرمجة الثاني', courseId:c2, type:'كويز', date:plus(3), time:'10:00', place:'معمل الحاسب 2', notes:'الحلقات والدوال' },
+    { id:uid(), title:'فاينل الفيزياء', courseId:c3, type:'فاينل', date:plus(28), time:'08:00', place:'مبنى العلوم', notes:'' }
+  ];
+  state.notes = [
+    { id:uid(), title:'ملخص قوانين التفاضل', courseId:c1, body:'قاعدة القوة: d/dx (x^n) = n·x^(n-1)\nقاعدة الضرب: (fg)\' = f\'g + fg\'\nقاعدة القسمة: (f/g)\' = (f\'g - fg\')/g²', updated:todayISO() },
+    { id:uid(), title:'مصادر مفيدة للبرمجة', courseId:c2, body:'• موقع W3Schools للتمارين\n• قناة CodeWithHarry\n• كتاب Automate the Boring Stuff', updated:todayISO() }
+  ];
+  state.studyLog = [
+    { id:uid(), date:todayISO(), courseId:c1, minutes:50 },
+    { id:uid(), date:todayISO(), courseId:c2, minutes:25 },
+    { id:uid(), date:plus(-1), courseId:c1, minutes:75 },
+    { id:uid(), date:plus(-2), courseId:c3, minutes:40 },
+    { id:uid(), date:plus(-3), courseId:c2, minutes:60 }
+  ];
+  save(); applySettings(); renderAll(); closeModal();
+  toast('🎁 تم تحميل البيانات التجريبية');
+}
+
+/* ============================================================
+   QUICK ADD
+============================================================ */
+function quickAdd(){
+  openModal('إضافة سريعة', `
+    <div style="display:grid;gap:10px">
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openTaskForm()">✅ مهمة / واجب جديد</button>
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExamForm()">⏰ اختبار / كويز جديد</button>
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openClassForm()">📅 محاضرة في الجدول</button>
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openCourseForm()">📚 مقرر جديد</button>
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openNoteForm()">📝 ملاحظة جديدة</button>
+    </div>
+  `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
+}
+document.getElementById('quickAddBtn').addEventListener('click', quickAdd);
+document.getElementById('fab').addEventListener('click', quickAdd);
+
+/* ============================================================
+   MOBILE SIDEBAR
+============================================================ */
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+});
+document.getElementById('overlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+});
+
+/* ============================================================
+   TASK FILTERS
+============================================================ */
+document.getElementById('taskFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  document.querySelectorAll('#taskFilters .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  taskFilter = chip.dataset.f;
+  renderTasks();
+});
+
+/* ============================================================
+   MAIN RENDER
+============================================================ */
+function renderAll(){
+  renderDashboard();
+  renderSchedule();
+  renderCourses();
+  renderTasks();
+  renderExams();
+  renderNotes();
+  renderGrades();
+  renderStudy();
+  pomoRender();
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+function init(){
+  applySettings();
+  renderAll();
+  document.getElementById('topDate').textContent =
+    new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  // first visit: offer sample data
+  const isFirst = !localStorage.getItem(STORE_KEY + '_seen');
+  if(isFirst && !state.courses.length){
+    localStorage.setItem(STORE_KEY + '_seen', '1');
+    setTimeout(() => {
+      openModal('أهلاً بك في مُساعد الجامعة 🎓', `
+        <p style="font-size:15px;line-height:1.9;margin-bottom:18px">
+          هذا التطبيق يساعدك على تنظيم دراستك الجامعية: الجدول، المهام، الاختبارات،
+          المذاكرة، والدرجات. كل بياناتك محفوظة في جهازك فقط.
+        </p>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:6px">
+          تبي نجرب لك بيانات جاهزة تشوف فيها كل شي شغال؟
+        </p>
+      `, `
+        <button class="btn btn-ghost" onclick="closeModal()">لا، أبدأ من الصفر</button>
+        <button class="btn btn-primary" onclick="loadSample()">🎁 نعم، عبّئ لي مثال</button>
+      `);
+    }, 700);
+  }
+
+  // hash routing
+  const h = location.hash.slice(1);
+  if(h && document.getElementById('view-' + h)) go(h);
+}
+init();
+
+// keyboard shortcut: Ctrl+K quick add
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
 </script>
 </body>

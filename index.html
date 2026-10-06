@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جامعة الأفق | Al-Ufuq University</title>
+<meta name="description" content="الموقع الرسمي لجامعة الأفق - كليات، برامج أكاديمية، قبول وتسجيل، خدمات إلكترونية، وأخبار الجامعة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230B5C4B'/><path d='M50 22 82 38 50 54 18 38z' fill='%23D4A537'/><path d='M30 46v18c0 6 9 11 20 11s20-5 20-11V46' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round'/></svg>">
+<style>
+/* ============ RESET & VARIABLES ============ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#0B5C4B;
+  --green-dark:#063A2F;
+  --green-light:#12806A;
+  --green-soft:#E6F1EE;
+  --gold:#D4A537;
+  --gold-light:#F2D388;
+  --dark:#081A16;
+  --text:#1B2A27;
+  --muted:#637875;
+  --line:#E3EAE8;
+  --bg:#F5F8F7;
+  --white:#fff;
+  --r:18px;
+  --r-sm:12px;
+  --shadow:0 8px 28px rgba(11,92,75,.07);
+  --shadow-lg:0 24px 60px rgba(11,92,75,.15);
+  --container:1200px;
+  --t:.35s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Cairo',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.8;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,h5{font-family:'Tajawal','Cairo',sans-serif;line-height:1.35;font-weight:800;color:var(--dark)}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+ul{list-style:none}
+button,input,select,textarea{font-family:inherit;font-size:inherit}
+::selection{background:var(--gold);color:var(--dark)}
+
+.container{width:100%;max-width:var(--container);margin-inline:auto;padding-inline:22px}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar{width:11px}
+::-webkit-scrollbar-track{background:var(--green-soft)}
+::-webkit-scrollbar-thumb{background:var(--green);border-radius:10px;border:3px solid var(--green-soft)}
+::-webkit-scrollbar-thumb:hover{background:var(--green-dark)}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  background:var(--green-dark);
+  color:#bfe0d8;
+  font-size:13.5px;
+  padding:9px 0;
+}
+.topbar .container{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.topbar-info{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.topbar-info span{display:flex;align-items:center;gap:7px}
+.topbar-info svg{width:15px;height:15px;stroke:var(--gold);fill:none;stroke-width:2}
+.topbar-social{display:flex;gap:8px}
+.topbar-social a{
+  width:30px;height:30px;display:grid;place-items:center;border-radius:8px;
+  background:rgba(255,255,255,.08);transition:var(--t)
+}
+.topbar-social a:hover{background:var(--gold);transform:translateY(-2px)}
+.topbar-social svg{width:15px;height:15px;fill:#cfe8e2;transition:var(--t)}
+.topbar-social a:hover svg{fill:var(--dark)}
+
+/* ============ HEADER ============ */
+.header{
+  position:sticky;top:0;z-index:900;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  transition:var(--t);
+}
+.header.scrolled{box-shadow:0 6px 30px rgba(8,26,22,.09)}
+.header .container{display:flex;align-items:center;justify-content:space-between;height:78px;gap:20px}
+
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer;flex-shrink:0}
+.logo-mark{
+  width:46px;height:46px;border-radius:13px;
+  background:linear-gradient(135deg,var(--green),var(--green-light));
+  display:grid;place-items:center;box-shadow:0 8px 20px rgba(11,92,75,.28);
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.logo-mark::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 45%,rgba(212,165,55,.55));
+}
+.logo-mark svg{width:26px;height:26px;position:relative;z-index:1}
+.logo-text b{font-family:'Tajawal';font-size:20px;font-weight:900;color:var(--green-dark);display:block;line-height:1.2}
+.logo-text small{font-size:10.5px;letter-spacing:2.2px;color:var(--gold);font-weight:700;text-transform:uppercase}
+
+.nav{display:flex;align-items:center;gap:4px}
+.nav-link{
+  padding:10px 15px;border-radius:11px;font-weight:600;font-size:15px;
+  color:var(--text);cursor:pointer;transition:var(--t);position:relative;white-space:nowrap;
+}
+.nav-link:hover{background:var(--green-soft);color:var(--green)}
+.nav-link.active{color:var(--green);background:var(--green-soft)}
+.nav-link.active::after{
+  content:'';position:absolute;bottom:4px;right:50%;transform:translateX(50%);
+  width:20px;height:3px;border-radius:3px;background:var(--gold)
+}
+
+.header-actions{display:flex;align-items:center;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:13px 26px;border-radius:13px;font-weight:700;font-size:15px;
+  cursor:pointer;border:none;transition:var(--t);font-family:'Cairo';white-space:nowrap;
+}
+.btn svg{width:18px;height:18px}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 8px 22px rgba(11,92,75,.26)}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(11,92,75,.34)}
+.btn-gold{background:var(--gold);color:var(--dark);box-shadow:0 8px 22px rgba(212,165,55,.32)}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--green);border:2px solid var(--green)}
+.btn-outline:hover{background:var(--green);color:#fff;transform:translateY(-2px)}
+.btn-ghost-light{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.btn-ghost-light:hover{background:#fff;color:var(--green-dark)}
+.btn-sm{padding:10px 18px;font-size:14px;border-radius:11px}
+.btn-block{width:100%}
+
+.burger{
+  display:none;width:46px;height:46px;border-radius:12px;background:var(--green-soft);
+  border:none;cursor:pointer;place-items:center;flex-shrink:0;
+}
+.burger span{display:block;width:20px;height:2.4px;background:var(--green);border-radius:2px;margin:3px auto;transition:var(--t)}
+.burger.open span:nth-child(1){transform:translateY(5.4px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-5.4px) rotate(-45deg)}
+
+/* ============ PAGES ============ */
+.page{display:none}
+.page.active{display:block;animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ============ SECTION HELPERS ============ */
+.section{padding:80px 0}
+.section-sm{padding:56px 0}
+.sec-head{text-align:center;max-width:720px;margin:0 auto 52px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green-soft);color:var(--green);
+  padding:7px 18px;border-radius:100px;font-size:13.5px;font-weight:700;
+  margin-bottom:16px;letter-spacing:.3px;
+}
+.eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.sec-title{font-size:clamp(26px,4vw,42px);margin-bottom:14px;letter-spacing:-.5px}
+.sec-title span{color:var(--green);position:relative}
+.sec-title span::after{
+  content:'';position:absolute;bottom:2px;right:0;left:0;height:9px;
+  background:rgba(212,165,55,.28);border-radius:6px;z-index:-1;
+}
+.sec-desc{color:var(--muted);font-size:16.5px}
+.bg-white{background:#fff}
+.bg-soft{background:linear-gradient(180deg,#fff,var(--bg))}
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--green-dark) 0%,var(--green) 55%,var(--green-light) 100%);
+  color:#fff;padding:96px 0 110px;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 18% 22%,rgba(212,165,55,.20),transparent 42%),
+                   radial-gradient(circle at 82% 78%,rgba(255,255,255,.13),transparent 45%);
+}
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M0 0h60v60H0z'/%3E%3Cpath d='M30 0v60M0 30h60'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hero .container{position:relative;z-index:2}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.24);
+  padding:8px 18px;border-radius:100px;font-size:13.5px;font-weight:600;margin-bottom:24px;
+  backdrop-filter:blur(6px);
+}
+.hero-badge i{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(212,165,55,.7)}50%{box-shadow:0 0 0 9px rgba(212,165,55,0)}}
+.hero h1{font-size:clamp(32px,5vw,58px);color:#fff;line-height:1.24;margin-bottom:20px;letter-spacing:-1px}
+.hero h1 em{color:var(--gold-light);font-style:normal}
+.hero p{font-size:17.5px;color:rgba(255,255,255,.85);max-width:560px;margin-bottom:34px}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px}
+.hero-mini{display:flex;gap:36px;flex-wrap:wrap}
+.hero-mini div strong{display:block;font-family:'Tajawal';font-size:28px;font-weight:900;color:var(--gold-light)}
+.hero-mini div span{font-size:13.5px;color:rgba(255,255,255,.72)}
+
+.hero-card{
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:26px;padding:30px;backdrop-filter:blur(16px);
+  box-shadow:0 30px 70px rgba(0,0,0,.25);
+}
+.hero-card h3{color:#fff;font-size:20px;margin-bottom:6px}
+.hero-card>p{font-size:14px;color:rgba(255,255,255,.72);margin-bottom:22px}
+.hero-links{display:grid;gap:11px}
+.hero-link{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);
+  padding:14px 16px;border-radius:14px;cursor:pointer;transition:var(--t);
+}
+.hero-link:hover{background:rgba(255,255,255,.19);transform:translateX(-6px);border-color:rgba(212,165,55,.5)}
+.hero-link .ic{
+  width:40px;height:40px;border-radius:11px;flex-shrink:0;
+  background:rgba(212,165,55,.2);display:grid;place-items:center;
+}
+.hero-link .ic svg{width:20px;height:20px;stroke:var(--gold-light);fill:none;stroke-width:2}
+.hero-link b{display:block;font-size:14.5px;font-weight:700;color:#fff}
+.hero-link span{font-size:12.5px;color:rgba(255,255,255,.65)}
+
+/* ============ QUICK BAR ============ */
+.quickbar{
+  margin-top:-56px;position:relative;z-index:5;
+}
+.quickbar-inner{
+  background:#fff;border-radius:24px;box-shadow:var(--shadow-lg);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  padding:32px 20px;gap:14px;
+}
+.qb-item{text-align:center;padding:12px;border-radius:16px;transition:var(--t);cursor:default}
+.qb-item:hover{background:var(--green-soft)}
+.qb-item .icon{
+  width:56px;height:56px;margin:0 auto 12px;border-radius:16px;
+  background:linear-gradient(135deg,var(--green-soft),#d6ebe5);
+  display:grid;place-items:center;
+}
+.qb-item .icon svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:2}
+.qb-item b{display:block;font-family:'Tajawal';font-size:26px;font-weight:900;color:var(--green-dark)}
+.qb-item span{font-size:13.5px;color:var(--muted);font-weight:600}
+
+/* ============ CARDS / GRIDS ============ */
+.grid{display:grid;gap:26px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+
+.card{
+  background:#fff;border-radius:var(--r);padding:30px;
+  border:1px solid var(--line);box-shadow:var(--shadow);
+  transition:var(--t);position:relative;overflow:hidden;
+}
+.card:hover{transform:translateY(-7px);box-shadow:var(--shadow-lg);border-color:#cfe4de}
+.card-icon{
+  width:58px;height:58px;border-radius:16px;margin-bottom:20px;
+  background:linear-gradient(135deg,var(--green),var(--green-light));
+  display:grid;place-items:center;box-shadow:0 10px 24px rgba(11,92,75,.25);
+}
+.card-icon svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:1.9}
+.card h3{font-size:19.5px;margin-bottom:10px}
+.card p{color:var(--muted);font-size:15px}
+.card .card-link{
+  display:inline-flex;align-items:center;gap:7px;margin-top:16px;
+  color:var(--green);font-weight:700;font-size:14.5px;transition:var(--t);
+}
+.card .card-link:hover{gap:12px;color:var(--gold)}
+
+/* College card */
+.college-card{padding:0;overflow:hidden;cursor:pointer}
+.college-top{
+  height:130px;position:relative;
+  background:linear-gradient(135deg,var(--green-dark),var(--green-light));
+  display:grid;place-items:center;
+}
+.college-top::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 75% 20%,rgba(212,165,55,.35),transparent 55%);
+}
+.college-top svg{width:50px;height:50px;stroke:rgba(255,255,255,.92);fill:none;stroke-width:1.6;position:relative;z-index:1}
+.college-body{padding:24px 26px 28px}
+.college-body h3{font-size:19px;margin-bottom:8px}
+.college-body p{font-size:14.5px;color:var(--muted);min-height:52px}
+.college-meta{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.tag{
+  background:var(--green-soft);color:var(--green);
+  padding:5px 13px;border-radius:100px;font-size:12.5px;font-weight:700;
+}
+.tag.gold{background:#FBF1D9;color:#96721A}
+
+/* ============ ABOUT SPLIT ============ */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.visual{
+  border-radius:26px;overflow:hidden;position:relative;min-height:420px;
+  background:linear-gradient(140deg,var(--green-dark),var(--green) 60%,var(--green-light));
+  display:grid;place-items:center;box-shadow:var(--shadow-lg);
+}
+.visual::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 30% 25%,rgba(212,165,55,.28),transparent 50%),
+                   radial-gradient(circle at 75% 80%,rgba(255,255,255,.12),transparent 45%);
+}
+.visual svg{width:150px;height:150px;stroke:rgba(255,255,255,.9);fill:none;stroke-width:1.1;position:relative;z-index:1;opacity:.9}
+.visual-badge{
+  position:absolute;bottom:26px;right:26px;left:26px;z-index:2;
+  background:rgba(255,255,255,.13);backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:20px 24px;
+  display:flex;gap:18px;align-items:center;
+}
+.visual-badge b{font-family:'Tajawal';font-size:34px;font-weight:900;color:var(--gold-light);line-height:1}
+.visual-badge span{font-size:13.5px;color:rgba(255,255,255,.82)}
+
+.check-list{display:grid;gap:14px;margin:26px 0 32px}
+.check-list li{display:flex;gap:13px;align-items:flex-start;font-size:15.5px;color:#33443f}
+.check-list li svg{
+  width:23px;height:23px;flex-shrink:0;margin-top:5px;
+  background:var(--green-soft);border-radius:50%;padding:4px;
+  stroke:var(--green);fill:none;stroke-width:3;
+}
+
+/* ============ VISION / MISSION ============ */
+.vm-card{
+  background:#fff;border-radius:var(--r);padding:36px 30px;
+  border-top:4px solid var(--gold);box-shadow:var(--shadow);transition:var(--t);
+}
+.vm-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.vm-card .num{
+  font-family:'Tajawal';font-size:46px;font-weight:900;
+  color:var(--green-soft);line-height:1;margin-bottom:10px;
+}
+.vm-card h3{font-size:21px;margin-bottom:12px}
+.vm-card p{color:var(--muted);font-size:15.5px}
+
+/* ============ STATS BAND ============ */
+.stats-band{
+  background:linear-gradient(135deg,var(--green-dark),var(--green));
+  color:#fff;padding:70px 0;position:relative;overflow:hidden;
+}
+.stats-band::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 15% 50%,rgba(212,165,55,.2),transparent 45%),
+                   radial-gradient(circle at 85% 30%,rgba(255,255,255,.1),transparent 40%);
+}
+.stats-band .container{position:relative;z-index:1}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center}
+.stat b{
+  display:block;font-family:'Tajawal';font-size:clamp(34px,5vw,52px);
+  font-weight:900;color:var(--gold-light);line-height:1;
+}
+.stat span{font-size:15px;color:rgba(255,255,255,.82);margin-top:10px;display:block}
+
+/* ============ NEWS ============ */
+.news-card{background:#fff;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:var(--t);cursor:pointer}
+.news-card:hover{transform:translateY(-7px);box-shadow:var(--shadow-lg)}
+.news-img{
+  height:175px;position:relative;display:grid;place-items:center;
+  background:linear-gradient(135deg,#0d4a3d,#1a8a72);
+}
+.news-img.v2{background:linear-gradient(135deg,#123f5c,#2b7fa8)}
+.news-img.v3{background:linear-gradient(135deg,#5c3d12,#a8812b)}
+.news-img.v4{background:linear-gradient(135deg,#3d1259,#7a3fa8)}
+.news-img svg{width:52px;height:52px;stroke:rgba(255,255,255,.85);fill:none;stroke-width:1.5}
+.news-date{
+  position:absolute;top:16px;right:16px;background:rgba(255,255,255,.95);
+  border-radius:12px;padding:8px 13px;text-align:center;line-height:1.15;
+}
+.news-date b{display:block;font-family:'Tajawal';font-size:19px;font-weight:900;color:var(--green-dark)}
+.news-date span{font-size:11px;color:var(--muted);font-weight:700}
+.news-body{padding:24px}
+.news-body .cat{font-size:12.5px;font-weight:800;color:var(--gold);letter-spacing:.5px}
+.news-body h3{font-size:18px;margin:9px 0 10px;line-height:1.5}
+.news-body p{font-size:14.5px;color:var(--muted)}
+.news-foot{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* Filter chips */
+.filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.chip{
+  padding:10px 22px;border-radius:100px;background:#fff;border:1.5px solid var(--line);
+  font-weight:700;font-size:14.5px;cursor:pointer;transition:var(--t);color:var(--muted);
+}
+.chip:hover{border-color:var(--green);color:var(--green)}
+.chip.active{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 8px 20px rgba(11,92,75,.25)}
+
+/* ============ EVENTS ============ */
+.event{
+  display:flex;gap:22px;background:#fff;border-radius:var(--r);padding:24px 26px;
+  border:1px solid var(--line);box-shadow:var(--shadow);transition:var(--t);align-items:center;
+}
+.event:hover{transform:translateX(-7px);box-shadow:var(--shadow-lg);border-color:#cfe4de}
+.event-date{
+  width:76px;height:76px;flex-shrink:0;border-radius:18px;
+  background:linear-gradient(135deg,var(--green),var(--green-light));
+  display:grid;place-items:center;color:#fff;text-align:center;line-height:1.1;
+}
+.event-date b{font-family:'Tajawal';font-size:26px;font-weight:900;display:block}
+.event-date span{font-size:12px;opacity:.85}
+.event-info h4{font-size:17.5px;margin-bottom:6px}
+.event-info p{font-size:14px;color:var(--muted);margin-bottom:8px}
+.event-info .meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--green);font-weight:600}
+.event-info .meta span{display:flex;align-items:center;gap:6px}
+.event-info .meta svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ============ TIMELINE / STEPS ============ */
+.steps{display:grid;gap:18px;counter-reset:s}
+.step{
+  display:flex;gap:20px;background:#fff;border:1px solid var(--line);
+  border-radius:var(--r);padding:24px 26px;box-shadow:var(--shadow);transition:var(--t);
+}
+.step:hover{border-color:var(--green);transform:translateX(-6px)}
+.step-num{
+  width:48px;height:48px;flex-shrink:0;border-radius:14px;
+  background:var(--green-soft);color:var(--green);
+  display:grid;place-items:center;font-family:'Tajawal';font-weight:900;font-size:21px;
+}
+.step h4{font-size:17.5px;margin-bottom:6px}
+.step p{font-size:14.5px;color:var(--muted)}
+
+/* ============ TABLE ============ */
+.table-wrap{overflow-x:auto;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line);background:#fff}
+table{width:100%;border-collapse:collapse;min-width:520px}
+thead{background:linear-gradient(135deg,var(--green-dark),var(--green))}
+thead th{color:#fff;padding:17px 20px;text-align:right;font-family:'Tajawal';font-weight:800;font-size:15.5px}
+tbody td{padding:16px 20px;border-bottom:1px solid var(--line);font-size:15px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--green-soft)}
+td .status{background:#E6F7EE;color:#1B7A4B;padding:5px 13px;border-radius:100px;font-size:12.5px;font-weight:700}
+td .status.warn{background:#FDF3E0;color:#9A6B0E}
+
+/* ============ FORMS ============ */
+.form-card{
+  background:#fff;border-radius:24px;padding:40px;
+  box-shadow:var(--shadow-lg);border:1px solid var(--line);
+}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field.full{grid-column:1/-1}
+.field label{font-size:14px;font-weight:700;color:#33443f}
+.field label .req{color:#c0392b}
+.field input,.field select,.field textarea{
+  padding:14px 16px;border-radius:13px;border:1.5px solid var(--line);
+  background:#FAFCFB;font-size:15px;transition:var(--t);color:var(--text);width:100%;
+}
+.field textarea{resize:vertical;min-height:120px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none;border-color:var(--green);background:#fff;
+  box-shadow:0 0 0 4px rgba(11,92,75,.09);
+}
+.field input::placeholder,.field textarea::placeholder{color:#9aabа8}
+.field .err{font-size:12.5px;color:#c0392b;font-weight:600;display:none}
+.field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#e07a6d;background:#FEF7F6}
+.field.invalid .err{display:block}
+
+.alert{
+  display:none;gap:12px;align-items:center;
+  background:#E6F7EE;border:1.5px solid #9fd9bd;color:#1B7A4B;
+  padding:16px 20px;border-radius:14px;font-weight:700;font-size:15px;margin-bottom:24px;
+}
+.alert.show{display:flex;animation:fadeUp .35s both}
+.alert svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;flex-shrink:0}
+
+/* ============ ACCORDION ============ */
+.acc{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff;margin-bottom:12px;box-shadow:var(--shadow)}
+.acc-head{
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+  padding:20px 24px;cursor:pointer;font-weight:700;font-size:16.5px;transition:var(--t);
+}
+.acc-head:hover{background:var(--green-soft)}
+.acc-head .plus{
+  width:30px;height:30px;flex-shrink:0;border-radius:9px;background:var(--green-soft);
+  display:grid;place-items:center;color:var(--green);font-size:19px;font-weight:700;
+  transition:var(--t);line-height:1;
+}
+.acc.open .acc-head{background:var(--green-soft);color:var(--green)}
+.acc.open .plus{background:var(--green);color:#fff;transform:rotate(135deg)}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.acc-body p{padding:0 24px 22px;color:var(--muted);font-size:15px}
+.acc.open .acc-body{max-height:340px}
+
+/* ============ SERVICES ============ */
+.service{
+  display:flex;gap:16px;align-items:flex-start;background:#fff;
+  border:1px solid var(--line);border-radius:var(--r);padding:24px;
+  box-shadow:var(--shadow);transition:var(--t);cursor:pointer;
+}
+.service:hover{transform:translateY(-6px);border-color:var(--green);box-shadow:var(--shadow-lg)}
+.service .ic{
+  width:50px;height:50px;flex-shrink:0;border-radius:14px;
+  background:var(--green-soft);display:grid;place-items:center;
+}
+.service .ic svg{width:24px;height:24px;stroke:var(--green);fill:none;stroke-width:1.9}
+.service h4{font-size:16.5px;margin-bottom:5px}
+.service p{font-size:13.5px;color:var(--muted)}
+
+/* ============ CTA ============ */
+.cta{
+  background:linear-gradient(135deg,var(--green-dark),var(--green-light));
+  border-radius:28px;padding:60px 50px;color:#fff;text-align:center;
+  position:relative;overflow:hidden;box-shadow:var(--shadow-lg);
+}
+.cta::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 20% 30%,rgba(212,165,55,.28),transparent 45%),
+                   radial-gradient(circle at 80% 70%,rgba(255,255,255,.12),transparent 45%);
+}
+.cta>*{position:relative;z-index:1}
+.cta h2{color:#fff;font-size:clamp(24px,3.5vw,36px);margin-bottom:14px}
+.cta p{color:rgba(255,255,255,.85);max-width:620px;margin:0 auto 30px;font-size:16.5px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ============ CONTACT ============ */
+.contact-item{
+  display:flex;gap:16px;align-items:flex-start;padding:22px;
+  background:#fff;border:1px solid var(--line);border-radius:var(--r);transition:var(--t);
+}
+.contact-item:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:var(--shadow)}
+.contact-item .ic{
+  width:48px;height:48px;flex-shrink:0;border-radius:13px;
+  background:linear-gradient(135deg,var(--green),var(--green-light));
+  display:grid;place-items:center;
+}
+.contact-item .ic svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:1.9}
+.contact-item b{display:block;font-size:15.5px;margin-bottom:4px}
+.contact-item span{font-size:14px;color:var(--muted);line-height:1.7}
+
+.map-box{
+  border-radius:22px;overflow:hidden;height:340px;position:relative;
+  background:linear-gradient(135deg,#0e2f28,#155e4e);
+  display:grid;place-items:center;box-shadow:var(--shadow);
+}
+.map-box::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+.map-box .pin{position:relative;z-index:1;text-align:center;color:#fff}
+.map-box .pin svg{width:56px;height:56px;stroke:var(--gold-light);fill:none;stroke-width:1.6;margin:0 auto 12px;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+.map-box .pin b{font-family:'Tajawal';font-size:18px;display:block}
+.map-box .pin span{font-size:13.5px;opacity:.75}
+
+/* ============ FOOTER ============ */
+.footer{background:var(--dark);color:#9fb5b0;padding:70px 0 0;margin-top:0}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.4fr;gap:44px;padding-bottom:52px}
+.footer h4{color:#fff;font-size:17px;margin-bottom:22px;font-family:'Tajawal';position:relative;padding-bottom:12px}
+.footer h4::after{content:'';position:absolute;bottom:0;right:0;width:36px;height:3px;background:var(--gold);border-radius:3px}
+.footer p{font-size:14.5px;line-height:1.9}
+.footer-logo{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.footer-logo .logo-mark{width:44px;height:44px}
+.footer-logo b{font-family:'Tajawal';font-size:19px;font-weight:900;color:#fff;display:block;line-height:1.2}
+.footer-logo small{font-size:10px;letter-spacing:2px;color:var(--gold)}
+.footer ul li{margin-bottom:12px}
+.footer ul a{font-size:14.5px;transition:var(--t);cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.footer ul a::before{content:'◂';font-size:10px;color:var(--gold);opacity:0;transition:var(--t)}
+.footer ul a:hover{color:var(--gold-light);transform:translateX(-5px)}
+.footer ul a:hover::before{opacity:1}
+
+.newsletter{display:flex;gap:9px;margin-top:16px}
+.newsletter input{
+  flex:1;padding:13px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);color:#fff;font-size:14px;min-width:0;
+}
+.newsletter input::placeholder{color:#7d938e}
+.newsletter input:focus{outline:none;border-color:var(--gold);background:rgba(255,255,255,.1)}
+.newsletter button{
+  padding:13px 20px;border-radius:12px;border:none;background:var(--gold);
+  color:var(--dark);font-weight:800;cursor:pointer;transition:var(--t);font-size:14px;white-space:nowrap;
+}
+.newsletter button:hover{background:var(--gold-light);transform:translateY(-2px)}
+
+.footer-social{display:flex;gap:10px;margin-top:22px}
+.footer-social a{
+  width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  background:rgba(255,255,255,.07);transition:var(--t);
+}
+.footer-social a:hover{background:var(--gold);transform:translateY(-4px)}
+.footer-social svg{width:18px;height:18px;fill:#9fb5b0;transition:var(--t)}
+.footer-social a:hover svg{fill:var(--dark)}
+
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.09);padding:24px 0;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  font-size:13.5px;
+}
+.footer-bottom a{transition:var(--t)}
+.footer-bottom a:hover{color:var(--gold-light)}
+.footer-bottom .links{display:flex;gap:22px;flex-wrap:wrap}
+
+/* ============ TO TOP ============ */
+.to-top{
+  position:fixed;bottom:28px;left:28px;width:50px;height:50px;border-radius:15px;
+  background:var(--green);color:#fff;border:none;display:grid;place-items:center;
+  cursor:pointer;box-shadow:0 12px 30px rgba(11,92,75,.35);z-index:800;
+  opacity:0;visibility:hidden;transition:var(--t);
+}
+.to-top.show{opacity:1;visibility:visible}
+.to-top:hover{background:var(--green-dark);transform:translateY(-4px)}
+.to-top svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.4}
+
+/* ============ PAGE HEADER ============ */
+.page-head{
+  background:linear-gradient(135deg,var(--green-dark),var(--green-light));
+  padding:70px 0 60px;color:#fff;position:relative;overflow:hidden;
+}
+.page-head::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 80% 30%,rgba(212,165,55,.22),transparent 45%);
+}
+.page-head .container{position:relative;z-index:1}
+.page-head h1{color:#fff;font-size:clamp(28px,4.5vw,46px);margin-bottom:12px}
+.page-head p{color:rgba(255,255,255,.82);max-width:640px;font-size:16.5px}
+.breadcrumb{display:flex;gap:10px;align-items:center;font-size:14px;margin-top:20px;color:rgba(255,255,255,.7)}
+.breadcrumb a{cursor:pointer;transition:var(--t)}
+.breadcrumb a:hover{color:var(--gold-light)}
+.breadcrumb span{color:var(--gold-light);font-weight:700}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1080px){
+  .nav{display:none}
+  .burger{display:grid}
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:36px}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .quickbar-inner{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .grid-3{grid-template-columns:repeat(2,1fr)}
+  .split{grid-template-columns:1fr;gap:40px}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:36px}
+  .hero{padding:70px 0 90px}
+}
+@media(max-width:768px){
+  .nav{
+    display:flex;position:fixed;inset:78px 0 auto 0;flex-direction:column;gap:6px;
+    background:#fff;padding:20px;border-bottom:1px solid var(--line);
+    box-shadow:0 20px 40px rgba(8,26,22,.14);
+    transform:translateY(-130%);transition:var(--t);z-index:899;max-height:calc(100vh - 78px);overflow-y:auto;
+  }
+  .nav.open{transform:translateY(0)}
+  .nav-link{width:100%;padding:14px 18px;font-size:16px;text-align:right}
+  .nav-link.active::after{display:none}
+  .header-actions .btn{display:none}
+  .section{padding:56px 0}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-card{padding:26px 22px}
+  .cta{padding:44px 24px}
+  .footer-grid{grid-template-columns:1fr;gap:34px}
+  .topbar-info{font-size:12.5px;gap:14px}
+  .topbar-social{display:none}
+  .hero-mini{gap:26px}
+  .footer-bottom{justify-content:center;text-align:center}
+  .quickbar-inner{padding:24px 12px}
+  .visual{min-height:320px}
+  .event{flex-direction:column;text-align:center;align-items:center}
+  .event-info .meta{justify-content:center}
+  .to-top{bottom:18px;left:18px;width:44px;height:44px}
+}
+@media(max-width:420px){
+  .qb-item b{font-size:22px}
+  .stat b{font-size:32px}
+  .hero-btns .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<div class="topbar">
+  <div class="container">
+    <div class="topbar-info">
+      <span>
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        920001234
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg>
+        info@ufuq.edu.sa
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        الأحد - الخميس: 8:00 ص - 4:00 م
+      </span>
+    </div>
+    <div class="topbar-social">
+      <a href="#" aria-label="تويتر"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.4l8.1-9.3L1 2h7.2l5 6.6L18.9 2zm-1.1 18h1.7L7.3 3.8H5.5L17.8 20z"/></svg></a>
+      <a href="#" aria-label="انستغرام"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z"/></svg></a>
+      <a href="#" aria-label="لينكدإن"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21H9z"/></svg></a>
+      <a href="#" aria-label="يوتيوب"><svg viewBox="0 0 24 24"><path d="M23 12s0-3.4-.4-5c-.2-.9-.9-1.6-1.8-1.8C19.2 5 12 5 12 5s-7.2 0-8.8.2c-.9.2-1.6.9-1.8 1.8C1 8.6 1 12 1 12s0 3.4.4 5c.2.9.9 1.6 1.8 1.8 1.6.2 8.8.2 8.8.2s7.2 0 8.8-.2c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-5 .4-5zM9.7 15.2V8.8l5.7 3.2-5.7 3.2z"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header class="header" id="header">
+  <div class="container">
+    <div class="logo" data-page="home">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 22 8 12 13 2 8z" fill="#D4A537"/>
+          <path d="M6 10.5V16c0 2 2.7 3.6 6 3.6s6-1.6 6-3.6v-5.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <b>جامعة الأفق</b>
+        <small>AL-UFUQ UNIVERSITY</small>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav">
+      <a class="nav-link active" data-page="home">الرئيسية</a>
+      <a class="nav-link" data-page="about">عن الجامعة</a>
+      <a class="nav-link" data-page="colleges">الكليات</a>
+      <a class="nav-link" data-page="admissions">القبول والتسجيل</a>
+      <a class="nav-link" data-page="services">الخدمات الإلكترونية</a>
+      <a class="nav-link" data-page="news">الأخبار والفعاليات</a>
+      <a class="nav-link" data-page="contact">تواصل معنا</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn btn-primary btn-sm" data-page="admissions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        قدّم الآن
+      </button>
+      <button class="burger" id="burger" aria-label="القائمة">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================================================================
+     PAGE: HOME
+=================================================================== -->
+<section class="page active" id="home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-badge"><i></i> التسجيل مفتوح للفصل الدراسي القادم</div>
+          <h1>نبني <em>قادة المستقبل</em><br>بمعرفةٍ تُحدث الأثر</h1>
+          <p>
+            جامعة الأفق مؤسسة أكاديمية رائدة تجمع بين الأصالة والابتكار، وتقدم برامج
+            نوعية في الهندسة والطب وتقنية المعلومات وإدارة الأعمال، في بيئة بحثية
+            محفّزة وشراكات دولية واسعة.
+          </p>
+          <div class="hero-btns">
+            <button class="btn btn-gold" data-page="admissions">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+              ابدأ التقديم
+            </button>
+            <button class="btn btn-ghost-light" data-page="colleges">
+              استكشف الكليات
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+          </div>
+          <div class="hero-mini">
+            <div><strong>+24</strong><span>ألف طالب وطالبة</span></div>
+            <div><strong>+180</strong><span>برنامج أكاديمي</span></div>
+            <div><strong>+320</strong><span>عضو هيئة تدريس</span></div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h3>روابط سريعة</h3>
+          <p>أكثر الخدمات طلباً من طلابنا وأعضاء هيئة التدريس</p>
+          <div class="hero-links">
+            <div class="hero-link" data-page="services">
+              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <div><b>البوابة الأكاديمية</b><span>الدرجات، الجدول، التسجيل</span></div>
+            </div>
+            <div class="hero-link" data-page="services">
+              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+              <div><b>المكتبة الرقمية</b><span>+120 ألف مصدر إلكتروني</span></div>
+            </div>
+            <div class="hero-link" data-page="admissions">
+              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></div>
+              <div><b>دليل القبول</b><span>الشروط والمواعيد</span></div>
+            </div>
+            <div class="hero-link" data-page="news">
+              <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="18" rx="2"/></svg></div>
+              <div><b>التقويم الأكاديمي</b><span>مواعيد الفصل الدراسي</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK BAR -->
+  <div class="quickbar">
+    <div class="container">
+      <div class="quickbar-inner">
+        <div class="qb-item">
+          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+          <b>8</b><span>كليات أكاديمية</span>
+        </div>
+        <div class="qb-item">
+          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <b>180</b><span>برنامج دراسي</span>
+        </div>
+        <div class="qb-item">
+          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
+          <b>96%</b><span>نسبة التوظيف</span>
+        </div>
+        <div class="qb-item">
+          <div class="icon"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg></div>
+          <b>45</b><span>شراكة دولية</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT BRIEF -->
+  <div class="section">
+    <div class="container">
+      <div class="split">
+        <div class="visual">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+          <div class="visual-badge">
+            <b>1995</b>
+            <span>سنة التأسيس — أكثر من ثلاثة عقود من الريادة الأكاديمية والبحث العلمي</span>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow">عن جامعة الأفق</div>
+          <h2 class="sec-title">بيئة أكاديمية <span>متكاملة</span> تصنع الفرق</h2>
+          <p style="color:var(--muted);font-size:16.5px">
+            تأسست جامعة الأفق عام 1995 لتكون منارة علمية تجمع بين عراقة التعليم
+            الجامعي ومتطلبات سوق العمل الحديث، وتضم اليوم ثماني كليات ومراكز بحثية
+            متخصصة تعمل على إنتاج المعرفة وخدمة المجتمع.
+          </p>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> اعتماد أكاديمي محلي ودولي لجميع البرامج</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> حرم جامعي ذكي بمساحة تتجاوز 2 مليون م²</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> مراكز ابتكار وريادة أعمال وحاضنات تقنية</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> برامج تبادل طلابي مع 45 جامعة عالمية</li>
+          </ul>
+          <button class="btn btn-primary" data-page="about">
+            تعرّف على الجامعة
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat"><b class="count" data-target="24">0</b><span>ألف طالب وطالبة</span></div>
+        <div class="stat"><b class="count" data-target="320" data-suffix="+">0</b><span>عضو هيئة تدريس</span></div>
+        <div class="stat"><b class="count" data-target="180">0</b><span>برنامج أكاديمي</span></div>
+        <div class="stat"><b class="count" data-target="96" data-suffix="%">0</b><span>نسبة توظيف الخريجين</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLLEGES PREVIEW -->
+  <div class="section bg-soft">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">الكليات</div>
+        <h2 class="sec-title">كليات <span>متنوعة</span> وبرامج نوعية</h2>
+        <p class="sec-desc">ثماني كليات تغطي التخصصات الصحية والهندسية والتقنية والإنسانية والإدارية</p>
+      </div>
+      <div class="grid grid-4" id="homeColleges"></div>
+      <div style="text-align:center;margin-top:44px">
+        <button class="btn btn-outline" data-page="colleges">
+          عرض جميع الكليات
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY US -->
+  <div class="section">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">لماذا الأفق؟</div>
+        <h2 class="sec-title">مزايا <span>تصنع تجربتك</span> الجامعية</h2>
+        <p class="sec-desc">نوفر منظومة تعليمية متكاملة تدعم الطالب أكاديمياً ومهنياً واجتماعياً</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <h3>برامج معتمدة</h3>
+          <p>جميع برامجنا حاصلة على الاعتماد الأكاديمي من الجهات المحلية والدولية المختصة.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <h3>حياة جامعية غنية</h3>
+          <p>أكثر من 60 نادياً طلابياً وأنشطة ثقافية ورياضية وتطوعية على مدار العام.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <h3>منح ومساعدات</h3>
+          <p>برامج منح دراسية للطلاب المتفوقين ومحفظي القرآن والفئات المستحقة.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>إرشاد أكاديمي</h3>
+          <p>مرشد أكاديمي لكل طالب لمتابعة مساره الدراسي وتقديم الدعم المستمر.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+          <h3>مختبرات متقدمة</h3>
+          <p>مختبرات مجهزة بأحدث التقنيات في الهندسة والطب والذكاء الاصطناعي.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"/></svg></div>
+          <h3>شراكات عالمية</h3>
+          <p>اتفاقيات تبادل طلابي وبحثي مع جامعات مرموقة في أوروبا وآسيا وأمريكا.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS PREVIEW -->
+  <div class="section bg-soft">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">آخر المستجدات</div>
+        <h2 class="sec-title">أخبار <span>وفعاليات</span> الجامعة</h2>
+        <p class="sec-desc">تابع أحدث الأنشطة والإنجازات والإعلانات الأكاديمية</p>
+      </div>
+      <div class="grid grid-3" id="homeNews"></div>
+      <div style="text-align:center;margin-top:44px">
+        <button class="btn btn-outline" data-page="news">
+          كل الأخبار
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="section">
+    <div class="container">
+      <div class="cta">
+        <h2>انضم إلى مجتمع جامعة الأفق</h2>
+        <p>باب القبول مفتوح الآن لجميع المراحل. ابدأ رحلتك الأكاديمية واحصل على فرص لا محدودة للنمو والتميز.</p>
+        <div class="cta-btns">
+          <button class="btn btn-gold" data-page="admissions">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            تقدّم بطلبك الآن
+          </button>
+          <button class="btn btn-ghost-light" data-page="contact">تواصل مع القبول</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================================================================
+     PAGE: ABOUT
+=================================================================== -->
+<section class="page" id="about">
+  <div class="page-head">
+    <div class="container">
+      <h1>عن جامعة الأفق</h1>
+      <p>ثلاثة عقود من الريادة في التعليم العالي والبحث العلمي وخدمة المجتمع</p>
+      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>عن الجامعة</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="split">
+        <div>
+          <div class="eyebrow">قصتنا</div>
+          <h2 class="sec-title">من فكرة طموحة إلى <span>صرح أكاديمي</span></h2>
+          <p style="color:var(--muted);font-size:16.5px;margin-bottom:16px">
+            انطلقت جامعة الأفق عام 1995 بثلاث كليات فقط وعدد محدود من الطلاب،
+            لتتحول اليوم إلى واحدة من أبرز المؤسسات التعليمية في المنطقة، تضم
+            ثماني كليات ومراكز بحثية متخصصة، وتخرّج آلاف الكفاءات التي تشغل
+            مواقع قيادية في مختلف القطاعات.
+          </p>
+          <p style="color:var(--muted);font-size:16.5px">
+            واصلت الجامعة تطوير برامجها الأكاديمية وبنيتها التحتية لتواكب
+            التحولات التقنية والاقتصادية، مع الحفاظ على قيمها الأصيلة ورسالتها
+            في خدمة المجتمع وإنتاج المعرفة.
+          </p>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 1995 — تأسيس الجامعة بثلاث كليات</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 2006 — افتتاح كلية الطب والعلوم الصحية</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 2015 — الحصول على الاعتماد الدولي الشامل</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> 2023 — إطلاق مركز الذكاء الاصطناعي والابتكار</li>
+          </ul>
+        </div>
+        <div class="visual">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6M9 11h.01M15 11h.01"/>
+          </svg>
+          <div class="visual-badge">
+            <b>8</b>
+            <span>كليات ومراكز بحثية متخصصة داخل الحرم الجامعي</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section bg-white">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">هويتنا</div>
+        <h2 class="sec-title">الرؤية والرسالة <span>والقيم</span></h2>
+      </div>
+      <div class="grid grid-3">
+        <div class="vm-card">
+          <div class="num">01</div>
+          <h3>رؤيتنا</h3>
+          <p>أن نكون جامعة رائدة عالمياً في التعليم والبحث العلمي والابتكار، ومساهماً فاعلاً في بناء اقتصاد المعرفة وتحقيق التنمية المستدامة.</p>
+        </div>
+        <div class="vm-card">
+          <div class="num">02</div>
+          <h3>رسالتنا</h3>
+          <p>تقديم تعليم جامعي نوعي وفق أفضل المعايير العالمية، وإنتاج بحث علمي مؤثر، وبناء شراكات مجتمعية تسهم في خدمة الوطن والإنسانية.</p>
+        </div>
+        <div class="vm-card">
+          <div class="num">03</div>
+          <h3>قيمنا</h3>
+          <p>الإتقان، النزاهة، الشفافية، العمل الجماعي، الإبداع، احترام التنوع، والمسؤولية المجتمعية في جميع أعمالنا وقراراتنا.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">القيادة</div>
+        <h2 class="sec-title">كلمة <span>مدير الجامعة</span></h2>
+      </div>
+      <div class="split">
+        <div class="visual" style="min-height:380px">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>
+          </svg>
+          <div class="visual-badge">
+            <div>
+              <b style="font-size:20px">أ.د. عبدالله بن محمد الحربي</b>
+              <span>مدير جامعة الأفق</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:17px;color:#33443f;line-height:2;margin-bottom:20px">
+            «في جامعة الأفق، نؤمن بأن التعليم ليس مجرد شهادة، بل رحلة متكاملة
+            لبناء الإنسان وصقل مهاراته. نعمل على تهيئة بيئة أكاديمية محفزة
+            تجمع بين الأصالة والابتكار، وتمكّن طلابنا من المنافسة محلياً
+            وعالمياً.»
+          </p>
+          <p style="font-size:17px;color:#33443f;line-height:2">
+            «نستثمر في البحث العلمي والشراكات الدولية والتحول الرقمي، لنقدم
+            تجربة جامعية استثنائية تخرج كفاءات قادرة على قيادة التغيير
+            وخدمة مجتمعها بتميز واقتدار.»
+          </p>
+          <div style="margin-top:30px;display:flex;gap:14px;flex-wrap:wrap">
+            <button class="btn btn-primary" data-page="contact">تواصل مع الإدارة</button>
+            <button class="btn btn-outline" data-page="colleges">استكشف الكليات</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat"><b class="count" data-target="30" data-suffix="+">0</b><span>عاماً من العطاء</span></div>
+        <div class="stat"><b class="count" data-target="65" data-suffix="+">0</b><span>ألف خريج وخريجة</span></div>
+        <div class="stat"><b class="count" data-target="45">0</b><span>شراكة دولية</span></div>
+        <div class="stat"><b class="count" data-target="1200" data-suffix="+">0</b><span>بحث علمي منشور</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section bg-white">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">الجودة</div>
+        <h2 class="sec-title">الاعتمادات <span>والجوائز</span></h2>
+      </div>
+      <div class="grid grid-4">
+        <div class="card" style="text-align:center">
+          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
+          <h3>الاعتماد المؤسسي</h3>
+          <p>اعتماد كامل لجميع البرامج الأكاديمية</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5"/></svg></div>
+          <h3>تصنيف QS</h3>
+          <p>ضمن أفضل 500 جامعة عالمياً</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <h3>جائزة التميز</h3>
+          <p>جائزة التميز في التعليم الجامعي</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <div class="card-icon" style="margin-inline:auto"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+          <h3>مركز الابتكار</h3>
+          <p>معتمد كحاضنة أعمال جامعية</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================
+     PAGE: COLLEGES
+=================================================================== -->
+<section class="page" id="colleges">
+  <div class="page-head">
+    <div class="container">
+      <h1>الكليات والبرامج</h1>
+      <p>ثماني كليات تقدم أكثر من 180 برنامجاً أكاديمياً في مراحل البكالوريوس والدراسات العليا</p>
+      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>الكليات</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="filters" id="collegeFilters">
+        <button class="chip active" data-filter="all">جميع الكليات</button>
+        <button class="chip" data-filter="health">الكليات الصحية</button>
+        <button class="chip" data-filter="eng">الهندسة والتقنية</button>
+        <button class="chip" data-filter="biz">الأعمال والعلوم</button>
+        <button class="chip" data-filter="hum">الإنسانية والتربوية</button>
+      </div>
+      <div class="grid grid-3" id="collegesGrid"></div>
+    </div>
+  </div>
+
+  <div class="section bg-white">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">معلومات سريعة</div>
+        <h2 class="sec-title">نظرة عامة على <span>الكليات</span></h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الكلية</th>
+              <th>عدد الأقسام</th>
+              <th>الدرجات الممنوحة</th>
+              <th>مدة الدراسة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>كلية الطب والعلوم الصحية</td><td>6</td><td>بكالوريوس / ماجستير / دكتوراه</td><td>6 سنوات + سنة امتياز</td></tr>
+            <tr><td>كلية الهندسة</td><td>5</td><td>بكالوريوس / ماجستير</td><td>5 سنوات</td></tr>
+            <tr><td>كلية علوم الحاسب والذكاء الاصطناعي</td><td>4</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
+            <tr><td>كلية إدارة الأعمال</td><td>5</td><td>بكالوريوس / ماجستير / دكتوراه</td><td>4 سنوات</td></tr>
+            <tr><td>كلية العلوم</td><td>4</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
+            <tr><td>كلية الآداب والعلوم الإنسانية</td><td>5</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
+            <tr><td>كلية التربية</td><td>4</td><td>بكالوريوس / ماجستير / دكتوراه</td><td>4 سنوات</td></tr>
+            <tr><td>كلية الشريعة والدراسات الإسلامية</td><td>3</td><td>بكالوريوس / ماجستير</td><td>4 سنوات</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="cta">
+        <h2>لم تجد تخصصك المناسب؟</h2>
+        <p>تواصل مع فريق الإرشاد الأكاديمي لمساعدتك في اختيار التخصص الأنسب لطموحك وقدراتك.</p>
+        <div class="cta-btns">
+          <button class="btn btn-gold" data-page="contact">تحدث مع مرشد أكاديمي</button>
+          <button class="btn btn-ghost-light" data-page="admissions">دليل القبول</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================
+     PAGE: ADMISSIONS
+=================================================================== -->
+<section class="page" id="admissions">
+  <div class="page-head">
+    <div class="container">
+      <h1>القبول والتسجيل</h1>
+      <p>كل ما تحتاجه للانضمام إلى جامعة الأفق — الشروط، المواعيد، وخطوات التقديم</p>
+      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>القبول والتسجيل</span></div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="section">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">خطوات التقديم</div>
+        <h2 class="sec-title">كيف <span>تقدّم</span> على الجامعة؟</h2>
+        <p class="sec-desc">ست خطوات واضحة من إنشاء الحساب حتى التسجيل النهائي</p>
+      </div>
+      <div class="grid grid-2">
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div><h4>إنشاء حساب في بوابة القبول</h4><p>سجّل بياناتك الأساسية عبر البوابة الإلكترونية واحصل على رقم طلبك.</p></div></div>
+          <div class="step"><div class="step-num">2</div><div><h4>تعبئة طلب الالتحاق</h4><p>اختر الكلية والتخصص المطلوب وأدخل بياناتك الأكاديمية بدقة.</p></div></div>
+          <div class="step"><div class="step-num">3</div><div><h4>رفع المستندات المطلوبة</h4><p>أرفق صورة الهوية، شهادة الثانوية، ونتائج الاختبارات المطلوبة.</p></div></div>
+          <div class="step"><div class="step-num">4</div><div><h4>سدّاد رسوم التقديم</h4><p>ادفع رسوم التقديم (200 ريال) إلكترونياً عبر نظام سداد.</p></div></div>
+          <div class="step"><div class="step-num">5</div><div><h4>المفاضلة والترشيح</h4><p>يتم ترتيب المتقدمين حسب النسبة الموزونة وإعلان النتائج.</p></div></div>
+          <div class="step"><div class="step-num">6</div><div><h4>التسجيل النهائي</h4><p>أكمل إجراءات التسجيل واستلم الرقم الجامعي والجدول الدراسي.</p></div></div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:24px">
+            <h3 style="margin-bottom:18px">شروط القبول — البكالوريوس</h3>
+            <ul class="check-list" style="margin:0">
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> شهادة الثانوية العامة بنسبة لا تقل عن 70%</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> اختبار القدرات العامة (قياس) بنسبة 25%</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> الاختبار التحصيلي بنسبة 25%</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> النسبة الموزونة: 50% ثانوية + 25% قدرات + 25% تحصيلي</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> اجتياز المقابلة الشخصية والفحص الطبي للكليات الصحية</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> شهادة حسن سيرة وسلوك</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:18px">المستندات المطلوبة</h3>
+            <ul class="check-list" style="margin:0">
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> صورة واضحة من الهوية الوطنية / الإقامة</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> أصل شهادة الثانوية أو صورة مصدقة</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> كشف درجات الثانوية المفصّل</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> صورة شخصية حديثة بخلفية بيضاء</li>
+              <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> نتيجة اختبار القدرات والتحصيلي</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DATES -->
+  <div class="section bg-white">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">التقويم</div>
+        <h2 class="sec-title">مواعيد <span>القبول</span> للعام الجامعي</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>المرحلة</th><th>التاريخ</th><th>الملاحظات</th><th>الحالة</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>فتح باب التقديم</td><td>1 رجب 1447هـ</td><td>عبر البوابة الإلكترونية</td><td><span class="status">مفتوح</span></td></tr>
+            <tr><td>إغلاق باب التقديم</td><td>25 رجب 1447هـ</td><td>لا يُقبل أي طلب بعد هذا التاريخ</td><td><span class="status warn">قريباً</span></td></tr>
+            <tr><td>اختبارات القبول والمقابلات</td><td>28 رجب — 3 شعبان</td><td>للكليات الصحية والهندسية</td><td><span class="status warn">قريباً</span></td></tr>
+            <tr><td>إعلان نتائج الترشيح</td><td>5 شعبان 1447هـ</td><td>عبر البوابة والرسائل النصية</td><td><span class="status warn">قريباً</span></td></tr>
+            <tr><td>تأكيد القبول وسداد الرسوم</td><td>6 — 12 شعبان</td><td>إلكترونياً عبر نظام سداد</td><td><span class="status warn">قريباً</span></td></tr>
+            <tr><td>بدء الدراسة</td><td>1 رمضان 1447هـ</td><td>حسب الجدول الأكاديمي</td><td><span class="status warn">قريباً</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION FORM -->
+  <div class="section">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">طلب الالتحاق</div>
+        <h2 class="sec-title">قدّم <span>طلبك</span> إلكترونياً</h2>
+        <p class="sec-desc">عبّئ النموذج التالي وسيتواصل معك فريق القبول خلال 48 ساعة</p>
+      </div>
+
+      <div class="form-card" style="max-width:900px;margin-inline:auto">
+        <div class="alert" id="applyAlert">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+          <span>تم استلام طلبك بنجاح! سيتواصل معك فريق القبول خلال 48 ساعة.</span>
+        </div>
+
+        <form id="applyForm" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label>الاسم الأول <span class="req">*</span></label>
+              <input type="text" name="first" placeholder="أدخل الاسم الأول">
+              <span class="err">الرجاء إدخال الاسم الأول</span>
+            </div>
+            <div class="field">
+              <label>اسم العائلة <span class="req">*</span></label>
+              <input type="text" name="last" placeholder="أدخل اسم العائلة">
+              <span class="err">الرجاء إدخال اسم العائلة</span>
+            </div>
+            <div class="field">
+              <label>رقم الهوية / الإقامة <span class="req">*</span></label>
+              <input type="text" name="id" placeholder="10 أرقام" inputmode="numeric">
+              <span class="err">الرجاء إدخال رقم هوية صحيح (10 أرقام)</span>
+            </div>
+            <div class="field">
+              <label>رقم الجوال <span class="req">*</span></label>
+              <input type="tel" name="phone" placeholder="05xxxxxxxx" inputmode="numeric">
+              <span class="err">الرجاء إدخال رقم جوال صحيح يبدأ بـ 05</span>
+            </div>
+            <div class="field">
+              <label>البريد الإلكتروني <span class="req">*</span></label>
+              <input type="email" name="email" placeholder="example@email.com">
+              <span class="err">الرجاء إدخال بريد إلكتروني صحيح</span>
+            </div>
+            <div class="field">
+              <label>تاريخ الميلاد</label>
+              <input type="date" name="dob">
+              <span class="err"></span>
+            </div>
+            <div class="field">
+              <label>الكلية المرغوبة <span class="req">*</span></label>
+              <select name="college">
+                <option value="">— اختر الكلية —</option>
+                <option>كلية الطب والعلوم الصحية</option>
+                <option>كلية الهندسة</option>
+                <option>كلية علوم الحاسب والذكاء الاصطناعي</option>
+                <option>كلية إدارة الأعمال</option>
+                <option>كلية العلوم</option>
+                <option>كلية الآداب والعلوم الإنسانية</option>
+                <option>كلية التربية</option>
+                <option>كلية الشريعة والدراسات الإسلامية</option>
+              </select>
+              <span class="err">الرجاء اختيار الكلية</span>
+            </div>
+            <div class="field">
+              <label>نسبة الثانوية العامة (%) <span class="req">*</span></label>
+              <input type="number" name="gpa" placeholder="مثال: 92" min="0" max="100">
+              <span class="err">الرجاء إدخال نسبة صحيحة بين 0 و 100</span>
+            </div>
+            <div class="field full">
+              <label>ملاحظات إضافية</label>
+              <textarea name="notes" placeholder="أي معلومات إضافية ترغب في إضافتها..."></textarea>
+            </div>
+            <div class="field full" style="flex-direction:row;align-items:center;gap:12px">
+              <input type="checkbox" id="terms" style="width:20px;height:20px;accent-color:var(--green)">
+              <label for="terms" style="font-weight:600;font-size:14.5px;cursor:pointer">
+                أقرّ بصحة جميع البيانات المدخلة وأوافق على شروط وأحكام القبول
+              </label>
+            </div>
+          </div>
+          <div style="margin-top:26px;display:flex;gap:12px;flex-wrap:wrap">
+            <button type="submit" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 2-7 20-4-9-9-4z"/></svg>
+              إرسال الطلب
+            </button>
+            <button type="reset" class="btn btn-outline">إعادة تعيين</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section bg-white">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">الأسئلة الشائعة</div>
+        <h2 class="sec-title">أجوبة <span>لأكثر</span> ما يُسأل عنه</h2>
+      </div>
+      <div style="max-width:840px;margin-inline:auto">
+        <div class="acc">
+          <div class="acc-head">ما هي النسبة الموزونة المطلوبة للقبول؟ <span class="plus">+</span></div>
+          <div class="acc-body"><p>تُحسب النسبة الموزونة بواقع 50% لشهادة الثانوية العامة، و25% لاختبار القدرات العامة، و25% للاختبار التحصيلي. وتختلف النسبة المطلوبة من كلية لأخرى حسب التنافسية.</p></div>
+        </div>
+        <div class="acc">
+          <div class="acc-head">هل توجد منح دراسية؟ <span class="plus">+</span></div>
+          <div class="acc-body"><p>نعم، تقدم الجامعة منحاً جزئية وكاملة للطلاب المتفوقين علمياً، ولحفظة القرآن الكريم، وللفئات المستحقة اجتماعياً. يتم الإعلان عن المنح قبل بداية كل فصل دراسي.</p></div>
+        </div>
+        <div class="acc">
+          <div class="acc-head">هل يمكنني تغيير التخصص بعد القبول؟ <span class="plus">+</span></div>
+          <div class="acc-body"><p>نعم، يُسمح بطلب تغيير التخصص بعد إكمال فصلين دراسيين على الأقل، بشرط استيفاء شروط التخصص الجديد وتحقيق المعدل المطلوب، وموافقة عمادة القبول والتسجيل.</p></div>
+        </div>
+        <div class="acc">
+          <div class="acc-head">هل الدراسة حضورية أم عن بُعد؟ <span class="plus">+</span></div>
+          <div class="acc-body"><p>الدراسة حضورية في الحرم الجامعي لجميع البرامج، مع إتاحة بعض المقررات العامة بنظام التعليم المدمج وفقاً لسياسات الجامعة.</p></div>
+        </div>
+        <div class="acc">
+          <div class="acc-head">ما هي رسوم الدراسة؟ <span class="plus">+</span></div>
+          <div class="acc-body"><p>تختلف الرسوم حسب الكلية والبرنامج. تبدأ من 25,000 ريال سنوياً للبرامج النظرية، وتصل إلى 75,000 ريال للبرامج الصحية. يمكن تقسيط الرسوم على دفعتين أو ثلاث دفعات.</p></div>
+        </div>
+        <div class="acc">
+          <div class="acc-head">هل توفر الجامعة سكناً طلابياً؟ <span class="plus">+</span></div>
+          <div class="acc-body"><p>نعم، توفر الجامعة سكناً طلابياً مجهزاً بالكامل للطلاب والطالبات، مع خدمات النقل والإنترنت والمرافق الرياضية والترفيهية، وذلك وفق شروط وأولوية التسجيل.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================
+     PAGE: SERVICES
+=================================================================== -->
+<section class="page" id="services">
+  <div class="page-head">
+    <div class="container">
+      <h1>الخدمات الإلكترونية</h1>
+      <p>منظومة رقمية متكاملة تخدم الطلاب وأعضاء هيئة التدريس والموظفين على مدار الساعة</p>
+      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>الخدمات الإلكترونية</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">الخدمات</div>
+        <h2 class="sec-title">كل ما تحتاجه <span>في مكان واحد</span></h2>
+        <p class="sec-desc">اضغط على أي خدمة للوصول إليها مباشرة</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div><h4>البوابة الأكاديمية</h4><p>الدرجات، الجدول الدراسي، التسجيل والحذف</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></div>
+          <div><h4>البريد الجامعي</h4><p>حساب بريد رسمي بسعة تخزين كبيرة</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+          <div><h4>المكتبة الرقمية</h4><p>أكثر من 120 ألف مصدر ومرجع إلكتروني</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+          <div><h4>نظام سداد الرسوم</h4><p>سداد الرسوم الدراسية إلكترونياً</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div><h4>الجدول الدراسي</h4><p>استعراض الجدول ومواعيد الاختبارات</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h3"/></svg></div>
+          <div><h4>طلب وثيقة تخرج</h4><p>إصدار الشهادات والسجلات الأكاديمية</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg></div>
+          <div><h4>الدعم الفني</h4><p>مساعدة تقنية على مدار الساعة</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v6M16 6v6M2 12h20M5 18h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2z"/></svg></div>
+          <div><h4>النقل الجامعي</h4><p>حجز مقعد وخطوط سير متعددة</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div>
+          <div><h4>السكن الطلابي</h4><p>تقديم طلب السكن والمرافق</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <div><h4>التدريب التعاوني</h4><p>التسجيل في برامج التدريب الميداني</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.5 13.5 17 22l-5-3-5 3 1.5-8.5"/></svg></div>
+          <div><h4>المنح الدراسية</h4><p>التقديم على المنح والمساعدات</p></div>
+        </div>
+        <div class="service">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+          <div><h4>الأنشطة الطلابية</h4><p>التسجيل في الأندية والبرامج</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="section bg-white">
+    <div class="container">
+      <div class="split" style="align-items:center">
+        <div>
+          <div class="eyebrow">بوابة الدخول</div>
+          <h2 class="sec-title">سجّل دخولك إلى <span>النظام الأكاديمي</span></h2>
+          <p style="color:var(--muted);font-size:16.5px;margin-bottom:22px">
+            استخدم الرقم الجامعي وكلمة المرور للوصول إلى جميع الخدمات الإلكترونية
+            من أي جهاز وفي أي وقت. في حال نسيت كلمة المرور يمكنك استعادتها
+            عبر البريد الجامعي.
+          </p>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> دخول آمن بتشفير كامل للبيانات</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> متاح على الجوال والحاسب</li>
+            <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> إشعارات فورية بالدرجات والمواعيد</li>
+          </ul>
+        </div>
+        <div class="form-card">
+          <div class="alert" id="loginAlert">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+            <span>تم تسجيل الدخول بنجاح (عرض توضيحي).</span>
+          </div>
+          <h3 style="margin-bottom:22px;font-size:21px">دخول البوابة الأكاديمية</h3>
+          <form id="loginForm" novalidate>
+            <div class="field" style="margin-bottom:18px">
+              <label>الرقم الجامعي / الهوية</label>
+              <input type="text" name="uid" placeholder="مثال: 202412345">
+              <span class="err">الرجاء إدخال الرقم الجامعي</span>
+            </div>
+            <div class="field" style="margin-bottom:22px">
+              <label>كلمة المرور</label>
+              <input type="password" name="pwd" placeholder="••••••••">
+              <span class="err">كلمة المرور يجب ألا تقل عن 6 أحرف</span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+              تسجيل الدخول
+            </button>
+            <div style="text-align:center;margin-top:16px;font-size:14px">
+              <a style="color:var(--green);font-weight:700;cursor:pointer">نسيت كلمة المرور؟</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================
+     PAGE: NEWS
+=================================================================== -->
+<section class="page" id="news">
+  <div class="page-head">
+    <div class="container">
+      <h1>الأخبار والفعاليات</h1>
+      <p>تابع آخر مستجدات جامعة الأفق من إنجازات وأنشطة وإعلانات أكاديمية</p>
+      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>الأخبار والفعاليات</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="filters" id="newsFilters">
+        <button class="chip active" data-filter="all">الكل</button>
+        <button class="chip" data-filter="academic">أكاديمي</button>
+        <button class="chip" data-filter="research">بحث علمي</button>
+        <button class="chip" data-filter="events">فعاليات</button>
+        <button class="chip" data-filter="partners">شراكات</button>
+      </div>
+      <div class="grid grid-3" id="newsGrid"></div>
+    </div>
+  </div>
+
+  <div class="section bg-white">
+    <div class="container">
+      <div class="sec-head">
+        <div class="eyebrow">التقويم</div>
+        <h2 class="sec-title">الفعاليات <span>القادمة</span></h2>
+      </div>
+      <div class="grid" style="gap:16px">
+        <div class="event">
+          <div class="event-date"><b>12</b><span>رجب</span></div>
+          <div class="event-info">
+            <h4>معرض التوظيف السنوي 2026</h4>
+            <p>أكثر من 80 شركة ومؤسسة وطنية تشارك بعروض وظيفية وتدريبية لخريجي الجامعة.</p>
+            <div class="meta">
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 9:00 ص — 4:00 م</span>
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> قاعة المؤتمرات الكبرى</span>
+            </div>
+          </div>
+        </div>
+        <div class="event">
+          <div class="event-date"><b>20</b><span>رجب</span></div>
+          <div class="event-info">
+            <h4>المؤتمر الدولي للذكاء الاصطناعي وتطبيقاته</h4>
+            <p>يستضيف نخبة من الباحثين والخبراء العالميين لمناقشة أحدث تطورات الذكاء الاصطناعي.</p>
+            <div class="meta">
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 8:30 ص — 5:00 م</span>
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> مركز الابتكار</span>
+            </div>
+          </div>
+        </div>
+        <div class="event">
+          <div class="event-date"><b>3</b><span>شعبان</span></div>
+          <div class="event-info">
+            <h4>أسبوع البحث العلمي</h4>
+            <p>عرض مشاريع التخرج وأوراق بحثية لطلاب الدراسات العليا مع جلسات نقاش متخصصة.</p>
+            <div class="meta">
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> طوال الأسبوع</span>
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> مبنى الكليات العلمية</span>
+            </div>
+          </div>
+        </div>
+        <div class="event">
+          <div class="event-date"><b>15</b><span>شعبان</span></div>
+          <div class="event-info">
+            <h4>يوم المهنة والإرشاد الوظيفي</h4>
+            <p>ورش عمل في كتابة السيرة الذاتية ومهارات المقابلات الشخصية مع مرشدين مهنيين.</p>
+            <div class="meta">
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> 10:00 ص — 3:00 م</span>
+              <span><svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> قاعة النخبة</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="cta">
+        <h2>اشترك في النشرة الإخبارية</h2>
+        <p>كن أول من يعرف بأخبار الجامعة والفعاليات والمواعيد الأكاديمية المهمة.</p>
+        <div class="newsletter" style="max-width:480px;margin-inline:auto">
+          <input type="email" placeholder="بريدك الإلكتروني" id="newsEmail">
+          <button type="button" onclick="subscribeNews(event)">اشترك</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================================
+     PAGE: CONTACT
+=================================================================== -->
+<section class="page" id="contact">
+  <div class="page-head">
+    <div class="container">
+      <h1>تواصل معنا</h1>
+      <p>فريقنا جاهز للإجابة على استفساراتك ومساعدتك في كل ما يتعلق بالقبول والدراسة</p>
+      <div class="breadcrumb"><a data-page="home">الرئيسية</a> / <span>تواصل معنا</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="grid grid-4" style="margin-bottom:56px">
+        <div class="contact-item">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><b>العنوان</b><span>طريق الملك عبدالله، حي الجامعة، الرياض 12345، المملكة العربية السعودية</span></div>
+        </div>
+        <div class="contact-item">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div><b>الهاتف</b><span>920001234<br>011 456 7890</span></div>
+        </div>
+        <div class="contact-item">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22 6-10 7L2 6"/></svg></div>
+          <div><b>البريد الإلكتروني</b><span>info@ufuq.edu.sa<br>admission@ufuq.edu.sa</span></div>
+        </div>
+        <div class="contact-item">
+          <div class="ic"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><b>ساعات العمل</b><span>الأحد — الخميس<br>8:00 ص — 4:00 م</span></div>
+        </div>
+      </div>
+
+      <div class="split" style="align-items:flex-start">
+        <div class="form-card">
+          <div class="alert" id="contactAlert">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+            <span>تم إرسال رسالتك بنجاح! سنرد عليك في أقرب وقت.</span>
+          </div>
+          <h3 style="margin-bottom:8px;font-size:22px">أرسل لنا رسالة</h3>
+          <p style="color:var(--muted);font-size:14.5px;margin-bottom:26px">سنقوم بالرد على استفسارك خلال 24 ساعة عمل</p>
+          <form id="contactForm" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label>الاسم الكامل <span class="req">*</span></label>
+                <input type="text" name="name" placeholder="أدخل اسمك">
+                <span class="err">الرجاء إدخال الاسم</span>
+              </div>
+              <div class="field">
+                <label>رقم الجوال <span class="req">*</span></label>
+                <input type="tel" name="phone" placeholder="05xxxxxxxx">
+                <span class="err">الرجاء إدخال رقم جوال صحيح</span>
+              </div>
+              <div class="field full">
+                <label>البريد الإلكتروني <span class="req">*</span></label>
+                <input type="email" name="email" placeholder="example@email.com">
+                <span class="err">الرجاء إدخال بريد إلكتروني صحيح</span>
+              </div>
+              <div class="field full">
+                <label>الموضوع <span class="req">*</span></label>
+                <select name="subject">
+                  <option value="">— اختر الموضوع —</option>
+                  <option>استفسار عن القبول</option>
+                  <option>استفسار عن البرامج الأكاديمية</option>
+                  <option>الرسوم والمنح الدراسية</option>
+                  <option>الخدمات الإلكترونية</option>
+                  <option>شكوى أو اقتراح</option>
+                  <option>أخرى</option>
+                </select>
+                <span class="err">الرجاء اختيار الموضوع</span>
+              </div>
+              <div class="field full">
+                <label>الرسالة <span class="req">*</span></label>
+                <textarea name="message" placeholder="اكتب رسالتك هنا..."></textarea>
+                <span class="err">الرجاء كتابة رسالة (10 أحرف على الأقل)</span>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:24px">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m22 2-7 20-4-9-9-4z"/></svg>
+              إرسال الرسالة
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <div class="map-box">
+            <div class="pin">
+              <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <b>جامعة الأفق — الحرم الرئيسي</b>
+              <span>الرياض، المملكة العربية السعودية</span>
+            </div>
+          </div>
+          <div class="card" style="margin-top:24px">
+            <h3 style="font-size:18px;margin-bottom:16px">أرقام التواصل المباشر</h3>
+            <div style="display:grid;gap:14px">
+              <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)">
+                <span style="font-size:14.5px;color:var(--muted)">عمادة القبول والتسجيل</span>
+                <b style="color:var(--green);font-size:14.5px">011 456 7801</b>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)">
+                <span style="font-size:14.5px;color:var(--muted)">عمادة شؤون الطلاب</span>
+                <b style="color:var(--green);font-size:14.5px">011 456 7802</b>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding-bottom:12px;border-bottom:1px solid var(--line)">
+                <span style="font-size:14.5px;color:var(--muted)">الدعم الفني</span>
+                <b style="color:var(--green);font-size:14.5px">011 456 7803</b>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="font-size:14.5px;color:var(--muted)">العلاقات العامة</span>
+                <b style="color:var(--green);font-size:14.5px">011 456 7804</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <div class="logo-mark">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 22 8 12 13 2 8z" fill="#D4A537"/>
+              <path d="M6 10.5V16c0 2 2.7 3.6 6 3.6s6-1.6 6-3.6v-5.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <b>جامعة الأفق</b>
+            <small>AL-UFUQ UNIVERSITY</small>
+          </div>
+        </div>
+        <p>
+          جامعة رائدة تجمع بين الأصالة والابتكار، تسعى لبناء قادة المستقبل
+          وإنتاج المعرفة وخدمة المجتمع منذ عام 1995.
+        </p>
+        <div class="footer-social">
+          <a href="#" aria-label="تويتر"><svg viewBox="0 0 24 24"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7l-5.5-7.2L4.5 22H1.4l8.1-9.3L1 2h7.2l5 6.6L18.9 2z"/></svg></a>
+          <a href="#" aria-label="انستغرام"><svg viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zm0 3.1a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 0 0 0-13.4zm0 11a4.3 4.3 0 1 1 0-8.6 4.3 4.3 0 0 1 0 8.6zm6.9-11.3a1.6 1.6 0 1 1-3.2 0 1.6 1.6 0 0 1 3.2 0z"/></svg></a>
+          <a href="#" aria-label="لينكدإن"><svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.7-2 4 0 4.7 2.6 4.7 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.2 1.4-2.2 2.9V21H9z"/></svg></a>
+          <a href="#" aria-label="يوتيوب"><svg viewBox="0 0 24 24"><path d="M23 12s0-3.4-.4-5c-.2-.9-.9-1.6-1.8-1.8C19.2 5 12 5 12 5s-7.2 0-8.8.2c-.9.2-1.6.9-1.8 1.8C1 8.6 1 12 1 12s0 3.4.4 5c.2.9.9 1.6 1.8 1.8 1.6.2 8.8.2 8.8.2s7.2 0 8.8-.2c.9-.2 1.6-.9 1.8-1.8.4-1.6.4-5 .4-5zM9.7 15.2V8.8l5.7 3.2-5.7 3.2z"/></svg></a>
+        </div>
+      </div>
+
+      <div>
+        <h4>روابط سريعة</h4>
+        <ul>
+          <li><a data-page="home">الرئيسية</a></li>
+          <li><a data-page="about">عن الجامعة</a></li>
+          <li><a data-page="colleges">الكليات والبرامج</a></li>
+          <li><a data-page="admissions">القبول والتسجيل</a></li>
+          <li><a data-page="news">الأخبار والفعاليات</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>خدمات الطلاب</h4>
+        <ul>
+          <li><a data-page="services">البوابة الأكاديمية</a></li>
+          <li><a data-page="services">المكتبة الرقمية</a></li>
+          <li><a data-page="services">المنح الدراسية</a></li>
+          <li><a data-page="services">السكن الطلابي</a></li>
+          <li><a data-page="contact">الدعم الفني</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4>النشرة البريدية</h4>
+        <p>اشترك لتصلك آخر أخبار الجامعة والفعاليات والمواعيد المهمة.</p>
+        <div class="newsletter">
+          <input type="email" placeholder="بريدك الإلكتروني" id="footerEmail">
+          <button type="button" onclick="subscribeNews(event,'footerEmail')">اشترك</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 جامعة الأفق. جميع الحقوق محفوظة.</span>
+      <div class="links">
+        <a>سياسة الخصوصية</a>
+        <a>شروط الاستخدام</a>
+        <a>خريطة الموقع</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button class="to-top" id="toTop" aria-label="أعلى الصفحة">
+  <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+</button>
+
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+const colleges = [
+  { name:'كلية الطب والعلوم الصحية', cat:'health', icon:'med', deps:6, desc:'برامج طبية متقدمة في الطب البشري والعلوم الصحية والتخصصات المساندة.' },
+  { name:'كلية الهندسة', cat:'eng', icon:'eng', deps:5, desc:'تخصصات هندسية شاملة في المدني والكهربائي والميكانيكي والكيميائي.' },
+  { name:'كلية علوم الحاسب والذكاء الاصطناعي', cat:'eng', icon:'ai', deps:4, desc:'برامج حديثة في علوم الحاسب والذكاء الاصطناعي والأمن السيبراني.' },
+  { name:'كلية إدارة الأعمال', cat:'biz', icon:'biz', deps:5, desc:'تخصصات في المحاسبة والتمويل والتسويق وإدارة الموارد البشرية.' },
+  { name:'كلية العلوم', cat:'biz', icon:'sci', deps:4, desc:'أقسام الرياضيات والفيزياء والكيمياء والأحياء والعلوم البيئية.' },
+  { name:'كلية الآداب والعلوم الإنسانية', cat:'hum', icon:'art', deps:5, desc:'برامج في اللغة العربية والإنجليزية والتاريخ والجغرافيا والإعلام.' },
+  { name:'كلية التربية', cat:'hum', icon:'edu', deps:4, desc:'إعداد المعلمين والقيادات التربوية وبرامج الطفولة المبكرة.' },
+  { name:'كلية الشريعة والدراسات الإسلامية', cat:'hum', icon:'isl', deps:3, desc:'دراسات في الفقه وأصوله والدراسات الإسلامية والعقيدة.' }
+];
+
+const icons = {
+  med:'<path d="M12 6v12M6 12h12"/><circle cx="12" cy="12" r="9"/>',
+  eng:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  ai:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9zM9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/>',
+  biz:'<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>',
+  sci:'<path d="M9 3h6M10 3v7L5 19a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 19l-5-9V3"/>',
+  art:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  edu:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+  isl:'<path d="M12 2 4 6v6c0 5 3.4 9.5 8 10 4.6-.5 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/>'
+};
+
+const news = [
+  { t:'بدء التسجيل للفصل الدراسي القادم لجميع المراحل', c:'academic', cat:'أكاديمي', d:'12', m:'رجب', v:'', p:'أعلنت عمادة القبول والتسجيل عن فتح باب التسجيل للفصل الدراسي القادم لجميع المراحل الدراسية عبر البوابة الإلكترونية.' },
+  { t:'جامعة الأفق تحقق المركز الأول في مسابقة الروبوتات الوطنية', c:'research', cat:'بحث علمي', d:'8', m:'رجب', v:'v2', p:'حقق فريق كلية الهندسة المركز الأول في المسابقة الوطنية للروبوتات بمشاركة أكثر من 40 جامعة.' },
+  { t:'توقيع اتفاقية تعاون أكاديمي مع جامعة دولية مرموقة', c:'partners', cat:'شراكات', d:'3', m:'رجب', v:'v3', p:'وقّعت الجامعة اتفاقية تعاون تشمل تبادل الطلاب وأعضاء هيئة التدريس والمشاريع البحثية المشتركة.' },
+  { t:'افتتاح مركز الابتكار وريادة الأعمال بحلته الجديدة', c:'events', cat:'فعاليات', d:'28', m:'جمادى', v:'v4', p:'افتتحت الجامعة مركز الابتكار المزود بأحدث التقنيات لدعم المشاريع الطلابية والشركات الناشئة.' },
+  { t:'حفل تخريج الدفعة الثلاثين من طلاب الجامعة', c:'events', cat:'فعاليات', d:'20', m:'جمادى', v:'', p:'احتفلت الجامعة بتخريج أكثر من 2400 طالب وطالبة من مختلف الكليات في حفل مهيب.' },
+  { t:'ورشة عمل عن الذكاء الاصطناعي في التعليم الجامعي', c:'academic', cat:'أكاديمي', d:'15', m:'جمادى', v:'v2', p:'نظمت كلية علوم الحاسب ورشة عمل متخصصة حول توظيف الذكاء الاصطناعي في تطوير العملية التعليمية.' },
+  { t:'حصول ثلاثة برامج أكاديمية على الاعتماد الدولي', c:'academic', cat:'أكاديمي', d:'9', m:'جمادى', v:'v3', p:'حصلت ثلاثة برامج في كليتي الهندسة وإدارة الأعمال على الاعتماد الدولي من هيئات معتمدة.' },
+  { t:'فريق طلابي يفوز بجائزة أفضل مشروع تقني مبتكر', c:'research', cat:'بحث علمي', d:'2', m:'جمادى', v:'v4', p:'فاز فريق من طلاب كلية علوم الحاسب بجائزة أفضل مشروع تقني في مسابقة الابتكار الإقليمية.' },
+  { t:'شراكة جديدة مع كبرى الشركات التقنية لتدريب الطلاب', c:'partners', cat:'شراكات', d:'25', m:'ربيع الآخر', v:'', p:'وقّعت الجامعة مذكرة تفاهم لتدريب طلاب السنوات الأخيرة وتوظيف المتميزين منهم.' }
+];
+
+/* ============================================================
+   RENDER HELPERS
+============================================================ */
+function collegeCard(c){
+  return `
+  <div class="college-card card" data-cat="${c.cat}">
+    <div class="college-top">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">${icons[c.icon]}</svg>
+    </div>
+    <div class="college-body">
+      <h3>${c.name}</h3>
+      <p>${c.desc}</p>
+      <div class="college-meta">
+        <span class="tag">${c.deps} أقسام</span>
+        <span class="tag gold">بكالوريوس</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function newsCard(n){
+  return `
+  <div class="news-card" data-cat="${n.c}">
+    <div class="news-img ${n.v}">
+      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+        <path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/>
+      </svg>
+      <div class="news-date"><b>${n.d}</b><span>${n.m}</span></div>
+    </div>
+    <div class="news-body">
+      <div class="cat">${n.cat}</div>
+      <h3>${n.t}</h3>
+      <p>${n.p}</p>
+      <div class="news-foot">
+        <span>جامعة الأفق</span>
+        <span style="color:var(--green);font-weight:700">اقرأ المزيد ←</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* Fill home previews */
+document.getElementById('homeColleges').innerHTML = colleges.slice(0,4).map(collegeCard).join('');
+document.getElementById('homeNews').innerHTML = news.slice(0,3).map(newsCard).join('');
+document.getElementById('collegesGrid').innerHTML = colleges.map(collegeCard).join('');
+document.getElementById('newsGrid').innerHTML = news.map(newsCard).join('');
+
+/* ============================================================
+   ROUTER
+============================================================ */
+const pages = document.querySelectorAll('.page');
+const nav = document.getElementById('nav');
+
+function navigate(id){
+  if(!document.getElementById(id)) id = 'home';
+  pages.forEach(p => p.classList.toggle('active', p.id === id));
+  document.querySelectorAll('.nav-link').forEach(a =>
+    a.classList.toggle('active', a.dataset.page === id)
+  );
+  nav.classList.remove('open');
+  document.getElementById('burger').classList.remove('open');
+  window.scrollTo({ top:0, behavior:'smooth' });
+  if(id === 'home') runCounters();
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-page]');
+  if(el){
+    e.preventDefault();
+    const id = el.dataset.page;
+    if(location.hash.slice(1) === id) navigate(id);
+    else location.hash = id;
+  }
+});
+
+window.addEventListener('hashchange', () => navigate(location.hash.slice(1) || 'home'));
+window.addEventListener('load', () => navigate(location.hash.slice(1) || 'home'));
+
+/* ============================================================
+   MOBILE MENU
+============================================================ */
+const burger = document.getElementById('burger');
+burger.addEventListener('click', () => {
+  nav.classList.toggle('open');
+  burger.classList.toggle('open');
+});
+
+/* ============================================================
+   HEADER SCROLL + TO TOP
+============================================================ */
+const header = document.getElementById('header');
+const toTop = document.getElementById('toTop');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  header.classList.toggle('scrolled', y > 10);
+  toTop.classList.toggle('show', y > 500);
+});
+toTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+/* ============================================================
+   COUNTERS
+============================================================ */
+let countersDone = false;
+function runCounters(){
+  if(countersDone) return;
+  const items = document.querySelectorAll('.page.active .count');
+  if(!items.length) return;
+  countersDone = true;
+  items.forEach(el => {
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix || '';
+    const dur = 1600;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+/* reset counter flag when returning to home so it can re-run if needed */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(en => { if(en.isIntersecting) runCounters(); });
+}, { threshold:0.3 });
+document.querySelectorAll('.stats-band').forEach(s => observer.observe(s));
+
+/* ============================================================
+   FILTERS
+============================================================ */
+function setupFilter(containerId, gridId, itemSelector){
+  const wrap = document.getElementById(containerId);
+  if(!wrap) return;
+  wrap.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    wrap.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const f = chip.dataset.filter;
+    document.querySelectorAll(`#${gridId} ${itemSelector}`).forEach(item => {
+      const show = f === 'all' || item.dataset.cat === f;
+      item.style.display = show ? '' : 'none';
+    });
+  });
+}
+setupFilter('collegeFilters', 'collegesGrid', '.college-card');
+setupFilter('newsFilters', 'newsGrid', '.news-card');
+
+/* ============================================================
+   ACCORDION
+============================================================ */
+document.querySelectorAll('.acc-head').forEach(head => {
+  head.addEventListener('click', () => {
+    const acc = head.parentElement;
+    const wasOpen = acc.classList.contains('open');
+    document.querySelectorAll('.acc').forEach(a => a.classList.remove('open'));
+    if(!wasOpen) acc.classList.add('open');
+  });
+});
+
+/* ============================================================
+   FORM VALIDATION
+============================================================ */
+const patterns = {
+  phone: /^05\d{8}$/,
+  id: /^\d{10}$/,
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+};
+
+function setState(field, ok){
+  field.classList.toggle('invalid', !ok);
+  return ok;
+}
+
+function validateField(input){
+  const field = input.closest('.field');
+  if(!field || !field.querySelector('.err')) return true;
+  const v = input.value.trim();
+  const n = input.name;
+
+  if(input.type === 'checkbox') return true;
+
+  if(n === 'id')       return setState(field, patterns.id.test(v));
+  if(n === 'phone')    return setState(field, patterns.phone.test(v.replace(/\s/g,'')));
+  if(n === 'email')    return setState(field, patterns.email.test(v));
+  if(n === 'uid')      return setState(field, v.length >= 6);
+  if(n === 'pwd')      return setState(field, v.length >= 6);
+  if(n === 'gpa')      return setState(field, v !== '' && +v >= 0 && +v <= 100);
+  if(n === 'message')  return setState(field, v.length >= 10);
+  if(n === 'dob')      return true;
+  return setState(field, v.length >= 2);
+}
+
+function attachValidation(formId, alertId, requiredNames){
+  const form = document.getElementById(formId);
+  if(!form) return;
+  const alertBox = document.getElementById(alertId);
+
+  form.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('blur', () => validateField(el));
+    el.addEventListener('input', () => {
+      const field = el.closest('.field');
+      if(field && field.classList.contains('invalid')) validateField(el);
+    });
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    let ok = true;
+    requiredNames.forEach(name => {
+      const el = form.querySelector(`[name="${name}"]`);
+      if(el && !validateField(el)) ok = false;
+    });
+
+    const terms = form.querySelector('#terms');
+    if(terms && !terms.checked){
+      ok = false;
+      terms.parentElement.style.color = '#c0392b';
+      setTimeout(() => terms.parentElement.style.color = '', 2500);
+    }
+
+    if(!ok){
+      const first = form.querySelector('.field.invalid input, .field.invalid select, .field.invalid textarea');
+      if(first) first.focus();
+      return;
+    }
+
+    alertBox.classList.add('show');
+    form.reset();
+    form.querySelectorAll('.field').forEach(f => f.classList.remove('invalid'));
+    alertBox.scrollIntoView({ behavior:'smooth', block:'center' });
+    setTimeout(() => alertBox.classList.remove('show'), 6000);
+  });
+
+  form.addEventListener('reset', () => {
+    form.querySelectorAll('.field').forEach(f => f.classList.remove('invalid'));
+    alertBox.classList.remove('show');
+  });
+}
+
+attachValidation('applyForm', 'applyAlert', ['first','last','id','phone','email','college','gpa']);
+attachValidation('contactForm', 'contactAlert', ['name','phone','email','subject','message']);
+attachValidation('loginForm', 'loginAlert', ['uid','pwd']);
+
+/* ============================================================
+   NEWSLETTER
+============================================================ */
+function subscribeNews(e, inputId = 'newsEmail'){
+  const btn = e.target;
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const val = input.value.trim();
+  if(!patterns.email.test(val)){
+    input.style.borderColor = '#e07a6d';
+    input.style.background = 'rgba(224,122,109,.12)';
+    input.focus();
+    setTimeout(() => {
+      input.style.borderColor = '';
+      input.style.background = '';
+    }, 2200);
+    return;
+  }
+  const original = btn.textContent;
+  btn.textContent = '✓ تم';
+  btn.style.background = '#1B7A4B';
+  btn.style.color = '#fff';
+  input.value = '';
+  setTimeout(() => {
+    btn.textContent = original;
+    btn.style.background = '';
+    btn.style.color = '';
+  }, 2600);
+}
+
+/* ============================================================
+   SMOOTH REVEAL ON SCROLL
+============================================================ */
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if(en.isIntersecting){
+      en.target.style.opacity = '1';
+      en.target.style.transform = 'translateY(0)';
+      revealObserver.unobserve(en.target);
+    }
+  });
+}, { threshold:0.08, rootMargin:'0px 0px -40px 0px' });
+
+function observeReveals(){
+  document.querySelectorAll('.page.active .card, .page.active .news-card, .page.active .service, .page.active .step, .page.active .event, .page.active .vm-card')
+    .forEach((el, i) => {
+      if(el.dataset.revealed) return;
+      el.dataset.revealed = '1';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(22px)';
+      el.style.transition = `opacity .55s ease ${Math.min(i * 45, 400)}ms, transform .55s ease ${Math.min(i * 45, 400)}ms`;
+      revealObserver.observe(el);
+    });
+}
+document.addEventListener('DOMContentLoaded', observeReveals);
+window.addEventListener('hashchange', () => setTimeout(observeReveals, 60));
+setTimeout(observeReveals, 300);
+
+/* ============================================================
+   KEYBOARD SHORTCUTS
+============================================================ */
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    nav.classList.remove('open');
+    burger.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

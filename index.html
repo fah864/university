@@ -1894,6 +1894,126 @@ init();
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
+/* ============================================================
+   ⚡ QUICK ADD SCHEDULE
+============================================================ */
+let qaItems = [];
+
+function minToTime(m){
+  return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+}
+
+function openQuickAdd(){
+  if(!state.courses.length){ toast('⚠️ أضف مقرراً أولاً'); go('courses'); return; }
+  qaItems = [];
+  openModal('⚡ إضافة سريعة للجدول', `
+    <div style="background:var(--p-light);padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:16px;line-height:1.7">
+      💡 اختر المقرر مرة واحدة، ثم أضف كل محاضراته بسرعة. الوقت يتقدم تلقائياً.
+    </div>
+    <div class="form-grid">
+      <div class="field full"><label>المقرر <span class="req">*</span></label>
+        <select id="qaCourse">${courseOptions()}</select></div>
+      <div class="field"><label>اليوم <span class="req">*</span></label>
+        <select id="qaDay">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></div>
+      <div class="field"><label>القاعة</label>
+        <input id="qaRoom" placeholder="اختياري"></div>
+      <div class="field"><label>من <span class="req">*</span></label>
+        <input type="time" id="qaStart" value="08:00"></div>
+      <div class="field"><label>إلى <span class="req">*</span></label>
+        <input type="time" id="qaEnd" value="09:30"></div>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="qaAdd()" style="margin-top:14px">➕ أضف واستمر</button>
+    <div id="qaList" style="margin-top:16px"></div>
+  `, `
+    <button class="btn btn-ghost" onclick="qaClose()">إلغاء</button>
+    <button class="btn btn-primary" onclick="qaSave()">💾 حفظ الكل</button>
+  `);
+  qaRender();
+}
+
+function qaAdd(){
+  const courseId = document.getElementById('qaCourse').value;
+  const day = +document.getElementById('qaDay').value;
+  const start = document.getElementById('qaStart').value;
+  const end = document.getElementById('qaEnd').value;
+  const room = document.getElementById('qaRoom').value.trim();
+  if(!courseId){ toast('⚠️ اختر المقرر'); return; }
+  if(!start || !end){ toast('⚠️ حدد الوقت'); return; }
+  if(toMin(end) <= toMin(start)){ toast('⚠️ وقت النهاية بعد البداية'); return; }
+
+  qaItems.push({ courseId, day, start, end, room });
+
+  // الوقت يتقدم تلقائياً بنفس المدة
+  const dur = toMin(end) - toMin(start);
+  const next = toMin(end);
+  document.getElementById('qaStart').value = minToTime(next);
+  document.getElementById('qaEnd').value = minToTime(next + dur);
+
+  qaRender();
+  toast('✅ تمت الإضافة');
+}
+
+function qaRender(){
+  const list = document.getElementById('qaList');
+  if(!list) return;
+  if(!qaItems.length){
+    list.innerHTML = `<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;background:var(--hover);border-radius:12px">لم تُضف أي محاضرة بعد</div>`;
+    return;
+  }
+  list.innerHTML = `<div style="font-size:13px;font-weight:800;margin-bottom:8px">📋 المضاف (${qaItems.length})</div>` +
+    qaItems.map((it,i) => `
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--hover);border-radius:11px;margin-bottom:6px">
+        <div style="width:9px;height:9px;border-radius:50%;background:${courseColor(it.courseId)};flex-shrink:0"></div>
+        <div style="flex:1;font-size:13px;line-height:1.5">
+          <b>${esc(courseName(it.courseId))}</b>
+          <div style="color:var(--muted);font-size:12px">${DAYS[it.day]} · ${it.start} - ${it.end}${it.room ? ' · ' + esc(it.room) : ''}</div>
+        </div>
+        <button class="mini-btn del" onclick="qaRemove(${i})">✕</button>
+      </div>
+    `).join('');
+}
+
+function qaRemove(i){ qaItems.splice(i,1); qaRender(); }
+
+function qaSave(){
+  if(!qaItems.length){ toast('⚠️ لم تُضف شي'); return; }
+  qaItems.forEach(it => state.schedule.push({ id: uid(), ...it }));
+  save();
+  const n = qaItems.length;
+  qaItems = [];
+  closeModal();
+  renderAll();
+  toast(`✅ تم حفظ ${n} محاضرة`);
+}
+
+function qaClose(){
+  if(qaItems.length && !confirm(`عندك ${qaItems.length} محاضرة لم تُحفظ. تبي تغلق؟`)) return;
+  qaItems = [];
+  closeModal();
+}
+
+// زر الإضافة السريعة في صفحة الجدول
+(function injectQA(){
+  const head = document.querySelector('#view-schedule .sec-head');
+  if(!head || document.getElementById('qaBtn')) return;
+  const existing = head.querySelector(':scope > button');
+  const btn = document.createElement('button');
+  btn.id = 'qaBtn';
+  btn.className = 'btn btn-ghost btn-sm';
+  btn.innerHTML = '⚡ إضافة سريعة';
+  btn.addEventListener('click', openQuickAdd);
+  if(existing){
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.gap = '8px';
+    wrap.style.flexWrap = 'wrap';
+    existing.parentNode.insertBefore(wrap, existing);
+    wrap.appendChild(existing);
+    wrap.appendChild(btn);
+  }else{
+    head.appendChild(btn);
+  }
+})();
 </script>
 </body>
 </html>

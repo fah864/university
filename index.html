@@ -2014,6 +2014,201 @@ function qaClose(){
     head.appendChild(btn);
   }
 })();
+
+/* ============================================================
+   📋 نظام الحضور والغياب
+============================================================ */
+const ATT_STATUS = {
+  present:  { label:'حاضر',           ico:'✅', color:'#059669', bg:'#d1fae5' },
+  excused:  { label:'غايب بعذر',      ico:'🟡', color:'#d97706', bg:'#fef3c7' },
+  absent:   { label:'غايب بدون عذر',  ico:'🔴', color:'#dc2626', bg:'#fee2e2' },
+  late:     { label:'متأخر',          ico:'⏰', color:'#7c3aed', bg:'#ede9fe' },
+  cancelled:{ label:'ملغي',           ico:'🚫', color:'#64748b', bg:'#e2e8f0' }
+};
+
+if(!state.attendance) state.attendance = [];
+
+// إضافة زر في القائمة الجانبية
+(function injectAttendanceNav(){
+  const nav = document.querySelector('.nav');
+  if(!nav || document.querySelector('[data-view="attendance"]')) return;
+  const btn = document.createElement('button');
+  btn.className = 'nav-btn';
+  btn.dataset.view = 'attendance';
+  btn.innerHTML = '<span class="ico">📋</span> الحضور والغياب';
+  btn.addEventListener('click', () => go('attendance'));
+  const ref = nav.querySelector('[data-view="exams"]');
+  if(ref) ref.after(btn); else nav.appendChild(btn);
+})();
+
+// إضافة صفحة
+(function injectAttendanceView(){
+  if(document.getElementById('view-attendance')) return;
+  const sec = document.createElement('section');
+  sec.className = 'view';
+  sec.id = 'view-attendance';
+  sec.innerHTML = `
+    <div class="sec-head">
+      <div><h2>📋 الحضور والغياب</h2><p id="attCount"></p></div>
+      <button class="btn btn-primary btn-sm" onclick="openAttForm()">➕ تسجيل حضور</button>
+    </div>
+    <div class="stats" id="attStats"></div>
+    <div class="filters" id="attFilters">
+      <button class="chip active" data-f="all">الكل</button>
+      <button class="chip" data-f="excused">🟡 بعذر</button>
+      <button class="chip" data-f="absent">🔴 بدون عذر</button>
+      <button class="chip" data-f="late">⏰ متأخر</button>
+      <button class="chip" data-f="cancelled">🚫 ملغي</button>
+    </div>
+    <div id="attList"></div>
+  `;
+  document.querySelector('.content').appendChild(sec);
+})();
+
+// تحديث بيانات القائمة الجانبية
+VIEW_META.attendance = ['الحضور والغياب','تابع غيابك وتأخيرك'];
+
+let attFilter = 'all';
+
+document.addEventListener('click', e => {
+  const c = e.target.closest('#attFilters .chip');
+  if(!c) return;
+  document.querySelectorAll('#attFilters .chip').forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  attFilter = c.dataset.f;
+  renderAttendance();
+});
+
+function openAttForm(id){
+  const a = id ? state.attendance.find(x => x.id === id) : null;
+  if(!state.schedule.length){ toast('⚠️ ما عندك محاضرات في الجدول'); go('schedule'); return; }
+
+  const sorted = state.schedule.slice().sort((x,y) => x.day - y.day || toMin(x.start) - toMin(y.start));
+  const classOpts = sorted.map(s => {
+    const c = getCourse(s.courseId);
+    const lbl = `${DAYS[s.day]} ${s.start}-${s.end} · ${courseName(s.courseId)}`;
+    return `<option value="${s.id}" ${a?.classId===s.id?'selected':''}>${esc(lbl)}</option>`;
+  }).join('');
+
+  const statusOpts = Object.entries(ATT_STATUS).map(([k,v]) =>
+    `<option value="${k}" ${a?.status===k?'selected':''}>${v.ico} ${v.label}</option>`
+  ).join('');
+
+  openModal(a ? 'تعديل سجل الحضور' : 'تسجيل حضور', `
+    <div class="form-grid">
+      <div class="field full"><label>المحاضرة <span class="req">*</span></label>
+        <select id="atClass">${classOpts}</select></div>
+      <div class="field"><label>التاريخ <span class="req">*</span></label>
+        <input type="date" id="atDate" value="${a?.date || todayISO()}"></div>
+      <div class="field"><label>الحالة <span class="req">*</span></label>
+        <select id="atStatus">${statusOpts}</select></div>
+      <div class="field full"><label>ملاحظة (اختياري)</label>
+        <textarea id="atNote" placeholder="سبب الغياب، عذر طبي...">${esc(a?.note||'')}</textarea></div>
+    </div>
+  `, `
+    ${a ? `<button class="btn btn-danger" onclick="deleteAtt('${id}')">🗑️</button>` : ''}
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveAtt('${id||''}')">💾 حفظ</button>
+  `);
+}
+
+function saveAtt(id){
+  const classId = document.getElementById('atClass').value;
+  const date = document.getElementById('atDate').value;
+  const status = document.getElementById('atStatus').value;
+  const note = document.getElementById('atNote').value.trim();
+  if(!date){ toast('⚠️ حدد التاريخ'); return; }
+  const data = { classId, date, status, note };
+  if(id){ Object.assign(state.attendance.find(x => x.id === id), data); }
+  else{ state.attendance.push({ id: uid(), ...data }); }
+  save(); closeModal(); renderAttendance(); renderDashboard(); toast('✅ تم الحفظ');
+}
+
+function deleteAtt(id){
+  if(!confirm('حذف هذا السجل؟')) return;
+  state.attendance = state.attendance.filter(x => x.id !== id);
+  save(); closeModal(); renderAttendance(); renderDashboard(); toast('🗑️ تم الحذف');
+}
+
+function renderAttendance(){
+  const stats = document.getElementById('attStats');
+  const list = document.getElementById('attList');
+  if(!stats) return;
+
+  const counts = { present:0, excused:0, absent:0, late:0, cancelled:0 };
+  state.attendance.forEach(a => counts[a.status] = (counts[a.status]||0) + 1);
+
+  document.getElementById('attCount').textContent = state.attendance.length
+    ? `${state.attendance.length} سجل حضور` : 'لا يوجد سجلات';
+
+  stats.innerHTML = [
+    { k:'excused', ico:'🟡', bg:'var(--warn-bg)' },
+    { k:'absent',  ico:'🔴', bg:'var(--danger-bg)' },
+    { k:'late',    ico:'⏰', bg:'#ede9fe' },
+    { k:'cancelled', ico:'🚫', bg:'var(--hover)' }
+  ].map(s => `
+    <div class="stat">
+      <div class="stat-ico" style="background:${s.bg}">${s.ico}</div>
+      <div><b>${counts[s.k]}</b><span>${ATT_STATUS[s.k].label}</span></div>
+    </div>
+  `).join('');
+
+  let arr = state.attendance.slice().sort((a,b) => b.date.localeCompare(a.date));
+  if(attFilter !== 'all') arr = arr.filter(a => a.status === attFilter);
+
+  if(!arr.length){
+    list.innerHTML = `<div class="empty">
+      <div class="e-ico">📋</div><b>لا توجد سجلات</b>
+      <p>سجّل حضورك بعد كل محاضرة</p>
+      <button class="btn btn-primary" onclick="openAttForm()">➕ تسجيل حضور</button>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = arr.map(a => {
+    const s = state.schedule.find(x => x.id === a.classId);
+    const st = ATT_STATUS[a.status] || ATT_STATUS.present;
+    const courseName_ = s ? courseName(s.courseId) : '—';
+    const cColor = s ? courseColor(s.courseId) : 'var(--muted)';
+    const timeStr = s ? `${DAYS[s.day]} ${s.start}-${s.end}` : '';
+    return `<div class="task">
+      <div style="width:36px;height:36px;border-radius:11px;background:${st.bg};color:${st.color};display:grid;place-items:center;font-size:17px;flex-shrink:0">${st.ico}</div>
+      <div class="task-main">
+        <div class="task-title">${esc(courseName_)}</div>
+        <div class="task-sub">
+          <span class="tag" style="background:${cColor}22;color:${cColor}">${timeStr}</span>
+          <span class="tag" style="background:${st.bg};color:${st.color}">${st.label}</span>
+          <span class="tag" style="background:var(--hover);color:var(--muted)">📅 ${fmtDate(a.date)}</span>
+        </div>
+        ${a.note ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px;background:var(--hover);padding:8px 10px;border-radius:9px">📝 ${esc(a.note)}</div>` : ''}
+      </div>
+      <div class="task-actions">
+        <button class="mini-btn" onclick="openAttForm('${a.id}')">✏️</button>
+        <button class="mini-btn del" onclick="deleteAtt('${a.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// إضافة زر حذف كل الملاحظات في الإعدادات
+(function addClearNotesBtn(){
+  const card = document.querySelector('#view-settings .card:last-child');
+  if(!card || document.getElementById('clearNotesBtn')) return;
+  const btn = document.createElement('button');
+  btn.id = 'clearNotesBtn';
+  btn.className = 'btn btn-danger btn-block';
+  btn.style.marginTop = '10px';
+  btn.textContent = '🗑️ حذف كل الملاحظات';
+  btn.onclick = () => {
+    if(!state.notes.length){ toast('ما عندك ملاحظات'); return; }
+    if(!confirm(`سيتم حذف ${state.notes.length} ملاحظة. متأكد؟`)) return;
+    state.notes = []; save(); renderNotes(); toast('🗑️ تم حذف الملاحظات');
+  };
+  card.querySelector('div[style*="flex-direction"]').appendChild(btn);
+})();
+
+// استدعاء أول مرة
+setTimeout(renderAttendance, 400);
 </script>
 </body>
 </html>

@@ -393,7 +393,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
 /* ============ القائمة الجانبية القابلة للطي ============ */
 .nav-group { margin-bottom: 4px; }
-
 .nav-group-title {
   font-size: 11.5px;
   color: var(--text);
@@ -437,7 +436,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
 /* ارتفاع القائمة على الجوال */
 .sidebar { height: 100vh; height: 100dvh; }
-  
+
 /* ============ RESPONSIVE ============ */
 @media(max-width:980px){
   .sidebar{
@@ -484,6 +483,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .ring-txt b{font-size:38px}
   .fab{bottom:20px;left:20px;width:52px;height:52px}
 }
+
 /* ============ عدّاد الأسبوع ============ */
 .week-badge{
   display:inline-flex;
@@ -503,8 +503,29 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .week-badge.warn{ background:var(--warn-bg); color:var(--warn); }
 .week-badge.danger{ background:var(--danger-bg); color:var(--danger); }
 
+/* ============ مؤشر المزامنة ============ */
+.sync-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:8px 14px;
+  border-radius:11px;
+  font-size:13px;
+  font-weight:800;
+  background:var(--ok-bg);
+  color:var(--ok);
+  white-space:nowrap;
+  cursor:pointer;
+  transition:var(--t);
+}
+.sync-badge:hover{ transform:translateY(-2px); }
+.sync-badge.loading{ background:var(--warn-bg); color:var(--warn); }
+.sync-badge.error{ background:var(--danger-bg); color:var(--danger); }
+
 @media(max-width:640px){
   .week-badge{ font-size:11.5px; padding:6px 10px; }
+  .sync-badge{ font-size:11.5px; padding:6px 10px; }
+  .sync-badge span:not(#syncIcon){ display:none; }
 }
 </style>
 </head>
@@ -549,8 +570,12 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
+      <div class="sync-badge" id="syncBadge" title="حالة المزامنة">
+        <span id="syncIcon">☁️</span>
+        <span id="syncText">مزامن</span>
+      </div>
       <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">📅 —</div>
-<div class="topbar-date" id="topDate"></div>
+      <div class="topbar-date" id="topDate"></div>
     </header>
 
     <div class="content">
@@ -558,23 +583,16 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== DASHBOARD ===== -->
       <section class="view active" id="view-dashboard">
         <div class="stats" id="dashStats"></div>
-
         <div class="grid g2" style="margin-bottom:20px">
           <div class="card">
-            <div class="sec-head" style="margin-bottom:14px">
-              <h2 style="font-size:18px">🔔 القادم عليك</h2>
-            </div>
+            <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">🔔 القادم عليك</h2></div>
             <div id="dashUpcoming"></div>
           </div>
-
           <div class="card">
-            <div class="sec-head" style="margin-bottom:14px">
-              <h2 style="font-size:18px">📅 محاضرات اليوم</h2>
-            </div>
+            <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">📅 محاضرات اليوم</h2></div>
             <div id="dashToday"></div>
           </div>
         </div>
-
         <div class="card">
           <div class="sec-head" style="margin-bottom:14px">
             <h2 style="font-size:18px">📈 تقدمك في المهام</h2>
@@ -604,10 +622,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== COURSES ===== -->
       <section class="view" id="view-courses">
         <div class="sec-head">
-          <div>
-            <h2>📚 المقررات الدراسية</h2>
-            <p id="coursesCount"></p>
-          </div>
+          <div><h2>📚 المقررات الدراسية</h2><p id="coursesCount"></p></div>
           <button class="btn btn-primary btn-sm" onclick="openCourseForm()">➕ إضافة مقرر</button>
         </div>
         <div class="grid g3" id="coursesGrid"></div>
@@ -616,10 +631,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== TASKS ===== -->
       <section class="view" id="view-tasks">
         <div class="sec-head">
-          <div>
-            <h2>✅ المهام والواجبات</h2>
-            <p id="tasksCount"></p>
-          </div>
+          <div><h2>✅ المهام والواجبات</h2><p id="tasksCount"></p></div>
           <button class="btn btn-primary btn-sm" onclick="openTaskForm()">➕ مهمة جديدة</button>
         </div>
         <div class="filters" id="taskFilters">
@@ -636,10 +648,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== EXAMS ===== -->
       <section class="view" id="view-exams">
         <div class="sec-head">
-          <div>
-            <h2>⏰ الاختبارات والكويزات</h2>
-            <p id="examsCount"></p>
-          </div>
+          <div><h2>⏰ الاختبارات والكويزات</h2><p id="examsCount"></p></div>
           <button class="btn btn-primary btn-sm" onclick="openExamForm()">➕ إضافة اختبار</button>
         </div>
         <div class="grid g3" id="examsGrid"></div>
@@ -648,10 +657,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== STUDY ===== -->
       <section class="view" id="view-study">
         <div class="sec-head">
-          <div>
-            <h2>🍅 مؤقّت المذاكرة</h2>
-            <p>تقنية بومودورو: ركّز 25 دقيقة ثم ارتح 5 دقائق</p>
-          </div>
+          <div><h2>🍅 مؤقّت المذاكرة</h2><p>تقنية بومودورو: ركّز 25 دقيقة ثم ارتح 5 دقائق</p></div>
         </div>
         <div class="pomo-wrap">
           <div class="pomo-card">
@@ -663,13 +669,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             <div class="ring-wrap">
               <svg class="ring" viewBox="0 0 200 200">
                 <circle class="bg" cx="100" cy="100" r="88"/>
-                <circle class="fg" id="ringFg" cx="100" cy="100" r="88"
-                        stroke-dasharray="552.92" stroke-dashoffset="0"/>
+                <circle class="fg" id="ringFg" cx="100" cy="100" r="88" stroke-dasharray="552.92" stroke-dashoffset="0"/>
               </svg>
-              <div class="ring-txt">
-                <b id="pomoTime">25:00</b>
-                <span id="pomoLabel">وقت التركيز</span>
-              </div>
+              <div class="ring-txt"><b id="pomoTime">25:00</b><span id="pomoLabel">وقت التركيز</span></div>
             </div>
             <div class="pomo-ctrl">
               <button class="btn btn-primary" id="pomoStart">▶ ابدأ</button>
@@ -680,11 +682,8 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
               <select id="pomoCourse"></select>
             </div>
           </div>
-
           <div class="card">
-            <div class="sec-head" style="margin-bottom:6px">
-              <h2 style="font-size:18px">📊 إحصائيات المذاكرة</h2>
-            </div>
+            <div class="sec-head" style="margin-bottom:6px"><h2 style="font-size:18px">📊 إحصائيات المذاكرة</h2></div>
             <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:8px">
               <div><b style="font-family:'Tajawal';font-size:24px;color:var(--p)" id="studyToday">0</b><div style="font-size:12px;color:var(--muted);font-weight:700">دقيقة اليوم</div></div>
               <div><b style="font-family:'Tajawal';font-size:24px;color:var(--p)" id="studyWeek">0</b><div style="font-size:12px;color:var(--muted);font-weight:700">دقيقة هذا الأسبوع</div></div>
@@ -701,10 +700,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== GRADES ===== -->
       <section class="view" id="view-grades">
         <div class="sec-head">
-          <div>
-            <h2>📊 الدرجات والمعدل</h2>
-            <p>أضف مكونات كل مقرر (كويز، واجب، ميدterm...) ووزنها ودرجتك</p>
-          </div>
+          <div><h2>📊 الدرجات والمعدل</h2><p>أضف مكونات كل مقرر ووزنها ودرجتك</p></div>
         </div>
         <div class="stats" id="gpaStats"></div>
         <div id="gradesList"></div>
@@ -713,10 +709,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== NOTES ===== -->
       <section class="view" id="view-notes">
         <div class="sec-head">
-          <div>
-            <h2>📝 الملاحظات</h2>
-            <p id="notesCount"></p>
-          </div>
+          <div><h2>📝 الملاحظات</h2><p id="notesCount"></p></div>
           <button class="btn btn-primary btn-sm" onclick="openNoteForm()">➕ ملاحظة جديدة</button>
         </div>
         <div class="grid g3" id="notesGrid"></div>
@@ -725,7 +718,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <!-- ===== SETTINGS ===== -->
       <section class="view" id="view-settings">
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
-
         <div class="grid g2">
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">🎨 المظهر</h3>
@@ -734,13 +726,13 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
               <button class="btn btn-ghost" onclick="setTheme('dark')">🌙 ليلي</button>
             </div>
             <h3 style="font-size:17px;margin-bottom:16px">📅 الفصل الدراسي</h3>
-<div class="form-grid" style="margin-bottom:20px">
-  <div class="field full">
-    <label>تاريخ بداية الفصل</label>
-    <input type="date" id="setSemesterStart">
-  </div>
-</div>
-<button class="btn btn-primary btn-sm" style="margin-bottom:20px" onclick="saveSemesterStart()">💾 حفظ تاريخ البداية</button>
+            <div class="form-grid" style="margin-bottom:20px">
+              <div class="field full">
+                <label>تاريخ بداية الفصل</label>
+                <input type="date" id="setSemesterStart">
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-bottom:20px" onclick="saveSemesterStart()">💾 حفظ تاريخ البداية</button>
             <h3 style="font-size:17px;margin-bottom:16px">⏱️ مدد البومودورو (بالدقائق)</h3>
             <div class="form-grid">
               <div class="field"><label>التركيز</label><input type="number" id="setWork" min="1" max="120"></div>
@@ -749,13 +741,13 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             </div>
             <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="savePomoSettings()">💾 حفظ</button>
           </div>
-
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
             <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
-              بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان. صدّرها كنسخة احتياطية.
+              بياناتك محفوظة في متصفحك + السحابة. صدّرها كنسخة احتياطية.
             </p>
             <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-primary btn-block" onclick="restoreFromCloud()">☁️ استعادة من السحابة</button>
               <button class="btn btn-ghost btn-block" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
               <button class="btn btn-ghost btn-block" onclick="document.getElementById('importFile').click()">📥 استيراد نسخة</button>
               <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
@@ -918,7 +910,6 @@ function openCourseForm(id){
   const colorBtns = COLORS.map(col =>
     `<button type="button" data-c="${col}" style="background:${col}" class="${col===pickedColor?'sel':''}"></button>`
   ).join('');
-
   openModal(c ? 'تعديل مقرر' : 'إضافة مقرر جديد', `
     <div class="form-grid">
       <div class="field full"><label>اسم المقرر <span class="req">*</span></label>
@@ -936,7 +927,6 @@ function openCourseForm(id){
     <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
     <button class="btn btn-primary" onclick="saveCourse('${id||''}')">💾 حفظ</button>
   `);
-
   document.getElementById('colorPick').addEventListener('click', e => {
     const b = e.target.closest('button[data-c]');
     if(!b) return;
@@ -955,17 +945,13 @@ function saveCourse(id){
     teacher: document.getElementById('cTeacher').value.trim(),
     color: pickedColor
   };
-  if(id){
-    const c = getCourse(id);
-    Object.assign(c, data);
-  }else{
-    state.courses.push({ id: uid(), ...data, grades: [] });
-  }
+  if(id){ Object.assign(getCourse(id), data); }
+  else{ state.courses.push({ id: uid(), ...data, grades: [] }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
 
 function deleteCourse(id){
-  if(!confirm('سيتم حذف المقرر وكل ما يتعلق به (محاضرات، مهام، اختبارات). متابعة؟')) return;
+  if(!confirm('سيتم حذف المقرر وكل ما يتعلق به. متابعة؟')) return;
   state.courses = state.courses.filter(c => c.id !== id);
   state.schedule = state.schedule.filter(s => s.courseId !== id);
   state.tasks = state.tasks.filter(t => t.courseId !== id);
@@ -990,7 +976,6 @@ function openClassForm(id, presetDay){
   const dayOpts = DAYS.map((d,i) =>
     `<option value="${i}" ${(s?.day ?? presetDay ?? 0) == i ? 'selected':''}>${d}</option>`
   ).join('');
-
   openModal(s ? 'تعديل محاضرة' : 'إضافة محاضرة', `
     <div class="form-grid">
       <div class="field full"><label>المقرر <span class="req">*</span></label>
@@ -1017,16 +1002,10 @@ function saveClass(id){
   const start = document.getElementById('clStart').value;
   const end = document.getElementById('clEnd').value;
   const room = document.getElementById('clRoom').value.trim();
-
   if(!courseId){ toast('⚠️ اختر المقرر'); return; }
   if(toMin(end) <= toMin(start)){ toast('⚠️ وقت النهاية يجب أن يكون بعد البداية'); return; }
-
-  if(id){
-    const s = state.schedule.find(x => x.id === id);
-    Object.assign(s, { courseId, day, start, end, room });
-  }else{
-    state.schedule.push({ id: uid(), courseId, day, start, end, room });
-  }
+  if(id){ Object.assign(state.schedule.find(x => x.id === id), { courseId, day, start, end, room }); }
+  else{ state.schedule.push({ id: uid(), courseId, day, start, end, room }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
 
@@ -1041,7 +1020,6 @@ function deleteClass(id){
 function openTaskForm(id, presetType){
   const t = id ? state.tasks.find(x => x.id === id) : null;
   const typeOpts = TASK_TYPES.map(x => `<option ${t?.type===x?'selected':''}>${x}</option>`).join('');
-
   openModal(t ? 'تعديل مهمة' : 'إضافة مهمة', `
     <div class="form-grid">
       <div class="field full"><label>عنوان المهمة <span class="req">*</span></label>
@@ -1073,7 +1051,6 @@ function saveTask(id){
   const due = document.getElementById('tDue').value;
   if(!title){ toast('⚠️ اكتب عنوان المهمة'); return; }
   if(!due){ toast('⚠️ حدد تاريخ التسليم'); return; }
-
   const data = {
     title, due,
     courseId: document.getElementById('tCourse').value,
@@ -1081,11 +1058,8 @@ function saveTask(id){
     priority: document.getElementById('tPriority').value,
     notes: document.getElementById('tNotes').value.trim()
   };
-  if(id){
-    Object.assign(state.tasks.find(x => x.id === id), data);
-  }else{
-    state.tasks.push({ id: uid(), ...data, done:false, created: todayISO() });
-  }
+  if(id){ Object.assign(state.tasks.find(x => x.id === id), data); }
+  else{ state.tasks.push({ id: uid(), ...data, done:false, created: todayISO() }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
 function deleteTask(id){
@@ -1103,7 +1077,6 @@ function toggleTask(id){
 function openExamForm(id){
   const e = id ? state.exams.find(x => x.id === id) : null;
   const typeOpts = EXAM_TYPES.map(x => `<option ${e?.type===x?'selected':''}>${x}</option>`).join('');
-
   openModal(e ? 'تعديل اختبار' : 'إضافة اختبار', `
     <div class="form-grid">
       <div class="field full"><label>عنوان الاختبار <span class="req">*</span></label>
@@ -1132,7 +1105,6 @@ function saveExam(id){
   const date = document.getElementById('eDate').value;
   if(!title){ toast('⚠️ اكتب عنوان الاختبار'); return; }
   if(!date){ toast('⚠️ حدد التاريخ'); return; }
-
   const data = {
     title, date,
     courseId: document.getElementById('eCourse').value,
@@ -1197,7 +1169,6 @@ function renderDashboard(){
   const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0);
   const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
 
-  // stats
   const statsHTML = [
     { ico:'📚', bg:'var(--p-light)', val:state.courses.length, lbl:'مقرر مسجّل' },
     { ico:'✅', bg:'var(--warn-bg)', val:openTasks.length, lbl:'مهمة متبقية' },
@@ -1210,7 +1181,6 @@ function renderDashboard(){
     </div>`).join('');
   document.getElementById('dashStats').innerHTML = statsHTML;
 
-  // progress
   const total = state.tasks.length;
   const done = state.tasks.filter(t => t.done).length;
   const pct = total ? Math.round(done/total*100) : 0;
@@ -1220,10 +1190,9 @@ function renderDashboard(){
   document.getElementById('dashLeft').textContent = total - done;
   document.getElementById('dashLate').textContent = late.length;
 
-  // upcoming
   const items = [
-    ...openTasks.map(t => ({ kind:'مهمة', ico:'✅', title:t.title, date:t.due, courseId:t.courseId, color:'var(--warn)' })),
-    ...upcomingExams.map(e => ({ kind:'اختبار', ico:'⏰', title:e.title, date:e.date, courseId:e.courseId, color:'var(--danger)' }))
+    ...openTasks.map(t => ({ kind:'مهمة', ico:'✅', title:t.title, date:t.due, courseId:t.courseId })),
+    ...upcomingExams.map(e => ({ kind:'اختبار', ico:'⏰', title:e.title, date:e.date, courseId:e.courseId }))
   ].sort((a,b) => a.date.localeCompare(b.date)).slice(0,6);
 
   const upEl = document.getElementById('dashUpcoming');
@@ -1250,12 +1219,8 @@ function renderDashboard(){
     }).join('');
   }
 
-  // today's classes
   const nowDay = new Date().getDay();
-  const todays = state.schedule
-    .filter(s => s.day === nowDay)
-    .sort((a,b) => toMin(a.start) - toMin(b.start));
-
+  const todays = state.schedule.filter(s => s.day === nowDay).sort((a,b) => toMin(a.start) - toMin(b.start));
   const tdEl = document.getElementById('dashToday');
   if(!todays.length){
     tdEl.innerHTML = `<div class="empty" style="padding:28px 10px">
@@ -1283,18 +1248,9 @@ function renderSchedule(){
   const nowDay = new Date().getDay();
   const hours = [];
   for(let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
-
-  const head = `<div class="sched-head">
-    <div></div>
-    <div class="sched-days">
-      ${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}
-    </div>
-  </div>`;
-
-  const times = `<div class="sched-times">
-    ${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}
-  </div>`;
-
+  const head = `<div class="sched-head"><div></div>
+    <div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
+  const times = `<div class="sched-times">${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}</div>`;
   const cols = `<div class="sched-cols">
     ${DAYS.map((_,di) => {
       const lines = hours.map((_,i) => `<div class="hour-line" style="top:${i*HOUR_H}px"></div>`).join('');
@@ -1313,7 +1269,6 @@ function renderSchedule(){
       return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
     }).join('')}
   </div>`;
-
   document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
 }
 
@@ -1325,7 +1280,6 @@ function renderCourses(){
   document.getElementById('coursesCount').textContent = state.courses.length
     ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة`
     : 'لم تضف أي مقرر بعد';
-
   if(!state.courses.length){
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
       <div class="e-ico">📚</div><b>لا توجد مقررات</b>
@@ -1334,7 +1288,6 @@ function renderCourses(){
     </div>`;
     return;
   }
-
   grid.innerHTML = state.courses.map(c => {
     const classes = state.schedule.filter(s => s.courseId === c.id).length;
     const tasks = state.tasks.filter(t => t.courseId === c.id && !t.done).length;
@@ -1363,10 +1316,7 @@ function renderCourses(){
 function renderTasks(){
   const list = document.getElementById('tasksList');
   const open = state.tasks.filter(t => !t.done);
-  document.getElementById('tasksCount').textContent =
-    `${state.tasks.length} مهمة · ${open.length} متبقية`;
-
-  // badge
+  document.getElementById('tasksCount').textContent = `${state.tasks.length} مهمة · ${open.length} متبقية`;
   const lateCount = open.filter(t => daysUntil(t.due) < 0).length;
   const badge = document.getElementById('badgeTasks');
   if(open.length){ badge.style.display = ''; badge.textContent = lateCount || open.length; }
@@ -1374,19 +1324,12 @@ function renderTasks(){
 
   let arr = state.tasks.slice();
   const td = todayISO();
-
   if(taskFilter === 'today') arr = arr.filter(t => t.due === td);
-  else if(taskFilter === 'week'){
-    arr = arr.filter(t => { const d = daysUntil(t.due); return d >= 0 && d <= 7; });
-  }
+  else if(taskFilter === 'week') arr = arr.filter(t => { const d = daysUntil(t.due); return d >= 0 && d <= 7; });
   else if(taskFilter === 'late') arr = arr.filter(t => !t.done && daysUntil(t.due) < 0);
   else if(taskFilter === 'open') arr = arr.filter(t => !t.done);
   else if(taskFilter === 'done') arr = arr.filter(t => t.done);
-
-  arr.sort((a,b) => {
-    if(a.done !== b.done) return a.done ? 1 : -1;
-    return a.due.localeCompare(b.due);
-  });
+  arr.sort((a,b) => { if(a.done !== b.done) return a.done ? 1 : -1; return a.due.localeCompare(b.due); });
 
   if(!arr.length){
     list.innerHTML = `<div class="empty">
@@ -1412,7 +1355,6 @@ function renderTasks(){
     else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; }
     else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; }
     const p = prioMap[t.priority] || prioMap.med;
-
     return `<div class="task ${t.done?'done':''}">
       <div class="chk" onclick="toggleTask('${t.id}')">✓</div>
       <div class="task-main">
@@ -1439,9 +1381,7 @@ function renderTasks(){
 function renderExams(){
   const grid = document.getElementById('examsGrid');
   const upcoming = state.exams.filter(e => daysUntil(e.date) >= 0);
-  document.getElementById('examsCount').textContent =
-    `${state.exams.length} اختبار · ${upcoming.length} قادم`;
-
+  document.getElementById('examsCount').textContent = `${state.exams.length} اختبار · ${upcoming.length} قادم`;
   const badge = document.getElementById('badgeExams');
   const soon = upcoming.filter(e => daysUntil(e.date) <= 7).length;
   if(soon){ badge.style.display = ''; badge.textContent = soon; }
@@ -1450,14 +1390,13 @@ function renderExams(){
   if(!state.exams.length){
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
       <div class="e-ico">⏰</div><b>لا توجد اختبارات</b>
-      <p>أضف مواعيد الكويزات والاختبارات لتصلك التنبيهات</p>
+      <p>أضف مواعيد الكويزات والاختبارات</p>
       <button class="btn btn-primary" onclick="openExamForm()">➕ إضافة اختبار</button>
     </div>`;
     return;
   }
 
   const sorted = state.exams.slice().sort((a,b) => a.date.localeCompare(b.date));
-
   grid.innerHTML = sorted.map(e => {
     const d = daysUntil(e.date);
     let num, lbl, bg, col;
@@ -1466,7 +1405,6 @@ function renderExams(){
     else if(d === 1){ num = '1'; lbl = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
     else if(d <= 7){ num = d; lbl = 'يوم'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
     else { num = d; lbl = 'يوم'; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
-
     return `<div class="exam">
       <div class="exam-top">
         <h3>${esc(e.title)}</h3>
@@ -1496,9 +1434,7 @@ function renderExams(){
 ============================================================ */
 function renderNotes(){
   const grid = document.getElementById('notesGrid');
-  document.getElementById('notesCount').textContent = state.notes.length
-    ? `${state.notes.length} ملاحظة` : 'لم تضف أي ملاحظة بعد';
-
+  document.getElementById('notesCount').textContent = state.notes.length ? `${state.notes.length} ملاحظة` : 'لم تضف أي ملاحظة بعد';
   if(!state.notes.length){
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
       <div class="e-ico">📝</div><b>لا توجد ملاحظات</b>
@@ -1507,7 +1443,6 @@ function renderNotes(){
     </div>`;
     return;
   }
-
   const sorted = state.notes.slice().sort((a,b) => (b.updated||'').localeCompare(a.updated||''));
   grid.innerHTML = sorted.map(n => `
     <div class="note">
@@ -1526,15 +1461,9 @@ function renderNotes(){
    RENDER: GRADES
 ============================================================ */
 function scoreToPoints(p){
-  if(p >= 95) return 5.00;
-  if(p >= 90) return 4.75;
-  if(p >= 85) return 4.50;
-  if(p >= 80) return 4.00;
-  if(p >= 75) return 3.50;
-  if(p >= 70) return 3.00;
-  if(p >= 65) return 2.50;
-  if(p >= 60) return 2.00;
-  return 0;
+  if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
+  if(p >= 80) return 4.00; if(p >= 75) return 3.50; if(p >= 70) return 3.00;
+  if(p >= 65) return 2.50; if(p >= 60) return 2.00; return 0;
 }
 function scoreToLetter(p){
   if(p >= 95) return 'A+'; if(p >= 90) return 'A';
@@ -1555,7 +1484,6 @@ function courseTotal(c){
 function renderGrades(){
   const statsEl = document.getElementById('gpaStats');
   const listEl = document.getElementById('gradesList');
-
   const graded = state.courses.filter(c => courseTotal(c) !== null);
   let gpa = null, totalCredits = 0;
   if(graded.length){
@@ -1567,22 +1495,14 @@ function renderGrades(){
     });
     if(cr > 0){ gpa = pts / cr; totalCredits = cr; }
   }
-
   statsEl.innerHTML = `
-    <div class="stat">
-      <div class="stat-ico" style="background:var(--p-light)">🎯</div>
-      <div><b>${gpa !== null ? gpa.toFixed(2) : '—'}</b><span>المعدل التقديري (من 5)</span></div>
-    </div>
-    <div class="stat">
-      <div class="stat-ico" style="background:var(--ok-bg)">📖</div>
-      <div><b>${totalCredits}</b><span>ساعة محسوبة</span></div>
-    </div>
-    <div class="stat">
-      <div class="stat-ico" style="background:var(--warn-bg)">📝</div>
-      <div><b>${graded.length}/${state.courses.length}</b><span>مقررات مُقيّمة</span></div>
-    </div>
+    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div>
+      <div><b>${gpa !== null ? gpa.toFixed(2) : '—'}</b><span>المعدل التقديري (من 5)</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div>
+      <div><b>${totalCredits}</b><span>ساعة محسوبة</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div>
+      <div><b>${graded.length}/${state.courses.length}</b><span>مقررات مُقيّمة</span></div></div>
   `;
-
   if(!state.courses.length){
     listEl.innerHTML = `<div class="empty">
       <div class="e-ico">📊</div><b>لا توجد مقررات</b>
@@ -1591,12 +1511,10 @@ function renderGrades(){
     </div>`;
     return;
   }
-
   listEl.innerHTML = state.courses.map(c => {
     const g = c.grades || [];
     const total = courseTotal(c);
     const totalW = g.reduce((a,x) => a + (+x.weight||0), 0);
-
     const rows = g.map((x,i) => `
       <div class="comp-row">
         <input value="${esc(x.name)}" onchange="updateComp('${c.id}',${i},'name',this.value)" placeholder="اسم المكوّن">
@@ -1604,21 +1522,16 @@ function renderGrades(){
         <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${c.id}',${i},'score',this.value)" placeholder="الدرجة">
         <button class="mini-btn del" onclick="removeComp('${c.id}',${i})">✕</button>
       </div>`).join('');
-
     return `<div class="grade-course">
       <div class="gc-head">
-        <div>
-          <h3 style="color:${c.color}">${esc(c.name)}</h3>
-          <span style="font-size:12.5px;color:var(--muted);font-weight:700">${c.credits||0} ساعات · مجموع الأوزان ${totalW}%</span>
-        </div>
+        <div><h3 style="color:${c.color}">${esc(c.name)}</h3>
+          <span style="font-size:12.5px;color:var(--muted);font-weight:700">${c.credits||0} ساعات · مجموع الأوزان ${totalW}%</span></div>
         <div style="text-align:center">
           <div class="gc-score">${total !== null ? total.toFixed(1) + '%' : '—'}</div>
           <div style="font-size:12.5px;font-weight:800;color:var(--muted)">${total !== null ? scoreToLetter(total) : ''}</div>
         </div>
       </div>
-      ${g.length ? `<div class="comp-row comp-hd">
-        <div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div>
-      </div>` : ''}
+      ${g.length ? `<div class="comp-row comp-hd"><div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div></div>` : ''}
       ${rows}
       <div style="display:flex;gap:8px;margin-top:12px">
         <button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button>
@@ -1626,17 +1539,8 @@ function renderGrades(){
     </div>`;
   }).join('');
 }
-function addComp(cid){
-  const c = getCourse(cid);
-  c.grades = c.grades || [];
-  c.grades.push({ name:'', weight:10, score:0 });
-  save(); renderGrades();
-}
-function removeComp(cid, i){
-  const c = getCourse(cid);
-  c.grades.splice(i,1);
-  save(); renderGrades();
-}
+function addComp(cid){ const c = getCourse(cid); c.grades = c.grades || []; c.grades.push({ name:'', weight:10, score:0 }); save(); renderGrades(); }
+function removeComp(cid, i){ const c = getCourse(cid); c.grades.splice(i,1); save(); renderGrades(); }
 function updateComp(cid, i, field, val){
   const c = getCourse(cid);
   if(!c.grades[i]) return;
@@ -1647,28 +1551,15 @@ function updateComp(cid, i, field, val){
 /* ============================================================
    POMODORO
 ============================================================ */
-let pomo = {
-  mode: 'work',
-  running: false,
-  remaining: 25 * 60,
-  total: 25 * 60,
-  timer: null,
-  sessionStart: null
-};
+let pomo = { mode: 'work', running: false, remaining: 25 * 60, total: 25 * 60, timer: null, sessionStart: null };
 const RING_C = 552.92;
 
-function pomoDuration(mode){
-  const p = state.settings.pomo;
-  return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60;
-}
-function pomoLabel(mode){
-  return mode === 'work' ? 'وقت التركيز' : mode === 'short' ? 'راحة قصيرة' : 'راحة طويلة';
-}
+function pomoDuration(mode){ const p = state.settings.pomo; return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60; }
+function pomoLabel(mode){ return mode === 'work' ? 'وقت التركيز' : mode === 'short' ? 'راحة قصيرة' : 'راحة طويلة'; }
 function pomoRender(){
   const m = Math.floor(pomo.remaining / 60);
   const s = pomo.remaining % 60;
-  document.getElementById('pomoTime').textContent =
-    `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('pomoTime').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
   document.getElementById('pomoLabel').textContent = pomoLabel(pomo.mode);
   const prog = pomo.total ? (pomo.total - pomo.remaining) / pomo.total : 0;
   document.getElementById('ringFg').style.strokeDashoffset = (RING_C * prog).toFixed(2);
@@ -1688,18 +1579,14 @@ function pomoTick(){
   if(pomo.remaining <= 0){
     clearInterval(pomo.timer);
     pomo.running = false;
-    // log study session
     if(pomo.mode === 'work'){
       const cid = document.getElementById('pomoCourse').value;
       const mins = Math.round(pomo.total / 60);
       state.studyLog.push({ id: uid(), date: todayISO(), courseId: cid, minutes: mins });
-      save();
-      renderStudy();
+      save(); renderStudy();
       toast(`🎉 أنهيت ${mins} دقيقة تركيز!`);
       try{ new Notification('انتهى وقت التركيز', { body:'خذ راحة الآن 👏' }); }catch(e){}
-    }else{
-      toast('☕ انتهت الراحة، يلا نرجع!');
-    }
+    }else{ toast('☕ انتهت الراحة، يلا نرجع!'); }
     pomoSetMode(pomo.mode === 'work' ? 'short' : 'work');
     return;
   }
@@ -1707,17 +1594,13 @@ function pomoTick(){
   pomoRender();
 }
 document.getElementById('pomoStart').addEventListener('click', () => {
-  if(pomo.running){
-    clearInterval(pomo.timer);
-    pomo.running = false;
-  }else{
+  if(pomo.running){ clearInterval(pomo.timer); pomo.running = false; }
+  else{
     if(pomo.remaining <= 0) pomo.remaining = pomoDuration(pomo.mode);
     if(!pomo.total) pomo.total = pomoDuration(pomo.mode);
     pomo.running = true;
     pomo.timer = setInterval(pomoTick, 1000);
-    if('Notification' in window && Notification.permission === 'default'){
-      Notification.requestPermission();
-    }
+    if('Notification' in window && Notification.permission === 'default'){ Notification.requestPermission(); }
   }
   pomoRender();
 });
@@ -1726,26 +1609,19 @@ document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c =>
   c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
 
 function renderStudy(){
-  // course dropdown
   const sel = document.getElementById('pomoCourse');
   const cur = sel.value;
-  sel.innerHTML = `<option value="">— بدون تحديد —</option>` +
-    state.courses.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  sel.innerHTML = `<option value="">— بدون تحديد —</option>` + state.courses.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
   if(cur) sel.value = cur;
-
   const today = todayISO();
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
   const weekStart = todayISO(weekAgo);
-
   const todayMin = state.studyLog.filter(l => l.date === today).reduce((a,b) => a + b.minutes, 0);
   const weekMin = state.studyLog.filter(l => l.date >= weekStart).reduce((a,b) => a + b.minutes, 0);
   const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
-
   document.getElementById('studyToday').textContent = todayMin;
   document.getElementById('studyWeek').textContent = weekMin;
   document.getElementById('studyTotal').textContent = totalMin;
-
-  // week bars
   const bars = [];
   for(let i = 6; i >= 0; i--){
     const d = new Date(); d.setDate(d.getDate() - i);
@@ -1755,11 +1631,9 @@ function renderStudy(){
   }
   const max = Math.max(...bars.map(b => b.mins), 60);
   document.getElementById('weekBars').innerHTML = bars.map(b => `
-    <div class="wbar">
-      <span class="wbar-val">${b.mins || ''}</span>
+    <div class="wbar"><span class="wbar-val">${b.mins || ''}</span>
       <div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div>
-      <span class="wbar-lbl">${b.day}</span>
-    </div>`).join('');
+      <span class="wbar-lbl">${b.day}</span></div>`).join('');
 }
 
 function openManualLog(){
@@ -1767,25 +1641,15 @@ function openManualLog(){
     <div class="form-grid">
       <div class="field full"><label>المقرر</label>
         <select id="mlCourse"><option value="">— بدون تحديد —</option>${courseOptions()}</select></div>
-      <div class="field"><label>التاريخ</label>
-        <input type="date" id="mlDate" value="${todayISO()}"></div>
-      <div class="field"><label>عدد الدقائق</label>
-        <input type="number" id="mlMin" value="60" min="1" max="600"></div>
+      <div class="field"><label>التاريخ</label><input type="date" id="mlDate" value="${todayISO()}"></div>
+      <div class="field"><label>عدد الدقائق</label><input type="number" id="mlMin" value="60" min="1" max="600"></div>
     </div>
-  `, `
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveManualLog()">💾 حفظ</button>
-  `);
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveManualLog()">💾 حفظ</button>`);
 }
 function saveManualLog(){
   const minutes = +document.getElementById('mlMin').value || 0;
   if(minutes <= 0){ toast('⚠️ أدخل عدد دقائق صحيح'); return; }
-  state.studyLog.push({
-    id: uid(),
-    date: document.getElementById('mlDate').value || todayISO(),
-    courseId: document.getElementById('mlCourse').value,
-    minutes
-  });
+  state.studyLog.push({ id: uid(), date: document.getElementById('mlDate').value || todayISO(), courseId: document.getElementById('mlCourse').value, minutes });
   save(); closeModal(); renderStudy(); renderDashboard(); toast('✅ تم الحفظ');
 }
 
@@ -1798,16 +1662,14 @@ function savePomoSettings(){
     short: Math.max(1, +document.getElementById('setShort').value || 5),
     long: Math.max(1, +document.getElementById('setLong').value || 15)
   };
-  save(); pomoSetMode(pomo.mode);
-  toast('✅ تم حفظ الإعدادات');
+  save(); pomoSetMode(pomo.mode); toast('✅ تم حفظ الإعدادات');
 }
 function exportData(){
   const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `university-backup-${todayISO()}.json`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+  a.click(); URL.revokeObjectURL(a.href);
   toast('📤 تم تصدير النسخة');
 }
 function importData(e){
@@ -1823,8 +1685,7 @@ function importData(e){
       toast('📥 تم استيراد البيانات');
     }catch(err){ toast('⚠️ الملف غير صالح'); }
   };
-  r.readAsText(f);
-  e.target.value = '';
+  r.readAsText(f); e.target.value = '';
 }
 function clearAll(){
   if(!confirm('سيتم حذف كل بياناتك نهائياً. متأكد؟')) return;
@@ -1857,7 +1718,6 @@ function loadSample(){
     { id:c4, name:'مهارات التواصل', code:'COMM101', credits:2, teacher:'د. أحمد الغامدي', color:COLORS[3], grades:[] },
     { id:c5, name:'اللغة الإنجليزية', code:'ENG101', credits:3, teacher:'د. نورة السالم', color:COLORS[4], grades:[] }
   ];
-  const d = new Date();
   state.schedule = [
     { id:uid(), courseId:c1, day:0, start:'08:00', end:'09:30', room:'مبنى 3 - قاعة 12' },
     { id:uid(), courseId:c2, day:0, start:'10:00', end:'11:00', room:'معمل الحاسب 2' },
@@ -1875,7 +1735,6 @@ function loadSample(){
     { id:uid(), title:'مشروع البرمجة - المرحلة الأولى', courseId:c2, type:'مشروع', due:plus(4), priority:'high', done:false, notes:'تسليم التصميم المبدئي', created:todayISO() },
     { id:uid(), title:'تقرير تجربة الفيزياء', courseId:c3, type:'تقرير', due:plus(2), priority:'med', done:false, notes:'', created:todayISO() },
     { id:uid(), title:'قراءة الفصل الخامس', courseId:c5, type:'أخرى', due:plus(6), priority:'low', done:false, notes:'', created:todayISO() },
-    { id:uid(), title:'عرض تقديمي عن مهارات الاستماع', courseId:c4, type:'عرض تقديمي', due:plus(8), priority:'med', done:false, notes:'5 دقائق', created:todayISO() },
     { id:uid(), title:'كويز الرياضيات القصير', courseId:c1, type:'كويز', due:plus(-1), priority:'high', done:false, notes:'تأخر!', created:todayISO() }
   ];
   state.exams = [
@@ -1884,15 +1743,13 @@ function loadSample(){
     { id:uid(), title:'فاينل الفيزياء', courseId:c3, type:'فاينل', date:plus(28), time:'08:00', place:'مبنى العلوم', notes:'' }
   ];
   state.notes = [
-    { id:uid(), title:'ملخص قوانين التفاضل', courseId:c1, body:'قاعدة القوة: d/dx (x^n) = n·x^(n-1)\nقاعدة الضرب: (fg)\' = f\'g + fg\'\nقاعدة القسمة: (f/g)\' = (f\'g - fg\')/g²', updated:todayISO() },
-    { id:uid(), title:'مصادر مفيدة للبرمجة', courseId:c2, body:'• موقع W3Schools للتمارين\n• قناة CodeWithHarry\n• كتاب Automate the Boring Stuff', updated:todayISO() }
+    { id:uid(), title:'ملخص قوانين التفاضل', courseId:c1, body:'قاعدة القوة، قاعدة الضرب، قاعدة القسمة', updated:todayISO() },
+    { id:uid(), title:'مصادر مفيدة للبرمجة', courseId:c2, body:'W3Schools، CodeWithHarry', updated:todayISO() }
   ];
   state.studyLog = [
     { id:uid(), date:todayISO(), courseId:c1, minutes:50 },
     { id:uid(), date:todayISO(), courseId:c2, minutes:25 },
-    { id:uid(), date:plus(-1), courseId:c1, minutes:75 },
-    { id:uid(), date:plus(-2), courseId:c3, minutes:40 },
-    { id:uid(), date:plus(-3), courseId:c2, minutes:60 }
+    { id:uid(), date:plus(-1), courseId:c1, minutes:75 }
   ];
   save(); applySettings(); renderAll(); closeModal();
   toast('🎁 تم تحميل البيانات التجريبية');
@@ -1943,15 +1800,8 @@ document.getElementById('taskFilters').addEventListener('click', e => {
    MAIN RENDER
 ============================================================ */
 function renderAll(){
-  renderDashboard();
-  renderSchedule();
-  renderCourses();
-  renderTasks();
-  renderExams();
-  renderNotes();
-  renderGrades();
-  renderStudy();
-  pomoRender();
+  renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
+  renderExams(); renderNotes(); renderGrades(); renderStudy(); pomoRender();
 }
 
 /* ============================================================
@@ -1963,76 +1813,72 @@ function init(){
   document.getElementById('topDate').textContent =
     new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
-  // first visit: offer sample data
   const isFirst = !localStorage.getItem(STORE_KEY + '_seen');
   if(isFirst && !state.courses.length){
     localStorage.setItem(STORE_KEY + '_seen', '1');
     setTimeout(() => {
       openModal('أهلاً بك في مُساعد الجامعة 🎓', `
         <p style="font-size:15px;line-height:1.9;margin-bottom:18px">
-          هذا التطبيق يساعدك على تنظيم دراستك الجامعية: الجدول، المهام، الاختبارات،
-          المذاكرة، والدرجات. كل بياناتك محفوظة في جهازك فقط.
+          هذا التطبيق يساعدك على تنظيم دراستك الجامعية.
         </p>
         <p style="font-size:14px;color:var(--muted);margin-bottom:6px">
-          تبي نجرب لك بيانات جاهزة تشوف فيها كل شي شغال؟
+          تبي نجرب لك بيانات جاهزة؟
         </p>
       `, `
         <button class="btn btn-ghost" onclick="closeModal()">لا، أبدأ من الصفر</button>
-        <button class="btn btn-primary" onclick="loadSample()">🎁 نعم، عبّئ لي مثال</button>
+        <button class="btn btn-primary" onclick="loadSample()">🎁 نعم</button>
       `);
     }, 700);
   }
 
-  // hash routing
   const h = location.hash.slice(1);
   if(h && document.getElementById('view-' + h)) go(h);
 }
 init();
-// جلب الحضور من السيرفر عند البداية
-setTimeout(() => { if(getMyChatId()) syncAttendanceFromServer(); }, 2500);
+
 // ⭐ تحميل البيانات من السحابة بعد الربط
 setTimeout(() => { if(getMyChatId()) loadFromCloud(); }, 1500);
-// keyboard shortcut: Ctrl+K quick add
+
+// ⭐ تشغيل مؤشر المزامنة
+setTimeout(() => {
+  if(getMyChatId()) setSyncStatus('success');
+  else {
+    const badge = document.getElementById('syncBadge');
+    if(badge) badge.style.display = 'none';
+  }
+}, 2000);
+
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
+
 /* ============================================================
    ⚡ QUICK ADD SCHEDULE
 ============================================================ */
 let qaItems = [];
-
-function minToTime(m){
-  return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
-}
+function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
 
 function openQuickAdd(){
   if(!state.courses.length){ toast('⚠️ أضف مقرراً أولاً'); go('courses'); return; }
   qaItems = [];
   openModal('⚡ إضافة سريعة للجدول', `
     <div style="background:var(--p-light);padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:16px;line-height:1.7">
-      💡 اختر المقرر مرة واحدة، ثم أضف كل محاضراته بسرعة. الوقت يتقدم تلقائياً.
+      💡 اختر المقرر مرة واحدة، ثم أضف كل محاضراته بسرعة.
     </div>
     <div class="form-grid">
       <div class="field full"><label>المقرر <span class="req">*</span></label>
         <select id="qaCourse">${courseOptions()}</select></div>
       <div class="field"><label>اليوم <span class="req">*</span></label>
         <select id="qaDay">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></div>
-      <div class="field"><label>القاعة</label>
-        <input id="qaRoom" placeholder="اختياري"></div>
-      <div class="field"><label>من <span class="req">*</span></label>
-        <input type="time" id="qaStart" value="08:00"></div>
-      <div class="field"><label>إلى <span class="req">*</span></label>
-        <input type="time" id="qaEnd" value="09:30"></div>
+      <div class="field"><label>القاعة</label><input id="qaRoom" placeholder="اختياري"></div>
+      <div class="field"><label>من <span class="req">*</span></label><input type="time" id="qaStart" value="08:00"></div>
+      <div class="field"><label>إلى <span class="req">*</span></label><input type="time" id="qaEnd" value="09:30"></div>
     </div>
     <button class="btn btn-primary btn-block" onclick="qaAdd()" style="margin-top:14px">➕ أضف واستمر</button>
     <div id="qaList" style="margin-top:16px"></div>
-  `, `
-    <button class="btn btn-ghost" onclick="qaClose()">إلغاء</button>
-    <button class="btn btn-primary" onclick="qaSave()">💾 حفظ الكل</button>
-  `);
+  `, `<button class="btn btn-ghost" onclick="qaClose()">إلغاء</button><button class="btn btn-primary" onclick="qaSave()">💾 حفظ الكل</button>`);
   qaRender();
 }
-
 function qaAdd(){
   const courseId = document.getElementById('qaCourse').value;
   const day = +document.getElementById('qaDay').value;
@@ -2042,19 +1888,13 @@ function qaAdd(){
   if(!courseId){ toast('⚠️ اختر المقرر'); return; }
   if(!start || !end){ toast('⚠️ حدد الوقت'); return; }
   if(toMin(end) <= toMin(start)){ toast('⚠️ وقت النهاية بعد البداية'); return; }
-
   qaItems.push({ courseId, day, start, end, room });
-
-  // الوقت يتقدم تلقائياً بنفس المدة
   const dur = toMin(end) - toMin(start);
   const next = toMin(end);
   document.getElementById('qaStart').value = minToTime(next);
   document.getElementById('qaEnd').value = minToTime(next + dur);
-
-  qaRender();
-  toast('✅ تمت الإضافة');
+  qaRender(); toast('✅ تمت الإضافة');
 }
-
 function qaRender(){
   const list = document.getElementById('qaList');
   if(!list) return;
@@ -2074,47 +1914,34 @@ function qaRender(){
       </div>
     `).join('');
 }
-
 function qaRemove(i){ qaItems.splice(i,1); qaRender(); }
-
 function qaSave(){
   if(!qaItems.length){ toast('⚠️ لم تُضف شي'); return; }
   qaItems.forEach(it => state.schedule.push({ id: uid(), ...it }));
   save();
   const n = qaItems.length;
   qaItems = [];
-  closeModal();
-  renderAll();
+  closeModal(); renderAll();
   toast(`✅ تم حفظ ${n} محاضرة`);
 }
-
 function qaClose(){
   if(qaItems.length && !confirm(`عندك ${qaItems.length} محاضرة لم تُحفظ. تبي تغلق؟`)) return;
-  qaItems = [];
-  closeModal();
+  qaItems = []; closeModal();
 }
-
-// زر الإضافة السريعة في صفحة الجدول
 (function injectQA(){
   const head = document.querySelector('#view-schedule .sec-head');
   if(!head || document.getElementById('qaBtn')) return;
   const existing = head.querySelector(':scope > button');
   const btn = document.createElement('button');
-  btn.id = 'qaBtn';
-  btn.className = 'btn btn-ghost btn-sm';
+  btn.id = 'qaBtn'; btn.className = 'btn btn-ghost btn-sm';
   btn.innerHTML = '⚡ إضافة سريعة';
   btn.addEventListener('click', openQuickAdd);
   if(existing){
     const wrap = document.createElement('div');
-    wrap.style.display = 'flex';
-    wrap.style.gap = '8px';
-    wrap.style.flexWrap = 'wrap';
+    wrap.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
     existing.parentNode.insertBefore(wrap, existing);
-    wrap.appendChild(existing);
-    wrap.appendChild(btn);
-  }else{
-    head.appendChild(btn);
-  }
+    wrap.appendChild(existing); wrap.appendChild(btn);
+  }else{ head.appendChild(btn); }
 })();
 
 /* ============================================================
@@ -2126,7 +1953,6 @@ const ATT = {
   late:     { label:'متأخر',         ico:'⏰', color:'#7c3aed' },
   cancelled:{ label:'ملغي',          ico:'🚫', color:'#64748b' }
 };
-
 if(!state.attendance) state.attendance = [];
 
 function classDateThisWeek(dayIdx){
@@ -2138,21 +1964,13 @@ function getAttFor(cid, date){
   return state.attendance.find(a => a.classId === cid && a.date === date);
 }
 
-// استبدال عرض الجدول - ألوان حسب الحالة
 renderSchedule = function(){
   const nowDay = new Date().getDay();
   const hours = [];
   for(let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
-
   const head = `<div class="sched-head"><div></div>
-    <div class="sched-days">
-      ${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}
-    </div></div>`;
-
-  const times = `<div class="sched-times">
-    ${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}
-  </div>`;
-
+    <div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
+  const times = `<div class="sched-times">${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}</div>`;
   const cols = `<div class="sched-cols">
     ${DAYS.map((_,di) => {
       const lines = hours.map((_,i) => `<div class="hour-line" style="top:${i*HOUR_H}px"></div>`).join('');
@@ -2181,7 +1999,6 @@ renderSchedule = function(){
       return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
     }).join('')}
   </div>`;
-
   document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
 };
 
@@ -2190,7 +2007,6 @@ function openAttPopup(classId, date){
   if(!s) return;
   const existing = getAttFor(classId, date);
   const cur = existing ? existing.status : 'present';
-
   const btns = Object.entries(ATT).map(([k,v]) => {
     const active = cur === k;
     const bg = v.color || courseColor(s.courseId);
@@ -2200,10 +2016,8 @@ function openAttPopup(classId, date){
       border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">
       ${v.ico} ${v.label}</button>`;
   }).join('');
-
   const dateStr = new Date(date + 'T00:00:00').toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
   const isToday = date === todayISO();
-
   openModal('📋 تسجيل الحضور', `
     <div style="text-align:center;margin-bottom:18px">
       <div style="font-size:17px;font-weight:800;font-family:'Tajawal';margin-bottom:5px;color:${courseColor(s.courseId)}">
@@ -2215,17 +2029,14 @@ function openAttPopup(classId, date){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${btns}</div>
     <div class="field" style="margin-top:16px">
       <label>ملاحظة (اختياري)</label>
-      <textarea id="attNote" placeholder="سبب الغياب، عذر طبي..." style="min-height:70px">${esc(existing?.note||'')}</textarea>
+      <textarea id="attNote" placeholder="سبب الغياب..." style="min-height:70px">${esc(existing?.note||'')}</textarea>
     </div>
-    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center">
-      💡 بدون تحديد = "حاضر" افتراضياً</div>
   `, `
     ${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}
     <button class="btn btn-ghost" onclick="closeModal()">إغلاق</button>
     <button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>
   `);
 }
-
 function setAtt(classId, date, status){
   const n = document.getElementById('attNote');
   const note = n ? n.value.trim() : '';
@@ -2239,22 +2050,19 @@ function setAtt(classId, date, status){
   save(); renderSchedule(); openAttPopup(classId, date);
   toast('✅ تم');
 }
-
 function saveAttNote(classId, date){
   const n = document.getElementById('attNote');
   if(!n) return;
   const att = getAttFor(classId, date);
   if(att){ att.note = n.value.trim(); save(); renderSchedule(); closeModal(); toast('💾 تم'); }
-  else{ toast('ℹ️ الحالة حاضر — ما فيه سجل'); }
+  else{ toast('ℹ️ الحالة حاضر'); }
 }
-
 function clearAtt(classId, date){
   if(!confirm('حذف سجل الحضور؟')) return;
   state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
   save(); renderSchedule(); closeModal(); toast('🗑️ تم');
 }
 
-// شريط توضيحي
 (function legend(){
   const head = document.querySelector('#view-schedule .sec-head');
   if(!head || document.getElementById('attLegend')) return;
@@ -2269,7 +2077,6 @@ function clearAtt(classId, date){
   head.parentNode.insertBefore(div, head.nextSibling);
 })();
 
-// زر حذف كل الملاحظات
 (function clearNotes(){
   const card = document.querySelector('#view-settings .card:last-child');
   if(!card || document.getElementById('clearNotesBtn')) return;
@@ -2289,24 +2096,19 @@ function clearAtt(classId, date){
 renderSchedule();
 
 /* ============================================================
-   📱 ربط تلقرام - نسخة محسّنة
+   📱 ربط تلقرام
 ============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
-
 let pollTimer = null;
 
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
 
-// ============ لما يرجع المستخدم للموقع، يحدّث الحالة ============
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
     updateTgStatus();
-    if(getMyChatId()){ 
-      syncToTelegram(true); 
-      syncAttendanceFromServer(); 
-    }
+    if(getMyChatId()){ syncToTelegram(true); syncAttendanceFromServer(); }
   }
 });
 window.addEventListener('focus', () => {
@@ -2318,6 +2120,7 @@ async function syncToTelegram(silent = true){
   const chatId = getMyChatId();
   if(!chatId) return;
   try{
+    if(typeof setSyncStatus === 'function') setSyncStatus('loading');
     await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
@@ -2337,10 +2140,12 @@ async function syncToTelegram(silent = true){
         settings: state.settings
       })
     });
-  }catch(e){}
+    if(typeof setSyncStatus === 'function') setSyncStatus('success');
+  }catch(e){
+    if(typeof setSyncStatus === 'function') setSyncStatus('error');
+  }
 }
 
-// ⭐ جديد: جلب الحضور من السيرفر
 async function syncAttendanceFromServer(){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -2348,22 +2153,17 @@ async function syncAttendanceFromServer(){
     const r = await fetch(TG_WORKER + '/get-attendance?chatId=' + chatId);
     const serverAtt = await r.json();
     if(!Array.isArray(serverAtt)) return;
-    
     let changed = false;
     for(const s of serverAtt){
       const local = state.attendance.find(a => a.classId === s.classId && a.date === s.date);
       if(!local){
-        state.attendance.push({ 
-          id: uid(), classId: s.classId, date: s.date, 
-          status: s.status, note: s.note || '' 
-        });
+        state.attendance.push({ id: uid(), classId: s.classId, date: s.date, status: s.status, note: s.note || '' });
         changed = true;
       } else if(local.status !== s.status){
         local.status = s.status;
         changed = true;
       }
     }
-    
     if(changed){
       save();
       if(typeof renderSchedule === 'function') renderSchedule();
@@ -2375,31 +2175,18 @@ async function syncAttendanceFromServer(){
 async function loadFromCloud(){
   const chatId = getMyChatId();
   if(!chatId) return;
-  
+  if(typeof setSyncStatus === 'function') setSyncStatus('loading');
   toast('☁️ جاري تحميل بياناتك...');
-  
   try{
     const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
     const data = await r.json();
-    
     if(!data || !data.lastSync){
       toast('📤 جاري رفع بياناتك...');
       await syncToTelegram(true);
       return;
     }
-    
-    const cloudCount = 
-      (data.tasks?.length || 0) + 
-      (data.courses?.length || 0) + 
-      (data.schedule?.length || 0) +
-      (data.exams?.length || 0);
-    
-    const localCount = 
-      (state.tasks?.length || 0) + 
-      (state.courses?.length || 0) + 
-      (state.schedule?.length || 0) +
-      (state.exams?.length || 0);
-    
+    const cloudCount = (data.tasks?.length||0)+(data.courses?.length||0)+(data.schedule?.length||0)+(data.exams?.length||0);
+    const localCount = (state.tasks?.length||0)+(state.courses?.length||0)+(state.schedule?.length||0)+(state.exams?.length||0);
     if(cloudCount >= localCount && cloudCount > 0){
       state.tasks = data.tasks || [];
       state.exams = data.exams || [];
@@ -2413,23 +2200,118 @@ async function loadFromCloud(){
       if(data.skills) state.skills = data.skills;
       if(data.studyLog) state.studyLog = data.studyLog;
       if(data.settings) state.settings = { ...state.settings, ...data.settings };
-      
       save();
       renderAll();
       if(typeof renderWeekBadge === 'function') renderWeekBadge();
       if(typeof renderSchedule === 'function') renderSchedule();
-      
       toast('✅ تم تحميل بياناتك من السحابة');
+      if(typeof setSyncStatus === 'function') setSyncStatus('success');
     } else {
       await syncToTelegram(true);
       toast('📤 تم رفع بياناتك');
+      if(typeof setSyncStatus === 'function') setSyncStatus('success');
     }
   }catch(e){
     console.error('Load error:', e);
+    if(typeof setSyncStatus === 'function') setSyncStatus('error');
   }
 }
 
-  
+function restoreFromCloud(){
+  const current = getMyChatId();
+  openModal('☁️ استعادة من السحابة', `
+    <div style="text-align:center">
+      <p style="font-size:14px;color:var(--muted);line-height:1.9;margin-bottom:16px">
+        أدخل رقم تلقرام ID حقك عشان نجيب بياناتك من السحابة.
+      </p>
+      <div class="field" style="margin-bottom:14px">
+        <label>رقم تلقرام ID</label>
+        <input type="text" id="restoreChatId" placeholder="مثال: 1720298796"
+               value="${current}" style="text-align:center;font-size:16px;font-weight:700">
+      </div>
+      <div style="background:var(--p-light);padding:12px;border-radius:11px;
+                  font-size:12.5px;line-height:1.8;color:var(--p-dark);
+                  font-weight:700;text-align:right;margin-bottom:14px">
+        💡 <b>كيف تجيب رقمك؟</b><br>
+        افتح جهازك الثاني ← الإعدادات ← تلقرام<br>
+        بتلاقي الرقم تحت "مربوط بنجاح"
+      </div>
+      <button class="btn btn-primary btn-block" onclick="doRestore()">☁️ استعادة الآن</button>
+    </div>
+  `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إلغاء</button>`);
+}
+
+async function doRestore(){
+  const id = document.getElementById('restoreChatId').value.trim();
+  if(!id || !/^\d+$/.test(id)){ toast('⚠️ أدخل رقم صحيح'); return; }
+  toast('☁️ جاري الاستعادة...');
+  try{
+    const r = await fetch(TG_WORKER + '/load?chatId=' + id);
+    const data = await r.json();
+    if(!data || !data.lastSync){ toast('⚠️ ما فيه بيانات لهذا الرقم'); return; }
+    setMyChatId(id);
+    state.tasks = data.tasks || [];
+    state.exams = data.exams || [];
+    state.courses = data.courses || [];
+    state.schedule = data.schedule || [];
+    state.attendance = data.attendance || [];
+    state.notes = data.notes || [];
+    state.gpaCourses = data.gpaCourses || [];
+    if(data.wellness) state.wellness = data.wellness;
+    if(data.archive) state.archive = data.archive;
+    if(data.skills) state.skills = data.skills;
+    if(data.studyLog) state.studyLog = data.studyLog;
+    if(data.settings) state.settings = { ...state.settings, ...data.settings };
+    save();
+    closeModal();
+    updateTgStatus();
+    toast('✅ تم استرجاع بياناتك!');
+    setTimeout(() => location.reload(), 800);
+  }catch(e){ toast('⚠️ فشل الاتصال'); }
+}
+
+/* ============ مؤشر المزامنة ============ */
+let lastSyncTime = null;
+
+function setSyncStatus(status){
+  const badge = document.getElementById('syncBadge');
+  const icon = document.getElementById('syncIcon');
+  const text = document.getElementById('syncText');
+  if(!badge) return;
+  badge.classList.remove('loading', 'error');
+  if(status === 'loading'){
+    badge.classList.add('loading');
+    icon.textContent = '⏳';
+    text.textContent = 'جاري المزامنة';
+  } else if(status === 'success'){
+    lastSyncTime = new Date();
+    icon.textContent = '✅';
+    updateSyncText();
+  } else if(status === 'error'){
+    badge.classList.add('error');
+    icon.textContent = '⚠️';
+    text.textContent = 'فشل المزامنة';
+  }
+}
+
+function updateSyncText(){
+  const text = document.getElementById('syncText');
+  const icon = document.getElementById('syncIcon');
+  const badge = document.getElementById('syncBadge');
+  if(!text || !lastSyncTime) return;
+  const diff = Math.round((Date.now() - lastSyncTime.getTime()) / 1000);
+  let label = '';
+  if(diff < 60) label = 'الآن';
+  else if(diff < 3600) label = `قبل ${Math.round(diff/60)} د`;
+  else if(diff < 86400) label = `قبل ${Math.round(diff/3600)} س`;
+  else label = `قبل ${Math.round(diff/86400)} ي`;
+  text.textContent = label;
+  icon.textContent = '✅';
+  badge.classList.remove('loading', 'error');
+}
+
+setInterval(updateSyncText, 60000);
+
 async function testTelegram(){
   const chatId = getMyChatId();
   if(!chatId){ toast('⚠️ اربط أولاً'); return; }
@@ -2444,15 +2326,10 @@ async function testTelegram(){
 }
 
 function connectTelegram(){
-  // 1) سوّ كود عشوائي
   const code = String(Math.floor(1000 + Math.random() * 9000));
   localStorage.setItem('tg_pending', code);
   localStorage.setItem('tg_pending_time', Date.now().toString());
-
-  // 2) شغل الفحص بالخلفية (يشتغل حتى لو راح لتلقرام)
   startPoll(code);
-
-  // 3) افتح تلقرام
   const tgUrl = 'https://t.me/' + TG_BOT + '?start=' + code;
   window.location.href = tgUrl;
 }
@@ -2460,16 +2337,13 @@ function connectTelegram(){
 function startPoll(code){
   if(pollTimer) clearInterval(pollTimer);
   const start = Date.now();
-
   pollTimer = setInterval(async () => {
-    // ما بعد 10 دقائق
     if(Date.now() - start > 600000){
       clearInterval(pollTimer);
       localStorage.removeItem('tg_pending');
       localStorage.removeItem('tg_pending_time');
       return;
     }
-
     try{
       const r = await fetch(TG_WORKER + '/poll?code=' + code);
       const d = await r.json();
@@ -2479,7 +2353,6 @@ function startPoll(code){
         localStorage.removeItem('tg_pending');
         localStorage.removeItem('tg_pending_time');
         await syncToTelegram(true);
-        // ⭐ محدّث الصفحة تلقائياً
         toast('🎉 تم الربط! جاري تحديث الصفحة...');
         setTimeout(() => location.reload(), 900);
       }
@@ -2493,7 +2366,6 @@ function unlinkTelegram(){
   localStorage.removeItem('tg_pending');
   localStorage.removeItem('tg_pending_time');
   if(pollTimer) clearInterval(pollTimer);
-  // ⭐ محدّث الصفحة بعد الفك
   toast('🔓 تم الفك');
   setTimeout(() => location.reload(), 600);
 }
@@ -2503,7 +2375,6 @@ function updateTgStatus(){
   if(!el) return;
   const id = getMyChatId();
   const pending = localStorage.getItem('tg_pending');
-
   if(id){
     el.innerHTML = '✅ <b>مربوط بنجاح</b>';
     el.style.background = 'var(--ok-bg)';
@@ -2519,28 +2390,22 @@ function updateTgStatus(){
   }
 }
 
-// ============ استئناف الفحص لو كان معلّق ============
 (function resumePending(){
   const pending = localStorage.getItem('tg_pending');
   const t = parseInt(localStorage.getItem('tg_pending_time') || '0');
-  // لو خلال آخر 10 دقائق
-  if(pending && Date.now() - t < 600000){
-    startPoll(pending);
-  } else if(pending){
+  if(pending && Date.now() - t < 600000){ startPoll(pending); }
+  else if(pending){
     localStorage.removeItem('tg_pending');
     localStorage.removeItem('tg_pending_time');
   }
 })();
 
-// مزامنة تلقائية
 const _origSave = save;
 save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
 
-// ============ واجهة الإعدادات ============
 (function addTGUI(){
   const card = document.querySelector('#view-settings .card:last-child');
   if(!card || document.getElementById('tgSection')) return;
-
   const sec = document.createElement('div');
   sec.id = 'tgSection';
   sec.style.cssText = 'margin-top:22px;padding-top:22px;border-top:1px solid var(--border)';
@@ -2560,8 +2425,6 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
   `;
   card.appendChild(sec);
   updateTgStatus();
-
-  // تحديث حالة الأزرار
   setInterval(() => {
     const linked = !!getMyChatId();
     const pending = localStorage.getItem('tg_pending');
@@ -2577,41 +2440,27 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
 
 /* ============================================================
    🎯 الميزات الإضافية
-   (عدّاد الغياب · حاسبة المعدل · الحفظ · الأرشيف · الصحة)
 ============================================================ */
-
-// تهيئة البيانات
 if(!state.memorization) state.memorization = { dailyGoal:5, unit:'صفحة', log:[] };
 if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
 if(!state.archive) state.archive = [];
 
 /* ============================================================
    📋 عدّاد الغياب — باليوم الكامل
-   كل يوم محاضرة = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
 ============================================================ */
 if(!Array.isArray(state.attendance)) state.attendance = [];
 
 function calcAttendance(){
-  const SEMESTER_WEEKS = 16;   // عدد أسابيع الفصل
-  const MAX_PERCENT = 0.25;    // حد الحرمان 25%
-  
+  const SEMESTER_WEEKS = 16;
+  const MAX_PERCENT = 0.25;
   const res = {};
-  
   (state.courses || []).forEach(c => {
-    // 1) الأيام الفريدة أسبوعياً
-    //    لو المادة يوم واحد → daysPerWeek = 1
-    //    لو يومين → 2، إلخ
     const daysSet = new Set();
     (state.schedule || [])
       .filter(s => s.courseId === c.id)
       .forEach(s => daysSet.add(s.day));
     const daysPerWeek = daysSet.size;
-    
-    // 2) إجمالي أيام الفصل
     const totalDays = daysPerWeek * SEMESTER_WEEKS;
-    
-    // 3) الأيام اللي غبت فيها (تواريخ فريدة)
-    //    لو غبت يوم فيه محاضرتين = يوم واحد
     const absentDates = new Set();
     (state.attendance || []).forEach(a => {
       if(a.status !== 'absent' && a.status !== 'excused') return;
@@ -2620,8 +2469,6 @@ function calcAttendance(){
       absentDates.add(a.date);
     });
     const absences = absentDates.size;
-    
-    // 4) التأخيرات (تواريخ فريدة)
     const lateDates = new Set();
     (state.attendance || []).forEach(a => {
       if(a.status !== 'late') return;
@@ -2630,13 +2477,8 @@ function calcAttendance(){
       lateDates.add(a.date);
     });
     const lates = lateDates.size;
-    
-    // 5) النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
     const percent = totalDays > 0 ? (absences / totalDays) * 100 : 0;
-    
-    // 6) حد الحرمان = 25% من الإجمالي
     const maxAbsences = Math.floor(totalDays * MAX_PERCENT);
-    
     res[c.id] = {
       course: c,
       total: totalDays,
@@ -2648,58 +2490,39 @@ function calcAttendance(){
       remaining: Math.max(0, maxAbsences - absences)
     };
   });
-  
   return res;
 }
 
 function renderAttendancePage(){
   const el = document.getElementById('attendanceContent');
   if(!el) return;
-  
   const data = calcAttendance();
-  
   if(!state.courses.length){
-    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً من صفحة المقررات</p></div>`;
+    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً</p></div>`;
     return;
   }
-  
   const totalAbsences = Object.values(data).reduce((a, x) => a + x.absences, 0);
-  
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
-        <div><b>${totalAbsences}</b><span>إجمالي أيام غيابك</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--p-light)">📅</div>
-        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--warn-bg)">🎯</div>
-        <div><b>25%</b><span>حد الحرمان</span></div>
-      </div>
+      <div class="stat"><div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
+        <div><b>${totalAbsences}</b><span>إجمالي أيام غيابك</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">📅</div>
+        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">🎯</div>
+        <div><b>25%</b><span>حد الحرمان</span></div></div>
     </div>
-    
     <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;line-height:1.9;font-weight:600">
       💡 <b>طريقة الحساب:</b>
       <br>• كل <b>يوم محاضرة</b> = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
       <br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
-      <br>• مثال: مادة يوم واحد أسبوعياً + 16 أسبوع = 16 يوم. غبت يوم = 6.25%
     </div>
-    
     <div style="display:grid;gap:14px">
       ${Object.values(data).map(d => {
         const used = d.percent;
-        const color = used >= 18.75 ? 'var(--danger)' : 
-                      used >= 12.5 ? 'var(--warn)' : 
-                      'var(--ok)';
-        const bg = used >= 18.75 ? 'var(--danger-bg)' : 
-                   used >= 12.5 ? 'var(--warn-bg)' : 
-                   'var(--ok-bg)';
+        const color = used >= 18.75 ? 'var(--danger)' : used >= 12.5 ? 'var(--warn)' : 'var(--ok)';
+        const bg = used >= 18.75 ? 'var(--danger-bg)' : used >= 12.5 ? 'var(--warn-bg)' : 'var(--ok-bg)';
         const emoji = used >= 18.75 ? '🚨' : used >= 12.5 ? '⚠️' : '✅';
         const barPercent = Math.min((d.percent / 25) * 100, 100);
-        
         return `
           <div class="card" style="padding:20px;border-right:4px solid ${color}">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
@@ -2714,11 +2537,9 @@ function renderAttendancePage(){
                 <span style="font-size:10.5px;font-weight:700">${emoji}</span>
               </div>
             </div>
-            
             <div class="prog" style="height:12px;margin-bottom:14px">
               <i style="width:${barPercent}%;background:${color}"></i>
             </div>
-            
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12.5px;font-weight:700;text-align:center">
               <div style="background:var(--hover);padding:8px;border-radius:9px">
                 <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">أيام غيابك</div>
@@ -2733,7 +2554,6 @@ function renderAttendancePage(){
                 <div style="color:var(--ok);font-size:15px;font-family:'Tajawal'">${d.remaining}</div>
               </div>
             </div>
-            
             <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
               <span style="color:var(--warn)">⏰ تأخير: <b>${d.lates}</b></span>
               ${d.percent >= 18.75 ? `<span style="color:var(--danger)">🚨 اقتربت من الحرمان!</span>` : ''}
@@ -2760,7 +2580,6 @@ function renderGPA(){
     if(cr > 0){ tp += pt * cr; tc += cr; }
   });
   const gpa = tc ? (tp / tc) : 0;
-
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
       <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div>
@@ -2827,7 +2646,6 @@ function renderWellness(){
     const todayLog = w.log.find(l => l.date === today) || { sleep:0, water:0 };
     const sleepPct = Math.min(100, Math.round((todayLog.sleep / w.sleepGoal) * 100));
     const waterPct = Math.min(100, Math.round((todayLog.water / w.waterGoal) * 100));
-
     const last7 = [];
     for(let i = 6; i >= 0; i--){
       const d = new Date(); d.setDate(d.getDate() - i);
@@ -2837,7 +2655,6 @@ function renderWellness(){
     }
     const maxSleep = Math.max(...last7.map(x => x.sleep), w.sleepGoal);
     const maxWater = Math.max(...last7.map(x => x.water), w.waterGoal);
-
     el.innerHTML = `
       <div class="grid g2" style="margin-bottom:16px">
         <div class="card" style="padding:22px">
@@ -2851,9 +2668,7 @@ function renderWellness(){
           </div>
           <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${sleepPct}%"></i></div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
-            ${[4,5,6,7,8,9,10].map(h => `
-              <button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>
-            `).join('')}
+            ${[4,5,6,7,8,9,10].map(h => `<button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>`).join('')}
           </div>
         </div>
         <div class="card" style="padding:22px">
@@ -3005,14 +2820,12 @@ function deleteArchive(i){
 (function addPages(){
   const content = document.querySelector('.content');
   if(!content) return;
-
   const pages = [
     { id:'attendance', ico:'📋', title:'عدّاد الغياب', sub:'تتبع غياباتك' },
     { id:'gpa', ico:'🎓', title:'حاسبة المعدل', sub:'احسب معدلك' },
     { id:'wellness', ico:'💪', title:'النوم والماء', sub:'صحتك أولاً' },
     { id:'archive', ico:'🗂️', title:'أرشيف الفصول', sub:'سجل كل فصولك' }
   ];
-
   pages.forEach(p => {
     if(document.getElementById('view-' + p.id)) return;
     const sec = document.createElement('section');
@@ -3033,15 +2846,11 @@ function deleteArchive(i){
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
   if(!nav) return;
-
-  // احذف الأزرار القديمة وخذ نسخ
   const existing = {};
   nav.querySelectorAll('.nav-btn').forEach(b => {
     existing[b.dataset.view] = b;
     b.remove();
   });
-
-  // سوّ الأزرار الجديدة
   const newBtn = (view, ico, label) => {
     if(existing[view]) {
       existing[view].innerHTML = `<span class="ico">${ico}</span> ${label}`;
@@ -3053,7 +2862,6 @@ function deleteArchive(i){
     b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
     return b;
   };
-
   const groups = [
     { title:'📌 الرئيسية', items:[
       ['dashboard','🏠','الرئيسية'],
@@ -3077,23 +2885,17 @@ function deleteArchive(i){
       ['settings','⚙️','الإعدادات']
     ]}
   ];
-
   nav.innerHTML = '';
   groups.forEach(g => {
     const group = document.createElement('div');
-    group.className = 'nav-group collapsed'; // كلها مطوية افتراضياً
-
+    group.className = 'nav-group collapsed';
     const title = document.createElement('div');
     title.className = 'nav-group-title';
     title.textContent = g.title;
-    title.addEventListener('click', () => {
-      group.classList.toggle('collapsed');
-    });
+    title.addEventListener('click', () => { group.classList.toggle('collapsed'); });
     group.appendChild(title);
-
     g.items.forEach(([v, ico, label]) => {
       const b = newBtn(v, ico, label);
-      // اربط الأزرار
       b.onclick = null;
       b.addEventListener('click', () => {
         go(v);
@@ -3108,11 +2910,8 @@ function deleteArchive(i){
       });
       group.appendChild(b);
     });
-
     nav.appendChild(group);
   });
-
-  // افتح مجموعة الصفحة الحالية
   const current = (location.hash.slice(1) || 'dashboard');
   nav.querySelectorAll('.nav-group').forEach(g => {
     if(g.querySelector(`[data-view="${current}"]`)) g.classList.remove('collapsed');
@@ -3142,11 +2941,8 @@ const _origGo = go;
 go = function(view){
   _origGo(view);
   document.querySelectorAll('.nav-group').forEach(g => {
-    if(g.querySelector(`[data-view="${view}"]`)){
-      g.classList.remove('collapsed');
-    }
+    if(g.querySelector(`[data-view="${view}"]`)){ g.classList.remove('collapsed'); }
   });
-  // شغّل الرندر
   setTimeout(() => {
     try{
       if(view === 'attendance') renderAttendancePage();
@@ -3157,7 +2953,6 @@ go = function(view){
   }, 60);
 };
 
-// شغّل الرندر الأولي
 setTimeout(() => {
   try{ renderAttendancePage(); }catch(e){}
   try{ renderGPA(); }catch(e){}
@@ -3168,7 +2963,7 @@ setTimeout(() => {
 /* ============================================================
    📅 عدّاد الأسبوع الدراسي
 ============================================================ */
-const SEMESTER_WEEKS = 16; // عدد أسابيع الفصل
+const SEMESTER_WEEKS = 16;
 
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
@@ -3220,7 +3015,6 @@ function saveSemesterStart(){
   toast('✅ تم حفظ بداية الفصل');
 }
 
-// أضف التاريخ في applySettings
 const _origApplySettings = applySettings;
 applySettings = function(){
   _origApplySettings();
@@ -3229,7 +3023,6 @@ applySettings = function(){
   renderWeekBadge();
 };
 
-// شغّل عند البداية
 setTimeout(renderWeekBadge, 300);
 </script>
 </body>

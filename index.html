@@ -2019,7 +2019,6 @@ function qaClose(){
    📋 الحضور من الجدول مباشرة
 ============================================================ */
 const ATT = {
-  present:  { label:'حاضر',          ico:'✅', color:null },
   excused:  { label:'غايب بعذر',     ico:'🟡', color:'#d97706' },
   absent:   { label:'غايب بدون عذر', ico:'🔴', color:'#dc2626' },
   late:     { label:'متأخر',         ico:'⏰', color:'#7c3aed' },
@@ -2188,10 +2187,12 @@ function clearAtt(classId, date){
 renderSchedule();
 
 /* ============================================================
-   📱 ربط تلقرام (متعدد المستخدمين)
+   📱 ربط تلقرام التلقائي
 ============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
+
+let pollTimer = null;
 
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
@@ -2227,15 +2228,43 @@ async function testTelegram(){
   }catch(e){ toast('⚠️ فشل'); }
 }
 
-async function linkTelegram(){
-  const input = document.getElementById('tgChatInput');
-  const id = (input.value || '').trim();
-  if(!/^-?\d+$/.test(id)){ toast('⚠️ رقم غير صحيح'); return; }
-  setMyChatId(id);
-  toast('✅ تم الربط');
-  await syncToTelegram(true);
-  await testTelegram();
-  updateTgStatus();
+async function connectTelegram(){
+  // 1) سوّ كود عشوائي
+  const code = Math.random().toString(36).slice(2, 10).toUpperCase();
+  localStorage.setItem('tg_pending', code);
+
+  // 2) افتح تلقرام
+  window.open('https://t.me/' + TG_BOT + '?start=' + code, '_blank');
+
+  // 3) عرض حالة الانتظار
+  const statusEl = document.getElementById('tgStatus');
+  if(statusEl) statusEl.innerHTML = '⏳ <b>جاري الربط...</b> افتح تلقرام واضغط START';
+  if(statusEl) statusEl.style.color = 'var(--warn)';
+
+  // 4) ابدأ الفحص كل ثانيتين
+  if(pollTimer) clearInterval(pollTimer);
+  const startTime = Date.now();
+  pollTimer = setInterval(async () => {
+    if(Date.now() - startTime > 180000){ // 3 دInterval(pollTimer);
+      if(statusEl){ 
+        statusEl.innerHTML = '⚠️ <b>انتهت المدة</b> — حاول مرة ثانية';
+        statusEl.style.color = 'var(--danger)';
+      }
+      return;
+    }
+    try{
+      const res = await fetch(TG_WORKER + '/poll?code=' + code);
+      const data = await res.json();
+      if(data.chatId){
+        clearInterval(pollTimer);
+        setMyChatId(String(data.chatId));
+        localStorage.removeItem('tg_pending');
+        updateTgStatus();
+        toast('🎉 تم ربط تلقرام بنجاح!');
+        await syncToTelegram(true);
+      }
+    }catch(e){}
+  }, 2000);
 }
 
 function unlinkTelegram(){
@@ -2245,36 +2274,22 @@ function unlinkTelegram(){
   toast('🔓 تم فك الربط');
 }
 
-function showLinkGuide(){
-  openModal('📱 كيف تربط تلقرام؟', `
-    <ol style="line-height:2.1;font-size:14.5px;padding-inline-start:22px">
-      <li>افتح تلقرام وابحث عن البوت: <b>@${TG_BOT}</b></li>
-      <li>أرسل للبوت أي رسالة مثل <b>مرحبا</b></li>
-      <li>افتح هذا الرابط في المتصفح وابحث فيه:</li>
-    </ol>
-    <div style="background:var(--hover);padding:12px;border-radius:10px;margin:12px 0;font-family:monospace;font-size:11.5px;word-break:break-all;direction:ltr;text-align:left">
-      api.telegram.org/bot&lt;TOKEN&gt;/getUpdates
-    </div>
-    <p style="font-size:13.5px;line-height:1.9">
-      عندك توكن البوت؟ ما عليك إلا تحط رقمه مكان <code>&lt;TOKEN&gt;</code>.<br><br>
-      ابحث في النتيجة عن <code>"chat":{"id":</code><br>
-      الرقم اللي بعده هو <b>Chat ID</b> حقك (9-10 أرقام).<br><br>
-      انسخه والصقه في الحقل واضغط "ربط".
-    </p>
-    <p style="margin-top:14px;padding:10px;background:var(--warn-bg);border-radius:10px;font-size:13px">
-      💡 كل شخص في الموقع له Chat ID خاص، والرسائل تنفصل تلقائياً
-    </p>
-  `, `<button class="btn btn-primary btn-block" onclick="closeModal()">فهمت</button>`);
-}
-
 function updateTgStatus(){
   const el = document.getElementById('tgStatus');
   if(!el) return;
   const id = getMyChatId();
-  el.innerHTML = id 
-    ? `✅ <b>مربوط</b> · Chat ID: <code>${id}</code>` 
-    : '⚠️ <b>غير مربوط</b> — اتبع التعليمات فوق';
-  el.style.color = id ? 'var(--ok)' : 'var(--muted)';
+  const pending = localStorage.getItem('tg_pending');
+  
+  if(id){
+    el.innerHTML = '✅ <b>مربوط بنجاح</b>';
+    el.style.color = 'var(--ok)';
+  } else if(pending){
+    el.innerHTML = '⏳ <b>جاري الربط...</b> افتح تلقرام واضغط START';
+    el.style.color = 'var(--warn)';
+  } else {
+    el.innerHTML = '⚠️ <b>غير مربوط</b> — اضغط الزر لربط تلقرام';
+    el.style.color = 'var(--muted)';
+  }
 }
 
 // مزامنة تلقائية مع كل حفظ
@@ -2297,25 +2312,35 @@ save = function(){
   sec.innerHTML = `
     <h3 style="font-size:17px;margin-bottom:8px">📱 ربط تلقرام</h3>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-      كل شخص يربط حسابه الخاص، وبيوصله إشعاراته لوحده 🔔
+      اضغط الزر، بيفتح لك تلقرام، اضغط <b>START</b> — وخلص! بيوصلك إشعار قبل كل مهمة واختبار 🔔
     </p>
-    <div id="tgStatus" style="font-size:13px;margin-bottom:12px;font-weight:700"></div>
-    <div class="field" style="margin-bottom:10px">
-      <label>Chat ID الخاص بك</label>
-      <input id="tgChatInput" placeholder="مثال: 123456789" value="${esc(getMyChatId())}">
-    </div>
+    <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:12px;background:var(--hover);border-radius:11px;text-align:center"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="btn btn-primary btn-sm" onclick="linkTelegram()">🔗 ربط / تحديث</button>
-      <button class="btn btn-ghost btn-sm" onclick="showLinkGuide()">❓ كيف أجد Chat ID؟</button>
-      <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()">🔓 فك</button>
+      <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام الآن</button>
+      <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="testTelegram()">🧪 اختبار</button>
-      <button class="btn btn-ghost btn-sm" onclick="syncToTelegram()">📤 مزامنة الآن</button>
+      <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
+      <button class="btn btn-ghost btn-sm" onclick="syncToTelegram()" id="tgSyncBtn" style="display:none">📤 مزامنة الآن</button>
     </div>
   `;
   card.appendChild(sec);
   updateTgStatus();
+  
+  // إظهار/إخفاء الأزرار حسب الحالة
+  const observer = setInterval(() => {
+    const linked = !!getMyChatId();
+    const conn = document.getElementById('tgConnectBtn');
+    const unl = document.getElementById('tgUnlinkBtn');
+    const tst = document.getElementById('tgTestBtn');
+    const syn = document.getElementById('tgSyncBtn');
+    if(conn){
+      conn.textContent = linked ? '🔄 إعادة ربط' : '🔗 ربط تلقرام الآن';
+      if(unl) unl.style.display = linked ? '' : 'none';
+      if(tst) tst.style.display = linked ? '' : 'none';
+      if(syn) syn.style.display = linked ? '' : 'none';
+    }
+  }, 1000);
 })();
 </script>
 </body>

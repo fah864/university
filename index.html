@@ -2188,74 +2188,134 @@ function clearAtt(classId, date){
 renderSchedule();
 
 /* ============================================================
-   📤 ربط تلقرام
+   📱 ربط تلقرام (متعدد المستخدمين)
 ============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
-const TG_ENABLED = true;
+const TG_BOT = 'MyMuHelperBot';
+
+function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
+function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
 
 async function syncToTelegram(silent = false){
-  if(!TG_ENABLED) return;
+  const chatId = getMyChatId();
+  if(!chatId){ if(!silent) toast('⚠️ اربط تلقرام أولاً'); return; }
   try{
-    const res = await fetch(TG_WORKER + '/save', {
+    await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({ 
+        chatId,
         tasks: state.tasks, 
         exams: state.exams,
         courses: state.courses
       })
     });
-    if(!silent) toast('📤 تمت المزامنة مع تلقرام');
-  }catch(e){ 
-    if(!silent) toast('⚠️ تعذّرت المزامنة');
-  }
+    if(!silent) toast('📤 تمت المزامنة');
+  }catch(e){ if(!silent) toast('⚠️ تعذّرت المزامنة'); }
 }
 
 async function testTelegram(){
+  const chatId = getMyChatId();
+  if(!chatId){ toast('⚠️ اربط أولاً'); return; }
   try{
-    await fetch(TG_WORKER + '/test');
+    await fetch(TG_WORKER + '/test', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ chatId })
+    });
     toast('✅ تحقق من تلقرام');
-  }catch(e){ toast('⚠️ فشل الاختبار'); }
+  }catch(e){ toast('⚠️ فشل'); }
+}
+
+async function linkTelegram(){
+  const input = document.getElementById('tgChatInput');
+  const id = (input.value || '').trim();
+  if(!/^-?\d+$/.test(id)){ toast('⚠️ رقم غير صحيح'); return; }
+  setMyChatId(id);
+  toast('✅ تم الربط');
+  await syncToTelegram(true);
+  await testTelegram();
+  updateTgStatus();
+}
+
+function unlinkTelegram(){
+  if(!confirm('فك الربط؟')) return;
+  localStorage.removeItem('tg_chat_id');
+  updateTgStatus();
+  toast('🔓 تم فك الربط');
+}
+
+function showLinkGuide(){
+  openModal('📱 كيف تربط تلقرام؟', `
+    <ol style="line-height:2.1;font-size:14.5px;padding-inline-start:22px">
+      <li>افتح تلقرام وابحث عن البوت: <b>@${TG_BOT}</b></li>
+      <li>أرسل للبوت أي رسالة مثل <b>مرحبا</b></li>
+      <li>افتح هذا الرابط في المتصفح وابحث فيه:</li>
+    </ol>
+    <div style="background:var(--hover);padding:12px;border-radius:10px;margin:12px 0;font-family:monospace;font-size:11.5px;word-break:break-all;direction:ltr;text-align:left">
+      api.telegram.org/bot&lt;TOKEN&gt;/getUpdates
+    </div>
+    <p style="font-size:13.5px;line-height:1.9">
+      عندك توكن البوت؟ ما عليك إلا تحط رقمه مكان <code>&lt;TOKEN&gt;</code>.<br><br>
+      ابحث في النتيجة عن <code>"chat":{"id":</code><br>
+      الرقم اللي بعده هو <b>Chat ID</b> حقك (9-10 أرقام).<br><br>
+      انسخه والصقه في الحقل واضغط "ربط".
+    </p>
+    <p style="margin-top:14px;padding:10px;background:var(--warn-bg);border-radius:10px;font-size:13px">
+      💡 كل شخص في الموقع له Chat ID خاص، والرسائل تنفصل تلقائياً
+    </p>
+  `, `<button class="btn btn-primary btn-block" onclick="closeModal()">فهمت</button>`);
+}
+
+function updateTgStatus(){
+  const el = document.getElementById('tgStatus');
+  if(!el) return;
+  const id = getMyChatId();
+  el.innerHTML = id 
+    ? `✅ <b>مربوط</b> · Chat ID: <code>${id}</code>` 
+    : '⚠️ <b>غير مربوط</b> — اتبع التعليمات فوق';
+  el.style.color = id ? 'var(--ok)' : 'var(--muted)';
 }
 
 // مزامنة تلقائية مع كل حفظ
 const _originalSave = save;
 save = function(){ 
   _originalSave(); 
-  if(TG_ENABLED) syncToTelegram(true);
+  if(getMyChatId()) syncToTelegram(true);
 };
 
-// مزامنة أولية
-setTimeout(() => { if(TG_ENABLED && state.tasks.length) syncToTelegram(true); }, 2000);
-
-// زر في الإعدادات
-(function addTGButton(){
+// واجهة الإعدادات
+(function addTGUI(){
   const card = document.querySelector('#view-settings .card:last-child');
-  if(!card || document.getElementById('tgBtn')) return;
-  const h = document.createElement('h3');
-  h.style.cssText = 'font-size:17px;margin:22px 0 12px';
-  h.textContent = '📱 الربط بتلقرام';
+  if(!card || document.getElementById('tgSection')) return;
   
-  const p = document.createElement('p');
-  p.style.cssText = 'font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.7';
-  p.textContent = 'بتوصلك إشعارات تلقرام قبل موعد كل مهمة واختبار.';
-  
-  const b1 = document.createElement('button');
-  b1.id = 'tgBtn';
-  b1.className = 'btn btn-primary btn-block';
-  b1.style.marginBottom = '10px';
-  b1.textContent = '🧪 اختبار الإرسال';
-  b1.onclick = testTelegram;
-  
-  const b2 = document.createElement('button');
-  b2.className = 'btn btn-ghost btn-block';
-  b2.textContent = '📤 مزامنة الآن';
-  b2.onclick = () => syncToTelegram();
-  
-  card.appendChild(h);
-  card.appendChild(p);
-  card.appendChild(b1);
-  card.appendChild(b2);
+  const sec = document.createElement('div');
+  sec.id = 'tgSection';
+  sec.style.marginTop = '22px';
+  sec.style.paddingTop = '22px';
+  sec.style.borderTop = '1px solid var(--border)';
+  sec.innerHTML = `
+    <h3 style="font-size:17px;margin-bottom:8px">📱 ربط تلقرام</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+      كل شخص يربط حسابه الخاص، وبيوصله إشعاراته لوحده 🔔
+    </p>
+    <div id="tgStatus" style="font-size:13px;margin-bottom:12px;font-weight:700"></div>
+    <div class="field" style="margin-bottom:10px">
+      <label>Chat ID الخاص بك</label>
+      <input id="tgChatInput" placeholder="مثال: 123456789" value="${esc(getMyChatId())}">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      <button class="btn btn-primary btn-sm" onclick="linkTelegram()">🔗 ربط / تحديث</button>
+      <button class="btn btn-ghost btn-sm" onclick="showLinkGuide()">❓ كيف أجد Chat ID؟</button>
+      <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()">🔓 فك</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="testTelegram()">🧪 اختبار</button>
+      <button class="btn btn-ghost btn-sm" onclick="syncToTelegram()">📤 مزامنة الآن</button>
+    </div>
+  `;
+  card.appendChild(sec);
+  updateTgStatus();
 })();
 </script>
 </body>

@@ -2968,6 +2968,134 @@ renderAll = function(){
   if(document.getElementById('wellContent')) renderWellness();
   if(document.getElementById('archiveContent')) renderArchive();
 };
+
+/* ============================================================
+   🔧 إصلاح القائمة الجانبية + تجميع
+============================================================ */
+.nav-group {
+  margin-bottom: 6px;
+}
+.nav-group-title {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-weight: 800;
+  padding: 14px 16px 6px;
+  letter-spacing: 1px;
+  opacity: 0.7;
+}
+
+/* إصلاح ارتفاع القائمة على الجوال */
+.sidebar {
+  height: 100vh;
+  height: 100dvh;
+}
+
+@media(max-width:980px){
+  .sidebar{
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    max-height: 100dvh;
+    width: min(85vw, 300px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    overflow: hidden;
+    box-shadow: -10px 0 40px rgba(0,0,0,.25);
+  }
+  .sidebar .nav{
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px;
+  }
+  .sidebar-foot{
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    background: var(--card);
+    border-top: 1px solid var(--border);
+  }
+}
+
+/* إصلاح padding المحتوى على الجوال */
+@media(max-width:980px){
+  .content{
+    padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* تحسين أزرار التنقل */
+.nav-btn{
+  font-size: 14.5px;
+  padding: 11px 14px;
+}
+
+/* ============================================================
+   🎨 تجميع القائمة الجانبية
+============================================================ */
+(function groupSidebar(){
+  const nav = document.querySelector('.nav');
+  if(!nav || nav.querySelector('.nav-group-title')) return;
+
+  const groups = [
+    { title: '📌 الرئيسية', views: ['dashboard','schedule','courses','tasks','exams'] },
+    { title: '📊 الأكاديمي', views: ['grades','gpa','attendance','archive'] },
+    { title: '🎯 المذاكرة والصحة', views: ['study','memorization','wellness'] },
+    { title: '⚙️ أدوات', views: ['notes','settings'] }
+  ];
+
+  // احفظ كل الأزرار
+  const allButtons = {};
+  nav.querySelectorAll('.nav-btn').forEach(b => {
+    allButtons[b.dataset.view] = b;
+    b.remove();
+  });
+
+  // أعد التنظيم
+  nav.innerHTML = '';
+  groups.forEach(g => {
+    const group = document.createElement('div');
+    group.className = 'nav-group';
+
+    const title = document.createElement('div');
+    title.className = 'nav-group-title';
+    title.textContent = g.title;
+    group.appendChild(title);
+
+    g.views.forEach(v => {
+      if(allButtons[v]) group.appendChild(allButtons[v]);
+    });
+
+    nav.appendChild(group);
+  });
+})();
+
+/* ============================================================
+   🛡️ إصلاح تمرير الصفحة على الجوال
+============================================================ */
+(function fixMobileScroll(){
+  // منع تمرير الصفحة الخلفية لما القائمة مفتوحة
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  if(!sidebar) return;
+
+  const observer = new MutationObserver(() => {
+    if(sidebar.classList.contains('open')){
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  });
+  observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+
+  // إصلاح ارتفاع الشاشة على الجوال
+  function fixVH(){
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', vh + 'px');
+  }
+  fixVH();
+  window.addEventListener('resize', fixVH);
+  window.addEventListener('orientationchange', () => setTimeout(fixVH, 200));
+})();
 </script>
 </body>
 </html>

@@ -2186,6 +2186,77 @@ function clearAtt(classId, date){
 })();
 
 renderSchedule();
+
+/* ============================================================
+   📤 ربط تلقرام
+============================================================ */
+const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
+const TG_ENABLED = true;
+
+async function syncToTelegram(silent = false){
+  if(!TG_ENABLED) return;
+  try{
+    const res = await fetch(TG_WORKER + '/save', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ 
+        tasks: state.tasks, 
+        exams: state.exams,
+        courses: state.courses
+      })
+    });
+    if(!silent) toast('📤 تمت المزامنة مع تلقرام');
+  }catch(e){ 
+    if(!silent) toast('⚠️ تعذّرت المزامنة');
+  }
+}
+
+async function testTelegram(){
+  try{
+    await fetch(TG_WORKER + '/test');
+    toast('✅ تحقق من تلقرام');
+  }catch(e){ toast('⚠️ فشل الاختبار'); }
+}
+
+// مزامنة تلقائية مع كل حفظ
+const _originalSave = save;
+save = function(){ 
+  _originalSave(); 
+  if(TG_ENABLED) syncToTelegram(true);
+};
+
+// مزامنة أولية
+setTimeout(() => { if(TG_ENABLED && state.tasks.length) syncToTelegram(true); }, 2000);
+
+// زر في الإعدادات
+(function addTGButton(){
+  const card = document.querySelector('#view-settings .card:last-child');
+  if(!card || document.getElementById('tgBtn')) return;
+  const h = document.createElement('h3');
+  h.style.cssText = 'font-size:17px;margin:22px 0 12px';
+  h.textContent = '📱 الربط بتلقرام';
+  
+  const p = document.createElement('p');
+  p.style.cssText = 'font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.7';
+  p.textContent = 'بتوصلك إشعارات تلقرام قبل موعد كل مهمة واختبار.';
+  
+  const b1 = document.createElement('button');
+  b1.id = 'tgBtn';
+  b1.className = 'btn btn-primary btn-block';
+  b1.style.marginBottom = '10px';
+  b1.textContent = '🧪 اختبار الإرسال';
+  b1.onclick = testTelegram;
+  
+  const b2 = document.createElement('button');
+  b2.className = 'btn btn-ghost btn-block';
+  b2.textContent = '📤 مزامنة الآن';
+  b2.onclick = () => syncToTelegram();
+  
+  card.appendChild(h);
+  card.appendChild(p);
+  card.appendChild(b1);
+  card.appendChild(b2);
+})();
 </script>
 </body>
 </html>

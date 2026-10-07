@@ -2187,7 +2187,7 @@ function clearAtt(classId, date){
 renderSchedule();
 
 /* ============================================================
-   📱 ربط تلقرام التلقائي
+   📱 ربط تلقرام الذكي
 ============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
@@ -2197,6 +2197,21 @@ let pollTimer = null;
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
 
+// ⭐ التقاط الربط من الرابط ?tg=123456
+(function checkUrlParam(){
+  const p = new URLSearchParams(location.search);
+  const tg = p.get('tg');
+  if(tg){
+    setMyChatId(tg);
+    history.replaceState({}, '', location.pathname);
+    setTimeout(() => {
+      toast('🎉 تم ربط تلقرام بنجاح!');
+      updateTgStatus();
+      syncToTelegram(true);
+    }, 800);
+  }
+})();
+
 async function syncToTelegram(silent = false){
   const chatId = getMyChatId();
   if(!chatId){ if(!silent) toast('⚠️ اربط تلقرام أولاً'); return; }
@@ -2204,15 +2219,10 @@ async function syncToTelegram(silent = false){
     await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ 
-        chatId,
-        tasks: state.tasks, 
-        exams: state.exams,
-        courses: state.courses
-      })
+      body: JSON.stringify({ chatId, tasks: state.tasks, exams: state.exams, courses: state.courses })
     });
     if(!silent) toast('📤 تمت المزامنة');
-  }catch(e){ if(!silent) toast('⚠️ تعذّرت المزامنة'); }
+  }catch(e){ if(!silent) toast('⚠️ فشل'); }
 }
 
 async function testTelegram(){
@@ -2228,50 +2238,50 @@ async function testTelegram(){
   }catch(e){ toast('⚠️ فشل'); }
 }
 
-async function connectTelegram(){
-  // 1) سوّ كود عشوائي
-  const code = Math.random().toString(36).slice(2, 10).toUpperCase();
+function connectTelegram(){
+  if(pollTimer) clearInterval(pollTimer);
+  const code = Math.random().toString(36).slice(2, 8).toUpperCase();
   localStorage.setItem('tg_pending', code);
 
-  // 2) افتح تلقرام
-  window.open('https://t.me/' + TG_BOT + '?start=' + code, '_blank');
+  // فتح تلقرام مع الكود
+  const url = 'https://t.me/' + TG_BOT + '?start=' + code;
+  window.open(url, '_blank');
 
-  // 3) عرض حالة الانتظار
   const statusEl = document.getElementById('tgStatus');
-  if(statusEl) statusEl.innerHTML = '⏳ <b>جاري الربط...</b> افتح تلقرام واضغط START';
-  if(statusEl) statusEl.style.color = 'var(--warn)';
+  if(statusEl){
+    statusEl.innerHTML = '⏳ <b>انتظر...</b> افتح تلقرام واضغط زر START';
+    statusEl.style.color = 'var(--warn)';
+  }
 
-  // 4) ابدأ الفحص كل ثانيتين
-  if(pollTimer) clearInterval(pollTimer);
-  const startTime = Date.now();
+  // فحص كل ثانية
+  const start = Date.now();
   pollTimer = setInterval(async () => {
-    if(Date.now() - startTime > 180000){ // 3 دInterval(pollTimer);
-      if(statusEl){ 
-        statusEl.innerHTML = '⚠️ <b>انتهت المدة</b> — حاول مرة ثانية';
-        statusEl.style.color = 'var(--danger)';
-      }
+    if(Date.now() - start > 300000){
+      clearInterval(pollTimer);
+      localStorage.removeItem('tg_pending');
+      if(statusEl){ statusEl.innerHTML = '⚠️ انتهت المدة'; statusEl.style.color = 'var(--danger)'; }
       return;
     }
     try{
-      const res = await fetch(TG_WORKER + '/poll?code=' + code);
-      const data = await res.json();
-      if(data.chatId){
+      const r = await fetch(TG_WORKER + '/poll?code=' + code);
+      const d = await r.json();
+      if(d.chatId){
         clearInterval(pollTimer);
-        setMyChatId(String(data.chatId));
+        setMyChatId(String(d.chatId));
         localStorage.removeItem('tg_pending');
         updateTgStatus();
-        toast('🎉 تم ربط تلقرام بنجاح!');
+        toast('🎉 تم الربط!');
         await syncToTelegram(true);
       }
     }catch(e){}
-  }, 2000);
+  }, 1500);
 }
 
 function unlinkTelegram(){
   if(!confirm('فك الربط؟')) return;
   localStorage.removeItem('tg_chat_id');
   updateTgStatus();
-  toast('🔓 تم فك الربط');
+  toast('🔓 تم الفك');
 }
 
 function updateTgStatus(){
@@ -2279,66 +2289,48 @@ function updateTgStatus(){
   if(!el) return;
   const id = getMyChatId();
   const pending = localStorage.getItem('tg_pending');
-  
-  if(id){
-    el.innerHTML = '✅ <b>مربوط بنجاح</b>';
-    el.style.color = 'var(--ok)';
-  } else if(pending){
-    el.innerHTML = '⏳ <b>جاري الربط...</b> افتح تلقرام واضغط START';
-    el.style.color = 'var(--warn)';
-  } else {
-    el.innerHTML = '⚠️ <b>غير مربوط</b> — اضغط الزر لربط تلقرام';
-    el.style.color = 'var(--muted)';
-  }
+  if(id){ el.innerHTML = '✅ <b>مربوط بنجاح</b>'; el.style.color = 'var(--ok)'; }
+  else if(pending){ el.innerHTML = '⏳ <b>جاري الربط...</b>'; el.style.color = 'var(--warn)'; }
+  else { el.innerHTML = '⚠️ <b>غير مربوط</b>'; el.style.color = 'var(--muted)'; }
 }
 
-// مزامنة تلقائية مع كل حفظ
-const _originalSave = save;
-save = function(){ 
-  _originalSave(); 
-  if(getMyChatId()) syncToTelegram(true);
-};
+// مزامنة تلقائية
+const _origSave = save;
+save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
 
-// واجهة الإعدادات
+// واجهة
 (function addTGUI(){
   const card = document.querySelector('#view-settings .card:last-child');
   if(!card || document.getElementById('tgSection')) return;
-  
+
   const sec = document.createElement('div');
   sec.id = 'tgSection';
-  sec.style.marginTop = '22px';
-  sec.style.paddingTop = '22px';
-  sec.style.borderTop = '1px solid var(--border)';
+  sec.style.cssText = 'margin-top:22px;padding-top:22px;border-top:1px solid var(--border)';
   sec.innerHTML = `
-    <h3 style="font-size:17px;margin-bottom:8px">📱 ربط تلقرام</h3>
+    <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-      اضغط الزر، بيفتح لك تلقرام، اضغط <b>START</b> — وخلص! بيوصلك إشعار قبل كل مهمة واختبار 🔔
+      اضغط الزر → افتح تلقرام → اضغط START → خلص! 🔔
     </p>
     <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:12px;background:var(--hover);border-radius:11px;text-align:center"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-      <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام الآن</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام</button>
       <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
       <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
-      <button class="btn btn-ghost btn-sm" onclick="syncToTelegram()" id="tgSyncBtn" style="display:none">📤 مزامنة الآن</button>
+      <button class="btn btn-ghost btn-sm" onclick="syncToTelegram()" id="tgSyncBtn" style="display:none">📤 مزامنة</button>
     </div>
   `;
   card.appendChild(sec);
   updateTgStatus();
-  
-  // إظهار/إخفاء الأزرار حسب الحالة
-  const observer = setInterval(() => {
+  setInterval(() => {
     const linked = !!getMyChatId();
-    const conn = document.getElementById('tgConnectBtn');
-    const unl = document.getElementById('tgUnlinkBtn');
-    const tst = document.getElementById('tgTestBtn');
-    const syn = document.getElementById('tgSyncBtn');
-    if(conn){
-      conn.textContent = linked ? '🔄 إعادة ربط' : '🔗 ربط تلقرام الآن';
-      if(unl) unl.style.display = linked ? '' : 'none';
-      if(tst) tst.style.display = linked ? '' : 'none';
-      if(syn) syn.style.display = linked ? '' : 'none';
+    const c = document.getElementById('tgConnectBtn');
+    if(c){
+      c.textContent = linked ? '🔄 إعادة ربط' : '🔗 ربط تلقرام';
+      document.getElementById('tgUnlinkBtn').style.display = linked ? '' : 'none';
+      document.getElementById('tgTestBtn').style.display = linked ? '' : 'none';
+      document.getElementById('tgSyncBtn').style.display = linked ? '' : 'none';
     }
   }, 1000);
 })();

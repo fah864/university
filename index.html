@@ -57,7 +57,7 @@ ul{list-style:none}
 .nav-btn.active .badge{background:rgba(255,255,255,.28)}
 .sidebar-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px}
 .icon-btn{width:40px;height:40px;border-radius:11px;background:var(--hover);display:grid;place-items:center;font-size:17px;transition:var(--t);flex:1}
-.icon-btn:hover{background:var(--p);transform:translateY(-2px)}
+.icon-btn:hover{background:var(--p);color:#fff;transform:translateY(-2px)}
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 22px;height:70px;display:flex;align-items:center;gap:16px}
 .hamburger{display:none;width:42px;height:42px;border-radius:11px;background:var(--hover);place-items:center;font-size:20px}
@@ -262,8 +262,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .sync-badge.loading{background:var(--warn-bg);color:var(--warn)}
 .sync-badge.error{background:var(--danger-bg);color:var(--danger)}
 .sync-badge.hidden{opacity:0;pointer-events:none}
-.theme-toggle{width:38px;height:38px;border-radius:11px;background:var(--hover);display:grid;place-items:center;font-size:17px;transition:var(--t);cursor:pointer;border:none;color:var(--text);flex-shrink:0}
-.theme-toggle:hover{background:var(--p);color:#fff;transform:translateY(-2px)}
 @media(max-width:640px){
   .week-badge{font-size:11.5px;padding:6px 10px}
   .sync-badge{font-size:11.5px;padding:6px 10px}
@@ -291,6 +289,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <button class="nav-btn" data-view="settings"><span class="ico">⚙️</span> الإعدادات</button>
     </nav>
     <div class="sidebar-foot">
+      <button class="icon-btn" id="themeBtn" title="تبديل المظهر">🌙</button>
       <button class="icon-btn" id="quickAddBtn" title="إضافة سريعة">➕</button>
     </div>
   </aside>
@@ -304,7 +303,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
-      <button class="theme-toggle" id="themeToggle" title="تبديل المظهر" onclick="toggleTheme()">🌙</button>
       <div class="sync-badge hidden" id="syncBadge" title="حالة المزامنة">
         <span id="syncIcon">☁️</span>
         <span id="syncText">مزامن</span>
@@ -453,6 +451,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
       <section class="view" id="view-settings">
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
+
         <div class="grid g2">
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">📅 الفصل الدراسي</h3>
@@ -464,16 +463,34 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             </div>
             <button class="btn btn-primary btn-sm" onclick="saveSemesterStart()">💾 حفظ تاريخ البداية</button>
           </div>
+
           <div class="card">
-            <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
-            <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
-              بياناتك محفوظة في متصفحك + السحابة تلقائياً.
-            </p>
-            <div style="display:flex;flex-direction:column;gap:10px">
-              <button class="btn btn-primary btn-block" onclick="restoreFromCloud()">☁️ استعادة من السحابة</button>
-              <button class="btn btn-danger btn-block" onclick="clearAll()">🗑️ حذف كل البيانات</button>
-            </div>
+            <h3 style="font-size:17px;margin-bottom:16px">🔄 حالة المزامنة</h3>
+            <div id="syncStatusContent"></div>
           </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+            اضغط الزر → بيفتح تلقرام → اضغط <b>START</b> → ارجع للموقع، بيحدّث تلقائياً ✅
+          </p>
+          <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:14px;border-radius:11px;text-align:center"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام</button>
+            <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
+          </div>
+          <div style="margin-top:8px">
+            <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
+          <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
+            بياناتك محفوظة في متصفحك + السحابة تلقائياً.
+          </p>
+          <button class="btn btn-danger btn-block" onclick="clearAll()">🗑️ حذف كل البيانات</button>
         </div>
       </section>
 
@@ -564,13 +581,13 @@ document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', (
 function setTheme(t){
   state.settings.theme = t;
   document.documentElement.dataset.theme = t;
-  const topBtn = document.getElementById('themeToggle');
-  if(topBtn) topBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+  const sideBtn = document.getElementById('themeBtn');
+  if(sideBtn) sideBtn.textContent = t === 'dark' ? '☀️' : '🌙';
   save();
 }
-function toggleTheme(){
+document.getElementById('themeBtn').addEventListener('click', () => {
   setTheme(state.settings.theme === 'dark' ? 'light' : 'dark');
-}
+});
 
 const modalBg = document.getElementById('modalBg');
 function openModal(title, bodyHTML, footHTML){
@@ -1119,8 +1136,8 @@ function clearAll(){
 }
 function applySettings(){
   document.documentElement.dataset.theme = state.settings.theme || 'light';
-  const topBtn = document.getElementById('themeToggle');
-  if(topBtn) topBtn.textContent = state.settings.theme === 'dark' ? '☀️' : '🌙';
+  const sideBtn = document.getElementById('themeBtn');
+  if(sideBtn) sideBtn.textContent = state.settings.theme === 'dark' ? '☀️' : '🌙';
   const p = state.settings.pomo;
   const wEl = document.getElementById('setWork');
   const sEl = document.getElementById('setShort');
@@ -1131,6 +1148,49 @@ function applySettings(){
   pomo.total = pomoDuration(pomo.mode);
   pomo.remaining = pomo.total;
   pomoRender();
+}
+
+// ⭐ حالة المزامنة
+function renderSyncStatus(){
+  const el = document.getElementById('syncStatusContent');
+  if(!el) return;
+  const chatId = getMyChatId();
+  const lastSync = parseInt(localStorage.getItem('localModified') || '0');
+  const lastSyncTime = lastSync ? new Date(lastSync) : null;
+  let timeStr = '—';
+  if(lastSyncTime){
+    const diff = Math.round((Date.now() - lastSyncTime.getTime()) / 1000);
+    if(diff < 60) timeStr = 'الآن';
+    else if(diff < 3600) timeStr = `قبل ${Math.round(diff/60)} دقيقة`;
+    else if(diff < 86400) timeStr = `قبل ${Math.round(diff/3600)} ساعة`;
+    else timeStr = `قبل ${Math.round(diff/86400)} يوم`;
+  }
+  const openTasks = state.tasks.filter(t => !t.done).length;
+  const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0).length;
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;padding:14px;background:${chatId ? 'var(--ok-bg)' : 'var(--warn-bg)'};border-radius:12px;margin-bottom:14px">
+      <span style="font-size:24px">${chatId ? '✅' : '⚠️'}</span>
+      <div>
+        <b style="display:block;font-size:14.5px;color:${chatId ? 'var(--ok)' : 'var(--warn)'}">${chatId ? 'مربوط بـ تلقرام' : 'غير مربوط'}</b>
+        <span style="font-size:12px;color:var(--muted);font-weight:600">${chatId ? 'آخر مزامنة: ' + timeStr : 'اربط من قسم تلقرام أدناه'}</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+      <div style="background:var(--hover);padding:12px 8px;border-radius:10px">
+        <div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--p)">${state.courses.length}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700">مقرر</div>
+      </div>
+      <div style="background:var(--hover);padding:12px 8px;border-radius:10px">
+        <div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--warn)">${openTasks}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700">مهمة متبقية</div>
+      </div>
+      <div style="background:var(--hover);padding:12px 8px;border-radius:10px">
+        <div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--danger)">${upcomingExams}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700">اختبار قادم</div>
+      </div>
+    </div>
+    ${chatId ? `<button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="doSync(false)">🔄 مزامنة الآن</button>` : ''}
+  `;
 }
 
 function quickAdd(){
@@ -1421,8 +1481,11 @@ async function doSync(silent = true){
     });
     localStorage.setItem('localModified', Date.now().toString());
     showSyncBadge('success');
+    if(!silent) toast('✅ تمت المزامنة');
+    renderSyncStatus();
   }catch(e){
     showSyncBadge('error');
+    if(!silent) toast('⚠️ فشلت المزامنة');
   }
 }
 
@@ -1456,13 +1519,11 @@ async function loadFromCloud(){
   const chatId = getMyChatId();
   if(!chatId) return;
   showSyncBadge('loading');
-  toast('☁️ جاري تحميل بياناتك...');
   try{
     const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
     const data = await r.json();
     if(!data || !data.lastSync){
       await doSync(true);
-      toast('📤 تم رفع بياناتك');
       return;
     }
     const localModified = parseInt(localStorage.getItem('localModified') || '0');
@@ -1485,62 +1546,17 @@ async function loadFromCloud(){
       renderAll();
       if(typeof renderWeekBadge === 'function') renderWeekBadge();
       if(typeof renderSchedule === 'function') renderSchedule();
-      toast('✅ تم تحميل بياناتك من السحابة');
+      toast('✅ تم تحديث بياناتك من السحابة');
       showSyncBadge('success');
+      renderSyncStatus();
     } else if(localModified > cloudModified){
       await doSync(true);
-      toast('📤 تم رفع بياناتك');
-      showSyncBadge('success');
     } else {
-      toast('✅ بياناتك محدّثة');
       showSyncBadge('success');
     }
   }catch(e){
     showSyncBadge('error');
   }
-}
-
-function restoreFromCloud(){
-  const current = getMyChatId();
-  openModal('☁️ استعادة من السحابة', `
-    <div style="text-align:center">
-      <p style="font-size:14px;color:var(--muted);line-height:1.9;margin-bottom:16px">أدخل رقم تلقرام ID حقك عشان نجيب بياناتك من السحابة.</p>
-      <div class="field" style="margin-bottom:14px">
-        <label>رقم تلقرام ID</label>
-        <input type="text" id="restoreChatId" placeholder="مثال: 1720298796" value="${current}" style="text-align:center;font-size:16px;font-weight:700">
-      </div>
-      <div style="background:var(--p-light);padding:12px;border-radius:11px;font-size:12.5px;line-height:1.8;color:var(--p-dark);font-weight:700;text-align:right;margin-bottom:14px">
-        💡 <b>كيف تجيب رقمك؟</b><br>افتح جهازك الثاني ← الإعدادات ← تلقرام<br>بتلاقي الرقم تحت "مربوط بنجاح"
-      </div>
-      <button class="btn btn-primary btn-block" onclick="doRestore()">☁️ استعادة الآن</button>
-    </div>
-  `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إلغاء</button>`);
-}
-async function doRestore(){
-  const id = document.getElementById('restoreChatId').value.trim();
-  if(!id || !/^\d+$/.test(id)){ toast('⚠️ أدخل رقم صحيح'); return; }
-  toast('☁️ جاري الاستعادة...');
-  try{
-    const r = await fetch(TG_WORKER + '/load?chatId=' + id);
-    const data = await r.json();
-    if(!data || !data.lastSync){ toast('⚠️ ما فيه بيانات لهذا الرقم'); return; }
-    setMyChatId(id);
-    state.tasks = data.tasks || [];
-    state.exams = data.exams || [];
-    state.courses = data.courses || [];
-    state.schedule = data.schedule || [];
-    state.attendance = data.attendance || [];
-    state.notes = data.notes || [];
-    state.gpaCourses = data.gpaCourses || [];
-    if(data.wellness) state.wellness = data.wellness;
-    if(data.archive) state.archive = data.archive;
-    if(data.skills) state.skills = data.skills;
-    if(data.studyLog) state.studyLog = data.studyLog;
-    if(data.settings) state.settings = { ...state.settings, ...data.settings };
-    save(); closeModal(); updateTgStatus();
-    toast('✅ تم استرجاع بياناتك!');
-    setTimeout(() => location.reload(), 800);
-  }catch(e){ toast('⚠️ فشل الاتصال'); }
 }
 
 function showSyncBadge(status){
@@ -1573,24 +1589,16 @@ async function checkCloudUpdates(){
   if(document.hidden) return;
   const chatId = getMyChatId();
   if(!chatId) return;
-  
-  // تجنّب الفحص لو سوينا مزامنة قبل 3 ثواني
   const lastSync = parseInt(localStorage.getItem('localModified') || '0');
   if(Date.now() - lastSync < 3000) return;
-  
   try{
     const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
     const data = await r.json();
     if(!data || !data.lastSync) return;
-    
     const cloudModified = new Date(data.lastSync).getTime();
     const lastChecked = parseInt(localStorage.getItem('lastCloudCheck') || '0');
-    
-    // لو السحابة فيها تحديث جديد
     if(cloudModified > lastChecked){
-      // لو التحديث مو منا (من جهاز ثاني)
       if(cloudModified > lastSync + 2000){
-        // نزّل البيانات بصمت
         state.tasks = data.tasks || [];
         state.exams = data.exams || [];
         state.courses = data.courses || [];
@@ -1603,20 +1611,13 @@ async function checkCloudUpdates(){
         if(data.skills) state.skills = data.skills;
         if(data.studyLog) state.studyLog = data.studyLog;
         if(data.settings) state.settings = { ...state.settings, ...data.settings };
-        
-        // سجّل التوقيتات
         localStorage.setItem('localModified', String(cloudModified));
         localStorage.setItem('lastCloudCheck', String(cloudModified));
-        
-        // احفظ محلياً بدون تشغيل مزامنة
         try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
-        
-        // حدّث الصفحة
         renderAll();
         if(typeof renderWeekBadge === 'function') renderWeekBadge();
         if(typeof renderSchedule === 'function') renderSchedule();
-        
-        // علّم المستخدم
+        renderSyncStatus();
         toast('🔄 تم تحديث البيانات من جهاز آخر');
         showSyncBadge('success');
       }
@@ -1629,21 +1630,19 @@ function startAutoSync(){
   if(autoSyncTimer) clearInterval(autoSyncTimer);
   autoSyncTimer = setInterval(checkCloudUpdates, 5000);
 }
-
 function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
 
-// ابدأ عند فتح الصفحة
 setTimeout(() => {
   if(getMyChatId()){
     loadFromCloud().then(() => {
       startAutoSync();
+      renderSyncStatus();
     });
   }
 }, 1500);
 
-// ⭐ وقف/شغّل عند تغيير الحالة
 document.addEventListener('visibilitychange', () => {
   if(document.hidden){
     stopAutoSync();
@@ -1736,27 +1735,7 @@ function updateTgStatus(){
 const _origSave = save;
 save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
 
-(function addTGUI(){
-  const card = document.querySelector('#view-settings .card:last-child');
-  if(!card || document.getElementById('tgSection')) return;
-  const sec = document.createElement('div');
-  sec.id = 'tgSection';
-  sec.style.cssText = 'margin-top:22px;padding-top:22px;border-top:1px solid var(--border)';
-  sec.innerHTML = `
-    <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-      اضغط الزر → بيفتح تلقرام → اضغط <b>START</b> → ارجع للموقع، بيحدّث تلقائياً ✅
-    </p>
-    <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:14px;border-radius:11px;text-align:center"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام</button>
-      <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
-    </div>
-    <div style="margin-top:8px">
-      <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
-    </div>
-  `;
-  card.appendChild(sec);
+(function initTGUI(){
   updateTgStatus();
   setInterval(() => {
     const linked = !!getMyChatId();
@@ -2130,6 +2109,7 @@ go = function(view){
       if(view === 'gpa') renderGPA();
       if(view === 'wellness') renderWellness();
       if(view === 'archive') renderArchive();
+      if(view === 'settings') renderSyncStatus();
     }catch(e){}
   }, 60);
 };
@@ -2139,6 +2119,7 @@ setTimeout(() => {
   try{ renderGPA(); }catch(e){}
   try{ renderWellness(); }catch(e){}
   try{ renderArchive(); }catch(e){}
+  try{ renderSyncStatus(); }catch(e){}
 }, 200);
 
 const SEMESTER_WEEKS = 16;

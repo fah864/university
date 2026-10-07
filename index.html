@@ -1988,7 +1988,8 @@ function init(){
   if(h && document.getElementById('view-' + h)) go(h);
 }
 init();
-
+// جلب الحضور من السيرفر عند البداية
+setTimeout(() => { if(getMyChatId()) syncAttendanceFromServer(); }, 2500);
 // keyboard shortcut: Ctrl+K quick add
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
@@ -2300,7 +2301,10 @@ function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
     updateTgStatus();
-    if(getMyChatId()) syncToTelegram(true);
+    if(getMyChatId()){ 
+      syncToTelegram(true); 
+      syncAttendanceFromServer(); 
+    }
   }
 });
 window.addEventListener('focus', () => {
@@ -2315,8 +2319,46 @@ async function syncToTelegram(silent = true){
     await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ chatId, tasks: state.tasks, exams: state.exams, courses: state.courses })
+      body: JSON.stringify({ 
+        chatId, 
+        tasks: state.tasks, 
+        exams: state.exams, 
+        courses: state.courses,
+        schedule: state.schedule
+      })
     });
+  }catch(e){}
+}
+
+// ⭐ جديد: جلب الحضور من السيرفر
+async function syncAttendanceFromServer(){
+  const chatId = getMyChatId();
+  if(!chatId) return;
+  try{
+    const r = await fetch(TG_WORKER + '/get-attendance?chatId=' + chatId);
+    const serverAtt = await r.json();
+    if(!Array.isArray(serverAtt)) return;
+    
+    let changed = false;
+    for(const s of serverAtt){
+      const local = state.attendance.find(a => a.classId === s.classId && a.date === s.date);
+      if(!local){
+        state.attendance.push({ 
+          id: uid(), classId: s.classId, date: s.date, 
+          status: s.status, note: s.note || '' 
+        });
+        changed = true;
+      } else if(local.status !== s.status){
+        local.status = s.status;
+        changed = true;
+      }
+    }
+    
+    if(changed){
+      save();
+      if(typeof renderSchedule === 'function') renderSchedule();
+      if(typeof renderAttendancePage === 'function') renderAttendancePage();
+    }
   }catch(e){}
 }
 

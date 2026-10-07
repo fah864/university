@@ -1990,6 +1990,8 @@ function init(){
 init();
 // جلب الحضور من السيرفر عند البداية
 setTimeout(() => { if(getMyChatId()) syncAttendanceFromServer(); }, 2500);
+// ⭐ تحميل البيانات من السحابة بعد الربط
+setTimeout(() => { if(getMyChatId()) loadFromCloud(); }, 1500);
 // keyboard shortcut: Ctrl+K quick add
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
@@ -2319,12 +2321,20 @@ async function syncToTelegram(silent = true){
     await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ 
-        chatId, 
-        tasks: state.tasks, 
-        exams: state.exams, 
+      body: JSON.stringify({
+        chatId,
+        tasks: state.tasks,
+        exams: state.exams,
         courses: state.courses,
-        schedule: state.schedule
+        schedule: state.schedule,
+        attendance: state.attendance,
+        notes: state.notes,
+        gpaCourses: state.gpaCourses,
+        wellness: state.wellness,
+        archive: state.archive,
+        skills: state.skills,
+        studyLog: state.studyLog,
+        settings: state.settings
       })
     });
   }catch(e){}
@@ -2362,6 +2372,64 @@ async function syncAttendanceFromServer(){
   }catch(e){}
 }
 
+async function loadFromCloud(){
+  const chatId = getMyChatId();
+  if(!chatId) return;
+  
+  toast('☁️ جاري تحميل بياناتك...');
+  
+  try{
+    const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
+    const data = await r.json();
+    
+    if(!data || !data.lastSync){
+      toast('📤 جاري رفع بياناتك...');
+      await syncToTelegram(true);
+      return;
+    }
+    
+    const cloudCount = 
+      (data.tasks?.length || 0) + 
+      (data.courses?.length || 0) + 
+      (data.schedule?.length || 0) +
+      (data.exams?.length || 0);
+    
+    const localCount = 
+      (state.tasks?.length || 0) + 
+      (state.courses?.length || 0) + 
+      (state.schedule?.length || 0) +
+      (state.exams?.length || 0);
+    
+    if(cloudCount >= localCount && cloudCount > 0){
+      state.tasks = data.tasks || [];
+      state.exams = data.exams || [];
+      state.courses = data.courses || [];
+      state.schedule = data.schedule || [];
+      state.attendance = data.attendance || [];
+      state.notes = data.notes || [];
+      state.gpaCourses = data.gpaCourses || [];
+      if(data.wellness) state.wellness = data.wellness;
+      if(data.archive) state.archive = data.archive;
+      if(data.skills) state.skills = data.skills;
+      if(data.studyLog) state.studyLog = data.studyLog;
+      if(data.settings) state.settings = { ...state.settings, ...data.settings };
+      
+      save();
+      renderAll();
+      if(typeof renderWeekBadge === 'function') renderWeekBadge();
+      if(typeof renderSchedule === 'function') renderSchedule();
+      
+      toast('✅ تم تحميل بياناتك من السحابة');
+    } else {
+      await syncToTelegram(true);
+      toast('📤 تم رفع بياناتك');
+    }
+  }catch(e){
+    console.error('Load error:', e);
+  }
+}
+
+  
 async function testTelegram(){
   const chatId = getMyChatId();
   if(!chatId){ toast('⚠️ اربط أولاً'); return; }

@@ -2187,7 +2187,7 @@ function clearAtt(classId, date){
 renderSchedule();
 
 /* ============================================================
-   📱 ربط تلقرام الذكي
+   📱 ربط تلقرام - كود بسيط
 ============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
@@ -2196,21 +2196,6 @@ let pollTimer = null;
 
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
-
-// ⭐ التقاط الربط من الرابط ?tg=123456
-(function checkUrlParam(){
-  const p = new URLSearchParams(location.search);
-  const tg = p.get('tg');
-  if(tg){
-    setMyChatId(tg);
-    history.replaceState({}, '', location.pathname);
-    setTimeout(() => {
-      toast('🎉 تم ربط تلقرام بنجاح!');
-      updateTgStatus();
-      syncToTelegram(true);
-    }, 800);
-  }
-})();
 
 async function syncToTelegram(silent = false){
   const chatId = getMyChatId();
@@ -2239,27 +2224,40 @@ async function testTelegram(){
 }
 
 function connectTelegram(){
+  // كود من 4 أرقام
+  const code = String(Math.floor(1000 + Math.random() * 9000));
+
+  openModal('🔗 ربط تلقرام', `
+    <div style="text-align:center">
+      <p style="font-size:14.5px;line-height:1.9;margin-bottom:16px">
+        افتح تلقرام وأرسل هذا الرقم للبوت:<br>
+        <b style="color:var(--p)">@${TG_BOT}</b>
+      </p>
+      <div style="font-family:'Tajawal';font-size:56px;font-weight:900;letter-spacing:8px;
+                  color:var(--p);background:var(--p-light);padding:20px;border-radius:18px;
+                  margin:16px 0;user-select:all" id="linkCode">${code}</div>
+      <button class="btn btn-primary btn-block" onclick="copyCode('${code}')" style="margin-bottom:10px">
+        📋 انسخ الرقم
+      </button>
+      <a href="https://t.me/${TG_BOT}" target="_blank" rel="noopener"
+         class="btn btn-ghost btn-block" style="text-decoration:none">
+        📱 افتح تلقرام
+      </a>
+      <div id="linkStatus" style="margin-top:18px;padding:12px;background:var(--hover);
+                                  border-radius:11px;font-size:13.5px;font-weight:700">
+        ⏳ بانتظار الربط...
+      </div>
+    </div>
+  `, `<button class="btn btn-ghost btn-block" onclick="cancelPoll()">إلغاء</button>`);
+
+  // ابدأ الفحص
   if(pollTimer) clearInterval(pollTimer);
-  const code = Math.random().toString(36).slice(2, 8).toUpperCase();
-  localStorage.setItem('tg_pending', code);
-
-  // فتح تلقرام مع الكود
-  const url = 'https://t.me/' + TG_BOT + '?start=' + code;
-  window.open(url, '_blank');
-
-  const statusEl = document.getElementById('tgStatus');
-  if(statusEl){
-    statusEl.innerHTML = '⏳ <b>انتظر...</b> افتح تلقرام واضغط زر START';
-    statusEl.style.color = 'var(--warn)';
-  }
-
-  // فحص كل ثانية
   const start = Date.now();
   pollTimer = setInterval(async () => {
+    const st = document.getElementById('linkStatus');
     if(Date.now() - start > 300000){
       clearInterval(pollTimer);
-      localStorage.removeItem('tg_pending');
-      if(statusEl){ statusEl.innerHTML = '⚠️ انتهت المدة'; statusEl.style.color = 'var(--danger)'; }
+      if(st){ st.innerHTML = '⚠️ انتهت المدة'; st.style.color = 'var(--danger)'; }
       return;
     }
     try{
@@ -2268,13 +2266,27 @@ function connectTelegram(){
       if(d.chatId){
         clearInterval(pollTimer);
         setMyChatId(String(d.chatId));
-        localStorage.removeItem('tg_pending');
-        updateTgStatus();
-        toast('🎉 تم الربط!');
-        await syncToTelegram(true);
+        if(st){ st.innerHTML = '✅ تم الربط بنجاح!'; st.style.color = 'var(--ok)'; }
+        toast('🎉 تم ربط تلقرام!');
+        setTimeout(() => { closeModal(); updateTgStatus(); syncToTelegram(true); }, 1200);
       }
     }catch(e){}
-  }, 1500);
+  }, 2000);
+}
+
+function copyCode(code){
+  navigator.clipboard.writeText(code).then(() => toast('📋 تم النسخ')).catch(() => {
+    const el = document.getElementById('linkCode');
+    const r = document.createRange(); r.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    toast('📋 انسخ يدوياً');
+  });
+}
+
+function cancelPoll(){
+  if(pollTimer) clearInterval(pollTimer);
+  closeModal();
 }
 
 function unlinkTelegram(){
@@ -2288,9 +2300,7 @@ function updateTgStatus(){
   const el = document.getElementById('tgStatus');
   if(!el) return;
   const id = getMyChatId();
-  const pending = localStorage.getItem('tg_pending');
   if(id){ el.innerHTML = '✅ <b>مربوط بنجاح</b>'; el.style.color = 'var(--ok)'; }
-  else if(pending){ el.innerHTML = '⏳ <b>جاري الربط...</b>'; el.style.color = 'var(--warn)'; }
   else { el.innerHTML = '⚠️ <b>غير مربوط</b>'; el.style.color = 'var(--muted)'; }
 }
 
@@ -2309,7 +2319,7 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
   sec.innerHTML = `
     <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-      اضغط الزر → افتح تلقرام → اضغط START → خلص! 🔔
+      بتوصلك إشعارات قبل كل مهمة واختبار 🔔
     </p>
     <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:12px;background:var(--hover);border-radius:11px;text-align:center"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">

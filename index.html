@@ -391,6 +391,53 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .prog{height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:10px}
 .prog i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--p),#2dd4bf);transition:width .6s ease}
 
+/* ============ القائمة الجانبية القابلة للطي ============ */
+.nav-group { margin-bottom: 4px; }
+
+.nav-group-title {
+  font-size: 11.5px;
+  color: var(--text);
+  font-weight: 800;
+  padding: 12px 14px;
+  letter-spacing: .5px;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--hover);
+  border-radius: 11px;
+  transition: all .25s;
+  margin: 0 6px 4px;
+}
+.nav-group-title:hover { background: var(--border); }
+.nav-group-title::after {
+  content: '▾';
+  font-size: 11px;
+  color: var(--muted);
+  transition: transform .25s;
+}
+.nav-group.collapsed .nav-group-title::after {
+  transform: rotate(-90deg);
+}
+.nav-group.collapsed .nav-btn {
+  display: none;
+}
+.nav-group .nav-btn {
+  animation: slideDown .25s ease;
+  margin-inline-start: 6px;
+  width: calc(100% - 6px);
+  font-size: 14.5px;
+  padding: 11px 14px;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ارتفاع القائمة على الجوال */
+.sidebar { height: 100vh; height: 100dvh; }
+  
 /* ============ RESPONSIVE ============ */
 @media(max-width:980px){
   .sidebar{position:fixed;right:0;top:0;transform:translateX(100%);box-shadow:var(--shadow-lg)}

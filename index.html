@@ -262,6 +262,8 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .sync-badge.loading{background:var(--warn-bg);color:var(--warn)}
 .sync-badge.error{background:var(--danger-bg);color:var(--danger)}
 .sync-badge.hidden{opacity:0;pointer-events:none}
+.theme-toggle{width:38px;height:38px;border-radius:11px;background:var(--hover);display:grid;place-items:center;font-size:17px;transition:var(--t);cursor:pointer;border:none;color:var(--text);flex-shrink:0}
+.theme-toggle:hover{background:var(--p);color:#fff;transform:translateY(-2px)}
 @media(max-width:640px){
   .week-badge{font-size:11.5px;padding:6px 10px}
   .sync-badge{font-size:11.5px;padding:6px 10px}
@@ -289,7 +291,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <button class="nav-btn" data-view="settings"><span class="ico">⚙️</span> الإعدادات</button>
     </nav>
     <div class="sidebar-foot">
-      <button class="icon-btn" id="themeBtn" title="الوضع الليلي">🌙</button>
       <button class="icon-btn" id="quickAddBtn" title="إضافة سريعة">➕</button>
     </div>
   </aside>
@@ -303,6 +304,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
+      <button class="theme-toggle" id="themeToggle" title="تبديل المظهر" onclick="toggleTheme()">🌙</button>
       <div class="sync-badge hidden" id="syncBadge" title="حالة المزامنة">
         <span id="syncIcon">☁️</span>
         <span id="syncText">مزامن</span>
@@ -419,6 +421,18 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             </div>
           </div>
         </div>
+
+        <div class="card" style="margin-top:20px">
+          <div class="sec-head" style="margin-bottom:14px">
+            <h2 style="font-size:18px">⏱️ مدد البومودورو (بالدقائق)</h2>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label>التركيز</label><input type="number" id="setWork" min="1" max="120"></div>
+            <div class="field"><label>راحة قصيرة</label><input type="number" id="setShort" min="1" max="60"></div>
+            <div class="field"><label>راحة طويلة</label><input type="number" id="setLong" min="1" max="90"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="savePomoSettings()">💾 حفظ</button>
+        </div>
       </section>
 
       <section class="view" id="view-grades">
@@ -441,11 +455,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
         <div class="grid g2">
           <div class="card">
-            <h3 style="font-size:17px;margin-bottom:16px">🎨 المظهر</h3>
-            <div style="display:flex;gap:10px;margin-bottom:20px">
-              <button class="btn btn-ghost" onclick="setTheme('light')">☀️ نهاري</button>
-              <button class="btn btn-ghost" onclick="setTheme('dark')">🌙 ليلي</button>
-            </div>
             <h3 style="font-size:17px;margin-bottom:16px">📅 الفصل الدراسي</h3>
             <div class="form-grid" style="margin-bottom:20px">
               <div class="field full">
@@ -453,14 +462,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
                 <input type="date" id="setSemesterStart">
               </div>
             </div>
-            <button class="btn btn-primary btn-sm" style="margin-bottom:20px" onclick="saveSemesterStart()">💾 حفظ تاريخ البداية</button>
-            <h3 style="font-size:17px;margin-bottom:16px">⏱️ مدد البومودورو (بالدقائق)</h3>
-            <div class="form-grid">
-              <div class="field"><label>التركيز</label><input type="number" id="setWork" min="1" max="120"></div>
-              <div class="field"><label>راحة قصيرة</label><input type="number" id="setShort" min="1" max="60"></div>
-              <div class="field"><label>راحة طويلة</label><input type="number" id="setLong" min="1" max="90"></div>
-            </div>
-            <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="savePomoSettings()">💾 حفظ</button>
+            <button class="btn btn-primary btn-sm" onclick="saveSemesterStart()">💾 حفظ تاريخ البداية</button>
           </div>
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
@@ -562,10 +564,13 @@ document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', (
 function setTheme(t){
   state.settings.theme = t;
   document.documentElement.dataset.theme = t;
-  document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
+  const topBtn = document.getElementById('themeToggle');
+  if(topBtn) topBtn.textContent = t === 'dark' ? '☀️' : '🌙';
   save();
 }
-document.getElementById('themeBtn').addEventListener('click', () => { setTheme(state.settings.theme === 'dark' ? 'light' : 'dark'); });
+function toggleTheme(){
+  setTheme(state.settings.theme === 'dark' ? 'light' : 'dark');
+}
 
 const modalBg = document.getElementById('modalBg');
 function openModal(title, bodyHTML, footHTML){
@@ -1114,11 +1119,15 @@ function clearAll(){
 }
 function applySettings(){
   document.documentElement.dataset.theme = state.settings.theme || 'light';
-  document.getElementById('themeBtn').textContent = state.settings.theme === 'dark' ? '☀️' : '🌙';
+  const topBtn = document.getElementById('themeToggle');
+  if(topBtn) topBtn.textContent = state.settings.theme === 'dark' ? '☀️' : '🌙';
   const p = state.settings.pomo;
-  document.getElementById('setWork').value = p.work;
-  document.getElementById('setShort').value = p.short;
-  document.getElementById('setLong').value = p.long;
+  const wEl = document.getElementById('setWork');
+  const sEl = document.getElementById('setShort');
+  const lEl = document.getElementById('setLong');
+  if(wEl) wEl.value = p.work;
+  if(sEl) sEl.value = p.short;
+  if(lEl) lEl.value = p.long;
   pomo.total = pomoDuration(pomo.mode);
   pomo.remaining = pomo.total;
   pomoRender();
@@ -1169,8 +1178,6 @@ function init(){
   if(h && document.getElementById('view-' + h)) go(h);
 }
 init();
-
-setTimeout(() => { if(getMyChatId()) loadFromCloud(); }, 1500);
 
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
@@ -1387,7 +1394,6 @@ window.addEventListener('focus', () => {
   if(getMyChatId()) syncToTelegram(true);
 });
 
-// ⭐ Debounced sync
 function syncToTelegram(silent = true){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -1537,16 +1543,13 @@ async function doRestore(){
   }catch(e){ toast('⚠️ فشل الاتصال'); }
 }
 
-// ⭐ مؤشر المزامنة الذكي
 function showSyncBadge(status){
   const badge = document.getElementById('syncBadge');
   const icon = document.getElementById('syncIcon');
   const text = document.getElementById('syncText');
   if(!badge) return;
-  
   if(syncBadgeHideTimer) clearTimeout(syncBadgeHideTimer);
   badge.classList.remove('hidden', 'loading', 'error');
-  
   if(status === 'loading'){
     badge.classList.add('loading');
     icon.textContent = '⏳';
@@ -1554,20 +1557,101 @@ function showSyncBadge(status){
   } else if(status === 'success'){
     icon.textContent = '✅';
     text.textContent = 'الآن';
-    // ⭐ اخفِ بعد 3 ثواني
-    syncBadgeHideTimer = setTimeout(() => {
-      badge.classList.add('hidden');
-    }, 3000);
+    syncBadgeHideTimer = setTimeout(() => { badge.classList.add('hidden'); }, 3000);
   } else if(status === 'error'){
     badge.classList.add('error');
     icon.textContent = '⚠️';
     text.textContent = 'فشل';
-    // ⭐ اخفِ بعد 5 ثواني
-    syncBadgeHideTimer = setTimeout(() => {
-      badge.classList.add('hidden');
-    }, 5000);
+    syncBadgeHideTimer = setTimeout(() => { badge.classList.add('hidden'); }, 5000);
   }
 }
+
+// ⭐ مزامنة تلقائية كل 5 ثواني
+let autoSyncTimer = null;
+
+async function checkCloudUpdates(){
+  if(document.hidden) return;
+  const chatId = getMyChatId();
+  if(!chatId) return;
+  
+  // تجنّب الفحص لو سوينا مزامنة قبل 3 ثواني
+  const lastSync = parseInt(localStorage.getItem('localModified') || '0');
+  if(Date.now() - lastSync < 3000) return;
+  
+  try{
+    const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
+    const data = await r.json();
+    if(!data || !data.lastSync) return;
+    
+    const cloudModified = new Date(data.lastSync).getTime();
+    const lastChecked = parseInt(localStorage.getItem('lastCloudCheck') || '0');
+    
+    // لو السحابة فيها تحديث جديد
+    if(cloudModified > lastChecked){
+      // لو التحديث مو منا (من جهاز ثاني)
+      if(cloudModified > lastSync + 2000){
+        // نزّل البيانات بصمت
+        state.tasks = data.tasks || [];
+        state.exams = data.exams || [];
+        state.courses = data.courses || [];
+        state.schedule = data.schedule || [];
+        state.attendance = data.attendance || [];
+        state.notes = data.notes || [];
+        state.gpaCourses = data.gpaCourses || [];
+        if(data.wellness) state.wellness = data.wellness;
+        if(data.archive) state.archive = data.archive;
+        if(data.skills) state.skills = data.skills;
+        if(data.studyLog) state.studyLog = data.studyLog;
+        if(data.settings) state.settings = { ...state.settings, ...data.settings };
+        
+        // سجّل التوقيتات
+        localStorage.setItem('localModified', String(cloudModified));
+        localStorage.setItem('lastCloudCheck', String(cloudModified));
+        
+        // احفظ محلياً بدون تشغيل مزامنة
+        try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+        
+        // حدّث الصفحة
+        renderAll();
+        if(typeof renderWeekBadge === 'function') renderWeekBadge();
+        if(typeof renderSchedule === 'function') renderSchedule();
+        
+        // علّم المستخدم
+        toast('🔄 تم تحديث البيانات من جهاز آخر');
+        showSyncBadge('success');
+      }
+      localStorage.setItem('lastCloudCheck', String(cloudModified));
+    }
+  }catch(e){}
+}
+
+function startAutoSync(){
+  if(autoSyncTimer) clearInterval(autoSyncTimer);
+  autoSyncTimer = setInterval(checkCloudUpdates, 5000);
+}
+
+function stopAutoSync(){
+  if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
+}
+
+// ابدأ عند فتح الصفحة
+setTimeout(() => {
+  if(getMyChatId()){
+    loadFromCloud().then(() => {
+      startAutoSync();
+    });
+  }
+}, 1500);
+
+// ⭐ وقف/شغّل عند تغيير الحالة
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){
+    stopAutoSync();
+  } else if(getMyChatId()){
+    checkCloudUpdates();
+    startAutoSync();
+  }
+});
 
 async function testTelegram(){
   const chatId = getMyChatId();
@@ -1823,9 +1907,6 @@ function addGpaCourse(){
 function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); }
 function clearGPA(){ if(!confirm('حذف كل المقررات؟')) return; state.gpaCourses = []; save(); renderGPA(); }
 
-if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
-if(!Array.isArray(state.wellness.log)) state.wellness.log = [];
-
 function renderWellness(){
   const el = document.getElementById('wellnessContent');
   if(!el) return;
@@ -1879,8 +1960,6 @@ function getOrCreateTodayWellness(){
 function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); toast(`😴 سجّلت ${h} ساعات`); }
 function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); }
 function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); }
-
-if(!Array.isArray(state.archive)) state.archive = [];
 
 function renderArchive(){
   const el = document.getElementById('archiveContent');

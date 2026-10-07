@@ -2187,7 +2187,7 @@ function clearAtt(classId, date){
 renderSchedule();
 
 /* ============================================================
-   📱 ربط تلقرام - ضغطة واحدة
+   📱 ربط تلقرام - نسخة محسّنة
 ============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
@@ -2197,10 +2197,9 @@ let pollTimer = null;
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
 
-// ============ اكتشاف العودة من تلقرام ============
+// ============ لما يرجع المستخدم للموقع، يحدّث الحالة ============
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
-    // المستخدم رجع للموقع
     updateTgStatus();
     if(getMyChatId()) syncToTelegram(true);
   }
@@ -2210,17 +2209,16 @@ window.addEventListener('focus', () => {
   if(getMyChatId()) syncToTelegram(true);
 });
 
-async function syncToTelegram(silent = false){
+async function syncToTelegram(silent = true){
   const chatId = getMyChatId();
-  if(!chatId){ if(!silent) toast('⚠️ اربط تلقرام أولاً'); return; }
+  if(!chatId) return;
   try{
     await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({ chatId, tasks: state.tasks, exams: state.exams, courses: state.courses })
     });
-    if(!silent) toast('📤 تمت المزامنة');
-  }catch(e){ if(!silent) toast('⚠️ فشل'); }
+  }catch(e){}
 }
 
 async function testTelegram(){
@@ -2240,25 +2238,29 @@ function connectTelegram(){
   // 1) سوّ كود عشوائي
   const code = String(Math.floor(1000 + Math.random() * 9000));
   localStorage.setItem('tg_pending', code);
+  localStorage.setItem('tg_pending_time', Date.now().toString());
 
-  // 2) افتح تلقرام مع الكود جاهز
-  // المستخدم بس يضغط START
+  // 2) شغل الفحص بالخلفية (يشتغل حتى لو راح لتلقرام)
+  startPoll(code);
+
+  // 3) افتح تلقرام
   const tgUrl = 'https://t.me/' + TG_BOT + '?start=' + code;
   window.location.href = tgUrl;
-
-  // 3) شغل الفحص بالخلفية
-  startPoll(code);
 }
 
 function startPoll(code){
   if(pollTimer) clearInterval(pollTimer);
   const start = Date.now();
+
   pollTimer = setInterval(async () => {
-    if(Date.now() - start > 300000){
+    // ما بعد 10 دقائق
+    if(Date.now() - start > 600000){
       clearInterval(pollTimer);
       localStorage.removeItem('tg_pending');
+      localStorage.removeItem('tg_pending_time');
       return;
     }
+
     try{
       const r = await fetch(TG_WORKER + '/poll?code=' + code);
       const d = await r.json();
@@ -2266,11 +2268,11 @@ function startPoll(code){
         clearInterval(pollTimer);
         setMyChatId(String(d.chatId));
         localStorage.removeItem('tg_pending');
-        updateTgStatus();
-        toast('🎉 تم ربط تلقرام بنجاح!');
+        localStorage.removeItem('tg_pending_time');
         await syncToTelegram(true);
-        // اهتزاز خفيف للتنبيه
-        if(navigator.vibrate) navigator.vibrate([50, 50, 50]);
+        // ⭐ محدّث الصفحة تلقائياً
+        toast('🎉 تم الربط! جاري تحديث الصفحة...');
+        setTimeout(() => location.reload(), 900);
       }
     }catch(e){}
   }, 1500);
@@ -2280,9 +2282,11 @@ function unlinkTelegram(){
   if(!confirm('فك الربط؟')) return;
   localStorage.removeItem('tg_chat_id');
   localStorage.removeItem('tg_pending');
+  localStorage.removeItem('tg_pending_time');
   if(pollTimer) clearInterval(pollTimer);
-  updateTgStatus();
+  // ⭐ محدّث الصفحة بعد الفك
   toast('🔓 تم الفك');
+  setTimeout(() => location.reload(), 600);
 }
 
 function updateTgStatus(){
@@ -2290,7 +2294,7 @@ function updateTgStatus(){
   if(!el) return;
   const id = getMyChatId();
   const pending = localStorage.getItem('tg_pending');
-  
+
   if(id){
     el.innerHTML = '✅ <b>مربوط بنجاح</b>';
     el.style.background = 'var(--ok-bg)';
@@ -2309,7 +2313,14 @@ function updateTgStatus(){
 // ============ استئناف الفحص لو كان معلّق ============
 (function resumePending(){
   const pending = localStorage.getItem('tg_pending');
-  if(pending) startPoll(pending);
+  const t = parseInt(localStorage.getItem('tg_pending_time') || '0');
+  // لو خلال آخر 10 دقائق
+  if(pending && Date.now() - t < 600000){
+    startPoll(pending);
+  } else if(pending){
+    localStorage.removeItem('tg_pending');
+    localStorage.removeItem('tg_pending_time');
+  }
 })();
 
 // مزامنة تلقائية
@@ -2327,22 +2338,21 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
   sec.innerHTML = `
     <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-      اضغط الزر → بيفتح تلقرام → اضغط <b>START</b> → ارجع للموقع ✅
+      اضغط الزر → بيفتح تلقرام → اضغط <b>START</b> → ارجع للموقع، بيحدّث تلقائياً ✅
     </p>
     <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:14px;border-radius:11px;text-align:center"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام</button>
       <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+    <div style="margin-top:8px">
       <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
-      <button class="btn btn-ghost btn-sm" onclick="syncToTelegram()" id="tgSyncBtn" style="display:none">📤 مزامنة</button>
     </div>
   `;
   card.appendChild(sec);
   updateTgStatus();
-  
-  // تحديث دوري للزراير
+
+  // تحديث حالة الأزرار
   setInterval(() => {
     const linked = !!getMyChatId();
     const pending = localStorage.getItem('tg_pending');
@@ -2351,7 +2361,6 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
       c.textContent = linked ? '🔄 إعادة ربط' : (pending ? '⏳ فتح تلقرام' : '🔗 ربط تلقرام');
       document.getElementById('tgUnlinkBtn').style.display = linked ? '' : 'none';
       document.getElementById('tgTestBtn').style.display = linked ? '' : 'none';
-      document.getElementById('tgSyncBtn').style.display = linked ? '' : 'none';
     }
     updateTgStatus();
   }, 1500);

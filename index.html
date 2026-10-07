@@ -2377,32 +2377,26 @@ if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
 if(!state.archive) state.archive = [];
 
 /* ============================================================
-   1) 📋 عدّاد الغياب
+   📋 عدّاد الغياب
 ============================================================ */
+if(!Array.isArray(state.attendance)) state.attendance = [];
+
 function calcAttendance(){
-  const limits = { max: 0.25 }; // 25% حد الحرمان
   const res = {};
-  state.courses.forEach(c => {
-    const classes = state.schedule.filter(s => s.courseId === c.id).length;
-    const weeklyHours = classes; // محاضرات أسبوعياً
-    const totalWeeks = 15; // عدد أسابيع الفصل
-    const totalClasses = weeklyHours * totalWeeks;
-    const maxAbsences = Math.floor(totalClasses * limits.max);
-    
-    const abs = state.attendance.filter(a => {
-      const sch = state.schedule.find(s => s.id === a.classId);
+  (state.courses || []).forEach(c => {
+    const classes = (state.schedule || []).filter(s => s.courseId === c.id).length;
+    const totalClasses = classes * 15;
+    const maxAbsences = Math.floor(totalClasses * 0.25);
+    const abs = (state.attendance || []).filter(a => {
+      const sch = (state.schedule || []).find(s => s.id === a.classId);
       return sch && sch.courseId === c.id && (a.status === 'absent' || a.status === 'excused');
     }).length;
-    const late = state.attendance.filter(a => {
-      const sch = state.schedule.find(s => s.id === a.classId);
+    const late = (state.attendance || []).filter(a => {
+      const sch = (state.schedule || []).find(s => s.id === a.classId);
       return sch && sch.courseId === c.id && a.status === 'late';
     }).length;
-
     res[c.id] = {
-      course: c,
-      absences: abs,
-      late: late,
-      max: maxAbsences,
+      course: c, absences: abs, late: late, max: maxAbsences,
       total: totalClasses,
       percent: maxAbsences ? Math.round((abs / maxAbsences) * 100) : 0,
       remaining: Math.max(0, maxAbsences - abs)
@@ -2418,21 +2412,16 @@ function renderAttendancePage(){
   const total = Object.values(data).reduce((a, x) => a + x.absences, 0);
 
   if(!state.courses.length){
-    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b>
-      <p>أضف مقرراتك وحددها في الجدول عشان يشتغل العدّاد</p></div>`;
+    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً</p></div>`;
     return;
   }
 
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
-        <div><b>${total}</b><span>إجمالي غياباتك</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--warn-bg)">📊</div>
-        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div>
-      </div>
+      <div class="stat"><div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
+        <div><b>${total}</b><span>إجمالي غياباتك</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📊</div>
+        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div></div>
     </div>
     <div style="display:grid;gap:14px">
       ${Object.values(data).map(d => {
@@ -2440,69 +2429,55 @@ function renderAttendancePage(){
         const bg = d.percent >= 75 ? 'var(--danger-bg)' : d.percent >= 50 ? 'var(--warn-bg)' : 'var(--ok-bg)';
         const emoji = d.percent >= 75 ? '🚨' : d.percent >= 50 ? '⚠️' : '✅';
         return `
-        <div class="card" style="padding:20px;border-right:4px solid ${color}">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
-            <div>
-              <h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px">${esc(d.course.name)}</h3>
-              <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.total} محاضرة هذا الفصل</span>
+          <div class="card" style="padding:20px;border-right:4px solid ${color}">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+              <div>
+                <h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px">${esc(d.course.name)}</h3>
+                <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.total} محاضرة</span>
+              </div>
+              <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center">
+                <b style="font-family:'Tajawal';font-size:20px;display:block;line-height:1">${d.absences} / ${d.max}</b>
+                <span style="font-size:11px;font-weight:700">${emoji} ${d.percent}%</span>
+              </div>
             </div>
-            <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center">
-              <b style="font-family:'Tajawal';font-size:20px;display:block;line-height:1">${d.absences} / ${d.max}</b>
-              <span style="font-size:11px;font-weight:700">${emoji} ${d.percent}%</span>
+            <div class="prog" style="height:10px;margin-bottom:12px">
+              <i style="width:${Math.min(d.percent, 100)}%;background:${color}"></i>
             </div>
-          </div>
-          <div class="prog" style="height:10px;margin-bottom:12px">
-            <i style="width:${Math.min(d.percent, 100)}%;background:${color}"></i>
-          </div>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;font-weight:700">
-            <span style="color:var(--ok)">✅ متبقي: <b>${d.remaining}</b></span>
-            <span style="color:var(--warn)">⏰ تأخير: <b>${d.late}</b></span>
-            ${d.percent >= 75 ? `<span style="color:var(--danger)">🚨 اقتربت من الحرمان!</span>` : ''}
-          </div>
-        </div>`;
+            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;font-weight:700">
+              <span style="color:var(--ok)">✅ متبقي: <b>${d.remaining}</b></span>
+              <span style="color:var(--warn)">⏰ تأخير: <b>${d.late}</b></span>
+            </div>
+          </div>`;
       }).join('')}
-    </div>
-  `;
+    </div>`;
 }
 
 /* ============================================================
-   2) 📊 حاسبة المعدل
+   🎓 حاسبة المعدل
 ============================================================ */
-const GRADE_POINTS = {
-  'A+':5.00,'A':4.75,'B+':4.50,'B':4.00,'C+':3.50,'C':3.00,'D+':2.50,'D':2.00,'F':0.00
-};
+const GRADE_POINTS = { 'A+':5,'A':4.75,'B+':4.5,'B':4,'C+':3.5,'C':3,'D+':2.5,'D':2,'F':0 };
 const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
-
-if(!state.gpaCourses) state.gpaCourses = [];
+if(!Array.isArray(state.gpaCourses)) state.gpaCourses = [];
 
 function renderGPA(){
   const el = document.getElementById('gpaContent');
   if(!el) return;
-
-  let totalPoints = 0, totalCredits = 0;
+  let tp = 0, tc = 0;
   state.gpaCourses.forEach(c => {
-    const cr = +c.credits || 0;
-    const pt = GRADE_POINTS[c.grade] || 0;
-    if(cr > 0){ totalPoints += pt * cr; totalCredits += cr; }
+    const cr = +c.credits || 0, pt = GRADE_POINTS[c.grade] || 0;
+    if(cr > 0){ tp += pt * cr; tc += cr; }
   });
-  const gpa = totalCredits ? (totalPoints / totalCredits) : 0;
+  const gpa = tc ? (tp / tc) : 0;
 
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--p-light)">🎓</div>
-        <div><b>${gpa.toFixed(2)}</b><span>المعدل الفصلي</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--ok-bg)">📖</div>
-        <div><b>${totalCredits}</b><span>ساعة معتمدة</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--warn-bg)">📚</div>
-        <div><b>${state.gpaCourses.length}</b><span>مقرر</span></div>
-      </div>
+      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div>
+        <div><b>${gpa.toFixed(2)}</b><span>المعدل الفصلي</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div>
+        <div><b>${tc}</b><span>ساعة معتمدة</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📚</div>
+        <div><b>${state.gpaCourses.length}</b><span>مقرر</span></div></div>
     </div>
-
     <div class="card" style="margin-bottom:16px;padding:16px">
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <input id="gpaName" placeholder="اسم المقرر" style="flex:2;min-width:140px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
@@ -2513,23 +2488,17 @@ function renderGPA(){
         <button class="btn btn-primary btn-sm" onclick="addGpaCourse()">➕ إضافة</button>
       </div>
     </div>
-
     ${state.gpaCourses.length ? `
       <div class="table-wrap">
         <table>
-          <thead>
-            <tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr>
-          </thead>
-          <tbody>
-            ${state.gpaCourses.map((c, i) => `
-              <tr>
-                <td><b>${esc(c.name)}</b></td>
-                <td>${c.credits}</td>
-                <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
-                <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
-                <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td>
-              </tr>
-            `).join('')}
+          <thead><tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr></thead>
+          <tbody>${state.gpaCourses.map((c, i) => `
+            <tr>
+              <td><b>${esc(c.name)}</b></td><td>${c.credits}</td>
+              <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
+              <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
+              <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td>
+            </tr>`).join('')}
           </tbody>
         </table>
       </div>
@@ -2539,7 +2508,6 @@ function renderGPA(){
     ` : `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراتك لحساب المعدل</p></div>`}
   `;
 }
-
 function addGpaCourse(){
   const name = document.getElementById('gpaName').value.trim();
   const credits = +document.getElementById('gpaCredits').value || 0;
@@ -2553,241 +2521,119 @@ function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); 
 function clearGPA(){ if(!confirm('حذف كل المقررات؟')) return; state.gpaCourses = []; save(); renderGPA(); }
 
 /* ============================================================
-   3) 📖 تتبع الحفظ
+   💪 النوم والماء
 ============================================================ */
-function renderMemorization(){
-  const el = document.getElementById('memContent');
-  if(!el) return;
-  const m = state.memorization;
-  const today = todayISO();
-  
-  // Streak
-  const days = [...new Set(m.log.map(l => l.date))].sort().reverse();
-  let streak = 0;
-  if(days.length){
-    let d = new Date();
-    for(let i = 0; i < 365; i++){
-      const dStr = todayISO(d);
-      if(days.includes(dStr)){ streak++; d.setDate(d.getDate() - 1); }
-      else if(i === 0){ d.setDate(d.getDate() - 1); continue; }
-      else break;
-    }
-  }
+if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
+if(!Array.isArray(state.wellness.log)) state.wellness.log = [];
 
-  const todayLog = m.log.filter(l => l.date === today);
-  const todayAmount = todayLog.reduce((a,b) => a + b.amount, 0);
-  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
-  const weekStart = todayISO(weekAgo);
-  const weekAmount = m.log.filter(l => l.date >= weekStart).reduce((a,b) => a + b.amount, 0);
-  const totalAmount = m.log.reduce((a,b) => a + b.amount, 0);
-  const pct = m.dailyGoal ? Math.min(100, Math.round((todayAmount / m.dailyGoal) * 100)) : 0;
-
-  el.innerHTML = `
-    <div class="stats" style="margin-bottom:20px">
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--warn-bg)">🔥</div>
-        <div><b>${streak}</b><span>يوم متتالي</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--p-light)">📖</div>
-        <div><b>${todayAmount}</b><span>${m.unit} اليوم</span></div>
-      </div>
-      <div class="stat">
-        <div class="stat-ico" style="background:var(--ok-bg)">📈</div>
-        <div><b>${totalAmount}</b><span>${m.unit} إجمالي</span></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px;padding:22px">
-      <h3 style="font-size:17px;margin-bottom:14px">🎯 هدف اليوم: ${m.dailyGoal} ${m.unit}</h3>
-      <div class="prog" style="height:14px;margin-bottom:14px">
-        <i style="width:${pct}%;background:linear-gradient(90deg,var(--p),#2dd4bf)"></i>
-      </div>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:16px">
-        ${pct >= 100 ? '🎉 ماشاء الله! حققت هدف اليوم' : `متبقي ${m.dailyGoal - todayAmount} ${m.unit} لتحقيق الهدف`}
-      </p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input id="memAmount" type="number" placeholder="كم ${m.unit}؟" min="1" style="flex:1;min-width:100px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <button class="btn btn-primary" onclick="addMem()">➕ أضف</button>
-      </div>
-    </div>
-
-    <div class="card" style="padding:20px">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-        <h3 style="font-size:16px">⚙️ الإعدادات</h3>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <span style="font-size:13.5px">الهدف اليومي:</span>
-        <input type="number" id="memGoal" value="${m.dailyGoal}" min="1" style="width:80px;padding:8px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg)">
-        <select id="memUnit" style="padding:8px;border-radius:9px;border:1.5px solid var(--border);background:var(--bg)">
-          <option ${m.unit==='صفحة'?'selected':''}>صفحة</option>
-          <option ${m.unit==='آية'?'selected':''}>آية</option>
-          <option ${m.unit==='حديث'?'selected':''}>حديث</option>
-          <option ${m.unit==='دقيقة'?'selected':''}>دقيقة</option>
-        </select>
-        <button class="btn btn-ghost btn-sm" onclick="saveMemSettings()">💾 حفظ</button>
-      </div>
-    </div>
-
-    ${m.log.length ? `
-      <div class="card" style="margin-top:16px;padding:20px">
-        <h3 style="font-size:16px;margin-bottom:14px">📋 آخر التسجيلات</h3>
-        ${m.log.slice(-7).reverse().map((l, idx) => `
-          <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)">
-            <span style="font-size:14px">${fmtDate(l.date)}</span>
-            <span style="font-weight:800;color:var(--p)">${l.amount} ${m.unit}</span>
-          </div>
-        `).join('')}
-      </div>
-    ` : ''}
-  `;
-}
-
-function addMem(){
-  const amount = +document.getElementById('memAmount').value || 0;
-  if(amount <= 0){ toast('⚠️ أدخل رقم صحيح'); return; }
-  state.memorization.log.push({ id:uid(), date: todayISO(), amount });
-  save(); renderMemorization(); toast('✅ تم التسجيل');
-}
-function saveMemSettings(){
-  state.memorization.dailyGoal = +document.getElementById('memGoal').value || 5;
-  state.memorization.unit = document.getElementById('memUnit').value;
-  save(); renderMemorization(); toast('✅ تم الحفظ');
-}
-
-/* ============================================================
-   4) 💪 الصحة (نوم + ماء)
-============================================================ */
 function renderWellness(){
-  const el = document.getElementById('wellContent');
+  const el = document.getElementById('wellnessContent');
   if(!el) return;
-  const w = state.wellness;
-  const today = todayISO();
-  const todayLog = w.log.find(l => l.date === today) || { sleep:0, water:0 };
-  const sleepPct = Math.min(100, Math.round((todayLog.sleep / w.sleepGoal) * 100));
-  const waterPct = Math.min(100, Math.round((todayLog.water / w.waterGoal) * 100));
+  try{
+    const w = state.wellness;
+    const today = todayISO();
+    const todayLog = w.log.find(l => l.date === today) || { sleep:0, water:0 };
+    const sleepPct = Math.min(100, Math.round((todayLog.sleep / w.sleepGoal) * 100));
+    const waterPct = Math.min(100, Math.round((todayLog.water / w.waterGoal) * 100));
 
-  const last7 = [];
-  for(let i = 6; i >= 0; i--){
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const iso = todayISO(d);
-    const log = w.log.find(l => l.date === iso) || { sleep:0, water:0 };
-    last7.push({ day: DAYS_SHORT[d.getDay()], ...log });
-  }
-  const maxSleep = Math.max(...last7.map(x => x.sleep), w.sleepGoal);
-  const maxWater = Math.max(...last7.map(x => x.water), w.waterGoal);
+    const last7 = [];
+    for(let i = 6; i >= 0; i--){
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const iso = todayISO(d);
+      const log = w.log.find(l => l.date === iso) || { sleep:0, water:0 };
+      last7.push({ day: DAYS_SHORT[d.getDay()], ...log });
+    }
+    const maxSleep = Math.max(...last7.map(x => x.sleep), w.sleepGoal);
+    const maxWater = Math.max(...last7.map(x => x.water), w.waterGoal);
 
-  el.innerHTML = `
-    <div class="grid g2" style="margin-bottom:16px">
-      <div class="card" style="padding:22px">
-        <div style="text-align:center;margin-bottom:16px">
-          <div style="font-size:52px;line-height:1">😴</div>
-          <h3 style="font-size:19px;margin-top:8px">النوم</h3>
+    el.innerHTML = `
+      <div class="grid g2" style="margin-bottom:16px">
+        <div class="card" style="padding:22px">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:52px;line-height:1">😴</div>
+            <h3 style="font-size:19px;margin-top:8px">النوم</h3>
+          </div>
+          <div style="text-align:center;margin-bottom:14px">
+            <b style="font-family:'Tajawal';font-size:42px;color:var(--p)">${todayLog.sleep}</b>
+            <span style="font-size:15px;color:var(--muted)"> / ${w.sleepGoal} ساعات</span>
+          </div>
+          <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${sleepPct}%"></i></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${[4,5,6,7,8,9,10].map(h => `
+              <button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>
+            `).join('')}
+          </div>
         </div>
-        <div style="text-align:center;margin-bottom:14px">
-          <b style="font-family:'Tajawal';font-size:42px;color:var(--p)">${todayLog.sleep}</b>
-          <span style="font-size:15px;color:var(--muted)"> / ${w.sleepGoal} ساعات</span>
+        <div class="card" style="padding:22px">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:52px;line-height:1">💧</div>
+            <h3 style="font-size:19px;margin-top:8px">الماء</h3>
+          </div>
+          <div style="text-align:center;margin-bottom:14px">
+            <b style="font-family:'Tajawal';font-size:42px;color:#0891b2">${todayLog.water}</b>
+            <span style="font-size:15px;color:var(--muted)"> / ${w.waterGoal} أكواب</span>
+          </div>
+          <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${waterPct}%;background:#0891b2"></i></div>
+          <div style="text-align:center">
+            <button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button>
+            <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير</button>
+          </div>
         </div>
-        <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${sleepPct}%"></i></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${[4,5,6,7,8,9,10].map(h => `
-            <button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>
+      </div>
+      <div class="card" style="padding:20px;margin-bottom:16px">
+        <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - النوم</h3>
+        <div class="week-bars">
+          ${last7.map(d => `
+            <div class="wbar"><span class="wbar-val">${d.sleep || ''}</span>
+              <div class="wbar-fill" style="height:${Math.max((d.sleep/maxSleep)*100, 3)}%"></div>
+              <span class="wbar-lbl">${d.day}</span></div>
           `).join('')}
         </div>
       </div>
-
-      <div class="card" style="padding:22px">
-        <div style="text-align:center;margin-bottom:16px">
-          <div style="font-size:52px;line-height:1">💧</div>
-          <h3 style="font-size:19px;margin-top:8px">الماء</h3>
-        </div>
-        <div style="text-align:center;margin-bottom:14px">
-          <b style="font-family:'Tajawal';font-size:42px;color:#0891b2">${todayLog.water}</b>
-          <span style="font-size:15px;color:var(--muted)"> / ${w.waterGoal} أكواب</span>
-        </div>
-        <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${waterPct}%;background:#0891b2"></i></div>
-        <div style="text-align:center">
-          <button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button>
-          <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير اليوم</button>
+      <div class="card" style="padding:20px">
+        <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - الماء</h3>
+        <div class="week-bars">
+          ${last7.map(d => `
+            <div class="wbar"><span class="wbar-val" style="color:#0891b2">${d.water || ''}</span>
+              <div class="wbar-fill" style="height:${Math.max((d.water/maxWater)*100, 3)}%;background:linear-gradient(180deg,#0891b2,#0e7490)"></div>
+              <span class="wbar-lbl">${d.day}</span></div>
+          `).join('')}
         </div>
       </div>
-    </div>
-
-    <div class="card" style="padding:20px;margin-bottom:16px">
-      <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - النوم</h3>
-      <div class="week-bars">
-        ${last7.map(d => `
-          <div class="wbar">
-            <span class="wbar-val">${d.sleep || ''}</span>
-            <div class="wbar-fill" style="height:${Math.max((d.sleep/maxSleep)*100, 3)}%"></div>
-            <span class="wbar-lbl">${d.day}</span>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-
-    <div class="card" style="padding:20px">
-      <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - الماء</h3>
-      <div class="week-bars">
-        ${last7.map(d => `
-          <div class="wbar">
-            <span class="wbar-val" style="color:#0891b2">${d.water || ''}</span>
-            <div class="wbar-fill" style="height:${Math.max((d.water/maxWater)*100, 3)}%;background:linear-gradient(180deg,#0891b2,#0e7490)"></div>
-            <span class="wbar-lbl">${d.day}</span>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
+    `;
+  }catch(e){ el.innerHTML = '<div class="empty"><b>خطأ في العرض</b></div>'; }
 }
-
 function getOrCreateTodayWellness(){
   const today = todayISO();
   let log = state.wellness.log.find(l => l.date === today);
-  if(!log){
-    log = { date: today, sleep: 0, water: 0 };
-    state.wellness.log.push(log);
-  }
+  if(!log){ log = { date: today, sleep: 0, water: 0 }; state.wellness.log.push(log); }
   return log;
 }
-function addSleep(h){
-  const log = getOrCreateTodayWellness();
-  log.sleep = h; // استبدال لأن النوم مرة وحدة
-  save(); renderWellness(); toast(`😴 سجّلت ${h} ساعات نوم`);
-}
-function addWater(){
-  const log = getOrCreateTodayWellness();
-  log.water += 1;
-  save(); renderWellness();
-}
-function resetWater(){
-  const log = getOrCreateTodayWellness();
-  log.water = 0;
-  save(); renderWellness();
-}
+function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); toast(`😴 سجّلت ${h} ساعات`); }
+function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); }
+function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); }
 
 /* ============================================================
-   5) 🗂️ أرشيف الفصول
+   🗂️ أرشيف الفصول
 ============================================================ */
+if(!Array.isArray(state.archive)) state.archive = [];
+
 function renderArchive(){
   const el = document.getElementById('archiveContent');
   if(!el) return;
-
   el.innerHTML = `
     <div class="card" style="padding:22px;margin-bottom:20px">
       <h3 style="font-size:17px;margin-bottom:8px">💾 أرشفة الفصل الحالي</h3>
       <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-        بيحفظ نسخة كاملة من: المقررات، الجدول، المهام، الاختبارات، الدرجات، الحضور، والمذاكرة.
-        <br>بيصير عندك سجل تاريخي لكل فصل.
+        بيحفظ نسخة كاملة من بياناتك الحالية.
       </p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input id="archiveName" placeholder="اسم الفصل (مثال: الفصل الأول 1447)" style="flex:2;min-width:180px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <button class="btn btn-primary" onclick="createArchive()">💾 أرشفة الآن</button>
+        <input id="archiveName" placeholder="اسم الفصل" style="flex:2;min-width:180px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
+        <button class="btn btn-primary" onclick="createArchive()">💾 أرشفة</button>
       </div>
     </div>
-
     ${state.archive.length ? `
-      <h3 style="font-size:17px;margin-bottom:14px">📚 الفصول المؤرشفة (${state.archive.length})</h3>
+      <h3 style="font-size:17px;margin-bottom:14px">📚 المؤرشفة (${state.archive.length})</h3>
       <div style="display:grid;gap:12px">
         ${state.archive.map((a, i) => `
           <div class="card" style="padding:18px;border-right:4px solid var(--p)">
@@ -2795,7 +2641,7 @@ function renderArchive(){
               <div>
                 <h4 style="font-size:16.5px;margin-bottom:4px">${esc(a.name)}</h4>
                 <span style="font-size:12.5px;color:var(--muted);font-weight:700">
-                  📅 ${new Date(a.created).toLocaleDateString('ar-EG', {year:'numeric',month:'long',day:'numeric'})}
+                  📅 ${new Date(a.created).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}
                 </span>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -2807,127 +2653,76 @@ function renderArchive(){
               <span>📚 ${a.data.courses?.length || 0} مقرر</span>
               <span>✅ ${a.data.tasks?.length || 0} مهمة</span>
               <span>⏰ ${a.data.exams?.length || 0} اختبار</span>
-              <span>📝 ${a.data.notes?.length || 0} ملاحظة</span>
             </div>
           </div>
         `).join('')}
       </div>
-    ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي عشان تحفظ بياناتك</p></div>`}
+    ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي</p></div>`}
   `;
 }
-
 function createArchive(){
   const name = document.getElementById('archiveName').value.trim();
   if(!name){ toast('⚠️ اكتب اسم الفصل'); return; }
-  if(!confirm(`أرشفة "${name}"؟`)) return;
-  
   state.archive.push({
-    id: uid(),
-    name,
-    created: new Date().toISOString(),
+    id: uid(), name, created: new Date().toISOString(),
     data: JSON.parse(JSON.stringify({
-      courses: state.courses,
-      schedule: state.schedule,
-      tasks: state.tasks,
-      exams: state.exams,
-      notes: state.notes,
-      studyLog: state.studyLog,
-      attendance: state.attendance,
-      gpaCourses: state.gpaCourses
+      courses: state.courses || [], schedule: state.schedule || [],
+      tasks: state.tasks || [], exams: state.exams || [],
+      notes: state.notes || [], studyLog: state.studyLog || [],
+      attendance: state.attendance || [], gpaCourses: state.gpaCourses || []
     }))
   });
   save(); renderArchive(); toast('✅ تمت الأرشفة');
 }
-
 function viewArchive(i){
-  const a = state.archive[i];
-  if(!a) return;
+  const a = state.archive[i]; if(!a) return;
   const d = a.data;
-  const totalStudy = d.studyLog?.reduce((x,y) => x + y.minutes, 0) || 0;
-  
   openModal(`📚 ${a.name}`, `
-    <div style="display:grid;gap:16px">
-      <div style="background:var(--hover);padding:14px;border-radius:12px">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13.5px;font-weight:700">
-          <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div>
-          <div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
-          <div>✅ <b>${d.tasks?.length || 0}</b> مهمة</div>
-          <div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
-          <div>📝 <b>${d.notes?.length || 0}</b> ملاحظة</div>
-          <div>🍅 <b>${totalStudy}</b> دقيقة مذاكرة</div>
-        </div>
+    <div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13.5px;font-weight:700">
+        <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div>
+        <div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
+        <div>✅ <b>${d.tasks?.length || 0}</b> مهمة</div>
+        <div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
       </div>
-      
-      ${d.courses?.length ? `
-        <div>
-          <h4 style="font-size:15px;margin-bottom:10px">📚 المقررات:</h4>
-          ${d.courses.map(c => `
-            <div style="padding:10px;background:var(--hover);border-radius:10px;margin-bottom:6px;font-size:13.5px">
-              <b style="color:${c.color}">${esc(c.name)}</b>
-              <span style="color:var(--muted);font-weight:700"> · ${c.credits || 0} ساعات</span>
-            </div>
-          `).join('')}
-        </div>
-      ` : ''}
     </div>
   `, `
     <button class="btn btn-ghost" onclick="closeModal()">إغلاق</button>
     <button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>
   `);
 }
-
 function loadArchive(i){
-  const a = state.archive[i];
-  if(!a) return;
-  if(!confirm('سيتم استبدال بياناتك الحالية. متابعة؟')) return;
+  const a = state.archive[i]; if(!a) return;
+  if(!confirm('سيتم استبدال البيانات. متابعة؟')) return;
   const d = a.data;
-  state.courses = d.courses || [];
-  state.schedule = d.schedule || [];
-  state.tasks = d.tasks || [];
-  state.exams = d.exams || [];
-  state.notes = d.notes || [];
-  state.studyLog = d.studyLog || [];
-  state.attendance = d.attendance || [];
-  state.gpaCourses = d.gpaCourses || [];
-  save(); closeModal(); renderAll();
-  if(typeof renderArchive === 'function') renderArchive();
+  state.courses = d.courses || []; state.schedule = d.schedule || [];
+  state.tasks = d.tasks || []; state.exams = d.exams || [];
+  state.notes = d.notes || []; state.studyLog = d.studyLog || [];
+  state.attendance = d.attendance || []; state.gpaCourses = d.gpaCourses || [];
+  save(); closeModal(); renderAll(); renderArchive();
   toast('✅ تمت الاستعادة');
 }
-
 function deleteArchive(i){
   if(!confirm('حذف هذا الأرشيف؟')) return;
-  state.archive.splice(i, 1);
-  save(); renderArchive(); toast('🗑️ تم الحذف');
+  state.archive.splice(i, 1); save(); renderArchive(); toast('🗑️ تم');
 }
 
 /* ============================================================
-   📌 إضافة الصفحات للقائمة الجانبية
+   📌 إنشاء الصفحات
 ============================================================ */
-(function addNavButtons(){
-  const nav = document.querySelector('.nav');
-  if(!nav || document.getElementById('nav-extras')) return;
-  
-  const extras = document.createElement('div');
-  extras.id = 'nav-extras';
-  extras.style.display = 'contents';
-  
+(function addPages(){
+  const content = document.querySelector('.content');
+  if(!content) return;
+
   const pages = [
-    { id:'attendance', ico:'📋', title:'عدّاد الغياب', sub:'تتبع غياباتك لكل مقرر' },
-    { id:'gpa', ico:'🎓', title:'حاسبة المعدل', sub:'احسب معدلك الفصلي' },
-    { id:'memorization', ico:'📖', title:'تتبع الحفظ', sub:'هدف الحفظ اليومي' },
-    { id:'wellness', ico:'💪', title:'النوم والماء', sub:'صحتك قبل كل شي' },
+    { id:'attendance', ico:'📋', title:'عدّاد الغياب', sub:'تتبع غياباتك' },
+    { id:'gpa', ico:'🎓', title:'حاسبة المعدل', sub:'احسب معدلك' },
+    { id:'wellness', ico:'💪', title:'النوم والماء', sub:'صحتك أولاً' },
     { id:'archive', ico:'🗂️', title:'أرشيف الفصول', sub:'سجل كل فصولك' }
   ];
-  
+
   pages.forEach(p => {
-    // زر القائمة
-    const btn = document.createElement('button');
-    btn.className = 'nav-btn';
-    btn.dataset.view = p.id;
-    btn.innerHTML = `<span class="ico">${p.ico}</span> ${p.title}`;
-    extras.appendChild(btn);
-    
-    // صفحة المحتوى
+    if(document.getElementById('view-' + p.id)) return;
     const sec = document.createElement('section');
     sec.className = 'view';
     sec.id = 'view-' + p.id;
@@ -2935,114 +2730,148 @@ function deleteArchive(i){
       <div class="sec-head"><div><h2>${p.ico} ${p.title}</h2><p>${p.sub}</p></div></div>
       <div id="${p.id}Content"></div>
     `;
-    document.querySelector('.content').appendChild(sec);
-    
-    // معلومات الصفحة
+    content.appendChild(sec);
     VIEW_META[p.id] = [p.title, p.sub];
   });
-  
-  // اربط الأزرار
-  extras.querySelectorAll('.nav-btn').forEach(b => {
-    b.addEventListener('click', () => {
-      go(b.dataset.view);
-      setTimeout(() => {
-        if(b.dataset.view === 'attendance') renderAttendancePage();
-        if(b.dataset.view === 'gpa') renderGPA();
-        if(b.dataset.view === 'memorization') renderMemorization();
-        if(b.dataset.view === 'wellness') renderWellness();
-        if(b.dataset.view === 'archive') renderArchive();
-      }, 50);
-    });
-  });
-  
-  nav.appendChild(extras);
 })();
 
-// تحديث كل شي
-const _origRenderAll = renderAll;
-renderAll = function(){
-  _origRenderAll();
-  if(document.getElementById('attendanceContent')) renderAttendancePage();
-  if(document.getElementById('gpaContent')) renderGPA();
-  if(document.getElementById('memContent')) renderMemorization();
-  if(document.getElementById('wellContent')) renderWellness();
-  if(document.getElementById('archiveContent')) renderArchive();
-};
-
 /* ============================================================
-   🎨 تجميع القائمة الجانبية
+   📌 إضافة أزرار القائمة + تجميع
 ============================================================ */
-(function groupSidebar(){
+(function rebuildNav(){
   const nav = document.querySelector('.nav');
-  if(!nav || nav.querySelector('.nav-group-title')) return;
+  if(!nav) return;
 
-  const groups = [
-    { title: '📌 الرئيسية', views: ['dashboard','schedule','courses','tasks','exams'] },
-    { title: '📊 الأكاديمي', views: ['grades','gpa','attendance','archive'] },
-    { title: '🎯 المذاكرة والصحة', views: ['study','memorization','wellness'] },
-    { title: '⚙️ أدوات', views: ['notes','settings'] }
-  ];
-
-  const allButtons = {};
+  // احذف الأزرار القديمة وخذ نسخ
+  const existing = {};
   nav.querySelectorAll('.nav-btn').forEach(b => {
-    allButtons[b.dataset.view] = b;
+    existing[b.dataset.view] = b;
     b.remove();
   });
+
+  // سوّ الأزرار الجديدة
+  const newBtn = (view, ico, label) => {
+    if(existing[view]) {
+      existing[view].innerHTML = `<span class="ico">${ico}</span> ${label}`;
+      return existing[view];
+    }
+    const b = document.createElement('button');
+    b.className = 'nav-btn';
+    b.dataset.view = view;
+    b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
+    return b;
+  };
+
+  const groups = [
+    { title:'📌 الرئيسية', items:[
+      ['dashboard','🏠','الرئيسية'],
+      ['schedule','📅','الجدول الدراسي'],
+      ['courses','📚','المقررات'],
+      ['tasks','✅','المهام والواجبات'],
+      ['exams','⏰','الاختبارات']
+    ]},
+    { title:'📊 الأكاديمي', items:[
+      ['grades','📊','الدرجات'],
+      ['gpa','🎓','حاسبة المعدل'],
+      ['attendance','📋','عدّاد الغياب'],
+      ['archive','🗂️','أرشيف الفصول']
+    ]},
+    { title:'🎯 المذاكرة والصحة', items:[
+      ['study','🍅','المذاكرة'],
+      ['wellness','💪','النوم والماء']
+    ]},
+    { title:'⚙️ أدوات', items:[
+      ['notes','📝','الملاحظات'],
+      ['settings','⚙️','الإعدادات']
+    ]}
+  ];
 
   nav.innerHTML = '';
   groups.forEach(g => {
     const group = document.createElement('div');
-    group.className = 'nav-group';
+    group.className = 'nav-group collapsed'; // كلها مطوية افتراضياً
 
     const title = document.createElement('div');
     title.className = 'nav-group-title';
     title.textContent = g.title;
+    title.addEventListener('click', () => {
+      group.classList.toggle('collapsed');
+    });
     group.appendChild(title);
 
-    g.views.forEach(v => {
-      if(allButtons[v]){
-        group.appendChild(allButtons[v]);
-        // اربط الزر من جديد
-        const btn = allButtons[v];
-        btn.onclick = null;
-        btn.addEventListener('click', () => {
-          go(btn.dataset.view);
-          setTimeout(() => {
-            try{
-              if(btn.dataset.view === 'attendance') renderAttendancePage();
-              if(btn.dataset.view === 'gpa') renderGPA();
-              if(btn.dataset.view === 'memorization') renderMemorization();
-              if(btn.dataset.view === 'wellness') renderWellness();
-              if(btn.dataset.view === 'archive') renderArchive();
-            }catch(e){}
-          }, 60);
-        });
-      }
+    g.items.forEach(([v, ico, label]) => {
+      const b = newBtn(v, ico, label);
+      // اربط الأزرار
+      b.onclick = null;
+      b.addEventListener('click', () => {
+        go(v);
+        setTimeout(() => {
+          try{
+            if(v === 'attendance') renderAttendancePage();
+            if(v === 'gpa') renderGPA();
+            if(v === 'wellness') renderWellness();
+            if(v === 'archive') renderArchive();
+          }catch(e){}
+        }, 60);
+      });
+      group.appendChild(b);
     });
 
     nav.appendChild(group);
   });
+
+  // افتح مجموعة الصفحة الحالية
+  const current = (location.hash.slice(1) || 'dashboard');
+  nav.querySelectorAll('.nav-group').forEach(g => {
+    if(g.querySelector(`[data-view="${current}"]`)) g.classList.remove('collapsed');
+  });
 })();
 
 /* ============================================================
-   🛡️ إصلاح تمرير الصفحة على الجوال
+   🛡️ إصلاح الجوال
 ============================================================ */
-(function fixMobileScroll(){
+(function fixMobile(){
   const sidebar = document.getElementById('sidebar');
   if(!sidebar) return;
-
-  const observer = new MutationObserver(() => {
+  const mo = new MutationObserver(() => {
     document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
   });
-  observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
-
-  function fixVH(){
-    document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-  }
-  fixVH();
-  window.addEventListener('resize', fixVH);
-  window.addEventListener('orientationchange', () => setTimeout(fixVH, 200));
+  mo.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+  const setVH = () => document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+  setVH();
+  window.addEventListener('resize', setVH);
+  window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 })();
+
+/* ============================================================
+   🔄 عند التنقل، افتح مجموعة الصفحة
+============================================================ */
+const _origGo = go;
+go = function(view){
+  _origGo(view);
+  document.querySelectorAll('.nav-group').forEach(g => {
+    if(g.querySelector(`[data-view="${view}"]`)){
+      g.classList.remove('collapsed');
+    }
+  });
+  // شغّل الرندر
+  setTimeout(() => {
+    try{
+      if(view === 'attendance') renderAttendancePage();
+      if(view === 'gpa') renderGPA();
+      if(view === 'wellness') renderWellness();
+      if(view === 'archive') renderArchive();
+    }catch(e){}
+  }, 60);
+};
+
+// شغّل الرندر الأولي
+setTimeout(() => {
+  try{ renderAttendancePage(); }catch(e){}
+  try{ renderGPA(); }catch(e){}
+  try{ renderWellness(); }catch(e){}
+  try{ renderArchive(); }catch(e){}
+}, 200);
 </script>
 </body>
 </html>

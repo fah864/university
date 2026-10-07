@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-/* ============ RESET & TOKENS ============ */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
   --p:#0d9488; --p-dark:#0f766e; --p-light:#ccfbf1;
@@ -17,12 +16,8 @@
   --danger:#dc2626; --danger-bg:#fee2e2;
   --warn:#d97706; --warn-bg:#fef3c7;
   --ok:#059669; --ok-bg:#d1fae5;
-  --bg:#f4f7f8;
-  --card:#ffffff;
-  --text:#0f172a;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --hover:#f1f5f9;
+  --bg:#f4f7f8; --card:#ffffff; --text:#0f172a; --muted:#64748b;
+  --border:#e2e8f0; --hover:#f1f5f9;
   --shadow:0 2px 10px rgba(15,23,42,.05);
   --shadow-lg:0 18px 45px rgba(15,23,42,.12);
   --r:16px; --r-sm:11px;
@@ -37,12 +32,7 @@ html[data-theme="dark"]{
   --danger-bg:#3b1414; --warn-bg:#3a2a09; --ok-bg:#0d2f24;
 }
 html{scroll-behavior:smooth}
-body{
-  font-family:'Cairo','Tajawal',system-ui,sans-serif;
-  background:var(--bg); color:var(--text);
-  line-height:1.7; -webkit-font-smoothing:antialiased;
-  transition:background .3s,color .3s;
-}
+body{font-family:'Cairo','Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
 h1,h2,h3,h4{font-family:'Tajawal','Cairo',sans-serif;font-weight:800;line-height:1.35}
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
 button{cursor:pointer;border:none;background:none}
@@ -52,81 +42,37 @@ ul{list-style:none}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:20px}
 ::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 ::selection{background:var(--p);color:#fff}
-
-/* ============ LAYOUT ============ */
 .app{display:flex;min-height:100vh}
-
-/* ---- SIDEBAR ---- */
-.sidebar{
-  width:var(--sidebar);flex-shrink:0;background:var(--card);
-  border-left:1px solid var(--border);
-  display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
-  transition:var(--t);z-index:60;
-}
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--card);border-left:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;transition:var(--t);z-index:60}
 .brand{padding:22px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
-.brand-logo{
-  width:44px;height:44px;border-radius:13px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--p),#0f766e);
-  display:grid;place-items:center;font-size:22px;
-  box-shadow:0 8px 20px rgba(13,148,136,.3);
-}
+.brand-logo{width:44px;height:44px;border-radius:13px;flex-shrink:0;background:linear-gradient(135deg,var(--p),#0f766e);display:grid;place-items:center;font-size:22px;box-shadow:0 8px 20px rgba(13,148,136,.3)}
 .brand-txt b{display:block;font-family:'Tajawal';font-size:17px;font-weight:800;line-height:1.2}
 .brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
-
 .nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-.nav-btn{
-  display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
-  font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right;
-}
+.nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right}
 .nav-btn:hover{background:var(--hover);color:var(--text)}
 .nav-btn.active{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
 .nav-btn .ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
-.nav-btn .badge{
-  margin-inline-start:auto;background:var(--danger);color:#fff;
-  font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;min-width:22px;text-align:center;
-}
+.nav-btn .badge{margin-inline-start:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;min-width:22px;text-align:center}
 .nav-btn.active .badge{background:rgba(255,255,255,.28)}
-
 .sidebar-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px}
-.icon-btn{
-  width:40px;height:40px;border-radius:11px;background:var(--hover);
-  display:grid;place-items:center;font-size:17px;transition:var(--t);flex:1;
-}
+.icon-btn{width:40px;height:40px;border-radius:11px;background:var(--hover);display:grid;place-items:center;font-size:17px;transition:var(--t);flex:1}
 .icon-btn:hover{background:var(--p);transform:translateY(-2px)}
-
-/* ---- MAIN ---- */
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
-.topbar{
-  position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
-  padding:0 22px;height:70px;display:flex;align-items:center;gap:16px;
-}
+.topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 22px;height:70px;display:flex;align-items:center;gap:16px}
 .hamburger{display:none;width:42px;height:42px;border-radius:11px;background:var(--hover);place-items:center;font-size:20px}
 .page-title{font-size:19px;font-weight:800}
 .page-sub{font-size:12.5px;color:var(--muted);font-weight:600}
 .topbar-spacer{flex:1}
-.topbar-date{
-  font-size:13px;color:var(--muted);font-weight:700;background:var(--hover);
-  padding:8px 14px;border-radius:11px;white-space:nowrap;
-}
+.topbar-date{font-size:13px;color:var(--muted);font-weight:700;background:var(--hover);padding:8px 14px;border-radius:11px;white-space:nowrap}
 .content{padding:24px 22px 90px;max-width:1400px;width:100%;margin-inline:auto}
-
-/* ---- VIEWS ---- */
 .view{display:none;animation:fade .35s ease both}
 .view.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-/* ============ COMPONENTS ============ */
 .sec-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
 .sec-head h2{font-size:21px}
 .sec-head p{font-size:13.5px;color:var(--muted);font-weight:600}
-
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;
-  transition:var(--t);white-space:nowrap;
-}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;transition:var(--t);white-space:nowrap}
 .btn-primary{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.26)}
 .btn-primary:hover{background:var(--p-dark);transform:translateY(-2px)}
 .btn-ghost{background:var(--hover);color:var(--text)}
@@ -135,126 +81,65 @@ ul{list-style:none}
 .btn-danger:hover{background:var(--danger);color:#fff}
 .btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
 .btn-block{width:100%}
-
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
-
-/* ---- STATS ---- */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:24px}
-.stat{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);
-  transition:var(--t);position:relative;overflow:hidden;
-}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);transition:var(--t);position:relative;overflow:hidden}
 .stat:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.stat-ico{
-  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
-  font-size:22px;flex-shrink:0;
-}
+.stat-ico{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
 .stat b{display:block;font-family:'Tajawal';font-size:26px;font-weight:800;line-height:1.1}
 .stat span{font-size:13px;color:var(--muted);font-weight:600}
-
-/* ---- GRID ---- */
 .grid{display:grid;gap:16px}
 .g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
 .g3{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-
-/* ---- UPCOMING LIST ---- */
-.up-item{
-  display:flex;align-items:center;gap:14px;padding:14px;border-radius:13px;
-  background:var(--hover);margin-bottom:10px;transition:var(--t);
-}
+.up-item{display:flex;align-items:center;gap:14px;padding:14px;border-radius:13px;background:var(--hover);margin-bottom:10px;transition:var(--t)}
 .up-item:hover{transform:translateX(-5px)}
 .up-item:last-child{margin-bottom:0}
 .up-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .up-info{flex:1;min-width:0}
 .up-info b{display:block;font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .up-info span{font-size:12.5px;color:var(--muted);font-weight:600}
-.up-time{
-  font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap;
-}
-
-/* ---- EMPTY ---- */
-.empty{
-  text-align:center;padding:50px 20px;color:var(--muted);
-}
+.up-time{font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .empty .e-ico{font-size:52px;margin-bottom:14px;opacity:.5}
 .empty b{display:block;font-size:17px;color:var(--text);margin-bottom:6px;font-family:'Tajawal'}
 .empty p{font-size:14px;margin-bottom:18px}
-
-/* ---- COURSE CARD ---- */
-.course-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  overflow:hidden;box-shadow:var(--shadow);transition:var(--t);position:relative;
-}
+.course-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);transition:var(--t);position:relative}
 .course-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
 .course-bar{height:6px}
 .course-body{padding:18px}
 .course-body h3{font-size:17px;margin-bottom:4px}
 .course-body .code{font-size:12.5px;color:var(--muted);font-weight:700;margin-bottom:12px}
 .course-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.pill{
-  font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:20px;
-  background:var(--hover);color:var(--muted);
-}
+.pill{font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:20px;background:var(--hover);color:var(--muted)}
 .course-actions{display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
-.course-actions button{
-  flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:700;
-  background:var(--hover);transition:var(--t);
-}
+.course-actions button{flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:700;background:var(--hover);transition:var(--t)}
 .course-actions button:hover{background:var(--p);color:#fff}
-
-/* ---- SCHEDULE ---- */
 .sched-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:auto;box-shadow:var(--shadow)}
 .sched-inner{min-width:900px}
 .sched-head{display:grid;grid-template-columns:64px 1fr;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--card);z-index:5}
 .sched-days{display:grid;grid-template-columns:repeat(7,1fr)}
-.sched-day{
-  padding:12px 6px;text-align:center;font-weight:800;font-size:13.5px;
-  font-family:'Tajawal';border-inline-start:1px solid var(--border);
-}
+.sched-day{padding:12px 6px;text-align:center;font-weight:800;font-size:13.5px;font-family:'Tajawal';border-inline-start:1px solid var(--border)}
 .sched-day.today{background:var(--p-light);color:var(--p-dark)}
 html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .sched-body{display:grid;grid-template-columns:64px 1fr;position:relative}
 .sched-times{display:flex;flex-direction:column}
-.sched-time{
-  height:58px;font-size:11.5px;color:var(--muted);font-weight:700;
-  display:flex;align-items:flex-start;justify-content:center;padding-top:2px;
-  border-bottom:1px solid var(--border);
-}
+.sched-time{height:58px;font-size:11.5px;color:var(--muted);font-weight:700;display:flex;align-items:flex-start;justify-content:center;padding-top:2px;border-bottom:1px solid var(--border)}
 .sched-cols{display:grid;grid-template-columns:repeat(7,1fr);position:relative}
 .sched-col{position:relative;border-inline-start:1px solid var(--border);min-height:870px}
 .sched-col .hour-line{position:absolute;left:0;right:0;height:1px;background:var(--border);opacity:.6}
-.cls{
-  position:absolute;left:3px;right:3px;border-radius:10px;padding:6px 9px;
-  color:#fff;font-size:12px;font-weight:700;overflow:hidden;cursor:pointer;
-  transition:var(--t);box-shadow:0 3px 10px rgba(0,0,0,.18);
-}
+.cls{position:absolute;left:3px;right:3px;border-radius:10px;padding:6px 9px;color:#fff;font-size:12px;font-weight:700;overflow:hidden;cursor:pointer;transition:var(--t);box-shadow:0 3px 10px rgba(0,0,0,.18)}
 .cls:hover{transform:scale(1.03);z-index:10;box-shadow:0 8px 22px rgba(0,0,0,.3)}
 .cls b{display:block;font-size:12.5px;line-height:1.3;margin-bottom:2px}
 .cls span{font-size:10.5px;opacity:.9;display:block}
-
-/* ---- TASK ---- */
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.chip{
-  padding:8px 16px;border-radius:20px;font-size:13.5px;font-weight:700;
-  background:var(--card);border:1.5px solid var(--border);color:var(--muted);transition:var(--t);
-}
+.chip{padding:8px 16px;border-radius:20px;font-size:13.5px;font-weight:700;background:var(--card);border:1.5px solid var(--border);color:var(--muted);transition:var(--t)}
 .chip:hover{border-color:var(--p);color:var(--p)}
 .chip.active{background:var(--p);border-color:var(--p);color:#fff}
-
-.task{
-  display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;
-  background:var(--card);border:1px solid var(--border);margin-bottom:10px;
-  transition:var(--t);box-shadow:var(--shadow);
-}
+.task{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border);margin-bottom:10px;transition:var(--t);box-shadow:var(--shadow)}
 .task:hover{border-color:var(--p);transform:translateX(-4px)}
 .task.done{opacity:.55}
 .task.done .task-title{text-decoration:line-through}
-.chk{
-  width:24px;height:24px;border-radius:8px;border:2px solid var(--border);
-  flex-shrink:0;margin-top:2px;display:grid;place-items:center;transition:var(--t);
-  font-size:14px;color:transparent;
-}
+.chk{width:24px;height:24px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:grid;place-items:center;transition:var(--t);font-size:14px;color:transparent}
 .chk:hover{border-color:var(--p)}
 .task.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
 .task-main{flex:1;min-width:0}
@@ -262,31 +147,19 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .task-sub{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);font-weight:600}
 .tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px}
 .task-actions{display:flex;gap:4px;flex-shrink:0}
-.mini-btn{
-  width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
-  font-size:14px;background:var(--hover);transition:var(--t);
-}
+.mini-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;background:var(--hover);transition:var(--t)}
 .mini-btn:hover{background:var(--p);color:#fff}
 .mini-btn.del:hover{background:var(--danger)}
-
-/* ---- EXAM ---- */
-.exam{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:20px;box-shadow:var(--shadow);transition:var(--t);position:relative;overflow:hidden;
-}
+.exam{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);transition:var(--t);position:relative;overflow:hidden}
 .exam:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
 .exam-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
 .exam-top h3{font-size:17px;flex:1}
-.countdown{
-  text-align:center;padding:8px 14px;border-radius:13px;font-weight:800;flex-shrink:0;min-width:76px;
-}
+.countdown{text-align:center;padding:8px 14px;border-radius:13px;font-weight:800;flex-shrink:0;min-width:76px}
 .countdown b{display:block;font-family:'Tajawal';font-size:23px;line-height:1}
 .countdown span{font-size:10.5px;font-weight:700;opacity:.85}
 .exam-detail{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
 .exam-detail span{display:flex;align-items:center;gap:5px}
 .exam-actions{display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
-
-/* ---- POMODORO ---- */
 .pomo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 .pomo-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px;box-shadow:var(--shadow);text-align:center}
 .ring-wrap{position:relative;width:230px;height:230px;margin:0 auto 22px}
@@ -294,22 +167,17 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .ring circle{fill:none;stroke-width:11;stroke-linecap:round}
 .ring .bg{stroke:var(--border)}
 .ring .fg{stroke:var(--p);transition:stroke-dashoffset .3s linear}
-.ring-txt{
-  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-}
+.ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .ring-txt b{font-family:'Tajawal';font-size:44px;font-weight:800;line-height:1;letter-spacing:1px}
 .ring-txt span{font-size:13px;color:var(--muted);font-weight:700;margin-top:6px}
 .pomo-modes{display:flex;gap:8px;justify-content:center;margin-bottom:22px}
 .pomo-ctrl{display:flex;gap:10px;justify-content:center}
 .pomo-ctrl .btn{padding:13px 30px;font-size:15px}
-
 .week-bars{display:flex;align-items:flex-end;gap:8px;height:150px;padding:10px 0;margin-top:10px}
 .wbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
 .wbar-fill{width:100%;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--p),var(--p-dark));min-height:4px;transition:height .5s ease}
 .wbar-lbl{font-size:11px;color:var(--muted);font-weight:700}
 .wbar-val{font-size:11px;font-weight:800;color:var(--p)}
-
-/* ---- GRADES ---- */
 .grade-course{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--shadow)}
 .gc-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 .gc-head h3{font-size:17px}
@@ -318,151 +186,53 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .comp-row input{padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:13.5px;width:100%;transition:var(--t)}
 .comp-row input:focus{outline:none;border-color:var(--p);background:var(--card)}
 .comp-hd{font-size:12px;color:var(--muted);font-weight:800}
-
-/* ---- NOTES ---- */
 .note{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);transition:var(--t);position:relative}
 .note:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
 .note h4{font-size:16px;margin-bottom:8px;padding-inline-end:30px}
 .note p{font-size:13.5px;color:var(--muted);white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:hidden}
 .note .n-date{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:12px;display:block}
-
-/* ---- FORMS ---- */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field{display:flex;flex-direction:column;gap:7px}
 .field.full{grid-column:1/-1}
 .field label{font-size:13.5px;font-weight:700}
 .field label .req{color:var(--danger)}
-.field input,.field select,.field textarea{
-  padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);
-  background:var(--bg);font-size:14.5px;transition:var(--t);width:100%;
-}
+.field input,.field select,.field textarea{padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-size:14.5px;transition:var(--t);width:100%}
 .field textarea{resize:vertical;min-height:100px}
-.field input:focus,.field select:focus,.field textarea:focus{
-  outline:none;border-color:var(--p);background:var(--card);
-  box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent);
-}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--p);background:var(--card);box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent)}
 .color-pick{display:flex;gap:9px;flex-wrap:wrap}
-.color-pick button{
-  width:34px;height:34px;border-radius:11px;border:3px solid transparent;transition:var(--t);
-}
+.color-pick button{width:34px;height:34px;border-radius:11px;border:3px solid transparent;transition:var(--t)}
 .color-pick button.sel{border-color:var(--text);transform:scale(1.12)}
-
-/* ---- MODAL ---- */
-.modal-bg{
-  position:fixed;inset:0;background:rgba(8,20,35,.62);backdrop-filter:blur(5px);
-  z-index:200;display:none;align-items:center;justify-content:center;padding:18px;
-}
+.modal-bg{position:fixed;inset:0;background:rgba(8,20,35,.62);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
 .modal-bg.open{display:flex;animation:fade .22s ease}
-.modal{
-  background:var(--card);border-radius:22px;width:100%;max-width:560px;
-  max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:pop .3s cubic-bezier(.34,1.4,.64,1);
-}
+.modal{background:var(--card);border-radius:22px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:pop .3s cubic-bezier(.34,1.4,.64,1)}
 @keyframes pop{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:none}}
-.modal-head{
-  padding:20px 24px;border-bottom:1px solid var(--border);
-  display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;
-  background:var(--card);z-index:2;border-radius:22px 22px 0 0;
-}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:2;border-radius:22px 22px 0 0}
 .modal-head h3{font-size:19px}
 .modal-head button{width:36px;height:36px;border-radius:10px;background:var(--hover);display:grid;place-items:center;font-size:18px}
 .modal-head button:hover{background:var(--danger-bg);color:var(--danger)}
 .modal-body{padding:24px}
 .modal-foot{padding:16px 24px 24px;display:flex;gap:10px}
 .modal-foot .btn{flex:1}
-
-/* ---- TOAST ---- */
-.toast{
-  position:fixed;bottom:26px;right:50%;transform:translate(50%,120px);
-  background:var(--text);color:var(--bg);padding:13px 26px;border-radius:14px;
-  font-weight:700;font-size:14.5px;z-index:500;transition:transform .4s cubic-bezier(.34,1.4,.64,1);
-  box-shadow:var(--shadow-lg);max-width:90vw;text-align:center;
-}
+.toast{position:fixed;bottom:26px;right:50%;transform:translate(50%,120px);background:var(--text);color:var(--bg);padding:13px 26px;border-radius:14px;font-weight:700;font-size:14.5px;z-index:500;transition:transform .4s cubic-bezier(.34,1.4,.64,1);box-shadow:var(--shadow-lg);max-width:90vw;text-align:center}
 .toast.show{transform:translate(50%,0)}
-
-/* ---- FAB ---- */
-.fab{
-  position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;
-  background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;
-  box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t);
-}
+.fab{position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t)}
 .fab:hover{transform:translateY(-4px) rotate(90deg);background:var(--p-dark)}
-
-/* ---- PROGRESS ---- */
 .prog{height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:10px}
 .prog i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--p),#2dd4bf);transition:width .6s ease}
-
-/* ============ القائمة الجانبية القابلة للطي ============ */
-.nav-group { margin-bottom: 4px; }
-.nav-group-title {
-  font-size: 11.5px;
-  color: var(--text);
-  font-weight: 800;
-  padding: 12px 14px;
-  letter-spacing: .5px;
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--hover);
-  border-radius: 11px;
-  transition: all .25s;
-  margin: 0 6px 4px;
-}
-.nav-group-title:hover { background: var(--border); }
-.nav-group-title::after {
-  content: '▾';
-  font-size: 11px;
-  color: var(--muted);
-  transition: transform .25s;
-}
-.nav-group.collapsed .nav-group-title::after {
-  transform: rotate(-90deg);
-}
-.nav-group.collapsed .nav-btn {
-  display: none;
-}
-.nav-group .nav-btn {
-  animation: slideDown .25s ease;
-  margin-inline-start: 6px;
-  width: calc(100% - 6px);
-  font-size: 14.5px;
-  padding: 11px 14px;
-}
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ارتفاع القائمة على الجوال */
-.sidebar { height: 100vh; height: 100dvh; }
-
-/* ============ RESPONSIVE ============ */
+.nav-group{margin-bottom:4px}
+.nav-group-title{font-size:11.5px;color:var(--text);font-weight:800;padding:12px 14px;letter-spacing:.5px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;background:var(--hover);border-radius:11px;transition:all .25s;margin:0 6px 4px}
+.nav-group-title:hover{background:var(--border)}
+.nav-group-title::after{content:'▾';font-size:11px;color:var(--muted);transition:transform .25s}
+.nav-group.collapsed .nav-group-title::after{transform:rotate(-90deg)}
+.nav-group.collapsed .nav-btn{display:none}
+.nav-group .nav-btn{animation:slideDown .25s ease;margin-inline-start:6px;width:calc(100% - 6px);font-size:14.5px;padding:11px 14px}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.sidebar{height:100vh;height:100dvh}
 @media(max-width:980px){
-  .sidebar{
-    position:fixed;right:0;top:0;bottom:0;
-    height:auto;
-    max-height:100dvh;
-    width:min(85vw, 310px);
-    padding-bottom:env(safe-area-inset-bottom, 0px);
-    overflow:hidden;
-    transform:translateX(100%);
-    box-shadow:-10px 0 40px rgba(0,0,0,.25);
-    transition:var(--t);
-    z-index:60;
-  }
-  .sidebar.open{ transform:translateX(0); }
-  .sidebar .nav{
-    flex:1;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-    padding-bottom:20px;
-  }
-  .sidebar-foot{
-    padding-bottom:calc(14px + env(safe-area-inset-bottom, 0px));
-    background:var(--card);
-    border-top:1px solid var(--border);
-  }
+  .sidebar{position:fixed;right:0;top:0;bottom:0;height:auto;max-height:100dvh;width:min(85vw,310px);padding-bottom:env(safe-area-inset-bottom,0px);overflow:hidden;transform:translateX(100%);box-shadow:-10px 0 40px rgba(0,0,0,.25);transition:var(--t);z-index:60}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar .nav{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:20px}
+  .sidebar-foot{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--border)}
   .hamburger{display:grid}
   .pomo-wrap{grid-template-columns:1fr}
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:55;display:none}
@@ -483,65 +253,30 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .ring-txt b{font-size:38px}
   .fab{bottom:20px;left:20px;width:52px;height:52px}
 }
-
-/* ============ عدّاد الأسبوع ============ */
-.week-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:8px 14px;
-  border-radius:11px;
-  font-size:13px;
-  font-weight:800;
-  background:var(--p-light);
-  color:var(--p-dark);
-  white-space:nowrap;
-  cursor:pointer;
-  transition:var(--t);
-}
-.week-badge:hover{ transform:translateY(-2px); }
-.week-badge.warn{ background:var(--warn-bg); color:var(--warn); }
-.week-badge.danger{ background:var(--danger-bg); color:var(--danger); }
-
-/* ============ مؤشر المزامنة ============ */
-.sync-badge{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  padding:8px 14px;
-  border-radius:11px;
-  font-size:13px;
-  font-weight:800;
-  background:var(--ok-bg);
-  color:var(--ok);
-  white-space:nowrap;
-  cursor:pointer;
-  transition:var(--t);
-}
-.sync-badge:hover{ transform:translateY(-2px); }
-.sync-badge.loading{ background:var(--warn-bg); color:var(--warn); }
-.sync-badge.error{ background:var(--danger-bg); color:var(--danger); }
-
+.week-badge{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:11px;font-size:13px;font-weight:800;background:var(--p-light);color:var(--p-dark);white-space:nowrap;cursor:pointer;transition:var(--t)}
+.week-badge:hover{transform:translateY(-2px)}
+.week-badge.warn{background:var(--warn-bg);color:var(--warn)}
+.week-badge.danger{background:var(--danger-bg);color:var(--danger)}
+.sync-badge{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:11px;font-size:13px;font-weight:800;background:var(--ok-bg);color:var(--ok);white-space:nowrap;cursor:pointer;transition:all .4s ease;opacity:1}
+.sync-badge:hover{transform:translateY(-2px)}
+.sync-badge.loading{background:var(--warn-bg);color:var(--warn)}
+.sync-badge.error{background:var(--danger-bg);color:var(--danger)}
+.sync-badge.hidden{opacity:0;pointer-events:none}
 @media(max-width:640px){
-  .week-badge{ font-size:11.5px; padding:6px 10px; }
-  .sync-badge{ font-size:11.5px; padding:6px 10px; }
-  .sync-badge span:not(#syncIcon){ display:none; }
+  .week-badge{font-size:11.5px;padding:6px 10px}
+  .sync-badge{font-size:11.5px;padding:6px 10px}
+  .sync-badge span:not(#syncIcon){display:none}
 }
 </style>
 </head>
 <body>
 
 <div class="app">
-  <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="brand-logo">🎓</div>
-      <div class="brand-txt">
-        <b>مُساعد الجامعة</b>
-        <span>نظّم دراستك بذكاء</span>
-      </div>
+      <div class="brand-txt"><b>مُساعد الجامعة</b><span>نظّم دراستك بذكاء</span></div>
     </div>
-
     <nav class="nav">
       <button class="nav-btn active" data-view="dashboard"><span class="ico">🏠</span> الرئيسية</button>
       <button class="nav-btn" data-view="schedule"><span class="ico">📅</span> الجدول الدراسي</button>
@@ -553,7 +288,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <button class="nav-btn" data-view="notes"><span class="ico">📝</span> الملاحظات</button>
       <button class="nav-btn" data-view="settings"><span class="ico">⚙️</span> الإعدادات</button>
     </nav>
-
     <div class="sidebar-foot">
       <button class="icon-btn" id="themeBtn" title="الوضع الليلي">🌙</button>
       <button class="icon-btn" id="quickAddBtn" title="إضافة سريعة">➕</button>
@@ -561,7 +295,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   </aside>
   <div class="overlay" id="overlay"></div>
 
-  <!-- ============ MAIN ============ -->
   <main class="main">
     <header class="topbar">
       <button class="hamburger" id="hamburger">☰</button>
@@ -570,7 +303,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
-      <div class="sync-badge" id="syncBadge" title="حالة المزامنة">
+      <div class="sync-badge hidden" id="syncBadge" title="حالة المزامنة">
         <span id="syncIcon">☁️</span>
         <span id="syncText">مزامن</span>
       </div>
@@ -580,7 +313,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
     <div class="content">
 
-      <!-- ===== DASHBOARD ===== -->
       <section class="view active" id="view-dashboard">
         <div class="stats" id="dashStats"></div>
         <div class="grid g2" style="margin-bottom:20px">
@@ -607,19 +339,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
-      <!-- ===== SCHEDULE ===== -->
       <section class="view" id="view-schedule">
         <div class="sec-head">
-          <div>
-            <h2>📅 الجدول الدراسي الأسبوعي</h2>
-            <p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p>
-          </div>
+          <div><h2>📅 الجدول الدراسي الأسبوعي</h2><p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p></div>
           <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
         </div>
         <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
       </section>
 
-      <!-- ===== COURSES ===== -->
       <section class="view" id="view-courses">
         <div class="sec-head">
           <div><h2>📚 المقررات الدراسية</h2><p id="coursesCount"></p></div>
@@ -628,7 +355,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="grid g3" id="coursesGrid"></div>
       </section>
 
-      <!-- ===== TASKS ===== -->
       <section class="view" id="view-tasks">
         <div class="sec-head">
           <div><h2>✅ المهام والواجبات</h2><p id="tasksCount"></p></div>
@@ -645,7 +371,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div id="tasksList"></div>
       </section>
 
-      <!-- ===== EXAMS ===== -->
       <section class="view" id="view-exams">
         <div class="sec-head">
           <div><h2>⏰ الاختبارات والكويزات</h2><p id="examsCount"></p></div>
@@ -654,7 +379,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="grid g3" id="examsGrid"></div>
       </section>
 
-      <!-- ===== STUDY ===== -->
       <section class="view" id="view-study">
         <div class="sec-head">
           <div><h2>🍅 مؤقّت المذاكرة</h2><p>تقنية بومودورو: ركّز 25 دقيقة ثم ارتح 5 دقائق</p></div>
@@ -697,7 +421,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
-      <!-- ===== GRADES ===== -->
       <section class="view" id="view-grades">
         <div class="sec-head">
           <div><h2>📊 الدرجات والمعدل</h2><p>أضف مكونات كل مقرر ووزنها ودرجتك</p></div>
@@ -706,7 +429,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div id="gradesList"></div>
       </section>
 
-      <!-- ===== NOTES ===== -->
       <section class="view" id="view-notes">
         <div class="sec-head">
           <div><h2>📝 الملاحظات</h2><p id="notesCount"></p></div>
@@ -715,7 +437,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="grid g3" id="notesGrid"></div>
       </section>
 
-      <!-- ===== SETTINGS ===== -->
       <section class="view" id="view-settings">
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
         <div class="grid g2">
@@ -744,14 +465,10 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
             <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
-              بياناتك محفوظة في متصفحك + السحابة. صدّرها كنسخة احتياطية.
+              بياناتك محفوظة في متصفحك + السحابة تلقائياً.
             </p>
             <div style="display:flex;flex-direction:column;gap:10px">
               <button class="btn btn-primary btn-block" onclick="restoreFromCloud()">☁️ استعادة من السحابة</button>
-              <button class="btn btn-ghost btn-block" onclick="exportData()">📤 تصدير نسخة احتياطية</button>
-              <button class="btn btn-ghost btn-block" onclick="document.getElementById('importFile').click()">📥 استيراد نسخة</button>
-              <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
-              <button class="btn btn-ghost btn-block" onclick="loadSample()">🎁 تحميل بيانات تجريبية</button>
               <button class="btn btn-danger btn-block" onclick="clearAll()">🗑️ حذف كل البيانات</button>
             </div>
           </div>
@@ -762,13 +479,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   </main>
 </div>
 
-<!-- ============ MODAL ============ -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <div class="modal-head">
-      <h3 id="modalTitle">عنوان</h3>
-      <button onclick="closeModal()">✕</button>
-    </div>
+    <div class="modal-head"><h3 id="modalTitle">عنوان</h3><button onclick="closeModal()">✕</button></div>
     <div class="modal-body" id="modalBody"></div>
     <div class="modal-foot" id="modalFoot"></div>
   </div>
@@ -778,9 +491,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 <button class="fab" id="fab" title="إضافة سريعة">＋</button>
 
 <script>
-/* ============================================================
-   CONSTANTS
-============================================================ */
 const DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 const DAYS_SHORT = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
 const COLORS = ['#0d9488','#4f46e5','#db2777','#ea580c','#0891b2','#7c3aed','#059669','#d97706','#dc2626','#2563eb'];
@@ -789,9 +499,6 @@ const EXAM_TYPES = ['كويز','ميدتيرم','فاينل','اختبار عم�
 const HOUR_START = 7, HOUR_END = 21, HOUR_H = 58;
 const STORE_KEY = 'uni_helper_v1';
 
-/* ============================================================
-   STATE
-============================================================ */
 let state = loadState();
 let taskFilter = 'all';
 
@@ -810,44 +517,23 @@ function loadState(){
   }catch(e){ return defaultState(); }
 }
 function save(){
-  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    localStorage.setItem('localModified', Date.now().toString());
+  }catch(e){}
 }
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
-/* ============================================================
-   HELPERS
-============================================================ */
-function esc(s){
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function todayISO(d = new Date()){
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function daysUntil(iso){
-  const t = new Date(); t.setHours(0,0,0,0);
-  const d = new Date(iso + 'T00:00:00');
-  return Math.round((d - t) / 86400000);
-}
-function fmtDate(iso){
-  if(!iso) return '—';
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('ar-EG', { day:'numeric', month:'long' });
-}
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function todayISO(d = new Date()){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function daysUntil(iso){ const t = new Date(); t.setHours(0,0,0,0); const d = new Date(iso + 'T00:00:00'); return Math.round((d - t) / 86400000); }
+function fmtDate(iso){ if(!iso) return '—'; const d = new Date(iso + 'T00:00:00'); return d.toLocaleDateString('ar-EG', { day:'numeric', month:'long' }); }
 function getCourse(id){ return state.courses.find(c => c.id === id); }
 function courseName(id){ const c = getCourse(id); return c ? c.name : 'عام'; }
 function courseColor(id){ const c = getCourse(id); return c ? c.color : '#64748b'; }
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._tm);
-  t._tm = setTimeout(() => t.classList.remove('show'), 2400);
-}
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 2400); }
 function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
 
-/* ============================================================
-   NAVIGATION
-============================================================ */
 const VIEW_META = {
   dashboard: ['الرئيسية','نظرة عامة على يومك الدراسي'],
   schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
@@ -873,22 +559,14 @@ function go(view){
 }
 document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
 
-/* ============================================================
-   THEME
-============================================================ */
 function setTheme(t){
   state.settings.theme = t;
   document.documentElement.dataset.theme = t;
   document.getElementById('themeBtn').textContent = t === 'dark' ? '☀️' : '🌙';
   save();
 }
-document.getElementById('themeBtn').addEventListener('click', () => {
-  setTheme(state.settings.theme === 'dark' ? 'light' : 'dark');
-});
+document.getElementById('themeBtn').addEventListener('click', () => { setTheme(state.settings.theme === 'dark' ? 'light' : 'dark'); });
 
-/* ============================================================
-   MODAL SYSTEM
-============================================================ */
 const modalBg = document.getElementById('modalBg');
 function openModal(title, bodyHTML, footHTML){
   document.getElementById('modalTitle').textContent = title;
@@ -900,33 +578,21 @@ function closeModal(){ modalBg.classList.remove('open'); }
 modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 
-/* ============================================================
-   COURSE FORM
-============================================================ */
 let pickedColor = COLORS[0];
 function openCourseForm(id){
   const c = id ? getCourse(id) : null;
   pickedColor = c ? c.color : COLORS[state.courses.length % COLORS.length];
-  const colorBtns = COLORS.map(col =>
-    `<button type="button" data-c="${col}" style="background:${col}" class="${col===pickedColor?'sel':''}"></button>`
-  ).join('');
+  const colorBtns = COLORS.map(col => `<button type="button" data-c="${col}" style="background:${col}" class="${col===pickedColor?'sel':''}"></button>`).join('');
   openModal(c ? 'تعديل مقرر' : 'إضافة مقرر جديد', `
     <div class="form-grid">
       <div class="field full"><label>اسم المقرر <span class="req">*</span></label>
         <input id="cName" placeholder="مثال: تفاضل وتكامل" value="${esc(c?.name||'')}"></div>
-      <div class="field"><label>الرمز</label>
-        <input id="cCode" placeholder="MATH101" value="${esc(c?.code||'')}"></div>
-      <div class="field"><label>عدد الساعات</label>
-        <input id="cCredits" type="number" min="0" max="10" value="${c?.credits ?? 3}"></div>
-      <div class="field full"><label>اسم الدكتور</label>
-        <input id="cTeacher" placeholder="د. محمد أحمد" value="${esc(c?.teacher||'')}"></div>
-      <div class="field full"><label>اللون</label>
-        <div class="color-pick" id="colorPick">${colorBtns}</div></div>
+      <div class="field"><label>الرمز</label><input id="cCode" placeholder="MATH101" value="${esc(c?.code||'')}"></div>
+      <div class="field"><label>عدد الساعات</label><input id="cCredits" type="number" min="0" max="10" value="${c?.credits ?? 3}"></div>
+      <div class="field full"><label>اسم الدكتور</label><input id="cTeacher" placeholder="د. محمد أحمد" value="${esc(c?.teacher||'')}"></div>
+      <div class="field full"><label>اللون</label><div class="color-pick" id="colorPick">${colorBtns}</div></div>
     </div>
-  `, `
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveCourse('${id||''}')">💾 حفظ</button>
-  `);
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveCourse('${id||''}')">💾 حفظ</button>`);
   document.getElementById('colorPick').addEventListener('click', e => {
     const b = e.target.closest('button[data-c]');
     if(!b) return;
@@ -934,13 +600,11 @@ function openCourseForm(id){
     document.querySelectorAll('#colorPick button').forEach(x => x.classList.toggle('sel', x === b));
   });
 }
-
 function saveCourse(id){
   const name = document.getElementById('cName').value.trim();
   if(!name){ toast('⚠️ اكتب اسم المقرر'); return; }
   const data = {
-    name,
-    code: document.getElementById('cCode').value.trim(),
+    name, code: document.getElementById('cCode').value.trim(),
     credits: +document.getElementById('cCredits').value || 0,
     teacher: document.getElementById('cTeacher').value.trim(),
     color: pickedColor
@@ -949,7 +613,6 @@ function saveCourse(id){
   else{ state.courses.push({ id: uid(), ...data, grades: [] }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-
 function deleteCourse(id){
   if(!confirm('سيتم حذف المقرر وكل ما يتعلق به. متابعة؟')) return;
   state.courses = state.courses.filter(c => c.id !== id);
@@ -960,42 +623,24 @@ function deleteCourse(id){
   save(); renderAll(); toast('🗑️ تم الحذف');
 }
 
-/* ============================================================
-   SCHEDULE / CLASS FORM
-============================================================ */
 function courseOptions(sel){
   if(!state.courses.length) return `<option value="">— أضف مقرراً أولاً —</option>`;
-  return state.courses.map(c =>
-    `<option value="${c.id}" ${c.id===sel?'selected':''}>${esc(c.name)}</option>`
-  ).join('');
+  return state.courses.map(c => `<option value="${c.id}" ${c.id===sel?'selected':''}>${esc(c.name)}</option>`).join('');
 }
-
 function openClassForm(id, presetDay){
   if(!state.courses.length){ toast('⚠️ أضف مقرراً أولاً'); go('courses'); return; }
   const s = id ? state.schedule.find(x => x.id === id) : null;
-  const dayOpts = DAYS.map((d,i) =>
-    `<option value="${i}" ${(s?.day ?? presetDay ?? 0) == i ? 'selected':''}>${d}</option>`
-  ).join('');
+  const dayOpts = DAYS.map((d,i) => `<option value="${i}" ${(s?.day ?? presetDay ?? 0) == i ? 'selected':''}>${d}</option>`).join('');
   openModal(s ? 'تعديل محاضرة' : 'إضافة محاضرة', `
     <div class="form-grid">
-      <div class="field full"><label>المقرر <span class="req">*</span></label>
-        <select id="clCourse">${courseOptions(s?.courseId)}</select></div>
-      <div class="field"><label>اليوم <span class="req">*</span></label>
-        <select id="clDay">${dayOpts}</select></div>
-      <div class="field"><label>القاعة</label>
-        <input id="clRoom" placeholder="قاعة 204" value="${esc(s?.room||'')}"></div>
-      <div class="field"><label>من <span class="req">*</span></label>
-        <input type="time" id="clStart" value="${s?.start||'08:00'}"></div>
-      <div class="field"><label>إلى <span class="req">*</span></label>
-        <input type="time" id="clEnd" value="${s?.end||'09:00'}"></div>
+      <div class="field full"><label>المقرر <span class="req">*</span></label><select id="clCourse">${courseOptions(s?.courseId)}</select></div>
+      <div class="field"><label>اليوم <span class="req">*</span></label><select id="clDay">${dayOpts}</select></div>
+      <div class="field"><label>القاعة</label><input id="clRoom" placeholder="قاعة 204" value="${esc(s?.room||'')}"></div>
+      <div class="field"><label>من <span class="req">*</span></label><input type="time" id="clStart" value="${s?.start||'08:00'}"></div>
+      <div class="field"><label>إلى <span class="req">*</span></label><input type="time" id="clEnd" value="${s?.end||'09:00'}"></div>
     </div>
-  `, `
-    ${s ? `<button class="btn btn-danger" onclick="deleteClass('${id}')">🗑️</button>` : ''}
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveClass('${id||''}')">💾 حفظ</button>
-  `);
+  `, `${s ? `<button class="btn btn-danger" onclick="deleteClass('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveClass('${id||''}')">💾 حفظ</button>`);
 }
-
 function saveClass(id){
   const courseId = document.getElementById('clCourse').value;
   const day = +document.getElementById('clDay').value;
@@ -1008,44 +653,29 @@ function saveClass(id){
   else{ state.schedule.push({ id: uid(), courseId, day, start, end, room }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-
 function deleteClass(id){
   state.schedule = state.schedule.filter(s => s.id !== id);
   save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
 }
 
-/* ============================================================
-   TASK FORM
-============================================================ */
 function openTaskForm(id, presetType){
   const t = id ? state.tasks.find(x => x.id === id) : null;
   const typeOpts = TASK_TYPES.map(x => `<option ${t?.type===x?'selected':''}>${x}</option>`).join('');
   openModal(t ? 'تعديل مهمة' : 'إضافة مهمة', `
     <div class="form-grid">
-      <div class="field full"><label>عنوان المهمة <span class="req">*</span></label>
-        <input id="tTitle" placeholder="مثال: حل واجب الفصل الثالث" value="${esc(t?.title||'')}"></div>
-      <div class="field"><label>المقرر</label>
-        <select id="tCourse"><option value="">— عام —</option>${courseOptions(t?.courseId)}</select></div>
-      <div class="field"><label>النوع</label>
-        <select id="tType">${typeOpts}</select></div>
-      <div class="field"><label>تاريخ التسليم <span class="req">*</span></label>
-        <input type="date" id="tDue" value="${t?.due || todayISO()}"></div>
-      <div class="field"><label>الأولوية</label>
-        <select id="tPriority">
-          <option value="high" ${t?.priority==='high'?'selected':''}>🔴 عالية</option>
-          <option value="med" ${t?.priority==='med'?'selected':''}>🟡 متوسطة</option>
-          <option value="low" ${t?.priority==='low'?'selected':''}>🟢 منخفضة</option>
-        </select></div>
-      <div class="field full"><label>ملاحظات</label>
-        <textarea id="tNotes" placeholder="تفاصيل إضافية...">${esc(t?.notes||'')}</textarea></div>
+      <div class="field full"><label>عنوان المهمة <span class="req">*</span></label><input id="tTitle" placeholder="مثال: حل واجب الفصل الثالث" value="${esc(t?.title||'')}"></div>
+      <div class="field"><label>المقرر</label><select id="tCourse"><option value="">— عام —</option>${courseOptions(t?.courseId)}</select></div>
+      <div class="field"><label>النوع</label><select id="tType">${typeOpts}</select></div>
+      <div class="field"><label>تاريخ التسليم <span class="req">*</span></label><input type="date" id="tDue" value="${t?.due || todayISO()}"></div>
+      <div class="field"><label>الأولوية</label><select id="tPriority">
+        <option value="high" ${t?.priority==='high'?'selected':''}>🔴 عالية</option>
+        <option value="med" ${t?.priority==='med'?'selected':''}>🟡 متوسطة</option>
+        <option value="low" ${t?.priority==='low'?'selected':''}>🟢 منخفضة</option>
+      </select></div>
+      <div class="field full"><label>ملاحظات</label><textarea id="tNotes" placeholder="تفاصيل إضافية...">${esc(t?.notes||'')}</textarea></div>
     </div>
-  `, `
-    ${t ? `<button class="btn btn-danger" onclick="deleteTask('${id}')">🗑️</button>` : ''}
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveTask('${id||''}')">💾 حفظ</button>
-  `);
+  `, `${t ? `<button class="btn btn-danger" onclick="deleteTask('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveTask('${id||''}')">💾 حفظ</button>`);
 }
-
 function saveTask(id){
   const title = document.getElementById('tTitle').value.trim();
   const due = document.getElementById('tDue').value;
@@ -1062,43 +692,23 @@ function saveTask(id){
   else{ state.tasks.push({ id: uid(), ...data, done:false, created: todayISO() }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-function deleteTask(id){
-  state.tasks = state.tasks.filter(t => t.id !== id);
-  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
-}
-function toggleTask(id){
-  const t = state.tasks.find(x => x.id === id);
-  if(t){ t.done = !t.done; save(); renderAll(); }
-}
+function deleteTask(id){ state.tasks = state.tasks.filter(t => t.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
+function toggleTask(id){ const t = state.tasks.find(x => x.id === id); if(t){ t.done = !t.done; save(); renderAll(); } }
 
-/* ============================================================
-   EXAM FORM
-============================================================ */
 function openExamForm(id){
   const e = id ? state.exams.find(x => x.id === id) : null;
   const typeOpts = EXAM_TYPES.map(x => `<option ${e?.type===x?'selected':''}>${x}</option>`).join('');
   openModal(e ? 'تعديل اختبار' : 'إضافة اختبار', `
     <div class="form-grid">
-      <div class="field full"><label>عنوان الاختبار <span class="req">*</span></label>
-        <input id="eTitle" placeholder="مثال: ميدتيرم الفصل الأول" value="${esc(e?.title||'')}"></div>
-      <div class="field"><label>المقرر</label>
-        <select id="eCourse"><option value="">— عام —</option>${courseOptions(e?.courseId)}</select></div>
-      <div class="field"><label>النوع</label>
-        <select id="eType">${typeOpts}</select></div>
-      <div class="field"><label>التاريخ <span class="req">*</span></label>
-        <input type="date" id="eDate" value="${e?.date || todayISO()}"></div>
-      <div class="field"><label>الوقت</label>
-        <input type="time" id="eTime" value="${e?.time||'08:00'}"></div>
-      <div class="field full"><label>المكان / القاعة</label>
-        <input id="ePlace" placeholder="مبنى 5 - قاعة 102" value="${esc(e?.place||'')}"></div>
-      <div class="field full"><label>ملاحظات / مواضيع المذاكرة</label>
-        <textarea id="eNotes" placeholder="الفصول المطلوبة...">${esc(e?.notes||'')}</textarea></div>
+      <div class="field full"><label>عنوان الاختبار <span class="req">*</span></label><input id="eTitle" placeholder="مثال: ميدتيرم الفصل الأول" value="${esc(e?.title||'')}"></div>
+      <div class="field"><label>المقرر</label><select id="eCourse"><option value="">— عام —</option>${courseOptions(e?.courseId)}</select></div>
+      <div class="field"><label>النوع</label><select id="eType">${typeOpts}</select></div>
+      <div class="field"><label>التاريخ <span class="req">*</span></label><input type="date" id="eDate" value="${e?.date || todayISO()}"></div>
+      <div class="field"><label>الوقت</label><input type="time" id="eTime" value="${e?.time||'08:00'}"></div>
+      <div class="field full"><label>المكان / القاعة</label><input id="ePlace" placeholder="مبنى 5 - قاعة 102" value="${esc(e?.place||'')}"></div>
+      <div class="field full"><label>ملاحظات / مواضيع المذاكرة</label><textarea id="eNotes" placeholder="الفصول المطلوبة...">${esc(e?.notes||'')}</textarea></div>
     </div>
-  `, `
-    ${e ? `<button class="btn btn-danger" onclick="deleteExam('${id}')">🗑️</button>` : ''}
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveExam('${id||''}')">💾 حفظ</button>
-  `);
+  `, `${e ? `<button class="btn btn-danger" onclick="deleteExam('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExam('${id||''}')">💾 حفظ</button>`);
 }
 function saveExam(id){
   const title = document.getElementById('eTitle').value.trim();
@@ -1117,70 +727,41 @@ function saveExam(id){
   else{ state.exams.push({ id: uid(), ...data }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-function deleteExam(id){
-  state.exams = state.exams.filter(e => e.id !== id);
-  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
-}
+function deleteExam(id){ state.exams = state.exams.filter(e => e.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
-/* ============================================================
-   NOTE FORM
-============================================================ */
 function openNoteForm(id){
   const n = id ? state.notes.find(x => x.id === id) : null;
   openModal(n ? 'تعديل ملاحظة' : 'ملاحظة جديدة', `
     <div class="form-grid">
-      <div class="field full"><label>العنوان <span class="req">*</span></label>
-        <input id="nTitle" placeholder="عنوان الملاحظة" value="${esc(n?.title||'')}"></div>
-      <div class="field full"><label>المقرر</label>
-        <select id="nCourse"><option value="">— عام —</option>${courseOptions(n?.courseId)}</select></div>
-      <div class="field full"><label>المحتوى</label>
-        <textarea id="nBody" style="min-height:160px" placeholder="اكتب هنا...">${esc(n?.body||'')}</textarea></div>
+      <div class="field full"><label>العنوان <span class="req">*</span></label><input id="nTitle" placeholder="عنوان الملاحظة" value="${esc(n?.title||'')}"></div>
+      <div class="field full"><label>المقرر</label><select id="nCourse"><option value="">— عام —</option>${courseOptions(n?.courseId)}</select></div>
+      <div class="field full"><label>المحتوى</label><textarea id="nBody" style="min-height:160px" placeholder="اكتب هنا...">${esc(n?.body||'')}</textarea></div>
     </div>
-  `, `
-    ${n ? `<button class="btn btn-danger" onclick="deleteNote('${id}')">🗑️</button>` : ''}
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="saveNote('${id||''}')">💾 حفظ</button>
-  `);
+  `, `${n ? `<button class="btn btn-danger" onclick="deleteNote('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveNote('${id||''}')">💾 حفظ</button>`);
 }
 function saveNote(id){
   const title = document.getElementById('nTitle').value.trim();
   if(!title){ toast('⚠️ اكتب عنوان الملاحظة'); return; }
-  const data = {
-    title,
-    courseId: document.getElementById('nCourse').value,
-    body: document.getElementById('nBody').value
-  };
+  const data = { title, courseId: document.getElementById('nCourse').value, body: document.getElementById('nBody').value };
   if(id){ Object.assign(state.notes.find(x => x.id === id), data, { updated: todayISO() }); }
   else{ state.notes.push({ id: uid(), ...data, updated: todayISO() }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-function deleteNote(id){
-  state.notes = state.notes.filter(n => n.id !== id);
-  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
-}
+function deleteNote(id){ state.notes = state.notes.filter(n => n.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
-/* ============================================================
-   RENDER: DASHBOARD
-============================================================ */
 function renderDashboard(){
   const today = todayISO();
   const openTasks = state.tasks.filter(t => !t.done);
   const late = openTasks.filter(t => daysUntil(t.due) < 0);
   const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0);
   const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
-
   const statsHTML = [
     { ico:'📚', bg:'var(--p-light)', val:state.courses.length, lbl:'مقرر مسجّل' },
     { ico:'✅', bg:'var(--warn-bg)', val:openTasks.length, lbl:'مهمة متبقية' },
     { ico:'⏰', bg:'var(--danger-bg)', val:upcomingExams.length, lbl:'اختبار قادم' },
     { ico:'🍅', bg:'var(--ok-bg)', val:Math.round(totalMin/60) + 'h', lbl:'ساعات المذاكرة' }
-  ].map(s => `
-    <div class="stat">
-      <div class="stat-ico" style="background:${s.bg}">${s.ico}</div>
-      <div><b>${s.val}</b><span>${s.lbl}</span></div>
-    </div>`).join('');
+  ].map(s => `<div class="stat"><div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><b>${s.val}</b><span>${s.lbl}</span></div></div>`).join('');
   document.getElementById('dashStats').innerHTML = statsHTML;
-
   const total = state.tasks.length;
   const done = state.tasks.filter(t => t.done).length;
   const pct = total ? Math.round(done/total*100) : 0;
@@ -1189,17 +770,13 @@ function renderDashboard(){
   document.getElementById('dashDone').textContent = done;
   document.getElementById('dashLeft').textContent = total - done;
   document.getElementById('dashLate').textContent = late.length;
-
   const items = [
     ...openTasks.map(t => ({ kind:'مهمة', ico:'✅', title:t.title, date:t.due, courseId:t.courseId })),
     ...upcomingExams.map(e => ({ kind:'اختبار', ico:'⏰', title:e.title, date:e.date, courseId:e.courseId }))
   ].sort((a,b) => a.date.localeCompare(b.date)).slice(0,6);
-
   const upEl = document.getElementById('dashUpcoming');
   if(!items.length){
-    upEl.innerHTML = `<div class="empty" style="padding:28px 10px">
-      <div class="e-ico">🎉</div><b>ما عندك شي قريب</b>
-      <p>استمتع بوقتك أو أضف مهاماً جديدة</p></div>`;
+    upEl.innerHTML = `<div class="empty" style="padding:28px 10px"><div class="e-ico">🎉</div><b>ما عندك شي قريب</b><p>استمتع بوقتك أو أضف مهاماً جديدة</p></div>`;
   }else{
     upEl.innerHTML = items.map(it => {
       const d = daysUntil(it.date);
@@ -1208,48 +785,31 @@ function renderDashboard(){
       else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; }
       else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; }
       else { txt = `بعد ${d} يوم`; bg = 'var(--ok-bg)'; }
-      return `<div class="up-item">
-        <div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
-        <div class="up-info">
-          <b>${it.ico} ${esc(it.title)}</b>
-          <span>${it.kind} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span>
-        </div>
-        <div class="up-time" style="background:${bg}">${txt}</div>
-      </div>`;
+      return `<div class="up-item"><div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
+        <div class="up-info"><b>${it.ico} ${esc(it.title)}</b><span>${it.kind} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span></div>
+        <div class="up-time" style="background:${bg}">${txt}</div></div>`;
     }).join('');
   }
-
   const nowDay = new Date().getDay();
   const todays = state.schedule.filter(s => s.day === nowDay).sort((a,b) => toMin(a.start) - toMin(b.start));
   const tdEl = document.getElementById('dashToday');
   if(!todays.length){
-    tdEl.innerHTML = `<div class="empty" style="padding:28px 10px">
-      <div class="e-ico">🛌</div><b>ما فيه محاضرات اليوم</b>
-      <p>${DAYS[nowDay]} — يوم مريح!</p></div>`;
+    tdEl.innerHTML = `<div class="empty" style="padding:28px 10px"><div class="e-ico">🛌</div><b>ما فيه محاضرات اليوم</b><p>${DAYS[nowDay]} — يوم مريح!</p></div>`;
   }else{
     tdEl.innerHTML = todays.map(s => {
       const c = getCourse(s.courseId);
-      return `<div class="up-item">
-        <div class="up-dot" style="background:${courseColor(s.courseId)}"></div>
-        <div class="up-info">
-          <b>${esc(courseName(s.courseId))}</b>
-          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
-        </div>
-        <div class="up-time" style="background:var(--hover);color:var(--muted)">${c?.teacher ? esc(c.teacher) : ''}</div>
-      </div>`;
+      return `<div class="up-item"><div class="up-dot" style="background:${courseColor(s.courseId)}"></div>
+        <div class="up-info"><b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span></div>
+        <div class="up-time" style="background:var(--hover);color:var(--muted)">${c?.teacher ? esc(c.teacher) : ''}</div></div>`;
     }).join('');
   }
 }
 
-/* ============================================================
-   RENDER: SCHEDULE
-============================================================ */
 function renderSchedule(){
   const nowDay = new Date().getDay();
   const hours = [];
   for(let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
-  const head = `<div class="sched-head"><div></div>
-    <div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
+  const head = `<div class="sched-head"><div></div><div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
   const times = `<div class="sched-times">${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}</div>`;
   const cols = `<div class="sched-cols">
     ${DAYS.map((_,di) => {
@@ -1260,11 +820,7 @@ function renderSchedule(){
         const hgt = (endMin - startMin) / 60 * HOUR_H - 4;
         if(top < -50 || top > (HOUR_END-HOUR_START)*HOUR_H) return '';
         const col = courseColor(s.courseId);
-        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${col}"
-                     onclick="event.stopPropagation();openClassForm('${s.id}')">
-          <b>${esc(courseName(s.courseId))}</b>
-          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
-        </div>`;
+        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${col}" onclick="event.stopPropagation();openClassForm('${s.id}')"><b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span></div>`;
       }).join('');
       return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
     }).join('')}
@@ -1272,47 +828,25 @@ function renderSchedule(){
   document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
 }
 
-/* ============================================================
-   RENDER: COURSES
-============================================================ */
 function renderCourses(){
   const grid = document.getElementById('coursesGrid');
   document.getElementById('coursesCount').textContent = state.courses.length
-    ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة`
-    : 'لم تضف أي مقرر بعد';
+    ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة` : 'لم تضف أي مقرر بعد';
   if(!state.courses.length){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
-      <div class="e-ico">📚</div><b>لا توجد مقررات</b>
-      <p>ابدأ بإضافة مقرراتك لهذا الفصل</p>
-      <button class="btn btn-primary" onclick="openCourseForm()">➕ إضافة مقرر</button>
-    </div>`;
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">📚</div><b>لا توجد مقررات</b><p>ابدأ بإضافة مقرراتك لهذا الفصل</p><button class="btn btn-primary" onclick="openCourseForm()">➕ إضافة مقرر</button></div>`;
     return;
   }
   grid.innerHTML = state.courses.map(c => {
     const classes = state.schedule.filter(s => s.courseId === c.id).length;
     const tasks = state.tasks.filter(t => t.courseId === c.id && !t.done).length;
-    return `<div class="course-card">
-      <div class="course-bar" style="background:${c.color}"></div>
-      <div class="course-body">
-        <h3>${esc(c.name)}</h3>
-        <div class="code">${esc(c.code || '—')}${c.teacher ? ' · ' + esc(c.teacher) : ''}</div>
-        <div class="course-meta">
-          <span class="pill">${c.credits || 0} ساعات</span>
-          <span class="pill">${classes} محاضرة</span>
-          ${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn)">${tasks} مهمة</span>` : ''}
-        </div>
-        <div class="course-actions">
-          <button onclick="openCourseForm('${c.id}')">✏️ تعديل</button>
-          <button onclick="deleteCourse('${c.id}')">🗑️ حذف</button>
-        </div>
-      </div>
-    </div>`;
+    return `<div class="course-card"><div class="course-bar" style="background:${c.color}"></div>
+      <div class="course-body"><h3>${esc(c.name)}</h3>
+      <div class="code">${esc(c.code || '—')}${c.teacher ? ' · ' + esc(c.teacher) : ''}</div>
+      <div class="course-meta"><span class="pill">${c.credits || 0} ساعات</span><span class="pill">${classes} محاضرة</span>${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn)">${tasks} مهمة</span>` : ''}</div>
+      <div class="course-actions"><button onclick="openCourseForm('${c.id}')">✏️ تعديل</button><button onclick="deleteCourse('${c.id}')">🗑️ حذف</button></div></div></div>`;
   }).join('');
 }
 
-/* ============================================================
-   RENDER: TASKS
-============================================================ */
 function renderTasks(){
   const list = document.getElementById('tasksList');
   const open = state.tasks.filter(t => !t.done);
@@ -1321,7 +855,6 @@ function renderTasks(){
   const badge = document.getElementById('badgeTasks');
   if(open.length){ badge.style.display = ''; badge.textContent = lateCount || open.length; }
   else badge.style.display = 'none';
-
   let arr = state.tasks.slice();
   const td = todayISO();
   if(taskFilter === 'today') arr = arr.filter(t => t.due === td);
@@ -1330,22 +863,15 @@ function renderTasks(){
   else if(taskFilter === 'open') arr = arr.filter(t => !t.done);
   else if(taskFilter === 'done') arr = arr.filter(t => t.done);
   arr.sort((a,b) => { if(a.done !== b.done) return a.done ? 1 : -1; return a.due.localeCompare(b.due); });
-
   if(!arr.length){
-    list.innerHTML = `<div class="empty">
-      <div class="e-ico">✅</div><b>لا توجد مهام هنا</b>
-      <p>أضف مهمة جديدة أو غيّر الفلتر</p>
-      <button class="btn btn-primary" onclick="openTaskForm()">➕ مهمة جديدة</button>
-    </div>`;
+    list.innerHTML = `<div class="empty"><div class="e-ico">✅</div><b>لا توجد مهام هنا</b><p>أضف مهمة جديدة أو غيّر الفلتر</p><button class="btn btn-primary" onclick="openTaskForm()">➕ مهمة جديدة</button></div>`;
     return;
   }
-
   const prioMap = {
     high: { t:'🔴 عالية', bg:'var(--danger-bg)', c:'var(--danger)' },
     med:  { t:'🟡 متوسطة', bg:'var(--warn-bg)', c:'var(--warn)' },
     low:  { t:'🟢 منخفضة', bg:'var(--ok-bg)', c:'var(--ok)' }
   };
-
   list.innerHTML = arr.map(t => {
     const d = daysUntil(t.due);
     let dueTxt, dueBg;
@@ -1355,29 +881,18 @@ function renderTasks(){
     else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; }
     else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; }
     const p = prioMap[t.priority] || prioMap.med;
-    return `<div class="task ${t.done?'done':''}">
-      <div class="chk" onclick="toggleTask('${t.id}')">✓</div>
-      <div class="task-main">
-        <div class="task-title">${esc(t.title)}</div>
-        <div class="task-sub">
-          <span class="tag" style="background:${courseColor(t.courseId)}22;color:${courseColor(t.courseId)}">${esc(courseName(t.courseId))}</span>
-          <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(t.type)}</span>
-          <span class="tag" style="background:${p.bg};color:${p.c}">${p.t}</span>
-          <span class="tag" style="background:${dueBg}">📅 ${fmtDate(t.due)}</span>
-        </div>
-        ${t.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(t.notes)}</div>` : ''}
-      </div>
-      <div class="task-actions">
-        <button class="mini-btn" onclick="openTaskForm('${t.id}')">✏️</button>
-        <button class="mini-btn del" onclick="deleteTask('${t.id}')">🗑️</button>
-      </div>
-    </div>`;
+    return `<div class="task ${t.done?'done':''}"><div class="chk" onclick="toggleTask('${t.id}')">✓</div>
+      <div class="task-main"><div class="task-title">${esc(t.title)}</div>
+      <div class="task-sub">
+        <span class="tag" style="background:${courseColor(t.courseId)}22;color:${courseColor(t.courseId)}">${esc(courseName(t.courseId))}</span>
+        <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(t.type)}</span>
+        <span class="tag" style="background:${p.bg};color:${p.c}">${p.t}</span>
+        <span class="tag" style="background:${dueBg}">📅 ${fmtDate(t.due)}</span>
+      </div>${t.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(t.notes)}</div>` : ''}</div>
+      <div class="task-actions"><button class="mini-btn" onclick="openTaskForm('${t.id}')">✏️</button><button class="mini-btn del" onclick="deleteTask('${t.id}')">🗑️</button></div></div>`;
   }).join('');
 }
 
-/* ============================================================
-   RENDER: EXAMS
-============================================================ */
 function renderExams(){
   const grid = document.getElementById('examsGrid');
   const upcoming = state.exams.filter(e => daysUntil(e.date) >= 0);
@@ -1386,16 +901,10 @@ function renderExams(){
   const soon = upcoming.filter(e => daysUntil(e.date) <= 7).length;
   if(soon){ badge.style.display = ''; badge.textContent = soon; }
   else badge.style.display = 'none';
-
   if(!state.exams.length){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
-      <div class="e-ico">⏰</div><b>لا توجد اختبارات</b>
-      <p>أضف مواعيد الكويزات والاختبارات</p>
-      <button class="btn btn-primary" onclick="openExamForm()">➕ إضافة اختبار</button>
-    </div>`;
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">⏰</div><b>لا توجد اختبارات</b><p>أضف مواعيد الكويزات والاختبارات</p><button class="btn btn-primary" onclick="openExamForm()">➕ إضافة اختبار</button></div>`;
     return;
   }
-
   const sorted = state.exams.slice().sort((a,b) => a.date.localeCompare(b.date));
   grid.innerHTML = sorted.map(e => {
     const d = daysUntil(e.date);
@@ -1405,61 +914,29 @@ function renderExams(){
     else if(d === 1){ num = '1'; lbl = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
     else if(d <= 7){ num = d; lbl = 'يوم'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
     else { num = d; lbl = 'يوم'; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
-    return `<div class="exam">
-      <div class="exam-top">
-        <h3>${esc(e.title)}</h3>
-        <div class="countdown" style="background:${bg};color:${col}">
-          <b style="font-size:${d===0?'15px':'23px'}">${num}</b>
-          ${lbl ? `<span>${lbl}</span>` : ''}
-        </div>
-      </div>
-      <div class="exam-detail">
-        <span>📚 ${esc(courseName(e.courseId))}</span>
-        <span>🏷️ ${esc(e.type)}</span>
-        <span>📅 ${fmtDate(e.date)}</span>
-        ${e.time ? `<span>🕐 ${e.time}</span>` : ''}
-        ${e.place ? `<span>📍 ${esc(e.place)}</span>` : ''}
-      </div>
+    return `<div class="exam"><div class="exam-top"><h3>${esc(e.title)}</h3>
+      <div class="countdown" style="background:${bg};color:${col}"><b style="font-size:${d===0?'15px':'23px'}">${num}</b>${lbl ? `<span>${lbl}</span>` : ''}</div></div>
+      <div class="exam-detail"><span>📚 ${esc(courseName(e.courseId))}</span><span>🏷️ ${esc(e.type)}</span><span>📅 ${fmtDate(e.date)}</span>${e.time ? `<span>🕐 ${e.time}</span>` : ''}${e.place ? `<span>📍 ${esc(e.place)}</span>` : ''}</div>
       ${e.notes ? `<div style="font-size:13px;color:var(--muted);background:var(--hover);padding:10px 12px;border-radius:10px;margin-bottom:12px">${esc(e.notes)}</div>` : ''}
-      <div class="exam-actions">
-        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="openExamForm('${e.id}')">✏️ تعديل</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteExam('${e.id}')">🗑️</button>
-      </div>
-    </div>`;
+      <div class="exam-actions"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="openExamForm('${e.id}')">✏️ تعديل</button><button class="btn btn-danger btn-sm" onclick="deleteExam('${e.id}')">🗑️</button></div></div>`;
   }).join('');
 }
 
-/* ============================================================
-   RENDER: NOTES
-============================================================ */
 function renderNotes(){
   const grid = document.getElementById('notesGrid');
   document.getElementById('notesCount').textContent = state.notes.length ? `${state.notes.length} ملاحظة` : 'لم تضف أي ملاحظة بعد';
   if(!state.notes.length){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
-      <div class="e-ico">📝</div><b>لا توجد ملاحظات</b>
-      <p>دوّن أفكارك ونقاط المذاكرة المهمة</p>
-      <button class="btn btn-primary" onclick="openNoteForm()">➕ ملاحظة جديدة</button>
-    </div>`;
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">📝</div><b>لا توجد ملاحظات</b><p>دوّن أفكارك ونقاط المذاكرة المهمة</p><button class="btn btn-primary" onclick="openNoteForm()">➕ ملاحظة جديدة</button></div>`;
     return;
   }
   const sorted = state.notes.slice().sort((a,b) => (b.updated||'').localeCompare(a.updated||''));
-  grid.innerHTML = sorted.map(n => `
-    <div class="note">
-      <h4>${esc(n.title)}</h4>
-      ${n.courseId ? `<span class="tag" style="background:${courseColor(n.courseId)}22;color:${courseColor(n.courseId)}">${esc(courseName(n.courseId))}</span>` : ''}
-      <p style="margin-top:10px">${esc(n.body)}</p>
-      <span class="n-date">آخر تحديث: ${fmtDate(n.updated)}</span>
-      <div style="display:flex;gap:6px;margin-top:12px">
-        <button class="mini-btn" onclick="openNoteForm('${n.id}')">✏️</button>
-        <button class="mini-btn del" onclick="deleteNote('${n.id}')">🗑️</button>
-      </div>
-    </div>`).join('');
+  grid.innerHTML = sorted.map(n => `<div class="note"><h4>${esc(n.title)}</h4>
+    ${n.courseId ? `<span class="tag" style="background:${courseColor(n.courseId)}22;color:${courseColor(n.courseId)}">${esc(courseName(n.courseId))}</span>` : ''}
+    <p style="margin-top:10px">${esc(n.body)}</p>
+    <span class="n-date">آخر تحديث: ${fmtDate(n.updated)}</span>
+    <div style="display:flex;gap:6px;margin-top:12px"><button class="mini-btn" onclick="openNoteForm('${n.id}')">✏️</button><button class="mini-btn del" onclick="deleteNote('${n.id}')">🗑️</button></div></div>`).join('');
 }
 
-/* ============================================================
-   RENDER: GRADES
-============================================================ */
 function scoreToPoints(p){
   if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
   if(p >= 80) return 4.00; if(p >= 75) return 3.50; if(p >= 70) return 3.00;
@@ -1477,8 +954,7 @@ function courseTotal(c){
   if(!g.length) return null;
   const totalW = g.reduce((a,x) => a + (+x.weight||0), 0);
   if(!totalW) return null;
-  const sum = g.reduce((a,x) => a + (+x.score||0) * (+x.weight||0), 0);
-  return sum / totalW;
+  return g.reduce((a,x) => a + (+x.score||0) * (+x.weight||0), 0) / totalW;
 }
 
 function renderGrades(){
@@ -1496,64 +972,39 @@ function renderGrades(){
     if(cr > 0){ gpa = pts / cr; totalCredits = cr; }
   }
   statsEl.innerHTML = `
-    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div>
-      <div><b>${gpa !== null ? gpa.toFixed(2) : '—'}</b><span>المعدل التقديري (من 5)</span></div></div>
-    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div>
-      <div><b>${totalCredits}</b><span>ساعة محسوبة</span></div></div>
-    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div>
-      <div><b>${graded.length}/${state.courses.length}</b><span>مقررات مُقيّمة</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${gpa !== null ? gpa.toFixed(2) : '—'}</b><span>المعدل التقديري (من 5)</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${totalCredits}</b><span>ساعة محسوبة</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${graded.length}/${state.courses.length}</b><span>مقررات مُقيّمة</span></div></div>
   `;
   if(!state.courses.length){
-    listEl.innerHTML = `<div class="empty">
-      <div class="e-ico">📊</div><b>لا توجد مقررات</b>
-      <p>أضف مقرراتك أولاً ثم أدخل درجاتك</p>
-      <button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button>
-    </div>`;
+    listEl.innerHTML = `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً ثم أدخل درجاتك</p><button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button></div>`;
     return;
   }
   listEl.innerHTML = state.courses.map(c => {
     const g = c.grades || [];
     const total = courseTotal(c);
     const totalW = g.reduce((a,x) => a + (+x.weight||0), 0);
-    const rows = g.map((x,i) => `
-      <div class="comp-row">
-        <input value="${esc(x.name)}" onchange="updateComp('${c.id}',${i},'name',this.value)" placeholder="اسم المكوّن">
-        <input type="number" value="${x.weight}" min="0" max="100" onchange="updateComp('${c.id}',${i},'weight',this.value)" placeholder="الوزن">
-        <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${c.id}',${i},'score',this.value)" placeholder="الدرجة">
-        <button class="mini-btn del" onclick="removeComp('${c.id}',${i})">✕</button>
-      </div>`).join('');
+    const rows = g.map((x,i) => `<div class="comp-row">
+      <input value="${esc(x.name)}" onchange="updateComp('${c.id}',${i},'name',this.value)" placeholder="اسم المكوّن">
+      <input type="number" value="${x.weight}" min="0" max="100" onchange="updateComp('${c.id}',${i},'weight',this.value)" placeholder="الوزن">
+      <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${c.id}',${i},'score',this.value)" placeholder="الدرجة">
+      <button class="mini-btn del" onclick="removeComp('${c.id}',${i})">✕</button></div>`).join('');
     return `<div class="grade-course">
-      <div class="gc-head">
-        <div><h3 style="color:${c.color}">${esc(c.name)}</h3>
-          <span style="font-size:12.5px;color:var(--muted);font-weight:700">${c.credits||0} ساعات · مجموع الأوزان ${totalW}%</span></div>
-        <div style="text-align:center">
-          <div class="gc-score">${total !== null ? total.toFixed(1) + '%' : '—'}</div>
-          <div style="font-size:12.5px;font-weight:800;color:var(--muted)">${total !== null ? scoreToLetter(total) : ''}</div>
-        </div>
-      </div>
+      <div class="gc-head"><div><h3 style="color:${c.color}">${esc(c.name)}</h3>
+        <span style="font-size:12.5px;color:var(--muted);font-weight:700">${c.credits||0} ساعات · مجموع الأوزان ${totalW}%</span></div>
+        <div style="text-align:center"><div class="gc-score">${total !== null ? total.toFixed(1) + '%' : '—'}</div><div style="font-size:12.5px;font-weight:800;color:var(--muted)">${total !== null ? scoreToLetter(total) : ''}</div></div></div>
       ${g.length ? `<div class="comp-row comp-hd"><div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div></div>` : ''}
       ${rows}
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button>
-      </div>
+      <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button></div>
     </div>`;
   }).join('');
 }
 function addComp(cid){ const c = getCourse(cid); c.grades = c.grades || []; c.grades.push({ name:'', weight:10, score:0 }); save(); renderGrades(); }
 function removeComp(cid, i){ const c = getCourse(cid); c.grades.splice(i,1); save(); renderGrades(); }
-function updateComp(cid, i, field, val){
-  const c = getCourse(cid);
-  if(!c.grades[i]) return;
-  c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
-  save(); renderGrades();
-}
+function updateComp(cid, i, field, val){ const c = getCourse(cid); if(!c.grades[i]) return; c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0); save(); renderGrades(); }
 
-/* ============================================================
-   POMODORO
-============================================================ */
-let pomo = { mode: 'work', running: false, remaining: 25 * 60, total: 25 * 60, timer: null, sessionStart: null };
+let pomo = { mode: 'work', running: false, remaining: 25 * 60, total: 25 * 60, timer: null };
 const RING_C = 552.92;
-
 function pomoDuration(mode){ const p = state.settings.pomo; return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60; }
 function pomoLabel(mode){ return mode === 'work' ? 'وقت التركيز' : mode === 'short' ? 'راحة قصيرة' : 'راحة طويلة'; }
 function pomoRender(){
@@ -1571,8 +1022,7 @@ function pomoSetMode(mode){
   clearInterval(pomo.timer);
   pomo.total = pomoDuration(mode);
   pomo.remaining = pomo.total;
-  document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.mode === mode));
+  document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
   pomoRender();
 }
 function pomoTick(){
@@ -1605,8 +1055,7 @@ document.getElementById('pomoStart').addEventListener('click', () => {
   pomoRender();
 });
 document.getElementById('pomoReset').addEventListener('click', () => pomoSetMode(pomo.mode));
-document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c =>
-  c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
+document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
 
 function renderStudy(){
   const sel = document.getElementById('pomoCourse');
@@ -1630,17 +1079,13 @@ function renderStudy(){
     bars.push({ iso, mins, day: DAYS_SHORT[d.getDay()] });
   }
   const max = Math.max(...bars.map(b => b.mins), 60);
-  document.getElementById('weekBars').innerHTML = bars.map(b => `
-    <div class="wbar"><span class="wbar-val">${b.mins || ''}</span>
-      <div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div>
-      <span class="wbar-lbl">${b.day}</span></div>`).join('');
+  document.getElementById('weekBars').innerHTML = bars.map(b => `<div class="wbar"><span class="wbar-val">${b.mins || ''}</span><div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div><span class="wbar-lbl">${b.day}</span></div>`).join('');
 }
 
 function openManualLog(){
   openModal('إضافة وقت مذاكرة', `
     <div class="form-grid">
-      <div class="field full"><label>المقرر</label>
-        <select id="mlCourse"><option value="">— بدون تحديد —</option>${courseOptions()}</select></div>
+      <div class="field full"><label>المقرر</label><select id="mlCourse"><option value="">— بدون تحديد —</option>${courseOptions()}</select></div>
       <div class="field"><label>التاريخ</label><input type="date" id="mlDate" value="${todayISO()}"></div>
       <div class="field"><label>عدد الدقائق</label><input type="number" id="mlMin" value="60" min="1" max="600"></div>
     </div>
@@ -1653,9 +1098,6 @@ function saveManualLog(){
   save(); closeModal(); renderStudy(); renderDashboard(); toast('✅ تم الحفظ');
 }
 
-/* ============================================================
-   SETTINGS ACTIONS
-============================================================ */
 function savePomoSettings(){
   state.settings.pomo = {
     work: Math.max(1, +document.getElementById('setWork').value || 25),
@@ -1663,29 +1105,6 @@ function savePomoSettings(){
     long: Math.max(1, +document.getElementById('setLong').value || 15)
   };
   save(); pomoSetMode(pomo.mode); toast('✅ تم حفظ الإعدادات');
-}
-function exportData(){
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `university-backup-${todayISO()}.json`;
-  a.click(); URL.revokeObjectURL(a.href);
-  toast('📤 تم تصدير النسخة');
-}
-function importData(e){
-  const f = e.target.files[0];
-  if(!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    try{
-      const data = JSON.parse(ev.target.result);
-      if(!data || typeof data !== 'object') throw new Error();
-      state = Object.assign(defaultState(), data);
-      save(); applySettings(); renderAll(); closeModal();
-      toast('📥 تم استيراد البيانات');
-    }catch(err){ toast('⚠️ الملف غير صالح'); }
-  };
-  r.readAsText(f); e.target.value = '';
 }
 function clearAll(){
   if(!confirm('سيتم حذف كل بياناتك نهائياً. متأكد؟')) return;
@@ -1705,59 +1124,6 @@ function applySettings(){
   pomoRender();
 }
 
-/* ============================================================
-   SAMPLE DATA
-============================================================ */
-function loadSample(){
-  if(!confirm('سيتم استبدال بياناتك الحالية ببيانات تجريبية. متابعة؟')) return;
-  const c1 = uid(), c2 = uid(), c3 = uid(), c4 = uid(), c5 = uid();
-  state.courses = [
-    { id:c1, name:'تفاضل وتكامل 1', code:'MATH101', credits:4, teacher:'د. سارة العتيبي', color:COLORS[0], grades:[{name:'كويز 1',weight:10,score:8},{name:'واجبات',weight:20,score:18}] },
-    { id:c2, name:'مقدمة في البرمجة', code:'CS101', credits:3, teacher:'د. خالد الشمري', color:COLORS[1], grades:[{name:'مشروع',weight:25,score:23}] },
-    { id:c3, name:'الفيزياء العامة', code:'PHYS101', credits:3, teacher:'د. منى القحطاني', color:COLORS[2], grades:[] },
-    { id:c4, name:'مهارات التواصل', code:'COMM101', credits:2, teacher:'د. أحمد الغامدي', color:COLORS[3], grades:[] },
-    { id:c5, name:'اللغة الإنجليزية', code:'ENG101', credits:3, teacher:'د. نورة السالم', color:COLORS[4], grades:[] }
-  ];
-  state.schedule = [
-    { id:uid(), courseId:c1, day:0, start:'08:00', end:'09:30', room:'مبنى 3 - قاعة 12' },
-    { id:uid(), courseId:c2, day:0, start:'10:00', end:'11:00', room:'معمل الحاسب 2' },
-    { id:uid(), courseId:c3, day:1, start:'09:00', end:'10:30', room:'مبنى العلوم' },
-    { id:uid(), courseId:c4, day:1, start:'11:00', end:'12:00', room:'قاعة 105' },
-    { id:uid(), courseId:c5, day:2, start:'08:00', end:'09:30', room:'مركز اللغات' },
-    { id:uid(), courseId:c1, day:2, start:'10:00', end:'11:30', room:'مبنى 3 - قاعة 12' },
-    { id:uid(), courseId:c2, day:3, start:'09:00', end:'10:00', room:'معمل الحاسب 2' },
-    { id:uid(), courseId:c3, day:3, start:'11:00', end:'12:30', room:'مختبر الفيزياء' },
-    { id:uid(), courseId:c5, day:4, start:'08:00', end:'09:30', room:'مركز اللغات' }
-  ];
-  const plus = n => { const x = new Date(); x.setDate(x.getDate()+n); return todayISO(x); };
-  state.tasks = [
-    { id:uid(), title:'حل واجب الفصل الثالث', courseId:c1, type:'واجب', due:plus(1), priority:'high', done:false, notes:'التمارين 1-15', created:todayISO() },
-    { id:uid(), title:'مشروع البرمجة - المرحلة الأولى', courseId:c2, type:'مشروع', due:plus(4), priority:'high', done:false, notes:'تسليم التصميم المبدئي', created:todayISO() },
-    { id:uid(), title:'تقرير تجربة الفيزياء', courseId:c3, type:'تقرير', due:plus(2), priority:'med', done:false, notes:'', created:todayISO() },
-    { id:uid(), title:'قراءة الفصل الخامس', courseId:c5, type:'أخرى', due:plus(6), priority:'low', done:false, notes:'', created:todayISO() },
-    { id:uid(), title:'كويز الرياضيات القصير', courseId:c1, type:'كويز', due:plus(-1), priority:'high', done:false, notes:'تأخر!', created:todayISO() }
-  ];
-  state.exams = [
-    { id:uid(), title:'ميدتيرم تفاضل وتكامل', courseId:c1, type:'ميدتيرم', date:plus(9), time:'09:00', place:'قاعة الامتحانات الكبرى', notes:'الفصول 1-5' },
-    { id:uid(), title:'كويز البرمجة الثاني', courseId:c2, type:'كويز', date:plus(3), time:'10:00', place:'معمل الحاسب 2', notes:'الحلقات والدوال' },
-    { id:uid(), title:'فاينل الفيزياء', courseId:c3, type:'فاينل', date:plus(28), time:'08:00', place:'مبنى العلوم', notes:'' }
-  ];
-  state.notes = [
-    { id:uid(), title:'ملخص قوانين التفاضل', courseId:c1, body:'قاعدة القوة، قاعدة الضرب، قاعدة القسمة', updated:todayISO() },
-    { id:uid(), title:'مصادر مفيدة للبرمجة', courseId:c2, body:'W3Schools، CodeWithHarry', updated:todayISO() }
-  ];
-  state.studyLog = [
-    { id:uid(), date:todayISO(), courseId:c1, minutes:50 },
-    { id:uid(), date:todayISO(), courseId:c2, minutes:25 },
-    { id:uid(), date:plus(-1), courseId:c1, minutes:75 }
-  ];
-  save(); applySettings(); renderAll(); closeModal();
-  toast('🎁 تم تحميل البيانات التجريبية');
-}
-
-/* ============================================================
-   QUICK ADD
-============================================================ */
 function quickAdd(){
   openModal('إضافة سريعة', `
     <div style="display:grid;gap:10px">
@@ -1772,9 +1138,6 @@ function quickAdd(){
 document.getElementById('quickAddBtn').addEventListener('click', quickAdd);
 document.getElementById('fab').addEventListener('click', quickAdd);
 
-/* ============================================================
-   MOBILE SIDEBAR
-============================================================ */
 document.getElementById('hamburger').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
@@ -1784,9 +1147,6 @@ document.getElementById('overlay').addEventListener('click', () => {
   document.getElementById('overlay').classList.remove('show');
 });
 
-/* ============================================================
-   TASK FILTERS
-============================================================ */
 document.getElementById('taskFilters').addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if(!chip) return;
@@ -1796,68 +1156,28 @@ document.getElementById('taskFilters').addEventListener('click', e => {
   renderTasks();
 });
 
-/* ============================================================
-   MAIN RENDER
-============================================================ */
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
   renderExams(); renderNotes(); renderGrades(); renderStudy(); pomoRender();
 }
 
-/* ============================================================
-   INIT
-============================================================ */
 function init(){
   applySettings();
   renderAll();
-  document.getElementById('topDate').textContent =
-    new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-
-  const isFirst = !localStorage.getItem(STORE_KEY + '_seen');
-  if(isFirst && !state.courses.length){
-    localStorage.setItem(STORE_KEY + '_seen', '1');
-    setTimeout(() => {
-      openModal('أهلاً بك في مُساعد الجامعة 🎓', `
-        <p style="font-size:15px;line-height:1.9;margin-bottom:18px">
-          هذا التطبيق يساعدك على تنظيم دراستك الجامعية.
-        </p>
-        <p style="font-size:14px;color:var(--muted);margin-bottom:6px">
-          تبي نجرب لك بيانات جاهزة؟
-        </p>
-      `, `
-        <button class="btn btn-ghost" onclick="closeModal()">لا، أبدأ من الصفر</button>
-        <button class="btn btn-primary" onclick="loadSample()">🎁 نعم</button>
-      `);
-    }, 700);
-  }
-
+  document.getElementById('topDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   const h = location.hash.slice(1);
   if(h && document.getElementById('view-' + h)) go(h);
 }
 init();
 
-// ⭐ تحميل البيانات من السحابة بعد الربط
 setTimeout(() => { if(getMyChatId()) loadFromCloud(); }, 1500);
-
-// ⭐ تشغيل مؤشر المزامنة
-setTimeout(() => {
-  if(getMyChatId()) setSyncStatus('success');
-  else {
-    const badge = document.getElementById('syncBadge');
-    if(badge) badge.style.display = 'none';
-  }
-}, 2000);
 
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
 
-/* ============================================================
-   ⚡ QUICK ADD SCHEDULE
-============================================================ */
 let qaItems = [];
 function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
-
 function openQuickAdd(){
   if(!state.courses.length){ toast('⚠️ أضف مقرراً أولاً'); go('courses'); return; }
   qaItems = [];
@@ -1866,10 +1186,8 @@ function openQuickAdd(){
       💡 اختر المقرر مرة واحدة، ثم أضف كل محاضراته بسرعة.
     </div>
     <div class="form-grid">
-      <div class="field full"><label>المقرر <span class="req">*</span></label>
-        <select id="qaCourse">${courseOptions()}</select></div>
-      <div class="field"><label>اليوم <span class="req">*</span></label>
-        <select id="qaDay">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></div>
+      <div class="field full"><label>المقرر <span class="req">*</span></label><select id="qaCourse">${courseOptions()}</select></div>
+      <div class="field"><label>اليوم <span class="req">*</span></label><select id="qaDay">${DAYS.map((d,i)=>`<option value="${i}">${d}</option>`).join('')}</select></div>
       <div class="field"><label>القاعة</label><input id="qaRoom" placeholder="اختياري"></div>
       <div class="field"><label>من <span class="req">*</span></label><input type="time" id="qaStart" value="08:00"></div>
       <div class="field"><label>إلى <span class="req">*</span></label><input type="time" id="qaEnd" value="09:30"></div>
@@ -1903,16 +1221,11 @@ function qaRender(){
     return;
   }
   list.innerHTML = `<div style="font-size:13px;font-weight:800;margin-bottom:8px">📋 المضاف (${qaItems.length})</div>` +
-    qaItems.map((it,i) => `
-      <div style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--hover);border-radius:11px;margin-bottom:6px">
-        <div style="width:9px;height:9px;border-radius:50%;background:${courseColor(it.courseId)};flex-shrink:0"></div>
-        <div style="flex:1;font-size:13px;line-height:1.5">
-          <b>${esc(courseName(it.courseId))}</b>
-          <div style="color:var(--muted);font-size:12px">${DAYS[it.day]} · ${it.start} - ${it.end}${it.room ? ' · ' + esc(it.room) : ''}</div>
-        </div>
-        <button class="mini-btn del" onclick="qaRemove(${i})">✕</button>
-      </div>
-    `).join('');
+    qaItems.map((it,i) => `<div style="display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--hover);border-radius:11px;margin-bottom:6px">
+      <div style="width:9px;height:9px;border-radius:50%;background:${courseColor(it.courseId)};flex-shrink:0"></div>
+      <div style="flex:1;font-size:13px;line-height:1.5"><b>${esc(courseName(it.courseId))}</b>
+        <div style="color:var(--muted);font-size:12px">${DAYS[it.day]} · ${it.start} - ${it.end}${it.room ? ' · ' + esc(it.room) : ''}</div></div>
+      <button class="mini-btn del" onclick="qaRemove(${i})">✕</button></div>`).join('');
 }
 function qaRemove(i){ qaItems.splice(i,1); qaRender(); }
 function qaSave(){
@@ -1944,9 +1257,6 @@ function qaClose(){
   }else{ head.appendChild(btn); }
 })();
 
-/* ============================================================
-   📋 الحضور من الجدول مباشرة
-============================================================ */
 const ATT = {
   excused:  { label:'غايب بعذر',     ico:'🟡', color:'#d97706' },
   absent:   { label:'غايب بدون عذر', ico:'🔴', color:'#dc2626' },
@@ -1960,16 +1270,13 @@ function classDateThisWeek(dayIdx){
   d.setDate(d.getDate() + (dayIdx - d.getDay()));
   return todayISO(d);
 }
-function getAttFor(cid, date){
-  return state.attendance.find(a => a.classId === cid && a.date === date);
-}
+function getAttFor(cid, date){ return state.attendance.find(a => a.classId === cid && a.date === date); }
 
 renderSchedule = function(){
   const nowDay = new Date().getDay();
   const hours = [];
   for(let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
-  const head = `<div class="sched-head"><div></div>
-    <div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
+  const head = `<div class="sched-head"><div></div><div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
   const times = `<div class="sched-times">${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}</div>`;
   const cols = `<div class="sched-cols">
     ${DAYS.map((_,di) => {
@@ -1989,12 +1296,9 @@ renderSchedule = function(){
           color = st.color;
           if(status === 'cancelled') extra = 'opacity:.55;text-decoration:line-through';
         }
-        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${color};${extra}"
-          onclick="event.stopPropagation();openAttPopup('${s.id}','${dayDate}')">
-          <b>${esc(courseName(s.courseId))}</b>
-          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
-          ${status !== 'present' ? `<span style="position:absolute;top:3px;left:5px;font-size:12px">${st.ico}</span>` : ''}
-        </div>`;
+        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${color};${extra}" onclick="event.stopPropagation();openAttPopup('${s.id}','${dayDate}')">
+          <b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
+          ${status !== 'present' ? `<span style="position:absolute;top:3px;left:5px;font-size:12px">${st.ico}</span>` : ''}</div>`;
       }).join('');
       return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
     }).join('')}
@@ -2010,32 +1314,19 @@ function openAttPopup(classId, date){
   const btns = Object.entries(ATT).map(([k,v]) => {
     const active = cur === k;
     const bg = v.color || courseColor(s.courseId);
-    return `<button onclick="setAtt('${classId}','${date}','${k}')"
-      style="padding:13px;border-radius:12px;font-weight:700;font-size:13.5px;
-      background:${active ? bg : 'var(--hover)'};color:${active ? '#fff' : 'var(--text)'};
-      border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">
-      ${v.ico} ${v.label}</button>`;
+    return `<button onclick="setAtt('${classId}','${date}','${k}')" style="padding:13px;border-radius:12px;font-weight:700;font-size:13.5px;background:${active ? bg : 'var(--hover)'};color:${active ? '#fff' : 'var(--text)'};border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">${v.ico} ${v.label}</button>`;
   }).join('');
   const dateStr = new Date(date + 'T00:00:00').toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
   const isToday = date === todayISO();
   openModal('📋 تسجيل الحضور', `
     <div style="text-align:center;margin-bottom:18px">
-      <div style="font-size:17px;font-weight:800;font-family:'Tajawal';margin-bottom:5px;color:${courseColor(s.courseId)}">
-        ${esc(courseName(s.courseId))}</div>
-      <div style="font-size:12.5px;color:var(--muted);font-weight:700">
-        ${dateStr}${isToday ? ' <span style="color:var(--p)">(اليوم)</span>' : ''}
-        · ${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div>
+      <div style="font-size:17px;font-weight:800;font-family:'Tajawal';margin-bottom:5px;color:${courseColor(s.courseId)}">${esc(courseName(s.courseId))}</div>
+      <div style="font-size:12.5px;color:var(--muted);font-weight:700">${dateStr}${isToday ? ' <span style="color:var(--p)">(اليوم)</span>' : ''} · ${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${btns}</div>
-    <div class="field" style="margin-top:16px">
-      <label>ملاحظة (اختياري)</label>
-      <textarea id="attNote" placeholder="سبب الغياب..." style="min-height:70px">${esc(existing?.note||'')}</textarea>
-    </div>
-  `, `
-    ${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}
-    <button class="btn btn-ghost" onclick="closeModal()">إغلاق</button>
-    <button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>
-  `);
+    <div class="field" style="margin-top:16px"><label>ملاحظة (اختياري)</label>
+      <textarea id="attNote" placeholder="سبب الغياب..." style="min-height:70px">${esc(existing?.note||'')}</textarea></div>
+  `, `${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>`);
 }
 function setAtt(classId, date, status){
   const n = document.getElementById('attNote');
@@ -2047,8 +1338,7 @@ function setAtt(classId, date, status){
     if(att){ att.status = status; att.note = note; }
     else{ state.attendance.push({ id:uid(), classId, date, status, note }); }
   }
-  save(); renderSchedule(); openAttPopup(classId, date);
-  toast('✅ تم');
+  save(); renderSchedule(); openAttPopup(classId, date); toast('✅ تم');
 }
 function saveAttNote(classId, date){
   const n = document.getElementById('attNote');
@@ -2062,7 +1352,6 @@ function clearAtt(classId, date){
   state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
   save(); renderSchedule(); closeModal(); toast('🗑️ تم');
 }
-
 (function legend(){
   const head = document.querySelector('#view-schedule .sec-head');
   if(!head || document.getElementById('attLegend')) return;
@@ -2071,36 +1360,18 @@ function clearAtt(classId, date){
   div.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:12.5px;font-weight:700';
   div.innerHTML = Object.entries(ATT).map(([k,v]) => {
     const col = v.color || '#0d9488';
-    return `<span style="display:inline-flex;align-items:center;gap:5px;color:${col}">
-      <span style="width:11px;height:11px;border-radius:3px;background:${col}"></span>${v.label}</span>`;
+    return `<span style="display:inline-flex;align-items:center;gap:5px;color:${col}"><span style="width:11px;height:11px;border-radius:3px;background:${col}"></span>${v.label}</span>`;
   }).join('') + '<span style="color:var(--muted);font-weight:600;margin-inline-start:auto">اضغط أي محاضرة</span>';
   head.parentNode.insertBefore(div, head.nextSibling);
 })();
 
-(function clearNotes(){
-  const card = document.querySelector('#view-settings .card:last-child');
-  if(!card || document.getElementById('clearNotesBtn')) return;
-  const c = card.querySelector('div[style*="flex-direction"]');
-  if(!c) return;
-  const b = document.createElement('button');
-  b.id = 'clearNotesBtn'; b.className = 'btn btn-danger btn-block';
-  b.textContent = '🗑️ حذف كل الملاحظات';
-  b.onclick = () => {
-    if(!state.notes.length){ toast('ما عندك ملاحظات'); return; }
-    if(!confirm(`حذف ${state.notes.length} ملاحظة؟`)) return;
-    state.notes = []; save(); renderNotes(); toast('🗑️ تم');
-  };
-  c.appendChild(b);
-})();
-
 renderSchedule();
 
-/* ============================================================
-   📱 ربط تلقرام
-============================================================ */
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
 let pollTimer = null;
+let syncTimeout = null;
+let syncBadgeHideTimer = null;
 
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
@@ -2116,33 +1387,36 @@ window.addEventListener('focus', () => {
   if(getMyChatId()) syncToTelegram(true);
 });
 
-async function syncToTelegram(silent = true){
+// ⭐ Debounced sync
+function syncToTelegram(silent = true){
+  const chatId = getMyChatId();
+  if(!chatId) return;
+  if(syncTimeout) clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(() => doSync(silent), 800);
+}
+
+async function doSync(silent = true){
   const chatId = getMyChatId();
   if(!chatId) return;
   try{
-    if(typeof setSyncStatus === 'function') setSyncStatus('loading');
+    showSyncBadge('loading');
     await fetch(TG_WORKER + '/save', {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({
         chatId,
-        tasks: state.tasks,
-        exams: state.exams,
-        courses: state.courses,
-        schedule: state.schedule,
-        attendance: state.attendance,
-        notes: state.notes,
-        gpaCourses: state.gpaCourses,
-        wellness: state.wellness,
-        archive: state.archive,
-        skills: state.skills,
-        studyLog: state.studyLog,
+        tasks: state.tasks, exams: state.exams, courses: state.courses,
+        schedule: state.schedule, attendance: state.attendance,
+        notes: state.notes, gpaCourses: state.gpaCourses,
+        wellness: state.wellness, archive: state.archive,
+        skills: state.skills, studyLog: state.studyLog,
         settings: state.settings
       })
     });
-    if(typeof setSyncStatus === 'function') setSyncStatus('success');
+    localStorage.setItem('localModified', Date.now().toString());
+    showSyncBadge('success');
   }catch(e){
-    if(typeof setSyncStatus === 'function') setSyncStatus('error');
+    showSyncBadge('error');
   }
 }
 
@@ -2175,19 +1449,19 @@ async function syncAttendanceFromServer(){
 async function loadFromCloud(){
   const chatId = getMyChatId();
   if(!chatId) return;
-  if(typeof setSyncStatus === 'function') setSyncStatus('loading');
+  showSyncBadge('loading');
   toast('☁️ جاري تحميل بياناتك...');
   try{
     const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
     const data = await r.json();
     if(!data || !data.lastSync){
-      toast('📤 جاري رفع بياناتك...');
-      await syncToTelegram(true);
+      await doSync(true);
+      toast('📤 تم رفع بياناتك');
       return;
     }
-    const cloudCount = (data.tasks?.length||0)+(data.courses?.length||0)+(data.schedule?.length||0)+(data.exams?.length||0);
-    const localCount = (state.tasks?.length||0)+(state.courses?.length||0)+(state.schedule?.length||0)+(state.exams?.length||0);
-    if(cloudCount >= localCount && cloudCount > 0){
+    const localModified = parseInt(localStorage.getItem('localModified') || '0');
+    const cloudModified = new Date(data.lastSync).getTime();
+    if(cloudModified > localModified){
       state.tasks = data.tasks || [];
       state.exams = data.exams || [];
       state.courses = data.courses || [];
@@ -2200,20 +1474,23 @@ async function loadFromCloud(){
       if(data.skills) state.skills = data.skills;
       if(data.studyLog) state.studyLog = data.studyLog;
       if(data.settings) state.settings = { ...state.settings, ...data.settings };
+      localStorage.setItem('localModified', String(cloudModified));
       save();
       renderAll();
       if(typeof renderWeekBadge === 'function') renderWeekBadge();
       if(typeof renderSchedule === 'function') renderSchedule();
       toast('✅ تم تحميل بياناتك من السحابة');
-      if(typeof setSyncStatus === 'function') setSyncStatus('success');
-    } else {
-      await syncToTelegram(true);
+      showSyncBadge('success');
+    } else if(localModified > cloudModified){
+      await doSync(true);
       toast('📤 تم رفع بياناتك');
-      if(typeof setSyncStatus === 'function') setSyncStatus('success');
+      showSyncBadge('success');
+    } else {
+      toast('✅ بياناتك محدّثة');
+      showSyncBadge('success');
     }
   }catch(e){
-    console.error('Load error:', e);
-    if(typeof setSyncStatus === 'function') setSyncStatus('error');
+    showSyncBadge('error');
   }
 }
 
@@ -2221,26 +1498,18 @@ function restoreFromCloud(){
   const current = getMyChatId();
   openModal('☁️ استعادة من السحابة', `
     <div style="text-align:center">
-      <p style="font-size:14px;color:var(--muted);line-height:1.9;margin-bottom:16px">
-        أدخل رقم تلقرام ID حقك عشان نجيب بياناتك من السحابة.
-      </p>
+      <p style="font-size:14px;color:var(--muted);line-height:1.9;margin-bottom:16px">أدخل رقم تلقرام ID حقك عشان نجيب بياناتك من السحابة.</p>
       <div class="field" style="margin-bottom:14px">
         <label>رقم تلقرام ID</label>
-        <input type="text" id="restoreChatId" placeholder="مثال: 1720298796"
-               value="${current}" style="text-align:center;font-size:16px;font-weight:700">
+        <input type="text" id="restoreChatId" placeholder="مثال: 1720298796" value="${current}" style="text-align:center;font-size:16px;font-weight:700">
       </div>
-      <div style="background:var(--p-light);padding:12px;border-radius:11px;
-                  font-size:12.5px;line-height:1.8;color:var(--p-dark);
-                  font-weight:700;text-align:right;margin-bottom:14px">
-        💡 <b>كيف تجيب رقمك؟</b><br>
-        افتح جهازك الثاني ← الإعدادات ← تلقرام<br>
-        بتلاقي الرقم تحت "مربوط بنجاح"
+      <div style="background:var(--p-light);padding:12px;border-radius:11px;font-size:12.5px;line-height:1.8;color:var(--p-dark);font-weight:700;text-align:right;margin-bottom:14px">
+        💡 <b>كيف تجيب رقمك؟</b><br>افتح جهازك الثاني ← الإعدادات ← تلقرام<br>بتلاقي الرقم تحت "مربوط بنجاح"
       </div>
       <button class="btn btn-primary btn-block" onclick="doRestore()">☁️ استعادة الآن</button>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إلغاء</button>`);
 }
-
 async function doRestore(){
   const id = document.getElementById('restoreChatId').value.trim();
   if(!id || !/^\d+$/.test(id)){ toast('⚠️ أدخل رقم صحيح'); return; }
@@ -2262,65 +1531,49 @@ async function doRestore(){
     if(data.skills) state.skills = data.skills;
     if(data.studyLog) state.studyLog = data.studyLog;
     if(data.settings) state.settings = { ...state.settings, ...data.settings };
-    save();
-    closeModal();
-    updateTgStatus();
+    save(); closeModal(); updateTgStatus();
     toast('✅ تم استرجاع بياناتك!');
     setTimeout(() => location.reload(), 800);
   }catch(e){ toast('⚠️ فشل الاتصال'); }
 }
 
-/* ============ مؤشر المزامنة ============ */
-let lastSyncTime = null;
-
-function setSyncStatus(status){
+// ⭐ مؤشر المزامنة الذكي
+function showSyncBadge(status){
   const badge = document.getElementById('syncBadge');
   const icon = document.getElementById('syncIcon');
   const text = document.getElementById('syncText');
   if(!badge) return;
-  badge.classList.remove('loading', 'error');
+  
+  if(syncBadgeHideTimer) clearTimeout(syncBadgeHideTimer);
+  badge.classList.remove('hidden', 'loading', 'error');
+  
   if(status === 'loading'){
     badge.classList.add('loading');
     icon.textContent = '⏳';
-    text.textContent = 'جاري المزامنة';
+    text.textContent = 'جاري';
   } else if(status === 'success'){
-    lastSyncTime = new Date();
     icon.textContent = '✅';
-    updateSyncText();
+    text.textContent = 'الآن';
+    // ⭐ اخفِ بعد 3 ثواني
+    syncBadgeHideTimer = setTimeout(() => {
+      badge.classList.add('hidden');
+    }, 3000);
   } else if(status === 'error'){
     badge.classList.add('error');
     icon.textContent = '⚠️';
-    text.textContent = 'فشل المزامنة';
+    text.textContent = 'فشل';
+    // ⭐ اخفِ بعد 5 ثواني
+    syncBadgeHideTimer = setTimeout(() => {
+      badge.classList.add('hidden');
+    }, 5000);
   }
 }
-
-function updateSyncText(){
-  const text = document.getElementById('syncText');
-  const icon = document.getElementById('syncIcon');
-  const badge = document.getElementById('syncBadge');
-  if(!text || !lastSyncTime) return;
-  const diff = Math.round((Date.now() - lastSyncTime.getTime()) / 1000);
-  let label = '';
-  if(diff < 60) label = 'الآن';
-  else if(diff < 3600) label = `قبل ${Math.round(diff/60)} د`;
-  else if(diff < 86400) label = `قبل ${Math.round(diff/3600)} س`;
-  else label = `قبل ${Math.round(diff/86400)} ي`;
-  text.textContent = label;
-  icon.textContent = '✅';
-  badge.classList.remove('loading', 'error');
-}
-
-setInterval(updateSyncText, 60000);
 
 async function testTelegram(){
   const chatId = getMyChatId();
   if(!chatId){ toast('⚠️ اربط أولاً'); return; }
   try{
-    await fetch(TG_WORKER + '/test', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ chatId })
-    });
+    await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ chatId }) });
     toast('✅ تحقق من تلقرام');
   }catch(e){ toast('⚠️ فشل'); }
 }
@@ -2333,7 +1586,6 @@ function connectTelegram(){
   const tgUrl = 'https://t.me/' + TG_BOT + '?start=' + code;
   window.location.href = tgUrl;
 }
-
 function startPoll(code){
   if(pollTimer) clearInterval(pollTimer);
   const start = Date.now();
@@ -2352,14 +1604,13 @@ function startPoll(code){
         setMyChatId(String(d.chatId));
         localStorage.removeItem('tg_pending');
         localStorage.removeItem('tg_pending_time');
-        await syncToTelegram(true);
+        await doSync(true);
         toast('🎉 تم الربط! جاري تحديث الصفحة...');
         setTimeout(() => location.reload(), 900);
       }
     }catch(e){}
   }, 1500);
 }
-
 function unlinkTelegram(){
   if(!confirm('فك الربط؟')) return;
   localStorage.removeItem('tg_chat_id');
@@ -2369,7 +1620,6 @@ function unlinkTelegram(){
   toast('🔓 تم الفك');
   setTimeout(() => location.reload(), 600);
 }
-
 function updateTgStatus(){
   const el = document.getElementById('tgStatus');
   if(!el) return;
@@ -2389,7 +1639,6 @@ function updateTgStatus(){
     el.style.color = 'var(--muted)';
   }
 }
-
 (function resumePending(){
   const pending = localStorage.getItem('tg_pending');
   const t = parseInt(localStorage.getItem('tg_pending_time') || '0');
@@ -2438,16 +1687,8 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
   }, 1500);
 })();
 
-/* ============================================================
-   🎯 الميزات الإضافية
-============================================================ */
-if(!state.memorization) state.memorization = { dailyGoal:5, unit:'صفحة', log:[] };
 if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
 if(!state.archive) state.archive = [];
-
-/* ============================================================
-   📋 عدّاد الغياب — باليوم الكامل
-============================================================ */
 if(!Array.isArray(state.attendance)) state.attendance = [];
 
 function calcAttendance(){
@@ -2456,9 +1697,7 @@ function calcAttendance(){
   const res = {};
   (state.courses || []).forEach(c => {
     const daysSet = new Set();
-    (state.schedule || [])
-      .filter(s => s.courseId === c.id)
-      .forEach(s => daysSet.add(s.day));
+    (state.schedule || []).filter(s => s.courseId === c.id).forEach(s => daysSet.add(s.day));
     const daysPerWeek = daysSet.size;
     const totalDays = daysPerWeek * SEMESTER_WEEKS;
     const absentDates = new Set();
@@ -2479,16 +1718,7 @@ function calcAttendance(){
     const lates = lateDates.size;
     const percent = totalDays > 0 ? (absences / totalDays) * 100 : 0;
     const maxAbsences = Math.floor(totalDays * MAX_PERCENT);
-    res[c.id] = {
-      course: c,
-      total: totalDays,
-      daysPerWeek: daysPerWeek,
-      absences: absences,
-      lates: lates,
-      max: maxAbsences,
-      percent: percent,
-      remaining: Math.max(0, maxAbsences - absences)
-    };
+    res[c.id] = { course: c, total: totalDays, daysPerWeek: daysPerWeek, absences: absences, lates: lates, max: maxAbsences, percent: percent, remaining: Math.max(0, maxAbsences - absences) };
   });
   return res;
 }
@@ -2504,16 +1734,12 @@ function renderAttendancePage(){
   const totalAbsences = Object.values(data).reduce((a, x) => a + x.absences, 0);
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
-      <div class="stat"><div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
-        <div><b>${totalAbsences}</b><span>إجمالي أيام غيابك</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">📅</div>
-        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">🎯</div>
-        <div><b>25%</b><span>حد الحرمان</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--danger-bg)">⚠️</div><div><b>${totalAbsences}</b><span>إجمالي أيام غيابك</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">📅</div><div><b>${state.courses.length}</b><span>مقرر متابع</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">🎯</div><div><b>25%</b><span>حد الحرمان</span></div></div>
     </div>
     <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;line-height:1.9;font-weight:600">
-      💡 <b>طريقة الحساب:</b>
-      <br>• كل <b>يوم محاضرة</b> = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
+      💡 <b>طريقة الحساب:</b><br>• كل <b>يوم محاضرة</b> = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
       <br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
     </div>
     <div style="display:grid;gap:14px">
@@ -2523,50 +1749,28 @@ function renderAttendancePage(){
         const bg = used >= 18.75 ? 'var(--danger-bg)' : used >= 12.5 ? 'var(--warn-bg)' : 'var(--ok-bg)';
         const emoji = used >= 18.75 ? '🚨' : used >= 12.5 ? '⚠️' : '✅';
         const barPercent = Math.min((d.percent / 25) * 100, 100);
-        return `
-          <div class="card" style="padding:20px;border-right:4px solid ${color}">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
-              <div>
-                <h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px">${esc(d.course.name)}</h3>
-                <span style="font-size:12.5px;color:var(--muted);font-weight:700">
-                  ${d.daysPerWeek} يوم أسبوعياً · ${d.total} يوم في الفصل
-                </span>
-              </div>
-              <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center;min-width:90px">
-                <b style="font-family:'Tajawal';font-size:22px;display:block;line-height:1">${d.percent.toFixed(2)}%</b>
-                <span style="font-size:10.5px;font-weight:700">${emoji}</span>
-              </div>
-            </div>
-            <div class="prog" style="height:12px;margin-bottom:14px">
-              <i style="width:${barPercent}%;background:${color}"></i>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12.5px;font-weight:700;text-align:center">
-              <div style="background:var(--hover);padding:8px;border-radius:9px">
-                <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">أيام غيابك</div>
-                <div style="color:${color};font-size:15px;font-family:'Tajawal'">${d.absences}</div>
-              </div>
-              <div style="background:var(--hover);padding:8px;border-radius:9px">
-                <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">الحد (25%)</div>
-                <div style="color:var(--danger);font-size:15px;font-family:'Tajawal'">${d.max}</div>
-              </div>
-              <div style="background:var(--hover);padding:8px;border-radius:9px">
-                <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">متبقي</div>
-                <div style="color:var(--ok);font-size:15px;font-family:'Tajawal'">${d.remaining}</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
-              <span style="color:var(--warn)">⏰ تأخير: <b>${d.lates}</b></span>
-              ${d.percent >= 18.75 ? `<span style="color:var(--danger)">🚨 اقتربت من الحرمان!</span>` : ''}
-            </div>
-          </div>`;
+        return `<div class="card" style="padding:20px;border-right:4px solid ${color}">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+            <div><h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px">${esc(d.course.name)}</h3>
+              <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.daysPerWeek} يوم أسبوعياً · ${d.total} يوم في الفصل</span></div>
+            <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center;min-width:90px">
+              <b style="font-family:'Tajawal';font-size:22px;display:block;line-height:1">${d.percent.toFixed(2)}%</b>
+              <span style="font-size:10.5px;font-weight:700">${emoji}</span>
+            </div></div>
+          <div class="prog" style="height:12px;margin-bottom:14px"><i style="width:${barPercent}%;background:${color}"></i></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12.5px;font-weight:700;text-align:center">
+            <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">أيام غيابك</div><div style="color:${color};font-size:15px;font-family:'Tajawal'">${d.absences}</div></div>
+            <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">الحد (25%)</div><div style="color:var(--danger);font-size:15px;font-family:'Tajawal'">${d.max}</div></div>
+            <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">متبقي</div><div style="color:var(--ok);font-size:15px;font-family:'Tajawal'">${d.remaining}</div></div>
+          </div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
+            <span style="color:var(--warn)">⏰ تأخير: <b>${d.lates}</b></span>
+            ${d.percent >= 18.75 ? `<span style="color:var(--danger)">🚨 اقتربت من الحرمان!</span>` : ''}
+          </div></div>`;
       }).join('')}
-    </div>
-  `;
+    </div>`;
 }
 
-/* ============================================================
-   🎓 حاسبة المعدل
-============================================================ */
 const GRADE_POINTS = { 'A+':5,'A':4.75,'B+':4.5,'B':4,'C+':3.5,'C':3,'D+':2.5,'D':2,'F':0 };
 const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
 if(!Array.isArray(state.gpaCourses)) state.gpaCourses = [];
@@ -2582,40 +1786,28 @@ function renderGPA(){
   const gpa = tc ? (tp / tc) : 0;
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
-      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div>
-        <div><b>${gpa.toFixed(2)}</b><span>المعدل الفصلي</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div>
-        <div><b>${tc}</b><span>ساعة معتمدة</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📚</div>
-        <div><b>${state.gpaCourses.length}</b><span>مقرر</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div><div><b>${gpa.toFixed(2)}</b><span>المعدل الفصلي</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${tc}</b><span>ساعة معتمدة</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📚</div><div><b>${state.gpaCourses.length}</b><span>مقرر</span></div></div>
     </div>
     <div class="card" style="margin-bottom:16px;padding:16px">
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <input id="gpaName" placeholder="اسم المقرر" style="flex:2;min-width:140px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
         <input id="gpaCredits" type="number" placeholder="ساعات" min="1" max="10" value="3" style="width:80px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <select id="gpaGrade" style="padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-          ${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}
-        </select>
+        <select id="gpaGrade" style="padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}</select>
         <button class="btn btn-primary btn-sm" onclick="addGpaCourse()">➕ إضافة</button>
       </div>
     </div>
     ${state.gpaCourses.length ? `
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr></thead>
-          <tbody>${state.gpaCourses.map((c, i) => `
-            <tr>
-              <td><b>${esc(c.name)}</b></td><td>${c.credits}</td>
-              <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
-              <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
-              <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-      <div style="text-align:center;margin-top:14px">
-        <button class="btn btn-ghost btn-sm" onclick="clearGPA()">🗑️ حذف الكل</button>
-      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr></thead>
+        <tbody>${state.gpaCourses.map((c, i) => `<tr>
+          <td><b>${esc(c.name)}</b></td><td>${c.credits}</td>
+          <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
+          <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
+          <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td></tr>`).join('')}</tbody>
+      </table></div>
+      <div style="text-align:center;margin-top:14px"><button class="btn btn-ghost btn-sm" onclick="clearGPA()">🗑️ حذف الكل</button></div>
     ` : `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراتك لحساب المعدل</p></div>`}
   `;
 }
@@ -2631,9 +1823,6 @@ function addGpaCourse(){
 function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); }
 function clearGPA(){ if(!confirm('حذف كل المقررات؟')) return; state.gpaCourses = []; save(); renderGPA(); }
 
-/* ============================================================
-   💪 النوم والماء
-============================================================ */
 if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
 if(!Array.isArray(state.wellness.log)) state.wellness.log = [];
 
@@ -2658,54 +1847,25 @@ function renderWellness(){
     el.innerHTML = `
       <div class="grid g2" style="margin-bottom:16px">
         <div class="card" style="padding:22px">
-          <div style="text-align:center;margin-bottom:16px">
-            <div style="font-size:52px;line-height:1">😴</div>
-            <h3 style="font-size:19px;margin-top:8px">النوم</h3>
-          </div>
-          <div style="text-align:center;margin-bottom:14px">
-            <b style="font-family:'Tajawal';font-size:42px;color:var(--p)">${todayLog.sleep}</b>
-            <span style="font-size:15px;color:var(--muted)"> / ${w.sleepGoal} ساعات</span>
-          </div>
+          <div style="text-align:center;margin-bottom:16px"><div style="font-size:52px;line-height:1">😴</div><h3 style="font-size:19px;margin-top:8px">النوم</h3></div>
+          <div style="text-align:center;margin-bottom:14px"><b style="font-family:'Tajawal';font-size:42px;color:var(--p)">${todayLog.sleep}</b><span style="font-size:15px;color:var(--muted)"> / ${w.sleepGoal} ساعات</span></div>
           <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${sleepPct}%"></i></div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            ${[4,5,6,7,8,9,10].map(h => `<button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>`).join('')}
-          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${[4,5,6,7,8,9,10].map(h => `<button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>`).join('')}</div>
         </div>
         <div class="card" style="padding:22px">
-          <div style="text-align:center;margin-bottom:16px">
-            <div style="font-size:52px;line-height:1">💧</div>
-            <h3 style="font-size:19px;margin-top:8px">الماء</h3>
-          </div>
-          <div style="text-align:center;margin-bottom:14px">
-            <b style="font-family:'Tajawal';font-size:42px;color:#0891b2">${todayLog.water}</b>
-            <span style="font-size:15px;color:var(--muted)"> / ${w.waterGoal} أكواب</span>
-          </div>
+          <div style="text-align:center;margin-bottom:16px"><div style="font-size:52px;line-height:1">💧</div><h3 style="font-size:19px;margin-top:8px">الماء</h3></div>
+          <div style="text-align:center;margin-bottom:14px"><b style="font-family:'Tajawal';font-size:42px;color:#0891b2">${todayLog.water}</b><span style="font-size:15px;color:var(--muted)"> / ${w.waterGoal} أكواب</span></div>
           <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${waterPct}%;background:#0891b2"></i></div>
-          <div style="text-align:center">
-            <button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button>
-            <button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير</button>
-          </div>
+          <div style="text-align:center"><button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button><button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير</button></div>
         </div>
       </div>
       <div class="card" style="padding:20px;margin-bottom:16px">
         <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - النوم</h3>
-        <div class="week-bars">
-          ${last7.map(d => `
-            <div class="wbar"><span class="wbar-val">${d.sleep || ''}</span>
-              <div class="wbar-fill" style="height:${Math.max((d.sleep/maxSleep)*100, 3)}%"></div>
-              <span class="wbar-lbl">${d.day}</span></div>
-          `).join('')}
-        </div>
+        <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.sleep || ''}</span><div class="wbar-fill" style="height:${Math.max((d.sleep/maxSleep)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
       </div>
       <div class="card" style="padding:20px">
         <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - الماء</h3>
-        <div class="week-bars">
-          ${last7.map(d => `
-            <div class="wbar"><span class="wbar-val" style="color:#0891b2">${d.water || ''}</span>
-              <div class="wbar-fill" style="height:${Math.max((d.water/maxWater)*100, 3)}%;background:linear-gradient(180deg,#0891b2,#0e7490)"></div>
-              <span class="wbar-lbl">${d.day}</span></div>
-          `).join('')}
-        </div>
+        <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val" style="color:#0891b2">${d.water || ''}</span><div class="wbar-fill" style="height:${Math.max((d.water/maxWater)*100, 3)}%;background:linear-gradient(180deg,#0891b2,#0e7490)"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
       </div>
     `;
   }catch(e){ el.innerHTML = '<div class="empty"><b>خطأ في العرض</b></div>'; }
@@ -2720,9 +1880,6 @@ function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; sav
 function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); }
 function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); }
 
-/* ============================================================
-   🗂️ أرشيف الفصول
-============================================================ */
 if(!Array.isArray(state.archive)) state.archive = [];
 
 function renderArchive(){
@@ -2731,9 +1888,7 @@ function renderArchive(){
   el.innerHTML = `
     <div class="card" style="padding:22px;margin-bottom:20px">
       <h3 style="font-size:17px;margin-bottom:8px">💾 أرشفة الفصل الحالي</h3>
-      <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-        بيحفظ نسخة كاملة من بياناتك الحالية.
-      </p>
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">بيحفظ نسخة كاملة من بياناتك الحالية.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <input id="archiveName" placeholder="اسم الفصل" style="flex:2;min-width:180px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
         <button class="btn btn-primary" onclick="createArchive()">💾 أرشفة</button>
@@ -2742,27 +1897,19 @@ function renderArchive(){
     ${state.archive.length ? `
       <h3 style="font-size:17px;margin-bottom:14px">📚 المؤرشفة (${state.archive.length})</h3>
       <div style="display:grid;gap:12px">
-        ${state.archive.map((a, i) => `
-          <div class="card" style="padding:18px;border-right:4px solid var(--p)">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-              <div>
-                <h4 style="font-size:16.5px;margin-bottom:4px">${esc(a.name)}</h4>
-                <span style="font-size:12.5px;color:var(--muted);font-weight:700">
-                  📅 ${new Date(a.created).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}
-                </span>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button class="btn btn-primary btn-sm" onclick="viewArchive(${i})">👁️ عرض</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteArchive(${i})">🗑️</button>
-              </div>
-            </div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:700">
-              <span>📚 ${a.data.courses?.length || 0} مقرر</span>
-              <span>✅ ${a.data.tasks?.length || 0} مهمة</span>
-              <span>⏰ ${a.data.exams?.length || 0} اختبار</span>
-            </div>
-          </div>
-        `).join('')}
+        ${state.archive.map((a, i) => `<div class="card" style="padding:18px;border-right:4px solid var(--p)">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+            <div><h4 style="font-size:16.5px;margin-bottom:4px">${esc(a.name)}</h4>
+              <span style="font-size:12.5px;color:var(--muted);font-weight:700">📅 ${new Date(a.created).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}</span></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="viewArchive(${i})">👁️ عرض</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteArchive(${i})">🗑️</button>
+            </div></div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:700">
+            <span>📚 ${a.data.courses?.length || 0} مقرر</span>
+            <span>✅ ${a.data.tasks?.length || 0} مهمة</span>
+            <span>⏰ ${a.data.exams?.length || 0} اختبار</span>
+          </div></div>`).join('')}
       </div>
     ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي</p></div>`}
   `;
@@ -2787,16 +1934,11 @@ function viewArchive(i){
   openModal(`📚 ${a.name}`, `
     <div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:14px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13.5px;font-weight:700">
-        <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div>
-        <div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
-        <div>✅ <b>${d.tasks?.length || 0}</b> مهمة</div>
-        <div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
+        <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div><div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
+        <div>✅ <b>${d.tasks?.length || 0}</b> مهمة</div><div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
       </div>
     </div>
-  `, `
-    <button class="btn btn-ghost" onclick="closeModal()">إغلاق</button>
-    <button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>
-  `);
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>`);
 }
 function loadArchive(i){
   const a = state.archive[i]; if(!a) return;
@@ -2814,9 +1956,6 @@ function deleteArchive(i){
   state.archive.splice(i, 1); save(); renderArchive(); toast('🗑️ تم');
 }
 
-/* ============================================================
-   📌 إنشاء الصفحات
-============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
   if(!content) return;
@@ -2829,61 +1968,30 @@ function deleteArchive(i){
   pages.forEach(p => {
     if(document.getElementById('view-' + p.id)) return;
     const sec = document.createElement('section');
-    sec.className = 'view';
-    sec.id = 'view-' + p.id;
-    sec.innerHTML = `
-      <div class="sec-head"><div><h2>${p.ico} ${p.title}</h2><p>${p.sub}</p></div></div>
-      <div id="${p.id}Content"></div>
-    `;
+    sec.className = 'view'; sec.id = 'view-' + p.id;
+    sec.innerHTML = `<div class="sec-head"><div><h2>${p.ico} ${p.title}</h2><p>${p.sub}</p></div></div><div id="${p.id}Content"></div>`;
     content.appendChild(sec);
     VIEW_META[p.id] = [p.title, p.sub];
   });
 })();
 
-/* ============================================================
-   📌 إضافة أزرار القائمة + تجميع
-============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
   if(!nav) return;
   const existing = {};
-  nav.querySelectorAll('.nav-btn').forEach(b => {
-    existing[b.dataset.view] = b;
-    b.remove();
-  });
+  nav.querySelectorAll('.nav-btn').forEach(b => { existing[b.dataset.view] = b; b.remove(); });
   const newBtn = (view, ico, label) => {
-    if(existing[view]) {
-      existing[view].innerHTML = `<span class="ico">${ico}</span> ${label}`;
-      return existing[view];
-    }
+    if(existing[view]) { existing[view].innerHTML = `<span class="ico">${ico}</span> ${label}`; return existing[view]; }
     const b = document.createElement('button');
-    b.className = 'nav-btn';
-    b.dataset.view = view;
+    b.className = 'nav-btn'; b.dataset.view = view;
     b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
     return b;
   };
   const groups = [
-    { title:'📌 الرئيسية', items:[
-      ['dashboard','🏠','الرئيسية'],
-      ['schedule','📅','الجدول الدراسي'],
-      ['courses','📚','المقررات'],
-      ['tasks','✅','المهام والواجبات'],
-      ['exams','⏰','الاختبارات']
-    ]},
-    { title:'📊 الأكاديمي', items:[
-      ['grades','📊','الدرجات'],
-      ['gpa','🎓','حاسبة المعدل'],
-      ['attendance','📋','عدّاد الغياب'],
-      ['archive','🗂️','أرشيف الفصول']
-    ]},
-    { title:'🎯 المذاكرة والصحة', items:[
-      ['study','🍅','المذاكرة'],
-      ['wellness','💪','النوم والماء']
-    ]},
-    { title:'⚙️ أدوات', items:[
-      ['notes','📝','الملاحظات'],
-      ['settings','⚙️','الإعدادات']
-    ]}
+    { title:'📌 الرئيسية', items:[['dashboard','🏠','الرئيسية'],['schedule','📅','الجدول الدراسي'],['courses','📚','المقررات'],['tasks','✅','المهام والواجبات'],['exams','⏰','الاختبارات']] },
+    { title:'📊 الأكاديمي', items:[['grades','📊','الدرجات'],['gpa','🎓','حاسبة المعدل'],['attendance','📋','عدّاد الغياب'],['archive','🗂️','أرشيف الفصول']] },
+    { title:'🎯 المذاكرة والصحة', items:[['study','🍅','المذاكرة'],['wellness','💪','النوم والماء']] },
+    { title:'⚙️ أدوات', items:[['notes','📝','الملاحظات'],['settings','⚙️','الإعدادات']] }
   ];
   nav.innerHTML = '';
   groups.forEach(g => {
@@ -2918,9 +2026,6 @@ function deleteArchive(i){
   });
 })();
 
-/* ============================================================
-   🛡️ إصلاح الجوال
-============================================================ */
 (function fixMobile(){
   const sidebar = document.getElementById('sidebar');
   if(!sidebar) return;
@@ -2934,9 +2039,6 @@ function deleteArchive(i){
   window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 })();
 
-/* ============================================================
-   🔄 عند التنقل، افتح مجموعة الصفحة
-============================================================ */
 const _origGo = go;
 go = function(view){
   _origGo(view);
@@ -2960,11 +2062,7 @@ setTimeout(() => {
   try{ renderArchive(); }catch(e){}
 }, 200);
 
-/* ============================================================
-   📅 عدّاد الأسبوع الدراسي
-============================================================ */
 const SEMESTER_WEEKS = 16;
-
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
   if(!start) return null;
@@ -2973,40 +2071,21 @@ function getSemesterWeek(){
   const diffDays = Math.floor((today - startDate) / 86400000);
   if(diffDays < 0) return { week: 0, beforeStart: true, daysLeft: Math.abs(diffDays) };
   const week = Math.floor(diffDays / 7) + 1;
-  return {
-    week: Math.min(week, SEMESTER_WEEKS),
-    remaining: Math.max(0, SEMESTER_WEEKS - week),
-    current: week <= SEMESTER_WEEKS,
-    past: week > SEMESTER_WEEKS
-  };
+  return { week: Math.min(week, SEMESTER_WEEKS), remaining: Math.max(0, SEMESTER_WEEKS - week), current: week <= SEMESTER_WEEKS, past: week > SEMESTER_WEEKS };
 }
-
 function renderWeekBadge(){
   const el = document.getElementById('weekBadge');
   if(!el) return;
   const w = getSemesterWeek();
-  if(!w){
-    el.textContent = '📅 حدد بداية الفصل';
-    el.className = 'week-badge';
-    return;
-  }
-  if(w.beforeStart){
-    el.textContent = `⏳ باقي ${w.daysLeft} يوم`;
-    el.className = 'week-badge';
-    return;
-  }
-  if(w.past){
-    el.textContent = `✅ انتهى الفصل`;
-    el.className = 'week-badge';
-    return;
-  }
+  if(!w){ el.textContent = '📅 حدد بداية الفصل'; el.className = 'week-badge'; return; }
+  if(w.beforeStart){ el.textContent = `⏳ باقي ${w.daysLeft} يوم`; el.className = 'week-badge'; return; }
+  if(w.past){ el.textContent = `✅ انتهى الفصل`; el.className = 'week-badge'; return; }
   el.textContent = `📅 الأسبوع ${w.week} من ${SEMESTER_WEEKS}`;
   if(w.week >= 13) el.className = 'week-badge danger';
   else if(w.week >= 10) el.className = 'week-badge warn';
   else el.className = 'week-badge';
   el.title = `باقي ${w.remaining} أسبوع`;
 }
-
 function saveSemesterStart(){
   const val = document.getElementById('setSemesterStart').value;
   if(!val){ toast('⚠️ اختر التاريخ'); return; }
@@ -3014,7 +2093,6 @@ function saveSemesterStart(){
   save(); applySettings(); renderWeekBadge();
   toast('✅ تم حفظ بداية الفصل');
 }
-
 const _origApplySettings = applySettings;
 applySettings = function(){
   _origApplySettings();
@@ -3022,7 +2100,6 @@ applySettings = function(){
   if(inp) inp.value = state.settings.semesterStart || '';
   renderWeekBadge();
 };
-
 setTimeout(renderWeekBadge, 300);
 </script>
 </body>

@@ -2518,79 +2518,162 @@ if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
 if(!state.archive) state.archive = [];
 
 /* ============================================================
-   📋 عدّاد الغياب
+   📋 عدّاد الغياب — باليوم الكامل
+   كل يوم محاضرة = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
 ============================================================ */
 if(!Array.isArray(state.attendance)) state.attendance = [];
 
 function calcAttendance(){
+  const SEMESTER_WEEKS = 16;   // عدد أسابيع الفصل
+  const MAX_PERCENT = 0.25;    // حد الحرمان 25%
+  
   const res = {};
+  
   (state.courses || []).forEach(c => {
-    const classes = (state.schedule || []).filter(s => s.courseId === c.id).length;
-    const totalClasses = classes * 15;
-    const maxAbsences = Math.floor(totalClasses * 0.25);
-    const abs = (state.attendance || []).filter(a => {
+    // 1) الأيام الفريدة أسبوعياً
+    //    لو المادة يوم واحد → daysPerWeek = 1
+    //    لو يومين → 2، إلخ
+    const daysSet = new Set();
+    (state.schedule || [])
+      .filter(s => s.courseId === c.id)
+      .forEach(s => daysSet.add(s.day));
+    const daysPerWeek = daysSet.size;
+    
+    // 2) إجمالي أيام الفصل
+    const totalDays = daysPerWeek * SEMESTER_WEEKS;
+    
+    // 3) الأيام اللي غبت فيها (تواريخ فريدة)
+    //    لو غبت يوم فيه محاضرتين = يوم واحد
+    const absentDates = new Set();
+    (state.attendance || []).forEach(a => {
+      if(a.status !== 'absent' && a.status !== 'excused') return;
       const sch = (state.schedule || []).find(s => s.id === a.classId);
-      return sch && sch.courseId === c.id && (a.status === 'absent' || a.status === 'excused');
-    }).length;
-    const late = (state.attendance || []).filter(a => {
+      if(!sch || sch.courseId !== c.id) return;
+      absentDates.add(a.date);
+    });
+    const absences = absentDates.size;
+    
+    // 4) التأخيرات (تواريخ فريدة)
+    const lateDates = new Set();
+    (state.attendance || []).forEach(a => {
+      if(a.status !== 'late') return;
       const sch = (state.schedule || []).find(s => s.id === a.classId);
-      return sch && sch.courseId === c.id && a.status === 'late';
-    }).length;
+      if(!sch || sch.courseId !== c.id) return;
+      lateDates.add(a.date);
+    });
+    const lates = lateDates.size;
+    
+    // 5) النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
+    const percent = totalDays > 0 ? (absences / totalDays) * 100 : 0;
+    
+    // 6) حد الحرمان = 25% من الإجمالي
+    const maxAbsences = Math.floor(totalDays * MAX_PERCENT);
+    
     res[c.id] = {
-      course: c, absences: abs, late: late, max: maxAbsences,
-      total: totalClasses,
-      percent: maxAbsences ? Math.round((abs / maxAbsences) * 100) : 0,
-      remaining: Math.max(0, maxAbsences - abs)
+      course: c,
+      total: totalDays,
+      daysPerWeek: daysPerWeek,
+      absences: absences,
+      lates: lates,
+      max: maxAbsences,
+      percent: percent,
+      remaining: Math.max(0, maxAbsences - absences)
     };
   });
+  
   return res;
 }
 
 function renderAttendancePage(){
   const el = document.getElementById('attendanceContent');
   if(!el) return;
+  
   const data = calcAttendance();
-  const total = Object.values(data).reduce((a, x) => a + x.absences, 0);
-
+  
   if(!state.courses.length){
-    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً</p></div>`;
+    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً من صفحة المقررات</p></div>`;
     return;
   }
-
+  
+  const totalAbsences = Object.values(data).reduce((a, x) => a + x.absences, 0);
+  
   el.innerHTML = `
     <div class="stats" style="margin-bottom:20px">
-      <div class="stat"><div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
-        <div><b>${total}</b><span>إجمالي غياباتك</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📊</div>
-        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div></div>
+      <div class="stat">
+        <div class="stat-ico" style="background:var(--danger-bg)">⚠️</div>
+        <div><b>${totalAbsences}</b><span>إجمالي أيام غيابك</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico" style="background:var(--p-light)">📅</div>
+        <div><b>${state.courses.length}</b><span>مقرر متابع</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-ico" style="background:var(--warn-bg)">🎯</div>
+        <div><b>25%</b><span>حد الحرمان</span></div>
+      </div>
     </div>
+    
+    <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;line-height:1.9;font-weight:600">
+      💡 <b>طريقة الحساب:</b>
+      <br>• كل <b>يوم محاضرة</b> = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
+      <br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
+      <br>• مثال: مادة يوم واحد أسبوعياً + 16 أسبوع = 16 يوم. غبت يوم = 6.25%
+    </div>
+    
     <div style="display:grid;gap:14px">
       ${Object.values(data).map(d => {
-        const color = d.percent >= 75 ? 'var(--danger)' : d.percent >= 50 ? 'var(--warn)' : 'var(--ok)';
-        const bg = d.percent >= 75 ? 'var(--danger-bg)' : d.percent >= 50 ? 'var(--warn-bg)' : 'var(--ok-bg)';
-        const emoji = d.percent >= 75 ? '🚨' : d.percent >= 50 ? '⚠️' : '✅';
+        const used = d.percent;
+        const color = used >= 18.75 ? 'var(--danger)' : 
+                      used >= 12.5 ? 'var(--warn)' : 
+                      'var(--ok)';
+        const bg = used >= 18.75 ? 'var(--danger-bg)' : 
+                   used >= 12.5 ? 'var(--warn-bg)' : 
+                   'var(--ok-bg)';
+        const emoji = used >= 18.75 ? '🚨' : used >= 12.5 ? '⚠️' : '✅';
+        const barPercent = Math.min((d.percent / 25) * 100, 100);
+        
         return `
           <div class="card" style="padding:20px;border-right:4px solid ${color}">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
               <div>
                 <h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px">${esc(d.course.name)}</h3>
-                <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.total} محاضرة</span>
+                <span style="font-size:12.5px;color:var(--muted);font-weight:700">
+                  ${d.daysPerWeek} يوم أسبوعياً · ${d.total} يوم في الفصل
+                </span>
               </div>
-              <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center">
-                <b style="font-family:'Tajawal';font-size:20px;display:block;line-height:1">${d.absences} / ${d.max}</b>
-                <span style="font-size:11px;font-weight:700">${emoji} ${d.percent}%</span>
+              <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center;min-width:90px">
+                <b style="font-family:'Tajawal';font-size:22px;display:block;line-height:1">${d.percent.toFixed(2)}%</b>
+                <span style="font-size:10.5px;font-weight:700">${emoji}</span>
               </div>
             </div>
-            <div class="prog" style="height:10px;margin-bottom:12px">
-              <i style="width:${Math.min(d.percent, 100)}%;background:${color}"></i>
+            
+            <div class="prog" style="height:12px;margin-bottom:14px">
+              <i style="width:${barPercent}%;background:${color}"></i>
             </div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:13px;font-weight:700">
-              <span style="color:var(--ok)">✅ متبقي: <b>${d.remaining}</b></span>
-              <span style="color:var(--warn)">⏰ تأخير: <b>${d.late}</b></span>
+            
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12.5px;font-weight:700;text-align:center">
+              <div style="background:var(--hover);padding:8px;border-radius:9px">
+                <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">أيام غيابك</div>
+                <div style="color:${color};font-size:15px;font-family:'Tajawal'">${d.absences}</div>
+              </div>
+              <div style="background:var(--hover);padding:8px;border-radius:9px">
+                <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">الحد (25%)</div>
+                <div style="color:var(--danger);font-size:15px;font-family:'Tajawal'">${d.max}</div>
+              </div>
+              <div style="background:var(--hover);padding:8px;border-radius:9px">
+                <div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">متبقي</div>
+                <div style="color:var(--ok);font-size:15px;font-family:'Tajawal'">${d.remaining}</div>
+              </div>
+            </div>
+            
+            <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
+              <span style="color:var(--warn)">⏰ تأخير: <b>${d.lates}</b></span>
+              ${d.percent >= 18.75 ? `<span style="color:var(--danger)">🚨 اقتربت من الحرمان!</span>` : ''}
             </div>
           </div>`;
       }).join('')}
-    </div>`;
+    </div>
+  `;
 }
 
 /* ============================================================

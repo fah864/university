@@ -287,6 +287,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .sync-badge{font-size:11.5px;padding:6px 10px}
   .sync-badge span:not(#syncIcon){display:none}
 }
+/* ===== جداول ===== */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.table-wrap table{width:100%;border-collapse:collapse;font-size:14px}
+.table-wrap thead{background:var(--hover)}
+.table-wrap th{padding:12px 14px;text-align:right;font-weight:800;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.table-wrap td{padding:12px 14px;border-top:1px solid var(--border);font-weight:600}
+.table-wrap tbody tr{transition:background var(--t)}
+.table-wrap tbody tr:hover{background:var(--hover)}
 </style>
 </head>
 <body>
@@ -520,6 +528,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 <button class="fab" id="fab" title="إضافة سريعة">＋</button>
 
 <script>
+/* ============================================================
+   1) الثوابت
+============================================================ */
 const DAYS = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
 const DAYS_SHORT = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
 const COLORS = ['#0d9488','#4f46e5','#db2777','#ea580c','#0891b2','#7c3aed','#059669','#d97706','#dc2626','#2563eb'];
@@ -527,14 +538,27 @@ const TASK_TYPES = ['واجب','كويز','مشروع','تقرير','عرض تق
 const EXAM_TYPES = ['كويز','ميدتيرم','فاينل','اختبار عملي','مناقشة مشروع'];
 const HOUR_START = 7, HOUR_END = 21, HOUR_H = 58;
 const STORE_KEY = 'uni_helper_v1';
+const ATT = {
+  excused:  { label:'غايب بعذر',     ico:'🟡', color:'#d97706' },
+  absent:   { label:'غايب بدون عذر', ico:'🔴', color:'#dc2626' },
+  late:     { label:'متأخر',         ico:'⏰', color:'#7c3aed' },
+  cancelled:{ label:'ملغي',          ico:'🚫', color:'#64748b' }
+};
+const GRADE_POINTS = { 'A+':5,'A':4.75,'B+':4.5,'B':4,'C+':3.5,'C':3,'D+':2.5,'D':2,'F':0 };
+const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
+const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
+const TG_BOT = 'MyMuHelperBot';
+const SEMESTER_WEEKS = 16;
 
-let state = loadState();
-let taskFilter = 'all';
-
+/* ============================================================
+   2) الحالة + التحميل + الحفظ (مع دمج عميق)
+============================================================ */
 function defaultState(){
   return {
     courses: [], schedule: [], tasks: [], exams: [],
-    studyLog: [], settings: { theme:'light', pomo:{ work:25, short:5, long:15 } }
+    studyLog: [], attendance: [], gpaCourses: [], archive: [],
+    wellness: { sleepGoal:8, waterGoal:8, log:[] },
+    settings: { theme:'light', pomo:{ work:25, short:5, long:15 } }
   };
 }
 function loadState(){
@@ -542,17 +566,41 @@ function loadState(){
     const raw = localStorage.getItem(STORE_KEY);
     if(!raw) return defaultState();
     const s = JSON.parse(raw);
-    return Object.assign(defaultState(), s);
+    const def = defaultState();
+    const merged = { ...def, ...s };
+    // دمج عميق للإعدادات
+    merged.settings = { ...def.settings, ...(s.settings || {}) };
+    merged.settings.pomo = { ...def.settings.pomo, ...((s.settings && s.settings.pomo) || {}) };
+    // دمج wellness
+    merged.wellness = { ...def.wellness, ...(s.wellness || {}) };
+    if(!Array.isArray(merged.wellness.log)) merged.wellness.log = [];
+    // ضمان أن كل المصفوفات موجودة
+    if(!Array.isArray(merged.courses)) merged.courses = [];
+    if(!Array.isArray(merged.schedule)) merged.schedule = [];
+    if(!Array.isArray(merged.tasks)) merged.tasks = [];
+    if(!Array.isArray(merged.exams)) merged.exams = [];
+    if(!Array.isArray(merged.studyLog)) merged.studyLog = [];
+    if(!Array.isArray(merged.attendance)) merged.attendance = [];
+    if(!Array.isArray(merged.gpaCourses)) merged.gpaCourses = [];
+    if(!Array.isArray(merged.archive)) merged.archive = [];
+    return merged;
   }catch(e){ return defaultState(); }
 }
+let state = loadState();
+let taskFilter = 'all';
+
 function save(){
   try{
     localStorage.setItem(STORE_KEY, JSON.stringify(state));
     localStorage.setItem('localModified', Date.now().toString());
   }catch(e){}
+  if(typeof syncToTelegram === 'function' && getMyChatId()) syncToTelegram(true);
 }
-const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 
+/* ============================================================
+   3) دوال مساعدة عامة
+============================================================ */
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function todayISO(d = new Date()){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function daysUntil(iso){ const t = new Date(); t.setHours(0,0,0,0); const d = new Date(iso + 'T00:00:00'); return Math.round((d - t) / 86400000); }
@@ -562,7 +610,11 @@ function courseName(id){ const c = getCourse(id); return c ? c.name : 'عام'; 
 function courseColor(id){ const c = getCourse(id); return c ? c.color : '#64748b'; }
 function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 2400); }
 function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
+function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
 
+/* ============================================================
+   4) التنقل بين الصفحات
+============================================================ */
 const VIEW_META = {
   dashboard: ['لوحة اليوم','نظرة عامة على يومك الدراسي'],
   schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
@@ -584,11 +636,28 @@ function go(view){
   document.getElementById('overlay').classList.remove('show');
   window.scrollTo({ top:0, behavior:'smooth' });
   location.hash = view;
+  // فتح مجموعة القائمة
+  document.querySelectorAll('.nav-group').forEach(g => {
+    if(g.querySelector(`[data-view="${view}"]`)) g.classList.remove('collapsed');
+  });
+  // رندرة خاصة عند الدخول
+  setTimeout(() => {
+    try{
+      if(view === 'attendance') renderAttendancePage();
+      if(view === 'gpa') renderGPA();
+      if(view === 'wellness') renderWellness();
+      if(view === 'archive') renderArchive();
+      if(view === 'settings') renderSyncStatus();
+    }catch(e){}
+  }, 60);
 }
 document.querySelectorAll('.nav-btn, .home-btn, [data-view]').forEach(b => {
   b.addEventListener('click', () => go(b.dataset.view));
 });
 
+/* ============================================================
+   5) الثيم
+============================================================ */
 function setTheme(t){
   state.settings.theme = t;
   document.documentElement.dataset.theme = t;
@@ -600,6 +669,9 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   setTheme(state.settings.theme === 'dark' ? 'light' : 'dark');
 });
 
+/* ============================================================
+   6) المودال
+============================================================ */
 const modalBg = document.getElementById('modalBg');
 function openModal(title, bodyHTML, footHTML){
   document.getElementById('modalTitle').textContent = title;
@@ -611,6 +683,9 @@ function closeModal(){ modalBg.classList.remove('open'); }
 modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
 
+/* ============================================================
+   7) المقررات
+============================================================ */
 let pickedColor = COLORS[0];
 function openCourseForm(id){
   const c = id ? getCourse(id) : null;
@@ -655,6 +730,9 @@ function deleteCourse(id){
   save(); renderAll(); toast('🗑️ تم الحذف');
 }
 
+/* ============================================================
+   8) المحاضرات
+============================================================ */
 function courseOptions(sel){
   if(!state.courses.length) return `<option value="">— أضف مقرراً أولاً —</option>`;
   return state.courses.map(c => `<option value="${c.id}" ${c.id===sel?'selected':''}>${esc(c.name)}</option>`).join('');
@@ -690,6 +768,9 @@ function deleteClass(id){
   save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
 }
 
+/* ============================================================
+   9) المهام
+============================================================ */
 function openTaskForm(id){
   const t = id ? state.tasks.find(x => x.id === id) : null;
   const typeOpts = TASK_TYPES.map(x => `<option ${t?.type===x?'selected':''}>${x}</option>`).join('');
@@ -727,6 +808,9 @@ function saveTask(id){
 function deleteTask(id){ state.tasks = state.tasks.filter(t => t.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 function toggleTask(id){ const t = state.tasks.find(x => x.id === id); if(t){ t.done = !t.done; save(); renderAll(); } }
 
+/* ============================================================
+   10) الاختبارات
+============================================================ */
 function openExamForm(id){
   const e = id ? state.exams.find(x => x.id === id) : null;
   const typeOpts = EXAM_TYPES.map(x => `<option ${e?.type===x?'selected':''}>${x}</option>`).join('');
@@ -761,6 +845,9 @@ function saveExam(id){
 }
 function deleteExam(id){ state.exams = state.exams.filter(e => e.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
+/* ============================================================
+   11) رندرة اللوحة
+============================================================ */
 function renderDashboard(){
   const today = todayISO();
   const openTasks = state.tasks.filter(t => !t.done);
@@ -817,6 +904,16 @@ function renderDashboard(){
   }
 }
 
+/* ============================================================
+   12) رندرة الجدول (مع الحضور)
+============================================================ */
+function classDateThisWeek(dayIdx){
+  const d = new Date();
+  d.setDate(d.getDate() + (dayIdx - d.getDay()));
+  return todayISO(d);
+}
+function getAttFor(cid, date){ return state.attendance.find(a => a.classId === cid && a.date === date); }
+
 function renderSchedule(){
   const nowDay = new Date().getDay();
   const hours = [];
@@ -826,13 +923,24 @@ function renderSchedule(){
   const cols = `<div class="sched-cols">
     ${DAYS.map((_,di) => {
       const lines = hours.map((_,i) => `<div class="hour-line" style="top:${i*HOUR_H}px"></div>`).join('');
+      const dayDate = classDateThisWeek(di);
       const blocks = state.schedule.filter(s => s.day === di).map(s => {
         const startMin = toMin(s.start), endMin = toMin(s.end);
         const top = (startMin - HOUR_START*60) / 60 * HOUR_H;
         const hgt = (endMin - startMin) / 60 * HOUR_H - 4;
         if(top < -50 || top > (HOUR_END-HOUR_START)*HOUR_H) return '';
-        const col = courseColor(s.courseId);
-        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${col}" onclick="event.stopPropagation();openClassForm('${s.id}')"><b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span></div>`;
+        const att = getAttFor(s.id, dayDate);
+        const status = att ? att.status : 'present';
+        const st = ATT[status];
+        let color = courseColor(s.courseId);
+        let extra = '';
+        if(status !== 'present'){
+          color = st.color;
+          if(status === 'cancelled') extra = 'opacity:.55;text-decoration:line-through';
+        }
+        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${color};${extra}" onclick="event.stopPropagation();openAttPopup('${s.id}','${dayDate}')">
+          <b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
+          ${status !== 'present' ? `<span style="position:absolute;top:3px;left:5px;font-size:12px">${st.ico}</span>` : ''}</div>`;
       }).join('');
       return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
     }).join('')}
@@ -840,6 +948,68 @@ function renderSchedule(){
   document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
 }
 
+function openAttPopup(classId, date){
+  const s = state.schedule.find(x => x.id === classId);
+  if(!s) return;
+  const existing = getAttFor(classId, date);
+  const cur = existing ? existing.status : 'present';
+  const btns = Object.entries(ATT).map(([k,v]) => {
+    const active = cur === k;
+    const bg = v.color || courseColor(s.courseId);
+    return `<button onclick="setAtt('${classId}','${date}','${k}')" style="padding:13px;border-radius:12px;font-weight:700;font-size:13.5px;background:${active ? bg : 'var(--hover)'};color:${active ? '#fff' : 'var(--text)'};border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">${v.ico} ${v.label}</button>`;
+  }).join('');
+  const dateStr = new Date(date + 'T00:00:00').toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
+  const isToday = date === todayISO();
+  openModal('📋 تسجيل الحضور', `
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:17px;font-weight:800;font-family:'Tajawal';margin-bottom:5px;color:${courseColor(s.courseId)}">${esc(courseName(s.courseId))}</div>
+      <div style="font-size:12.5px;color:var(--muted);font-weight:700">${dateStr}${isToday ? ' <span style="color:var(--p)">(اليوم)</span>' : ''} · ${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${btns}</div>
+    <div class="field" style="margin-top:16px"><label>ملاحظة (اختياري)</label>
+      <textarea id="attNote" placeholder="سبب الغياب..." style="min-height:70px">${esc(existing?.note||'')}</textarea></div>
+  `, `${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>`);
+}
+function setAtt(classId, date, status){
+  const n = document.getElementById('attNote');
+  const note = n ? n.value.trim() : '';
+  if(status === 'present'){
+    state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
+  } else {
+    const att = getAttFor(classId, date);
+    if(att){ att.status = status; att.note = note; }
+    else{ state.attendance.push({ id:uid(), classId, date, status, note }); }
+  }
+  save(); renderSchedule(); openAttPopup(classId, date); toast('✅ تم');
+}
+function saveAttNote(classId, date){
+  const n = document.getElementById('attNote');
+  if(!n) return;
+  const att = getAttFor(classId, date);
+  if(att){ att.note = n.value.trim(); save(); renderSchedule(); closeModal(); toast('💾 تم'); }
+  else{ toast('ℹ️ الحالة حاضر'); }
+}
+function clearAtt(classId, date){
+  if(!confirm('حذف سجل الحضور؟')) return;
+  state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
+  save(); renderSchedule(); closeModal(); toast('🗑️ تم');
+}
+(function legend(){
+  const head = document.querySelector('#view-schedule .sec-head');
+  if(!head || document.getElementById('attLegend')) return;
+  const div = document.createElement('div');
+  div.id = 'attLegend';
+  div.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:12.5px;font-weight:700';
+  div.innerHTML = Object.entries(ATT).map(([k,v]) => {
+    const col = v.color || '#0d9488';
+    return `<span style="display:inline-flex;align-items:center;gap:5px;color:${col}"><span style="width:11px;height:11px;border-radius:3px;background:${col}"></span>${v.label}</span>`;
+  }).join('') + '<span style="color:var(--muted);font-weight:600;margin-inline-start:auto">اضغط أي محاضرة</span>';
+  head.parentNode.insertBefore(div, head.nextSibling);
+})();
+
+/* ============================================================
+   13) رندرة المقررات
+============================================================ */
 function renderCourses(){
   const grid = document.getElementById('coursesGrid');
   document.getElementById('coursesCount').textContent = state.courses.length
@@ -859,6 +1029,9 @@ function renderCourses(){
   }).join('');
 }
 
+/* ============================================================
+   14) رندرة المهام
+============================================================ */
 function renderTasks(){
   const list = document.getElementById('tasksList');
   const open = state.tasks.filter(t => !t.done);
@@ -907,6 +1080,9 @@ function renderTasks(){
   }).join('');
 }
 
+/* ============================================================
+   15) رندرة الاختبارات
+============================================================ */
 function renderExams(){
   const grid = document.getElementById('examsGrid');
   const upcoming = state.exams.filter(e => daysUntil(e.date) >= 0);
@@ -938,6 +1114,9 @@ function renderExams(){
   }).join('');
 }
 
+/* ============================================================
+   16) الدرجات والمعدل
+============================================================ */
 function scoreToPoints(p){
   if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
   if(p >= 80) return 4.00; if(p >= 75) return 3.50; if(p >= 70) return 3.00;
@@ -1004,6 +1183,9 @@ function addComp(cid){ const c = getCourse(cid); c.grades = c.grades || []; c.gr
 function removeComp(cid, i){ const c = getCourse(cid); c.grades.splice(i,1); save(); renderGrades(); }
 function updateComp(cid, i, field, val){ const c = getCourse(cid); if(!c.grades[i]) return; c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0); save(); renderGrades(); }
 
+/* ============================================================
+   17) بومودورو
+============================================================ */
 let pomo = { mode: 'work', running: false, remaining: 25 * 60, total: 25 * 60, timer: null };
 const RING_C = 552.92;
 function pomoDuration(mode){ const p = state.settings.pomo; return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60; }
@@ -1058,6 +1240,9 @@ document.getElementById('pomoStart').addEventListener('click', () => {
 document.getElementById('pomoReset').addEventListener('click', () => pomoSetMode(pomo.mode));
 document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
 
+/* ============================================================
+   18) المذاكرة
+============================================================ */
 function renderStudy(){
   const sel = document.getElementById('pomoCourse');
   const cur = sel.value;
@@ -1113,6 +1298,10 @@ function clearAll(){
   save(); applySettings(); renderAll(); closeModal();
   toast('🗑️ تم حذف كل البيانات');
 }
+
+/* ============================================================
+   19) applySettings (معدّلة - تشمل بداية الفصل + شارة الأسبوع)
+============================================================ */
 function applySettings(){
   document.documentElement.dataset.theme = state.settings.theme || 'light';
   const sideBtn = document.getElementById('themeBtn');
@@ -1124,11 +1313,17 @@ function applySettings(){
   if(wEl) wEl.value = p.work;
   if(sEl) sEl.value = p.short;
   if(lEl) lEl.value = p.long;
+  const semEl = document.getElementById('setSemesterStart');
+  if(semEl) semEl.value = state.settings.semesterStart || '';
   pomo.total = pomoDuration(pomo.mode);
   pomo.remaining = pomo.total;
   pomoRender();
+  if(typeof renderWeekBadge === 'function') renderWeekBadge();
 }
 
+/* ============================================================
+   20) حالة المزامنة
+============================================================ */
 function renderSyncStatus(){
   const el = document.getElementById('syncStatusContent');
   if(!el) return;
@@ -1171,6 +1366,9 @@ function renderSyncStatus(){
   `;
 }
 
+/* ============================================================
+   21) الإضافة السريعة
+============================================================ */
 function quickAdd(){
   openModal('إضافة سريعة', `
     <div style="display:grid;gap:10px">
@@ -1181,9 +1379,14 @@ function quickAdd(){
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
-document.getElementById('quickAddBtn').addEventListener('click', quickAdd);
+// ✅ إصلاح: حماية العنصر غير الموجود
+const _quickAddBtn = document.getElementById('quickAddBtn');
+if(_quickAddBtn) _quickAddBtn.addEventListener('click', quickAdd);
 document.getElementById('fab').addEventListener('click', quickAdd);
 
+/* ============================================================
+   22) الهامبرغر + الفلاتر
+============================================================ */
 document.getElementById('hamburger').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
@@ -1202,26 +1405,18 @@ document.getElementById('taskFilters').addEventListener('click', e => {
   renderTasks();
 });
 
+/* ============================================================
+   23) رندرة كل شيء
+============================================================ */
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
   renderExams(); renderGrades(); renderStudy(); pomoRender();
 }
 
-function init(){
-  applySettings();
-  renderAll();
-  document.getElementById('topDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  const h = location.hash.slice(1);
-  if(h && document.getElementById('view-' + h)) go(h);
-}
-init();
-
-document.addEventListener('keydown', e => {
-  if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
-});
-
+/* ============================================================
+   24) الإضافة السريعة للجدول
+============================================================ */
 let qaItems = [];
-function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
 function openQuickAdd(){
   if(!state.courses.length){ toast('⚠️ أضف مقرراً أولاً'); go('courses'); return; }
   qaItems = [];
@@ -1301,118 +1496,9 @@ function qaClose(){
   }else{ head.appendChild(btn); }
 })();
 
-const ATT = {
-  excused:  { label:'غايب بعذر',     ico:'🟡', color:'#d97706' },
-  absent:   { label:'غايب بدون عذر', ico:'🔴', color:'#dc2626' },
-  late:     { label:'متأخر',         ico:'⏰', color:'#7c3aed' },
-  cancelled:{ label:'ملغي',          ico:'🚫', color:'#64748b' }
-};
-if(!state.attendance) state.attendance = [];
-
-function classDateThisWeek(dayIdx){
-  const d = new Date();
-  d.setDate(d.getDate() + (dayIdx - d.getDay()));
-  return todayISO(d);
-}
-function getAttFor(cid, date){ return state.attendance.find(a => a.classId === cid && a.date === date); }
-
-renderSchedule = function(){
-  const nowDay = new Date().getDay();
-  const hours = [];
-  for(let h = HOUR_START; h < HOUR_END; h++) hours.push(h);
-  const head = `<div class="sched-head"><div></div><div class="sched-days">${DAYS.map((d,i) => `<div class="sched-day ${i===nowDay?'today':''}">${d}</div>`).join('')}</div></div>`;
-  const times = `<div class="sched-times">${hours.map(h => `<div class="sched-time">${String(h).padStart(2,'0')}:00</div>`).join('')}</div>`;
-  const cols = `<div class="sched-cols">
-    ${DAYS.map((_,di) => {
-      const lines = hours.map((_,i) => `<div class="hour-line" style="top:${i*HOUR_H}px"></div>`).join('');
-      const dayDate = classDateThisWeek(di);
-      const blocks = state.schedule.filter(s => s.day === di).map(s => {
-        const startMin = toMin(s.start), endMin = toMin(s.end);
-        const top = (startMin - HOUR_START*60) / 60 * HOUR_H;
-        const hgt = (endMin - startMin) / 60 * HOUR_H - 4;
-        if(top < -50 || top > (HOUR_END-HOUR_START)*HOUR_H) return '';
-        const att = getAttFor(s.id, dayDate);
-        const status = att ? att.status : 'present';
-        const st = ATT[status];
-        let color = courseColor(s.courseId);
-        let extra = '';
-        if(status !== 'present'){
-          color = st.color;
-          if(status === 'cancelled') extra = 'opacity:.55;text-decoration:line-through';
-        }
-        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${color};${extra}" onclick="event.stopPropagation();openAttPopup('${s.id}','${dayDate}')">
-          <b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
-          ${status !== 'present' ? `<span style="position:absolute;top:3px;left:5px;font-size:12px">${st.ico}</span>` : ''}</div>`;
-      }).join('');
-      return `<div class="sched-col" data-day="${di}" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
-    }).join('')}
-  </div>`;
-  document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
-};
-
-function openAttPopup(classId, date){
-  const s = state.schedule.find(x => x.id === classId);
-  if(!s) return;
-  const existing = getAttFor(classId, date);
-  const cur = existing ? existing.status : 'present';
-  const btns = Object.entries(ATT).map(([k,v]) => {
-    const active = cur === k;
-    const bg = v.color || courseColor(s.courseId);
-    return `<button onclick="setAtt('${classId}','${date}','${k}')" style="padding:13px;border-radius:12px;font-weight:700;font-size:13.5px;background:${active ? bg : 'var(--hover)'};color:${active ? '#fff' : 'var(--text)'};border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">${v.ico} ${v.label}</button>`;
-  }).join('');
-  const dateStr = new Date(date + 'T00:00:00').toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
-  const isToday = date === todayISO();
-  openModal('📋 تسجيل الحضور', `
-    <div style="text-align:center;margin-bottom:18px">
-      <div style="font-size:17px;font-weight:800;font-family:'Tajawal';margin-bottom:5px;color:${courseColor(s.courseId)}">${esc(courseName(s.courseId))}</div>
-      <div style="font-size:12.5px;color:var(--muted);font-weight:700">${dateStr}${isToday ? ' <span style="color:var(--p)">(اليوم)</span>' : ''} · ${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${btns}</div>
-    <div class="field" style="margin-top:16px"><label>ملاحظة (اختياري)</label>
-      <textarea id="attNote" placeholder="سبب الغياب..." style="min-height:70px">${esc(existing?.note||'')}</textarea></div>
-  `, `${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>`);
-}
-function setAtt(classId, date, status){
-  const n = document.getElementById('attNote');
-  const note = n ? n.value.trim() : '';
-  if(status === 'present'){
-    state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
-  } else {
-    const att = getAttFor(classId, date);
-    if(att){ att.status = status; att.note = note; }
-    else{ state.attendance.push({ id:uid(), classId, date, status, note }); }
-  }
-  save(); renderSchedule(); openAttPopup(classId, date); toast('✅ تم');
-}
-function saveAttNote(classId, date){
-  const n = document.getElementById('attNote');
-  if(!n) return;
-  const att = getAttFor(classId, date);
-  if(att){ att.note = n.value.trim(); save(); renderSchedule(); closeModal(); toast('💾 تم'); }
-  else{ toast('ℹ️ الحالة حاضر'); }
-}
-function clearAtt(classId, date){
-  if(!confirm('حذف سجل الحضور؟')) return;
-  state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
-  save(); renderSchedule(); closeModal(); toast('🗑️ تم');
-}
-(function legend(){
-  const head = document.querySelector('#view-schedule .sec-head');
-  if(!head || document.getElementById('attLegend')) return;
-  const div = document.createElement('div');
-  div.id = 'attLegend';
-  div.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:12.5px;font-weight:700';
-  div.innerHTML = Object.entries(ATT).map(([k,v]) => {
-    const col = v.color || '#0d9488';
-    return `<span style="display:inline-flex;align-items:center;gap:5px;color:${col}"><span style="width:11px;height:11px;border-radius:3px;background:${col}"></span>${v.label}</span>`;
-  }).join('') + '<span style="color:var(--muted);font-weight:600;margin-inline-start:auto">اضغط أي محاضرة</span>';
-  head.parentNode.insertBefore(div, head.nextSibling);
-})();
-
-renderSchedule();
-
-const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
-const TG_BOT = 'MyMuHelperBot';
+/* ============================================================
+   25) تلقرام + المزامنة
+============================================================ */
 let pollTimer = null;
 let syncTimeout = null;
 let syncBadgeHideTimer = null;
@@ -1675,9 +1761,6 @@ function updateTgStatus(){
   else if(pending){ localStorage.removeItem('tg_pending'); localStorage.removeItem('tg_pending_time'); }
 })();
 
-const _origSave = save;
-save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
-
 (function initTGUI(){
   updateTgStatus();
   setInterval(() => {
@@ -1693,20 +1776,18 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
   }, 1500);
 })();
 
-if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
-if(!state.archive) state.archive = [];
-if(!Array.isArray(state.attendance)) state.attendance = [];
-if(!Array.isArray(state.gpaCourses)) state.gpaCourses = [];
-
+/* ============================================================
+   26) عدّاد الغياب
+============================================================ */
 function calcAttendance(){
-  const SEMESTER_WEEKS = 16;
+  const SEMESTER_WEEKS_LOCAL = 16;
   const MAX_PERCENT = 0.25;
   const res = {};
   (state.courses || []).forEach(c => {
     const daysSet = new Set();
     (state.schedule || []).filter(s => s.courseId === c.id).forEach(s => daysSet.add(s.day));
     const daysPerWeek = daysSet.size;
-    const totalDays = daysPerWeek * SEMESTER_WEEKS;
+    const totalDays = daysPerWeek * SEMESTER_WEEKS_LOCAL;
     const absentDates = new Set();
     (state.attendance || []).forEach(a => {
       if(a.status !== 'absent' && a.status !== 'excused') return;
@@ -1778,9 +1859,9 @@ function renderAttendancePage(){
     </div>`;
 }
 
-const GRADE_POINTS = { 'A+':5,'A':4.75,'B+':4.5,'B':4,'C+':3.5,'C':3,'D+':2.5,'D':2,'F':0 };
-const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
-
+/* ============================================================
+   27) حاسبة المعدل
+============================================================ */
 function renderGPA(){
   const el = document.getElementById('gpaContent');
   if(!el) return;
@@ -1829,6 +1910,9 @@ function addGpaCourse(){
 function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); }
 function clearGPA(){ if(!confirm('حذف كل المقررات؟')) return; state.gpaCourses = []; save(); renderGPA(); }
 
+/* ============================================================
+   28) النوم والماء
+============================================================ */
 function renderWellness(){
   const el = document.getElementById('wellnessContent');
   if(!el) return;
@@ -1883,6 +1967,9 @@ function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; sav
 function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); }
 function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); }
 
+/* ============================================================
+   29) الأرشيف
+============================================================ */
 function renderArchive(){
   const el = document.getElementById('archiveContent');
   if(!el) return;
@@ -1957,6 +2044,9 @@ function deleteArchive(i){
   state.archive.splice(i, 1); save(); renderArchive(); toast('🗑️ تم');
 }
 
+/* ============================================================
+   30) إضافة صفحات جديدة
+============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
   if(!content) return;
@@ -1976,6 +2066,9 @@ function deleteArchive(i){
   });
 })();
 
+/* ============================================================
+   31) بناء القائمة الجانبية
+============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
   if(!nav) return;
@@ -2028,6 +2121,9 @@ function deleteArchive(i){
   });
 })();
 
+/* ============================================================
+   32) تحسينات الموبايل
+============================================================ */
 (function fixMobile(){
   const sidebar = document.getElementById('sidebar');
   if(!sidebar) return;
@@ -2041,32 +2137,9 @@ function deleteArchive(i){
   window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 })();
 
-const _origGo = go;
-go = function(view){
-  _origGo(view);
-  document.querySelectorAll('.nav-group').forEach(g => {
-    if(g.querySelector(`[data-view="${view}"]`)){ g.classList.remove('collapsed'); }
-  });
-  setTimeout(() => {
-    try{
-      if(view === 'attendance') renderAttendancePage();
-      if(view === 'gpa') renderGPA();
-      if(view === 'wellness') renderWellness();
-      if(view === 'archive') renderArchive();
-      if(view === 'settings') renderSyncStatus();
-    }catch(e){}
-  }, 60);
-};
-
-setTimeout(() => {
-  try{ renderAttendancePage(); }catch(e){}
-  try{ renderGPA(); }catch(e){}
-  try{ renderWellness(); }catch(e){}
-  try{ renderArchive(); }catch(e){}
-  try{ renderSyncStatus(); }catch(e){}
-}, 200);
-
-const SEMESTER_WEEKS = 16;
+/* ============================================================
+   33) شارة الأسبوع
+============================================================ */
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
   if(!start) return null;
@@ -2097,14 +2170,34 @@ function saveSemesterStart(){
   save(); applySettings(); renderWeekBadge();
   toast('✅ تم حفظ بداية الفصل');
 }
-const _origApplySettings = applySettings;
-applySettings = function(){
-  _origApplySettings();
-  const inp = document.getElementById('setSemesterStart');
-  if(inp) inp.value = state.settings.semesterStart || '';
+
+/* ============================================================
+   34) اختصارات الكيبورد
+============================================================ */
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
+});
+
+/* ============================================================
+   35) التهيئة النهائية (بعد كل التعريفات)
+============================================================ */
+function init(){
+  applySettings();
+  renderAll();
+  document.getElementById('topDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const h = location.hash.slice(1);
+  if(h && document.getElementById('view-' + h)) go(h);
+  // رندرة الصفحات الديناميكية
+  try{ renderAttendancePage(); }catch(e){}
+  try{ renderGPA(); }catch(e){}
+  try{ renderWellness(); }catch(e){}
+  try{ renderArchive(); }catch(e){}
+  try{ renderSyncStatus(); }catch(e){}
   renderWeekBadge();
-};
-setTimeout(renderWeekBadge, 300);
+}
+
+// التشغيل النهائي
+init();
 </script>
 </body>
 </html>

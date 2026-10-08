@@ -49,7 +49,6 @@ ul{list-style:none}
 .brand-txt b{display:block;font-family:'Tajawal';font-size:17px;font-weight:800;line-height:1.2}
 .brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
 .nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-
 .home-btn{
   display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;
   font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;
@@ -70,14 +69,12 @@ ul{list-style:none}
   display:block;font-size:10.5px;font-weight:600;opacity:.85;
   letter-spacing:.3px;margin-top:-2px;
 }
-
 .nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right}
 .nav-btn:hover{background:var(--hover);color:var(--text)}
 .nav-btn.active{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
 .nav-btn .ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
 .nav-btn .badge{margin-inline-start:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;min-width:22px;text-align:center}
 .nav-btn.active .badge{background:rgba(255,255,255,.28)}
-
 .sidebar-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px}
 .icon-btn{width:44px;height:44px;border-radius:12px;background:var(--hover);display:grid;place-items:center;font-size:19px;transition:var(--t);flex:1;color:var(--text)}
 .icon-btn:hover{background:var(--p);color:#fff;transform:translateY(-2px)}
@@ -129,11 +126,7 @@ ul{list-style:none}
 .empty p{font-size:14px;margin-bottom:18px}
 .course-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);transition:var(--t);position:relative;cursor:pointer}
 .course-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--p)}
-.course-card::after{
-  content:'👁️ اضغط للتفاصيل';position:absolute;top:14px;left:14px;
-  font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:20px;
-  background:var(--p-light);color:var(--p-dark);opacity:0;transition:opacity var(--t);
-}
+.course-card::after{content:'👁️ اضغط للتفاصيل';position:absolute;top:14px;left:14px;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:20px;background:var(--p-light);color:var(--p-dark);opacity:0;transition:opacity var(--t)}
 .course-card:hover::after{opacity:1}
 .course-bar{height:6px}
 .course-body{padding:18px}
@@ -180,16 +173,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .mini-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;background:var(--hover);transition:var(--t)}
 .mini-btn:hover{background:var(--p);color:#fff}
 .mini-btn.del:hover{background:var(--danger)}
-.exam{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);transition:var(--t);position:relative;overflow:hidden}
-.exam:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-.exam-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-.exam-top h3{font-size:17px;flex:1}
-.countdown{text-align:center;padding:8px 14px;border-radius:13px;font-weight:800;flex-shrink:0;min-width:76px}
-.countdown b{display:block;font-family:'Tajawal';font-size:23px;line-height:1}
-.countdown span{font-size:10.5px;font-weight:700;opacity:.85}
-.exam-detail{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
-.exam-detail span{display:flex;align-items:center;gap:5px}
-.exam-actions{display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
+/* ===== بطاقة اختبار داخل القائمة ===== */
+.exam-item{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border);margin-bottom:10px;transition:var(--t);box-shadow:var(--shadow);border-right:4px solid var(--danger)}
+.exam-item:hover{border-color:var(--danger);transform:translateX(-4px)}
+.exam-item.past{opacity:.5;border-right-color:var(--muted)}
+.exam-item .ex-ico{width:44px;height:44px;flex-shrink:0;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--danger-bg);color:var(--danger)}
+.exam-item .ex-main{flex:1;min-width:0}
+.exam-item .ex-title{font-size:15.5px;font-weight:700;margin-bottom:5px}
+.exam-item .ex-sub{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);font-weight:600}
 .pomo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
 .pomo-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:30px;box-shadow:var(--shadow);text-align:center}
 .ring-wrap{position:relative;width:230px;height:230px;margin:0 auto 22px}
@@ -292,7 +283,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .sync-badge{font-size:11.5px;padding:6px 10px}
   .sync-badge span:not(#syncIcon){display:none}
 }
-/* ===== جداول ===== */
 .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
 .table-wrap table{width:100%;border-collapse:collapse;font-size:14px}
 .table-wrap thead{background:var(--hover)}
@@ -300,13 +290,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .table-wrap td{padding:12px 14px;border-top:1px solid var(--border);font-weight:600}
 .table-wrap tbody tr{transition:background var(--t)}
 .table-wrap tbody tr:hover{background:var(--hover)}
-
-/* ===== تفاصيل المقرر ===== */
-.cd-header{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
-  padding:22px;box-shadow:var(--shadow);margin-bottom:20px;
-  position:relative;overflow:hidden;
-}
+.cd-header{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:22px;box-shadow:var(--shadow);margin-bottom:20px;position:relative;overflow:hidden}
 .cd-header::before{content:'';position:absolute;top:0;right:0;left:0;height:6px;background:var(--cd-color,var(--p))}
 .cd-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-top:8px}
 .cd-title h2{font-size:24px;margin-bottom:6px;color:var(--cd-color,var(--text))}
@@ -319,30 +303,29 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .cd-section{margin-bottom:22px}
 .cd-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
 .cd-section-head h3{font-size:17px}
-.cd-item{
-  display:flex;align-items:center;gap:12px;padding:13px 15px;
-  background:var(--card);border:1px solid var(--border);border-radius:12px;
-  margin-bottom:8px;transition:var(--t);
-}
+.cd-item{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;transition:var(--t)}
 .cd-item:hover{border-color:var(--p);transform:translateX(-4px)}
 .cd-item .ci-ico{font-size:18px;flex-shrink:0}
 .cd-item .ci-main{flex:1;min-width:0}
 .cd-item .ci-main b{display:block;font-size:14.5px;font-weight:700;margin-bottom:3px}
 .cd-item .ci-main span{font-size:12.5px;color:var(--muted);font-weight:600}
 .cd-item .ci-side{font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap}
-.back-btn{
-  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;
-  background:var(--hover);color:var(--text);font-weight:700;font-size:14px;
-  transition:var(--t);margin-bottom:16px;
-}
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;background:var(--hover);color:var(--text);font-weight:700;font-size:14px;transition:var(--t);margin-bottom:16px}
 .back-btn:hover{background:var(--p);color:#fff;transform:translateX(4px)}
-.grade-summary-box{
-  background:linear-gradient(135deg,var(--cd-color,var(--p)),color-mix(in srgb,var(--cd-color,var(--p)) 70%,#0f766e));
-  color:#fff;padding:18px 22px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;
-  gap:14px;flex-wrap:wrap;margin-bottom:14px;box-shadow:0 10px 25px color-mix(in srgb,var(--cd-color,var(--p)) 30%,transparent);
-}
+.grade-summary-box{background:linear-gradient(135deg,var(--cd-color,var(--p)),color-mix(in srgb,var(--cd-color,var(--p)) 70%,#0f766e));color:#fff;padding:18px 22px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;box-shadow:0 10px 25px color-mix(in srgb,var(--cd-color,var(--p)) 30%,transparent)}
 .grade-summary-box b{font-family:'Tajawal';font-size:32px;font-weight:800;line-height:1}
 .grade-summary-box span{font-size:13px;font-weight:700;opacity:.9}
+/* بطاقة اختيار نوع الإضافة */
+.add-type-grid{display:grid;gap:12px}
+.add-type-btn{
+  display:flex;align-items:center;gap:14px;padding:18px;border-radius:14px;
+  background:var(--card);border:2px solid var(--border);transition:var(--t);text-align:right;
+}
+.add-type-btn:hover{border-color:var(--p);background:var(--hover);transform:translateX(-4px)}
+.add-type-btn .at-ico{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.add-type-btn .at-main{flex:1}
+.add-type-btn .at-main b{display:block;font-size:16px;font-weight:800;margin-bottom:3px}
+.add-type-btn .at-main span{font-size:12.5px;color:var(--muted);font-weight:600}
 </style>
 </head>
 <body>
@@ -413,6 +396,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
+      <section class="view" id="view-schedule">
+        <div class="sec-head">
+          <div><h2>📅 الجدول الدراسي الأسبوعي</h2><p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p></div>
+          <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
+        </div>
+        <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
+      </section>
+
       <section class="view" id="view-courses">
         <div class="sec-head">
           <div><h2>📚 المقررات الدراسية</h2><p id="coursesCount"></p></div>
@@ -425,56 +416,41 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div id="courseDetailContent"></div>
       </section>
 
-      <section class="view" id="view-schedule">
-        <div class="sec-head">
-          <div><h2>📅 الجدول الدراسي الأسبوعي</h2><p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p></div>
-          <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
-        </div>
-        <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
-      </section>
-
       <section class="view" id="view-tasks">
         <div class="sec-head">
-          <div><h2>✅ المهام والواجبات</h2><p id="tasksCount"></p></div>
-          <button class="btn btn-primary btn-sm" onclick="openTaskForm()">➕ مهمة جديدة</button>
+          <div><h2>📋 المهام والاختبارات</h2><p id="tasksCount"></p></div>
+          <button class="btn btn-primary btn-sm" onclick="openAddForm()">➕ إضافة جديدة</button>
         </div>
         <div class="filters" id="taskFilters">
           <button class="chip active" data-f="all">الكل</button>
+          <button class="chip" data-f="tasks">📝 مهام</button>
+          <button class="chip" data-f="exams">⏰ اختبارات</button>
           <button class="chip" data-f="today">اليوم</button>
           <button class="chip" data-f="week">هذا الأسبوع</button>
           <button class="chip" data-f="late">متأخرة</button>
-          <button class="chip" data-f="open">غير منجزة</button>
           <button class="chip" data-f="done">منجزة</button>
         </div>
         <div id="tasksList"></div>
       </section>
 
-      <section class="view" id="view-exams">
-        <div class="sec-head">
-          <div><h2>⏰ الاختبارات والكويزات</h2><p id="examsCount"></p></div>
-          <button class="btn btn-primary btn-sm" onclick="openExamForm()">➕ إضافة اختبار</button>
-        </div>
-        <div class="grid g3" id="examsGrid"></div>
-      </section>
-
       <section class="view" id="view-grades">
         <div class="sec-head">
-          <div><h2>🎓 المعدل والدرجات</h2><p>احسب معدلك الفصلي وتابع درجاتك التفصيلية في مكان واحد</p></div>
+          <div>
+            <h2>🎓 المعدل والدرجات</h2>
+            <p>كل مقرراتك في جدول واحد — تفصيلي أو تقدير مباشر</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openAddGradeForm()">➕ مقرر خارجي</button>
         </div>
 
-        <div class="sec-head" style="margin-bottom:12px">
-          <h3 style="font-size:17px">⚡ الحاسبة السريعة</h3>
-          <p style="font-size:12.5px;color:var(--muted)">أدخل التقدير النهائي لكل مقرر مباشرة</p>
-        </div>
-        <div id="gpaContent"></div>
-
-        <div style="height:1px;background:var(--border);margin:32px 0"></div>
-
-        <div class="sec-head" style="margin-bottom:12px">
-          <h3 style="font-size:17px">📚 الدرجات التفصيلية</h3>
-          <p style="font-size:12.5px;color:var(--muted)">أضف مكونات كل مقرر (واجبات، ميدتيرم، نهائي...) بأوزانها</p>
-        </div>
         <div class="stats" id="gpaStats"></div>
+
+        <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:1.9;font-weight:600">
+          💡 <b>كيف يعمل؟</b><br>
+          • <b>مقرراتك المسجّلة</b> تظهر تلقائياً في الجدول — أدخل مكوناتها أو تقديراً مباشراً<br>
+          • <b>المقررات الخارجية</b> (فصول سابقة) أضفها من زر "مقرر خارجي"<br>
+          • <b>المعدل</b> يُحسب تلقائياً من كل المقررات
+        </div>
+
         <div id="gradesList"></div>
       </section>
 
@@ -616,7 +592,7 @@ const TG_BOT = 'MyMuHelperBot';
 const SEMESTER_WEEKS = 16;
 
 /* ============================================================
-   2) الحالة + التحميل + الحفظ
+   2) الحالة
 ============================================================ */
 function defaultState(){
   return {
@@ -650,7 +626,7 @@ function loadState(){
 }
 let state = loadState();
 let taskFilter = 'all';
-let currentCourseId = null; // للمقرر المفتوح حالياً في صفحة التفاصيل
+let currentCourseId = null;
 
 function save(){
   try{
@@ -661,7 +637,7 @@ function save(){
 }
 
 /* ============================================================
-   3) دوال مساعدة عامة
+   3) دوال مساعدة
 ============================================================ */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -680,11 +656,10 @@ function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${Str
 ============================================================ */
 const VIEW_META = {
   dashboard: ['لوحة اليوم','نظرة عامة على يومك الدراسي'],
+  schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
   courses:   ['المقررات','كل مقرراتك في مكان واحد'],
   'course-detail': ['تفاصيل المقرر','نظرة شاملة على المقرر'],
-  schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
-  tasks:     ['المهام والواجبات','تابع كل ما عليك تسليمه'],
-  exams:     ['الاختبارات','مواعيد الكويزات والاختبارات'],
+  tasks:     ['المهام والاختبارات','تابع كل ما عليك تسليمه والاختبارات القادمة'],
   grades:    ['المعدل والدرجات','احسب معدلك وتابع درجاتك التفصيلية'],
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
   wellness:  ['النوم والماء','صحتك أولاً'],
@@ -696,7 +671,6 @@ function go(view){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view)?.classList.add('active');
 
-  // التظليل: عند فتح تفاصيل المقرر نُظلّل "المقررات"
   const hl = (view === 'course-detail') ? 'courses' : view;
   document.querySelectorAll('.nav-btn, .home-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === hl);
@@ -710,7 +684,6 @@ function go(view){
   window.scrollTo({ top:0, behavior:'smooth' });
   if(view !== 'course-detail') location.hash = view;
 
-  // فتح مجموعة القائمة
   document.querySelectorAll('.nav-group').forEach(g => {
     if(g.querySelector(`[data-view="${view}"]`)) g.classList.remove('collapsed');
   });
@@ -720,7 +693,7 @@ function go(view){
       if(view === 'attendance') renderAttendancePage();
       if(view === 'wellness') renderWellness();
       if(view === 'archive') renderArchive();
-      if(view === 'grades'){ renderGrades(); renderGPA(); }
+      if(view === 'grades') renderGrades();
       if(view === 'settings') renderSyncStatus();
       if(view === 'course-detail') renderCourseDetail();
       if(view === 'courses') renderCourses();
@@ -828,7 +801,6 @@ function renderCourseDetail(){
   const total = courseTotal(c);
   const openTasks = tasks.filter(t => !t.done).length;
 
-  // بطاقات إحصائية
   const statsHTML = `
     <div class="cd-stat"><b style="color:${c.color}">${lectures.length}</b><span>📅 محاضرة أسبوعياً</span></div>
     <div class="cd-stat"><b style="color:var(--warn)">${openTasks}</b><span>✅ مهمة متبقية</span></div>
@@ -836,7 +808,6 @@ function renderCourseDetail(){
     <div class="cd-stat"><b style="color:var(--ok)">${total !== null ? total.toFixed(1) + '%' : '—'}</b><span>📊 معدل الدرجات</span></div>
   `;
 
-  // المحاضرات
   let lecturesHTML = '';
   if(!lectures.length){
     lecturesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📅</div><b style="font-size:15px">لا توجد محاضرات</b><p style="font-size:12.5px">أضف محاضرات هذا المقرر من الجدول</p></div>`;
@@ -853,7 +824,6 @@ function renderCourseDetail(){
     `).join('');
   }
 
-  // المهام
   let tasksHTML = '';
   if(!tasks.length){
     tasksHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">✅</div><b style="font-size:15px">لا توجد مهام</b><p style="font-size:12.5px">أضف مهمة جديدة من زر "مهمة"</p></div>`;
@@ -879,10 +849,9 @@ function renderCourseDetail(){
     }).join('');
   }
 
-  // الاختبارات
   let examsHTML = '';
   if(!exams.length){
-    examsHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">⏰</div><b style="font-size:15px">لا توجد اختبارات</b><p style="font-size:12.5px">أضف اختباراً جديداً من زر "اختبار"</p></div>`;
+    examsHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">⏰</div><b style="font-size:15px">لا توجد اختبارات</b><p style="font-size:12.5px">أضف اختباراً جديداً</p></div>`;
   } else {
     examsHTML = exams.map(e => {
       const d = daysUntil(e.date);
@@ -905,7 +874,6 @@ function renderCourseDetail(){
     }).join('');
   }
 
-  // الدرجات التفصيلية
   let gradesHTML = '';
   const g = c.grades || [];
   if(!g.length){
@@ -970,17 +938,10 @@ function renderCourseDetail(){
 
     <div class="cd-section">
       <div class="cd-section-head">
-        <h3>✅ المهام (${tasks.length})</h3>
+        <h3>📋 المهام والاختبارات (${tasks.length + exams.length})</h3>
         <button class="btn btn-ghost btn-sm" onclick="openTaskFormForCourse('${c.id}')">➕ إضافة مهمة</button>
       </div>
       ${tasksHTML}
-    </div>
-
-    <div class="cd-section">
-      <div class="cd-section-head">
-        <h3>⏰ الاختبارات (${exams.length})</h3>
-        <button class="btn btn-ghost btn-sm" onclick="openExamFormForCourse('${c.id}')">➕ إضافة اختبار</button>
-      </div>
       ${examsHTML}
     </div>
 
@@ -994,18 +955,10 @@ function renderCourseDetail(){
   `;
 }
 
-/* دوال مختصرة: تفتح النموذج مع تحديد المقرر مسبقاً */
 function openTaskFormForCourse(cid){
   openTaskForm();
   setTimeout(() => {
     const sel = document.getElementById('tCourse');
-    if(sel){ sel.value = cid; }
-  }, 30);
-}
-function openExamFormForCourse(cid){
-  openExamForm();
-  setTimeout(() => {
-    const sel = document.getElementById('eCourse');
     if(sel){ sel.value = cid; }
   }, 30);
 }
@@ -1056,7 +1009,31 @@ function deleteClass(id){
 }
 
 /* ============================================================
-   10) المهام
+   10) نموذج اختيار نوع الإضافة (مهمة أو اختبار)
+============================================================ */
+function openAddForm(){
+  openModal('➕ إضافة جديدة', `
+    <div class="add-type-grid">
+      <button class="add-type-btn" onclick="closeModal();openTaskForm()">
+        <div class="at-ico" style="background:var(--warn-bg);color:var(--warn)">📝</div>
+        <div class="at-main">
+          <b>مهمة / واجب</b>
+          <span>واجبات، مشاريع، تقارير، بحوث</span>
+        </div>
+      </button>
+      <button class="add-type-btn" onclick="closeModal();openExamForm()">
+        <div class="at-ico" style="background:var(--danger-bg);color:var(--danger)">⏰</div>
+        <div class="at-main">
+          <b>اختبار / كويز</b>
+          <span>ميدتيرم، فاينل، كويز، اختبار عملي</span>
+        </div>
+      </button>
+    </div>
+  `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إلغاء</button>`);
+}
+
+/* ============================================================
+   11) المهام
 ============================================================ */
 function openTaskForm(id){
   const t = id ? state.tasks.find(x => x.id === id) : null;
@@ -1096,7 +1073,7 @@ function deleteTask(id){ state.tasks = state.tasks.filter(t => t.id !== id); sav
 function toggleTask(id){ const t = state.tasks.find(x => x.id === id); if(t){ t.done = !t.done; save(); renderAll(); } }
 
 /* ============================================================
-   11) الاختبارات
+   12) الاختبارات
 ============================================================ */
 function openExamForm(id){
   const e = id ? state.exams.find(x => x.id === id) : null;
@@ -1133,17 +1110,16 @@ function saveExam(id){
 function deleteExam(id){ state.exams = state.exams.filter(e => e.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
 /* ============================================================
-   12) رندرة اللوحة
+   13) رندرة اللوحة
 ============================================================ */
 function renderDashboard(){
-  const today = todayISO();
   const openTasks = state.tasks.filter(t => !t.done);
   const late = openTasks.filter(t => daysUntil(t.due) < 0);
   const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0);
   const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
   const statsHTML = [
     { ico:'📚', bg:'var(--p-light)', val:state.courses.length, lbl:'مقرر مسجّل' },
-    { ico:'✅', bg:'var(--warn-bg)', val:openTasks.length, lbl:'مهمة متبقية' },
+    { ico:'📋', bg:'var(--warn-bg)', val:openTasks.length + upcomingExams.length, lbl:'متبقي' },
     { ico:'⏰', bg:'var(--danger-bg)', val:upcomingExams.length, lbl:'اختبار قادم' },
     { ico:'🍅', bg:'var(--ok-bg)', val:Math.round(totalMin/60) + 'h', lbl:'ساعات المذاكرة' }
   ].map(s => `<div class="stat"><div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><b>${s.val}</b><span>${s.lbl}</span></div></div>`).join('');
@@ -1157,7 +1133,7 @@ function renderDashboard(){
   document.getElementById('dashLeft').textContent = total - done;
   document.getElementById('dashLate').textContent = late.length;
   const items = [
-    ...openTasks.map(t => ({ kind:'مهمة', ico:'✅', title:t.title, date:t.due, courseId:t.courseId })),
+    ...openTasks.map(t => ({ kind:'مهمة', ico:'📝', title:t.title, date:t.due, courseId:t.courseId })),
     ...upcomingExams.map(e => ({ kind:'اختبار', ico:'⏰', title:e.title, date:e.date, courseId:e.courseId }))
   ].sort((a,b) => a.date.localeCompare(b.date)).slice(0,6);
   const upEl = document.getElementById('dashUpcoming');
@@ -1192,7 +1168,7 @@ function renderDashboard(){
 }
 
 /* ============================================================
-   13) رندرة الجدول
+   14) رندرة الجدول
 ============================================================ */
 function classDateThisWeek(dayIdx){
   const d = new Date();
@@ -1295,7 +1271,7 @@ function clearAtt(classId, date){
 })();
 
 /* ============================================================
-   14) رندرة المقررات (البطاقات قابلة للنقر)
+   15) رندرة المقررات
 ============================================================ */
 function renderCourses(){
   const grid = document.getElementById('coursesGrid');
@@ -1331,92 +1307,121 @@ function renderCourses(){
 }
 
 /* ============================================================
-   15) رندرة المهام
+   16) رندرة المهام والاختبارات (موحّدة)
 ============================================================ */
 function renderTasks(){
   const list = document.getElementById('tasksList');
-  const open = state.tasks.filter(t => !t.done);
-  document.getElementById('tasksCount').textContent = `${state.tasks.length} مهمة · ${open.length} متبقية`;
-  const lateCount = open.filter(t => daysUntil(t.due) < 0).length;
-  const badge = document.getElementById('badgeTasks');
-  if(badge){
-    if(open.length){ badge.style.display = ''; badge.textContent = lateCount || open.length; }
-    else badge.style.display = 'none';
-  }
-  let arr = state.tasks.slice();
+  const openTasksCount = state.tasks.filter(t => !t.done).length;
+  const upcomingExamsCount = state.exams.filter(e => daysUntil(e.date) >= 0).length;
+  document.getElementById('tasksCount').textContent = `${state.tasks.length} مهمة · ${state.exams.length} اختبار · ${openTasksCount + upcomingExamsCount} متبقي`;
+
+  // بناء قائمة موحّدة
+  let items = [];
+  state.tasks.forEach(t => {
+    items.push({
+      kind:'task', date:t.due, done:!!t.done,
+      data:t
+    });
+  });
+  state.exams.forEach(e => {
+    const past = daysUntil(e.date) < 0;
+    items.push({
+      kind:'exam', date:e.date, done:past,
+      data:e
+    });
+  });
+
+  // الفلترة
   const td = todayISO();
-  if(taskFilter === 'today') arr = arr.filter(t => t.due === td);
-  else if(taskFilter === 'week') arr = arr.filter(t => { const d = daysUntil(t.due); return d >= 0 && d <= 7; });
-  else if(taskFilter === 'late') arr = arr.filter(t => !t.done && daysUntil(t.due) < 0);
-  else if(taskFilter === 'open') arr = arr.filter(t => !t.done);
-  else if(taskFilter === 'done') arr = arr.filter(t => t.done);
-  arr.sort((a,b) => { if(a.done !== b.done) return a.done ? 1 : -1; return a.due.localeCompare(b.due); });
-  if(!arr.length){
-    list.innerHTML = `<div class="empty"><div class="e-ico">✅</div><b>لا توجد مهام هنا</b><p>أضف مهمة جديدة أو غيّر الفلتر</p><button class="btn btn-primary" onclick="openTaskForm()">➕ مهمة جديدة</button></div>`;
+  if(taskFilter === 'tasks') items = items.filter(x => x.kind === 'task');
+  else if(taskFilter === 'exams') items = items.filter(x => x.kind === 'exam');
+  else if(taskFilter === 'today') items = items.filter(x => x.date === td);
+  else if(taskFilter === 'week') items = items.filter(x => { const d = daysUntil(x.date); return d >= 0 && d <= 7; });
+  else if(taskFilter === 'late') items = items.filter(x => x.kind === 'task' && !x.data.done && daysUntil(x.date) < 0);
+  else if(taskFilter === 'open') items = items.filter(x => !x.done);
+  else if(taskFilter === 'done') items = items.filter(x => x.done);
+
+  // الترتيب: المتبقي حسب التاريخ، المنجز في الأسفل
+  items.sort((a,b) => {
+    if(a.done !== b.done) return a.done ? 1 : -1;
+    return a.date.localeCompare(b.date);
+  });
+
+  if(!items.length){
+    list.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا يوجد شيء هنا</b><p>أضف مهمة أو اختبار جديد، أو غيّر الفلتر</p><button class="btn btn-primary" onclick="openAddForm()">➕ إضافة جديدة</button></div>`;
     return;
   }
+
   const prioMap = {
     high: { t:'🔴 عالية', bg:'var(--danger-bg)', c:'var(--danger)' },
     med:  { t:'🟡 متوسطة', bg:'var(--warn-bg)', c:'var(--warn)' },
     low:  { t:'🟢 منخفضة', bg:'var(--ok-bg)', c:'var(--ok)' }
   };
-  list.innerHTML = arr.map(t => {
-    const d = daysUntil(t.due);
-    let dueTxt, dueBg;
-    if(t.done){ dueTxt = 'منجزة'; dueBg = 'var(--ok-bg)'; }
-    else if(d < 0){ dueTxt = `متأخر ${Math.abs(d)} يوم`; dueBg = 'var(--danger-bg)'; }
-    else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; }
-    else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; }
-    else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; }
-    const p = prioMap[t.priority] || prioMap.med;
-    return `<div class="task ${t.done?'done':''}"><div class="chk" onclick="toggleTask('${t.id}')">✓</div>
-      <div class="task-main"><div class="task-title">${esc(t.title)}</div>
+
+  list.innerHTML = items.map(it => {
+    if(it.kind === 'task') return renderTaskItem(it.data, prioMap);
+    return renderExamItem(it.data);
+  }).join('');
+}
+
+function renderTaskItem(t, prioMap){
+  const d = daysUntil(t.due);
+  let dueTxt, dueBg;
+  if(t.done){ dueTxt = 'منجزة'; dueBg = 'var(--ok-bg)'; }
+  else if(d < 0){ dueTxt = `متأخر ${Math.abs(d)} يوم`; dueBg = 'var(--danger-bg)'; }
+  else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; }
+  else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; }
+  else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; }
+  const p = prioMap[t.priority] || prioMap.med;
+  return `<div class="task ${t.done?'done':''}">
+    <div class="chk" onclick="toggleTask('${t.id}')">✓</div>
+    <div class="task-main">
+      <div class="task-title">📝 ${esc(t.title)}</div>
       <div class="task-sub">
         <span class="tag" style="background:${courseColor(t.courseId)}22;color:${courseColor(t.courseId)}">${esc(courseName(t.courseId))}</span>
         <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(t.type)}</span>
         <span class="tag" style="background:${p.bg};color:${p.c}">${p.t}</span>
         <span class="tag" style="background:${dueBg}">📅 ${fmtDate(t.due)}</span>
-      </div>${t.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(t.notes)}</div>` : ''}</div>
-      <div class="task-actions"><button class="mini-btn" onclick="openTaskForm('${t.id}')">✏️</button><button class="mini-btn del" onclick="deleteTask('${t.id}')">🗑️</button></div></div>`;
-  }).join('');
+      </div>
+      ${t.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(t.notes)}</div>` : ''}
+    </div>
+    <div class="task-actions">
+      <button class="mini-btn" onclick="openTaskForm('${t.id}')">✏️</button>
+      <button class="mini-btn del" onclick="deleteTask('${t.id}')">🗑️</button>
+    </div>
+  </div>`;
+}
+
+function renderExamItem(e){
+  const d = daysUntil(e.date);
+  let dueTxt, dueBg;
+  if(d < 0){ dueTxt = 'انتهى'; dueBg = 'var(--hover)'; }
+  else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; }
+  else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--danger-bg)'; }
+  else if(d <= 7){ dueTxt = `بعد ${d} يوم`; dueBg = 'var(--warn-bg)'; }
+  else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--ok-bg)'; }
+  return `<div class="exam-item ${d < 0 ? 'past' : ''}">
+    <div class="ex-ico">⏰</div>
+    <div class="ex-main">
+      <div class="ex-title">${esc(e.title)}</div>
+      <div class="ex-sub">
+        <span class="tag" style="background:${courseColor(e.courseId)}22;color:${courseColor(e.courseId)}">${esc(courseName(e.courseId))}</span>
+        <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(e.type)}</span>
+        <span class="tag" style="background:${dueBg}">📅 ${fmtDate(e.date)}</span>
+        ${e.time ? `<span class="tag" style="background:var(--hover);color:var(--muted)">🕐 ${esc(e.time)}</span>` : ''}
+        ${e.place ? `<span class="tag" style="background:var(--hover);color:var(--muted)">📍 ${esc(e.place)}</span>` : ''}
+      </div>
+      ${e.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(e.notes)}</div>` : ''}
+    </div>
+    <div class="task-actions">
+      <button class="mini-btn" onclick="openExamForm('${e.id}')">✏️</button>
+      <button class="mini-btn del" onclick="deleteExam('${e.id}')">🗑️</button>
+    </div>
+  </div>`;
 }
 
 /* ============================================================
-   16) رندرة الاختبارات
-============================================================ */
-function renderExams(){
-  const grid = document.getElementById('examsGrid');
-  const upcoming = state.exams.filter(e => daysUntil(e.date) >= 0);
-  document.getElementById('examsCount').textContent = `${state.exams.length} اختبار · ${upcoming.length} قادم`;
-  const badge = document.getElementById('badgeExams');
-  const soon = upcoming.filter(e => daysUntil(e.date) <= 7).length;
-  if(badge){
-    if(soon){ badge.style.display = ''; badge.textContent = soon; }
-    else badge.style.display = 'none';
-  }
-  if(!state.exams.length){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">⏰</div><b>لا توجد اختبارات</b><p>أضف مواعيد الكويزات والاختبارات</p><button class="btn btn-primary" onclick="openExamForm()">➕ إضافة اختبار</button></div>`;
-    return;
-  }
-  const sorted = state.exams.slice().sort((a,b) => a.date.localeCompare(b.date));
-  grid.innerHTML = sorted.map(e => {
-    const d = daysUntil(e.date);
-    let num, lbl, bg, col;
-    if(d < 0){ num = '✓'; lbl = 'انتهى'; bg = 'var(--hover)'; col = 'var(--muted)'; }
-    else if(d === 0){ num = 'اليوم'; lbl = ''; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
-    else if(d === 1){ num = '1'; lbl = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
-    else if(d <= 7){ num = d; lbl = 'يوم'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
-    else { num = d; lbl = 'يوم'; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
-    return `<div class="exam"><div class="exam-top"><h3>${esc(e.title)}</h3>
-      <div class="countdown" style="background:${bg};color:${col}"><b style="font-size:${d===0?'15px':'23px'}">${num}</b>${lbl ? `<span>${lbl}</span>` : ''}</div></div>
-      <div class="exam-detail"><span>📚 ${esc(courseName(e.courseId))}</span><span>🏷️ ${esc(e.type)}</span><span>📅 ${fmtDate(e.date)}</span>${e.time ? `<span>🕐 ${e.time}</span>` : ''}${e.place ? `<span>📍 ${esc(e.place)}</span>` : ''}</div>
-      ${e.notes ? `<div style="font-size:13px;color:var(--muted);background:var(--hover);padding:10px 12px;border-radius:10px;margin-bottom:12px">${esc(e.notes)}</div>` : ''}
-      <div class="exam-actions"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="openExamForm('${e.id}')">✏️ تعديل</button><button class="btn btn-danger btn-sm" onclick="deleteExam('${e.id}')">🗑️</button></div></div>`;
-  }).join('');
-}
-
-/* ============================================================
-   17) الدرجات والمعدل
+   17) الدرجات والمعدل (موحّد)
 ============================================================ */
 function scoreToPoints(p){
   if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
@@ -1437,102 +1442,248 @@ function courseTotal(c){
   if(!totalW) return null;
   return g.reduce((a,x) => a + (+x.score||0) * (+x.weight||0), 0) / totalW;
 }
+function letterToPoints(letter){ return GRADE_POINTS[letter] || 0; }
+
+function getCourseGrade(c){
+  const detailed = courseTotal(c);
+  if(detailed !== null){
+    return { type:'detailed', score: detailed, letter: scoreToLetter(detailed) };
+  }
+  if(c.manualLetter){
+    return { type:'letter', score: null, letter: c.manualLetter };
+  }
+  return null;
+}
 
 function renderGrades(){
   const statsEl = document.getElementById('gpaStats');
   const listEl = document.getElementById('gradesList');
   if(!statsEl || !listEl) return;
-  const graded = state.courses.filter(c => courseTotal(c) !== null);
-  let gpa = null, totalCredits = 0;
-  if(graded.length){
-    let pts = 0, cr = 0;
-    graded.forEach(c => {
-      const t = courseTotal(c);
-      const credit = +c.credits || 0;
-      if(credit > 0){ pts += scoreToPoints(t) * credit; cr += credit; }
+
+  const allRows = [];
+  state.courses.forEach(c => {
+    const g = getCourseGrade(c);
+    allRows.push({
+      source: 'course',
+      id: c.id,
+      name: c.name,
+      code: c.code,
+      credits: +c.credits || 0,
+      color: c.color,
+      teacher: c.teacher,
+      type: g ? g.type : 'empty',
+      score: g ? g.score : null,
+      letter: g ? g.letter : null,
+      grades: c.grades || []
     });
-    if(cr > 0){ gpa = pts / cr; totalCredits = cr; }
-  }
+  });
+
+  state.gpaCourses.forEach((gc, idx) => {
+    allRows.push({
+      source: 'external',
+      idx,
+      name: gc.name,
+      code: '',
+      credits: +gc.credits || 0,
+      color: '#64748b',
+      teacher: '',
+      type: 'letter',
+      score: null,
+      letter: gc.grade,
+      grades: []
+    });
+  });
+
+  let pts = 0, cr = 0;
+  allRows.forEach(r => {
+    if(!r.letter) return;
+    const points = letterToPoints(r.letter);
+    const credit = r.credits || 0;
+    if(credit > 0){ pts += points * credit; cr += credit; }
+  });
+  const gpa = cr ? (pts / cr) : 0;
+  const gradedCount = allRows.filter(r => r.letter).length;
+
   statsEl.innerHTML = `
-    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${gpa !== null ? gpa.toFixed(2) : '—'}</b><span>المعدل التقديري (من 5)</span></div></div>
-    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${totalCredits}</b><span>ساعة محسوبة</span></div></div>
-    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${graded.length}/${state.courses.length}</b><span>مقررات مُقيّمة</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${gpa.toFixed(2)}</b><span>المعدل التقديري (من 5)</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${cr}</b><span>ساعة محسوبة</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${gradedCount}/${allRows.length}</b><span>مقررات مُقيّمة</span></div></div>
   `;
-  if(!state.courses.length){
-    listEl.innerHTML = `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً ثم أدخل درجاتك</p><button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button></div>`;
+
+  if(!allRows.length){
+    listEl.innerHTML = `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراً من قسم "المقررات" — أو مقرراً خارجياً</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button><button class="btn btn-ghost" onclick="openAddGradeForm()">➕ مقرر خارجي</button></div></div>`;
     return;
   }
-  listEl.innerHTML = state.courses.map(c => {
-    const g = c.grades || [];
-    const total = courseTotal(c);
-    const totalW = g.reduce((a,x) => a + (+x.weight||0), 0);
-    const rows = g.map((x,i) => `<div class="comp-row">
-      <input value="${esc(x.name)}" onchange="updateComp('${c.id}',${i},'name',this.value)" placeholder="اسم المكوّن">
-      <input type="number" value="${x.weight}" min="0" max="100" onchange="updateComp('${c.id}',${i},'weight',this.value)" placeholder="الوزن">
-      <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${c.id}',${i},'score',this.value)" placeholder="الدرجة">
-      <button class="mini-btn del" onclick="removeComp('${c.id}',${i})">✕</button></div>`).join('');
-    return `<div class="grade-course">
-      <div class="gc-head"><div><h3 style="color:${c.color}">${esc(c.name)}</h3>
-        <span style="font-size:12.5px;color:var(--muted);font-weight:700">${c.credits||0} ساعات · مجموع الأوزان ${totalW}%</span></div>
-        <div style="text-align:center"><div class="gc-score">${total !== null ? total.toFixed(1) + '%' : '—'}</div><div style="font-size:12.5px;font-weight:800;color:var(--muted)">${total !== null ? scoreToLetter(total) : ''}</div></div></div>
-      ${g.length ? `<div class="comp-row comp-hd"><div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div></div>` : ''}
-      ${rows}
-      <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button><button class="btn btn-ghost btn-sm" onclick="openCourseDetail('${c.id}')">📖 فتح المقرر</button></div>
-    </div>`;
-  }).join('');
-}
-function addComp(cid){ const c = getCourse(cid); c.grades = c.grades || []; c.grades.push({ name:'', weight:10, score:0 }); save(); renderGrades(); }
-function removeComp(cid, i){ const c = getCourse(cid); c.grades.splice(i,1); save(); renderGrades(); }
-function updateComp(cid, i, field, val){ const c = getCourse(cid); if(!c.grades[i]) return; c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0); save(); renderGrades(); }
 
-/* ====== حاسبة المعدل السريعة (gpaCourses) ====== */
-function renderGPA(){
-  const el = document.getElementById('gpaContent');
-  if(!el) return;
-  let tp = 0, tc = 0;
-  state.gpaCourses.forEach(c => {
-    const cr = +c.credits || 0, pt = GRADE_POINTS[c.grade] || 0;
-    if(cr > 0){ tp += pt * cr; tc += cr; }
-  });
-  const gpa = tc ? (tp / tc) : 0;
-  el.innerHTML = `
-    <div class="stats" style="margin-bottom:16px">
-      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div><div><b>${gpa.toFixed(2)}</b><span>المعدل السريع</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${tc}</b><span>ساعة معتمدة</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📚</div><div><b>${state.gpaCourses.length}</b><span>مقرر مُدخل</span></div></div>
-    </div>
-    <div class="card" style="margin-bottom:16px;padding:16px">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="gpaName" placeholder="اسم المقرر" style="flex:2;min-width:140px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <input id="gpaCredits" type="number" placeholder="ساعات" min="1" max="10" value="3" style="width:80px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <select id="gpaGrade" style="padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}</select>
-        <button class="btn btn-primary btn-sm" onclick="addGpaCourse()">➕ إضافة</button>
+  listEl.innerHTML = allRows.map((r, i) => buildGradeRow(r, i)).join('');
+}
+
+function buildGradeRow(r, i){
+  const isExternal = r.source === 'external';
+  const rowId = `grade-row-${r.source}-${i}`;
+  let statusBadge = '';
+  let actions = '';
+
+  if(r.type === 'detailed'){
+    const letter = r.letter;
+    const pColor = letter.startsWith('A') ? 'var(--ok)' : letter.startsWith('B') ? 'var(--p)' : letter.startsWith('C') ? 'var(--warn)' : 'var(--danger)';
+    statusBadge = `<span style="background:${pColor}22;color:${pColor};padding:6px 12px;border-radius:20px;font-weight:800;font-size:13px">${r.score.toFixed(1)}% · ${letter}</span>`;
+    actions = `<button class="btn btn-ghost btn-sm" onclick="toggleGradeExpand('${rowId}')">📝 تعديل المكونات</button>`;
+  } else if(r.type === 'letter'){
+    statusBadge = `
+      <select onchange="updateLetterGrade('${r.source}', ${isExternal ? r.idx : i}, this.value)" style="padding:6px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-weight:800;font-size:14px;color:var(--p);cursor:pointer">
+        ${GRADE_OPTIONS.map(g => `<option ${g === r.letter ? 'selected':''}>${g}</option>`).join('')}
+      </select>
+    `;
+    actions = isExternal
+      ? `<button class="mini-btn del" onclick="removeExternalGrade(${r.idx})">✕</button>`
+      : `<button class="btn btn-ghost btn-sm" onclick="addComponentsToCourse('${r.id}')">📝 تفصيلي</button>`;
+  } else {
+    statusBadge = `<span style="font-size:12.5px;color:var(--muted);font-weight:700">لم تُدخل درجة</span>`;
+    actions = `
+      <select onchange="updateLetterGrade('${r.source}', ${i}, this.value)" style="padding:6px 10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-weight:700;font-size:13px;cursor:pointer">
+        <option value="">— تقدير —</option>
+        ${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="addComponentsToCourse('${r.id}')">📝 تفصيلي</button>
+    `;
+  }
+
+  let detailsHTML = '';
+  if(r.type === 'detailed' && r.grades.length){
+    const totalW = r.grades.reduce((a, x) => a + (+x.weight || 0), 0);
+    detailsHTML = `
+      <div id="${rowId}" style="display:none;padding:16px;border-top:1px solid var(--border);background:var(--hover)">
+        <div class="comp-row comp-hd"><div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div></div>
+        ${r.grades.map((x, j) => `<div class="comp-row">
+          <input value="${esc(x.name)}" onchange="updateComp('${r.id}',${j},'name',this.value)" placeholder="اسم المكوّن">
+          <input type="number" value="${x.weight}" min="0" max="100" onchange="updateComp('${r.id}',${j},'weight',this.value)" placeholder="الوزن">
+          <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${r.id}',${j},'score',this.value)" placeholder="الدرجة">
+          <button class="mini-btn del" onclick="removeComp('${r.id}',${j})">✕</button>
+        </div>`).join('')}
+        <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-ghost btn-sm" onclick="addComp('${r.id}')">➕ إضافة مكوّن</button>
+          <span style="font-size:12.5px;color:var(--muted);font-weight:700">مجموع الأوزان: ${totalW}%</span>
+          ${totalW !== 100 ? `<span style="font-size:12px;color:var(--warn);font-weight:700">⚠️ المجموع مو 100%</span>` : '<span style="font-size:12px;color:var(--ok);font-weight:700">✓</span>'}
+        </div>
       </div>
+    `;
+  }
+
+  return `
+    <div class="card" style="padding:0;margin-bottom:12px;border-right:4px solid ${r.color};overflow:hidden">
+      <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:180px">
+          <h3 style="font-size:16px;color:${r.color};margin-bottom:2px">${esc(r.name)}${isExternal ? ' <span style="font-size:10.5px;background:var(--muted);color:#fff;padding:2px 8px;border-radius:20px;font-weight:700">خارجي</span>' : ''}</h3>
+          <span style="font-size:12.5px;color:var(--muted);font-weight:600">${r.code ? esc(r.code) + ' · ' : ''}${r.credits} ساعات${r.teacher ? ' · ' + esc(r.teacher) : ''}</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          ${statusBadge}
+          ${actions}
+        </div>
+      </div>
+      ${detailsHTML}
     </div>
-    ${state.gpaCourses.length ? `
-      <div class="table-wrap"><table>
-        <thead><tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr></thead>
-        <tbody>${state.gpaCourses.map((c, i) => `<tr>
-          <td><b>${esc(c.name)}</b></td><td>${c.credits}</td>
-          <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
-          <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
-          <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td></tr>`).join('')}</tbody>
-      </table></div>
-      <div style="text-align:center;margin-top:14px"><button class="btn btn-ghost btn-sm" onclick="clearGPA()">🗑️ حذف الكل</button></div>
-    ` : `<div class="empty" style="padding:30px 20px"><div class="e-ico">⚡</div><b>لا توجد مدخلات</b><p>أضف مقرراً بسرعة مع تقديره النهائي</p></div>`}
   `;
 }
-function addGpaCourse(){
-  const name = document.getElementById('gpaName').value.trim();
-  const credits = +document.getElementById('gpaCredits').value || 0;
-  const grade = document.getElementById('gpaGrade').value;
+
+function toggleGradeExpand(rowId){
+  const el = document.getElementById(rowId);
+  if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function updateLetterGrade(source, idx, letter){
+  if(!letter) return;
+  if(source === 'course'){
+    const c = state.courses[idx];
+    if(!c) return;
+    if(!c.grades || !c.grades.length){
+      c.manualLetter = letter;
+      save(); renderGrades(); toast('✅ تم الحفظ');
+    }
+  } else {
+    const gc = state.gpaCourses[idx];
+    if(!gc) return;
+    gc.grade = letter;
+    save(); renderGrades(); toast('✅ تم الحفظ');
+  }
+}
+
+function addComponentsToCourse(courseId){
+  const c = getCourse(courseId);
+  if(!c) return;
+  if(!c.grades) c.grades = [];
+  if(!c.grades.length){
+    c.grades.push({ name:'واجبات', weight:20, score:0 });
+    c.grades.push({ name:'ميدتيرم', weight:30, score:0 });
+    c.grades.push({ name:'نهائي', weight:50, score:0 });
+    delete c.manualLetter;
+    save(); renderGrades();
+    setTimeout(() => {
+      state.courses.forEach((cc, i) => {
+        if(cc.id === courseId){
+          const el = document.getElementById(`grade-row-course-${i}`);
+          if(el) el.style.display = 'block';
+        }
+      });
+    }, 50);
+    toast('📝 أضفت مكونات جاهزة — عدّلها');
+  }
+}
+
+function removeExternalGrade(i){
+  if(!confirm('حذف هذا المقرر من الحساب؟')) return;
+  state.gpaCourses.splice(i, 1);
+  save(); renderGrades(); toast('🗑️ تم');
+}
+
+function addComp(cid){
+  const c = getCourse(cid);
+  if(!c) return;
+  c.grades = c.grades || [];
+  c.grades.push({ name:'', weight:10, score:0 });
+  save(); renderGrades();
+}
+function removeComp(cid, i){
+  const c = getCourse(cid);
+  if(!c.grades) return;
+  c.grades.splice(i, 1);
+  if(!c.grades.length) delete c.grades;
+  save(); renderGrades();
+}
+function updateComp(cid, i, field, val){
+  const c = getCourse(cid);
+  if(!c.grades || !c.grades[i]) return;
+  c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
+  save(); renderGrades();
+}
+
+function openAddGradeForm(){
+  openModal('➕ إضافة مقرر خارجي', `
+    <div class="form-grid">
+      <div class="field full"><label>اسم المقرر <span class="req">*</span></label>
+        <input id="agName" placeholder="مثال: رياضيات الفصل السابق"></div>
+      <div class="field"><label>الساعات <span class="req">*</span></label>
+        <input id="agCredits" type="number" min="1" max="10" value="3"></div>
+      <div class="field"><label>التقدير <span class="req">*</span></label>
+        <select id="agGrade">${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}</select></div>
+    </div>
+    <div style="background:var(--p-light);padding:12px 14px;border-radius:12px;font-size:12.5px;line-height:1.8;margin-top:14px;font-weight:600">
+      💡 استخدم هذا لـ <b>المقررات الخارجية</b> فقط (فصول سابقة، مقررات مُعادلة).<br>
+      أما مقرراتك المسجّلة → تجدها تلقائياً في الجدول.
+    </div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExternalGrade()">💾 حفظ</button>`);
+}
+
+function saveExternalGrade(){
+  const name = document.getElementById('agName').value.trim();
+  const credits = +document.getElementById('agCredits').value || 0;
+  const grade = document.getElementById('agGrade').value;
   if(!name){ toast('⚠️ اكتب اسم المقرر'); return; }
   if(credits <= 0){ toast('⚠️ عدد ساعات غير صحيح'); return; }
   state.gpaCourses.push({ name, credits, grade });
-  save(); renderGPA(); toast('✅ تمت الإضافة');
+  save(); closeModal(); renderGrades(); toast('✅ تمت الإضافة');
 }
-function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); }
-function clearGPA(){ if(!confirm('حذف كل المقررات من الحاسبة السريعة؟')) return; state.gpaCourses = []; save(); renderGPA(); }
 
 /* ============================================================
    18) بومودورو
@@ -1719,20 +1870,18 @@ function renderSyncStatus(){
 }
 
 /* ============================================================
-   22) الإضافة السريعة
+   22) الإضافة السريعة (FAB)
 ============================================================ */
 function quickAdd(){
   openModal('إضافة سريعة', `
     <div style="display:grid;gap:10px">
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openTaskForm()">✅ مهمة / واجب جديد</button>
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openTaskForm()">📝 مهمة / واجب جديد</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExamForm()">⏰ اختبار / كويز جديد</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openClassForm()">📅 محاضرة في الجدول</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openCourseForm()">📚 مقرر جديد</button>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
-const _quickAddBtn = document.getElementById('quickAddBtn');
-if(_quickAddBtn) _quickAddBtn.addEventListener('click', quickAdd);
 document.getElementById('fab').addEventListener('click', quickAdd);
 
 /* ============================================================
@@ -1761,7 +1910,7 @@ document.getElementById('taskFilters').addEventListener('click', e => {
 ============================================================ */
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
-  renderExams(); renderGrades(); renderGPA(); renderStudy(); pomoRender();
+  renderGrades(); renderStudy(); pomoRender();
   if(currentCourseId) renderCourseDetail();
 }
 
@@ -2295,8 +2444,7 @@ function renderArchive(){
             </div></div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:700">
             <span>📚 ${a.data.courses?.length || 0} مقرر</span>
-            <span>✅ ${a.data.tasks?.length || 0} مهمة</span>
-            <span>⏰ ${a.data.exams?.length || 0} اختبار</span>
+            <span>📋 ${(a.data.tasks?.length || 0) + (a.data.exams?.length || 0)} مهمة واختبار</span>
           </div></div>`).join('')}
       </div>
     ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي</p></div>`}
@@ -2323,7 +2471,7 @@ function viewArchive(i){
     <div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:14px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13.5px;font-weight:700">
         <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div><div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
-        <div>✅ <b>${d.tasks?.length || 0}</b> مهمة</div><div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
+        <div>📝 <b>${d.tasks?.length || 0}</b> مهمة</div><div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
       </div>
     </div>
   `, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>`);
@@ -2346,7 +2494,7 @@ function deleteArchive(i){
 }
 
 /* ============================================================
-   30) إضافة الصفحات الديناميكية (الحضور، الصحة، الأرشيف)
+   30) إضافة الصفحات الديناميكية
 ============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
@@ -2367,7 +2515,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   31) بناء القائمة الجانبية بالترتيب الجديد
+   31) بناء القائمة الجانبية (الترتيب الجديد)
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -2382,13 +2530,12 @@ function deleteArchive(i){
     b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
     return b;
   };
-  // 🔄 الترتيب الجديد
+  // 🔄 الترتيب الجديد: الجدول → المقررات → المهام والاختبارات
   const groups = [
     { title:'📚 الدراسة', items:[
-      ['courses','📚','المقررات'],
       ['schedule','📅','الجدول الدراسي'],
-      ['tasks','✅','المهام والواجبات'],
-      ['exams','⏰','الاختبارات']
+      ['courses','📚','المقررات'],
+      ['tasks','📋','المهام والاختبارات']
     ]},
     { title:'📊 الأداء الأكاديمي', items:[
       ['grades','🎓','المعدل والدرجات'],
@@ -2422,7 +2569,7 @@ function deleteArchive(i){
             if(v === 'attendance') renderAttendancePage();
             if(v === 'wellness') renderWellness();
             if(v === 'archive') renderArchive();
-            if(v === 'grades'){ renderGrades(); renderGPA(); }
+            if(v === 'grades') renderGrades();
           }catch(e){}
         }, 60);
       });

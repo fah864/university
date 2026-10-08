@@ -50,7 +50,6 @@ ul{list-style:none}
 .brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
 .nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
 
-/* 🏠 زر الرئيسية المميز */
 .home-btn{
   display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;
   font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;
@@ -128,8 +127,14 @@ ul{list-style:none}
 .empty .e-ico{font-size:52px;margin-bottom:14px;opacity:.5}
 .empty b{display:block;font-size:17px;color:var(--text);margin-bottom:6px;font-family:'Tajawal'}
 .empty p{font-size:14px;margin-bottom:18px}
-.course-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);transition:var(--t);position:relative}
-.course-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.course-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);transition:var(--t);position:relative;cursor:pointer}
+.course-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--p)}
+.course-card::after{
+  content:'👁️ اضغط للتفاصيل';position:absolute;top:14px;left:14px;
+  font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:20px;
+  background:var(--p-light);color:var(--p-dark);opacity:0;transition:opacity var(--t);
+}
+.course-card:hover::after{opacity:1}
 .course-bar{height:6px}
 .course-body{padding:18px}
 .course-body h3{font-size:17px;margin-bottom:4px}
@@ -295,6 +300,49 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .table-wrap td{padding:12px 14px;border-top:1px solid var(--border);font-weight:600}
 .table-wrap tbody tr{transition:background var(--t)}
 .table-wrap tbody tr:hover{background:var(--hover)}
+
+/* ===== تفاصيل المقرر ===== */
+.cd-header{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px;box-shadow:var(--shadow);margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.cd-header::before{content:'';position:absolute;top:0;right:0;left:0;height:6px;background:var(--cd-color,var(--p))}
+.cd-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-top:8px}
+.cd-title h2{font-size:24px;margin-bottom:6px;color:var(--cd-color,var(--text))}
+.cd-title .cd-meta{font-size:13px;color:var(--muted);font-weight:700}
+.cd-actions{display:flex;gap:8px;flex-wrap:wrap}
+.cd-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:18px}
+.cd-stat{background:var(--hover);padding:12px;border-radius:12px;text-align:center}
+.cd-stat b{display:block;font-family:'Tajawal';font-size:22px;font-weight:800;line-height:1;margin-bottom:4px}
+.cd-stat span{font-size:11.5px;color:var(--muted);font-weight:700}
+.cd-section{margin-bottom:22px}
+.cd-section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.cd-section-head h3{font-size:17px}
+.cd-item{
+  display:flex;align-items:center;gap:12px;padding:13px 15px;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  margin-bottom:8px;transition:var(--t);
+}
+.cd-item:hover{border-color:var(--p);transform:translateX(-4px)}
+.cd-item .ci-ico{font-size:18px;flex-shrink:0}
+.cd-item .ci-main{flex:1;min-width:0}
+.cd-item .ci-main b{display:block;font-size:14.5px;font-weight:700;margin-bottom:3px}
+.cd-item .ci-main span{font-size:12.5px;color:var(--muted);font-weight:600}
+.cd-item .ci-side{font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;
+  background:var(--hover);color:var(--text);font-weight:700;font-size:14px;
+  transition:var(--t);margin-bottom:16px;
+}
+.back-btn:hover{background:var(--p);color:#fff;transform:translateX(4px)}
+.grade-summary-box{
+  background:linear-gradient(135deg,var(--cd-color,var(--p)),color-mix(in srgb,var(--cd-color,var(--p)) 70%,#0f766e));
+  color:#fff;padding:18px 22px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;
+  gap:14px;flex-wrap:wrap;margin-bottom:14px;box-shadow:0 10px 25px color-mix(in srgb,var(--cd-color,var(--p)) 30%,transparent);
+}
+.grade-summary-box b{font-family:'Tajawal';font-size:32px;font-weight:800;line-height:1}
+.grade-summary-box span{font-size:13px;font-weight:700;opacity:.9}
 </style>
 </head>
 <body>
@@ -365,20 +413,24 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
-      <section class="view" id="view-schedule">
-        <div class="sec-head">
-          <div><h2>📅 الجدول الدراسي الأسبوعي</h2><p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p></div>
-          <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
-        </div>
-        <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
-      </section>
-
       <section class="view" id="view-courses">
         <div class="sec-head">
           <div><h2>📚 المقررات الدراسية</h2><p id="coursesCount"></p></div>
           <button class="btn btn-primary btn-sm" onclick="openCourseForm()">➕ إضافة مقرر</button>
         </div>
         <div class="grid g3" id="coursesGrid"></div>
+      </section>
+
+      <section class="view" id="view-course-detail">
+        <div id="courseDetailContent"></div>
+      </section>
+
+      <section class="view" id="view-schedule">
+        <div class="sec-head">
+          <div><h2>📅 الجدول الدراسي الأسبوعي</h2><p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p></div>
+          <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
+        </div>
+        <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
       </section>
 
       <section class="view" id="view-tasks">
@@ -403,6 +455,27 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
           <button class="btn btn-primary btn-sm" onclick="openExamForm()">➕ إضافة اختبار</button>
         </div>
         <div class="grid g3" id="examsGrid"></div>
+      </section>
+
+      <section class="view" id="view-grades">
+        <div class="sec-head">
+          <div><h2>🎓 المعدل والدرجات</h2><p>احسب معدلك الفصلي وتابع درجاتك التفصيلية في مكان واحد</p></div>
+        </div>
+
+        <div class="sec-head" style="margin-bottom:12px">
+          <h3 style="font-size:17px">⚡ الحاسبة السريعة</h3>
+          <p style="font-size:12.5px;color:var(--muted)">أدخل التقدير النهائي لكل مقرر مباشرة</p>
+        </div>
+        <div id="gpaContent"></div>
+
+        <div style="height:1px;background:var(--border);margin:32px 0"></div>
+
+        <div class="sec-head" style="margin-bottom:12px">
+          <h3 style="font-size:17px">📚 الدرجات التفصيلية</h3>
+          <p style="font-size:12.5px;color:var(--muted)">أضف مكونات كل مقرر (واجبات، ميدتيرم، نهائي...) بأوزانها</p>
+        </div>
+        <div class="stats" id="gpaStats"></div>
+        <div id="gradesList"></div>
       </section>
 
       <section class="view" id="view-study">
@@ -457,14 +530,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
           </div>
           <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="savePomoSettings()">💾 حفظ</button>
         </div>
-      </section>
-
-      <section class="view" id="view-grades">
-        <div class="sec-head">
-          <div><h2>📊 الدرجات والمعدل</h2><p>أضف مكونات كل مقرر ووزنها ودرجتك</p></div>
-        </div>
-        <div class="stats" id="gpaStats"></div>
-        <div id="gradesList"></div>
       </section>
 
       <section class="view" id="view-settings">
@@ -551,7 +616,7 @@ const TG_BOT = 'MyMuHelperBot';
 const SEMESTER_WEEKS = 16;
 
 /* ============================================================
-   2) الحالة + التحميل + الحفظ (مع دمج عميق)
+   2) الحالة + التحميل + الحفظ
 ============================================================ */
 function defaultState(){
   return {
@@ -568,13 +633,10 @@ function loadState(){
     const s = JSON.parse(raw);
     const def = defaultState();
     const merged = { ...def, ...s };
-    // دمج عميق للإعدادات
     merged.settings = { ...def.settings, ...(s.settings || {}) };
     merged.settings.pomo = { ...def.settings.pomo, ...((s.settings && s.settings.pomo) || {}) };
-    // دمج wellness
     merged.wellness = { ...def.wellness, ...(s.wellness || {}) };
     if(!Array.isArray(merged.wellness.log)) merged.wellness.log = [];
-    // ضمان أن كل المصفوفات موجودة
     if(!Array.isArray(merged.courses)) merged.courses = [];
     if(!Array.isArray(merged.schedule)) merged.schedule = [];
     if(!Array.isArray(merged.tasks)) merged.tasks = [];
@@ -588,6 +650,7 @@ function loadState(){
 }
 let state = loadState();
 let taskFilter = 'all';
+let currentCourseId = null; // للمقرر المفتوح حالياً في صفحة التفاصيل
 
 function save(){
   try{
@@ -613,41 +676,54 @@ function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
 function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
 
 /* ============================================================
-   4) التنقل بين الصفحات
+   4) التنقل
 ============================================================ */
 const VIEW_META = {
   dashboard: ['لوحة اليوم','نظرة عامة على يومك الدراسي'],
-  schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
   courses:   ['المقررات','كل مقرراتك في مكان واحد'],
+  'course-detail': ['تفاصيل المقرر','نظرة شاملة على المقرر'],
+  schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
   tasks:     ['المهام والواجبات','تابع كل ما عليك تسليمه'],
   exams:     ['الاختبارات','مواعيد الكويزات والاختبارات'],
-  study:     ['المذاكرة','مؤقّت التركيز وسجل الساعات'],
-  grades:    ['الدرجات','احسب معدلك ومستواك'],
+  grades:    ['المعدل والدرجات','احسب معدلك وتابع درجاتك التفصيلية'],
+  study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
+  wellness:  ['النوم والماء','صحتك أولاً'],
+  attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
+  archive:   ['أرشيف الفصول','سجل كل فصولك السابقة'],
   settings:  ['الإعدادات','تخصيص التطبيق والبيانات']
 };
 function go(view){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view)?.classList.add('active');
-  document.querySelectorAll('.nav-btn, .home-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+
+  // التظليل: عند فتح تفاصيل المقرر نُظلّل "المقررات"
+  const hl = (view === 'course-detail') ? 'courses' : view;
+  document.querySelectorAll('.nav-btn, .home-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === hl);
+  });
+
   const [t,s] = VIEW_META[view] || ['',''];
   document.getElementById('pageTitle').textContent = t;
   document.getElementById('pageSub').textContent = s;
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
   window.scrollTo({ top:0, behavior:'smooth' });
-  location.hash = view;
+  if(view !== 'course-detail') location.hash = view;
+
   // فتح مجموعة القائمة
   document.querySelectorAll('.nav-group').forEach(g => {
     if(g.querySelector(`[data-view="${view}"]`)) g.classList.remove('collapsed');
   });
-  // رندرة خاصة عند الدخول
+
   setTimeout(() => {
     try{
       if(view === 'attendance') renderAttendancePage();
-      if(view === 'gpa') renderGPA();
       if(view === 'wellness') renderWellness();
       if(view === 'archive') renderArchive();
+      if(view === 'grades'){ renderGrades(); renderGPA(); }
       if(view === 'settings') renderSyncStatus();
+      if(view === 'course-detail') renderCourseDetail();
+      if(view === 'courses') renderCourses();
     }catch(e){}
   }, 60);
 }
@@ -727,11 +803,222 @@ function deleteCourse(id){
   state.schedule = state.schedule.filter(s => s.courseId !== id);
   state.tasks = state.tasks.filter(t => t.courseId !== id);
   state.exams = state.exams.filter(e => e.courseId !== id);
+  if(currentCourseId === id) currentCourseId = null;
   save(); renderAll(); toast('🗑️ تم الحذف');
 }
 
 /* ============================================================
-   8) المحاضرات
+   8) تفاصيل المقرر
+============================================================ */
+function openCourseDetail(id){
+  if(!getCourse(id)){ toast('⚠️ المقرر غير موجود'); return; }
+  currentCourseId = id;
+  go('course-detail');
+}
+function renderCourseDetail(){
+  const el = document.getElementById('courseDetailContent');
+  if(!el) return;
+  if(!currentCourseId){ go('courses'); return; }
+  const c = getCourse(currentCourseId);
+  if(!c){ go('courses'); return; }
+
+  const lectures = state.schedule.filter(s => s.courseId === c.id).sort((a,b) => a.day - b.day || toMin(a.start) - toMin(b.start));
+  const tasks = state.tasks.filter(t => t.courseId === c.id).sort((a,b) => a.due.localeCompare(b.due));
+  const exams = state.exams.filter(e => e.courseId === c.id).sort((a,b) => a.date.localeCompare(b.date));
+  const total = courseTotal(c);
+  const openTasks = tasks.filter(t => !t.done).length;
+
+  // بطاقات إحصائية
+  const statsHTML = `
+    <div class="cd-stat"><b style="color:${c.color}">${lectures.length}</b><span>📅 محاضرة أسبوعياً</span></div>
+    <div class="cd-stat"><b style="color:var(--warn)">${openTasks}</b><span>✅ مهمة متبقية</span></div>
+    <div class="cd-stat"><b style="color:var(--danger)">${exams.filter(e => daysUntil(e.date) >= 0).length}</b><span>⏰ اختبار قادم</span></div>
+    <div class="cd-stat"><b style="color:var(--ok)">${total !== null ? total.toFixed(1) + '%' : '—'}</b><span>📊 معدل الدرجات</span></div>
+  `;
+
+  // المحاضرات
+  let lecturesHTML = '';
+  if(!lectures.length){
+    lecturesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📅</div><b style="font-size:15px">لا توجد محاضرات</b><p style="font-size:12.5px">أضف محاضرات هذا المقرر من الجدول</p></div>`;
+  } else {
+    lecturesHTML = lectures.map(s => `
+      <div class="cd-item">
+        <div class="ci-ico">📅</div>
+        <div class="ci-main">
+          <b>${DAYS[s.day]}</b>
+          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
+        </div>
+        <div class="ci-side" style="background:${c.color}22;color:${c.color}">${toMin(s.end) - toMin(s.start)} د</div>
+      </div>
+    `).join('');
+  }
+
+  // المهام
+  let tasksHTML = '';
+  if(!tasks.length){
+    tasksHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">✅</div><b style="font-size:15px">لا توجد مهام</b><p style="font-size:12.5px">أضف مهمة جديدة من زر "مهمة"</p></div>`;
+  } else {
+    tasksHTML = tasks.map(t => {
+      const d = daysUntil(t.due);
+      let txt, bg, col;
+      if(t.done){ txt = 'منجزة'; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
+      else if(d < 0){ txt = `متأخر ${Math.abs(d)}ي`; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+      else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+      else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
+      else { txt = `بعد ${d}ي`; bg = 'var(--hover)'; col = 'var(--muted)'; }
+      return `
+        <div class="cd-item" style="${t.done?'opacity:.6':''}">
+          <div class="ci-ico">${t.done ? '✅' : '📝'}</div>
+          <div class="ci-main">
+            <b style="${t.done?'text-decoration:line-through':''}">${esc(t.title)}</b>
+            <span>${esc(t.type)} · ${fmtDate(t.due)}</span>
+          </div>
+          <div class="ci-side" style="background:${bg};color:${col}">${txt}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // الاختبارات
+  let examsHTML = '';
+  if(!exams.length){
+    examsHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">⏰</div><b style="font-size:15px">لا توجد اختبارات</b><p style="font-size:12.5px">أضف اختباراً جديداً من زر "اختبار"</p></div>`;
+  } else {
+    examsHTML = exams.map(e => {
+      const d = daysUntil(e.date);
+      let txt, bg, col;
+      if(d < 0){ txt = 'انتهى'; bg = 'var(--hover)'; col = 'var(--muted)'; }
+      else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+      else if(d === 1){ txt = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+      else if(d <= 7){ txt = `بعد ${d}ي`; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
+      else { txt = `بعد ${d}ي`; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
+      return `
+        <div class="cd-item">
+          <div class="ci-ico">⏰</div>
+          <div class="ci-main">
+            <b>${esc(e.title)}</b>
+            <span>${esc(e.type)} · ${fmtDate(e.date)}${e.time ? ' · ' + e.time : ''}${e.place ? ' · ' + esc(e.place) : ''}</span>
+          </div>
+          <div class="ci-side" style="background:${bg};color:${col}">${txt}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // الدرجات التفصيلية
+  let gradesHTML = '';
+  const g = c.grades || [];
+  if(!g.length){
+    gradesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📊</div><b style="font-size:15px">لا توجد درجات</b><p style="font-size:12.5px">أضف مكونات الدرجة من صفحة "المعدل والدرجات"</p></div>`;
+  } else {
+    gradesHTML = g.map(x => {
+      const scoreColor = (+x.score >= 80) ? 'var(--ok)' : (+x.score >= 60) ? 'var(--warn)' : 'var(--danger)';
+      return `
+        <div class="cd-item">
+          <div class="ci-ico">📝</div>
+          <div class="ci-main">
+            <b>${esc(x.name || 'مكوّن')}</b>
+            <span>الوزن: ${x.weight}%</span>
+          </div>
+          <div class="ci-side" style="background:${scoreColor}22;color:${scoreColor}">${x.score}%</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  el.innerHTML = `
+    <button class="back-btn" onclick="go('courses')">→ رجوع للمقررات</button>
+
+    <div class="cd-header" style="--cd-color:${c.color}">
+      <div class="cd-top">
+        <div class="cd-title">
+          <h2>${esc(c.name)}</h2>
+          <div class="cd-meta">
+            ${c.code ? `🔖 ${esc(c.code)}` : ''}
+            ${c.teacher ? ` · 👨‍🏫 ${esc(c.teacher)}` : ''}
+            ${c.credits ? ` · 🎯 ${c.credits} ساعات` : ''}
+          </div>
+        </div>
+        <div class="cd-actions">
+          <button class="btn btn-ghost btn-sm" onclick="openCourseForm('${c.id}')">✏️ تعديل المقرر</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c.id}')">🗑️ حذف</button>
+        </div>
+      </div>
+      <div class="cd-stat-row">${statsHTML}</div>
+    </div>
+
+    ${total !== null ? `
+      <div class="grade-summary-box" style="--cd-color:${c.color}">
+        <div>
+          <span>المعدل الحالي في المقرر</span>
+          <div><b>${total.toFixed(1)}%</b></div>
+        </div>
+        <div style="text-align:center">
+          <span>التقدير المتوقع</span>
+          <div style="font-family:'Tajawal';font-size:26px;font-weight:800">${scoreToLetter(total)}</div>
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="cd-section">
+      <div class="cd-section-head">
+        <h3>📅 المحاضرات (${lectures.length})</h3>
+        <button class="btn btn-ghost btn-sm" onclick="openClassFormForCourse('${c.id}')">➕ إضافة محاضرة</button>
+      </div>
+      ${lecturesHTML}
+    </div>
+
+    <div class="cd-section">
+      <div class="cd-section-head">
+        <h3>✅ المهام (${tasks.length})</h3>
+        <button class="btn btn-ghost btn-sm" onclick="openTaskFormForCourse('${c.id}')">➕ إضافة مهمة</button>
+      </div>
+      ${tasksHTML}
+    </div>
+
+    <div class="cd-section">
+      <div class="cd-section-head">
+        <h3>⏰ الاختبارات (${exams.length})</h3>
+        <button class="btn btn-ghost btn-sm" onclick="openExamFormForCourse('${c.id}')">➕ إضافة اختبار</button>
+      </div>
+      ${examsHTML}
+    </div>
+
+    <div class="cd-section">
+      <div class="cd-section-head">
+        <h3>📊 الدرجات التفصيلية</h3>
+        <button class="btn btn-ghost btn-sm" onclick="go('grades')">فتح المعدل والدرجات</button>
+      </div>
+      ${gradesHTML}
+    </div>
+  `;
+}
+
+/* دوال مختصرة: تفتح النموذج مع تحديد المقرر مسبقاً */
+function openTaskFormForCourse(cid){
+  openTaskForm();
+  setTimeout(() => {
+    const sel = document.getElementById('tCourse');
+    if(sel){ sel.value = cid; }
+  }, 30);
+}
+function openExamFormForCourse(cid){
+  openExamForm();
+  setTimeout(() => {
+    const sel = document.getElementById('eCourse');
+    if(sel){ sel.value = cid; }
+  }, 30);
+}
+function openClassFormForCourse(cid){
+  openClassForm();
+  setTimeout(() => {
+    const sel = document.getElementById('clCourse');
+    if(sel){ sel.value = cid; }
+  }, 30);
+}
+
+/* ============================================================
+   9) المحاضرات
 ============================================================ */
 function courseOptions(sel){
   if(!state.courses.length) return `<option value="">— أضف مقرراً أولاً —</option>`;
@@ -769,7 +1056,7 @@ function deleteClass(id){
 }
 
 /* ============================================================
-   9) المهام
+   10) المهام
 ============================================================ */
 function openTaskForm(id){
   const t = id ? state.tasks.find(x => x.id === id) : null;
@@ -809,7 +1096,7 @@ function deleteTask(id){ state.tasks = state.tasks.filter(t => t.id !== id); sav
 function toggleTask(id){ const t = state.tasks.find(x => x.id === id); if(t){ t.done = !t.done; save(); renderAll(); } }
 
 /* ============================================================
-   10) الاختبارات
+   11) الاختبارات
 ============================================================ */
 function openExamForm(id){
   const e = id ? state.exams.find(x => x.id === id) : null;
@@ -846,7 +1133,7 @@ function saveExam(id){
 function deleteExam(id){ state.exams = state.exams.filter(e => e.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
 /* ============================================================
-   11) رندرة اللوحة
+   12) رندرة اللوحة
 ============================================================ */
 function renderDashboard(){
   const today = todayISO();
@@ -905,7 +1192,7 @@ function renderDashboard(){
 }
 
 /* ============================================================
-   12) رندرة الجدول (مع الحضور)
+   13) رندرة الجدول
 ============================================================ */
 function classDateThisWeek(dayIdx){
   const d = new Date();
@@ -1008,12 +1295,13 @@ function clearAtt(classId, date){
 })();
 
 /* ============================================================
-   13) رندرة المقررات
+   14) رندرة المقررات (البطاقات قابلة للنقر)
 ============================================================ */
 function renderCourses(){
   const grid = document.getElementById('coursesGrid');
   document.getElementById('coursesCount').textContent = state.courses.length
-    ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة` : 'لم تضف أي مقرر بعد';
+    ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة · اضغط أي بطاقة للتفاصيل`
+    : 'لم تضف أي مقرر بعد';
   if(!state.courses.length){
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">📚</div><b>لا توجد مقررات</b><p>ابدأ بإضافة مقرراتك لهذا الفصل</p><button class="btn btn-primary" onclick="openCourseForm()">➕ إضافة مقرر</button></div>`;
     return;
@@ -1021,16 +1309,29 @@ function renderCourses(){
   grid.innerHTML = state.courses.map(c => {
     const classes = state.schedule.filter(s => s.courseId === c.id).length;
     const tasks = state.tasks.filter(t => t.courseId === c.id && !t.done).length;
-    return `<div class="course-card"><div class="course-bar" style="background:${c.color}"></div>
-      <div class="course-body"><h3>${esc(c.name)}</h3>
-      <div class="code">${esc(c.code || '—')}${c.teacher ? ' · ' + esc(c.teacher) : ''}</div>
-      <div class="course-meta"><span class="pill">${c.credits || 0} ساعات</span><span class="pill">${classes} محاضرة</span>${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn)">${tasks} مهمة</span>` : ''}</div>
-      <div class="course-actions"><button onclick="openCourseForm('${c.id}')">✏️ تعديل</button><button onclick="deleteCourse('${c.id}')">🗑️ حذف</button></div></div></div>`;
+    const total = courseTotal(c);
+    return `<div class="course-card" onclick="openCourseDetail('${c.id}')">
+      <div class="course-bar" style="background:${c.color}"></div>
+      <div class="course-body">
+        <h3>${esc(c.name)}</h3>
+        <div class="code">${esc(c.code || '—')}${c.teacher ? ' · ' + esc(c.teacher) : ''}</div>
+        <div class="course-meta">
+          <span class="pill">${c.credits || 0} ساعات</span>
+          <span class="pill">${classes} محاضرة</span>
+          ${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn)">${tasks} مهمة</span>` : ''}
+          ${total !== null ? `<span class="pill" style="background:var(--ok-bg);color:var(--ok)">${total.toFixed(1)}%</span>` : ''}
+        </div>
+        <div class="course-actions">
+          <button onclick="event.stopPropagation();openCourseForm('${c.id}')">✏️ تعديل</button>
+          <button onclick="event.stopPropagation();deleteCourse('${c.id}')">🗑️ حذف</button>
+        </div>
+      </div>
+    </div>`;
   }).join('');
 }
 
 /* ============================================================
-   14) رندرة المهام
+   15) رندرة المهام
 ============================================================ */
 function renderTasks(){
   const list = document.getElementById('tasksList');
@@ -1081,7 +1382,7 @@ function renderTasks(){
 }
 
 /* ============================================================
-   15) رندرة الاختبارات
+   16) رندرة الاختبارات
 ============================================================ */
 function renderExams(){
   const grid = document.getElementById('examsGrid');
@@ -1115,7 +1416,7 @@ function renderExams(){
 }
 
 /* ============================================================
-   16) الدرجات والمعدل
+   17) الدرجات والمعدل
 ============================================================ */
 function scoreToPoints(p){
   if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
@@ -1140,6 +1441,7 @@ function courseTotal(c){
 function renderGrades(){
   const statsEl = document.getElementById('gpaStats');
   const listEl = document.getElementById('gradesList');
+  if(!statsEl || !listEl) return;
   const graded = state.courses.filter(c => courseTotal(c) !== null);
   let gpa = null, totalCredits = 0;
   if(graded.length){
@@ -1175,7 +1477,7 @@ function renderGrades(){
         <div style="text-align:center"><div class="gc-score">${total !== null ? total.toFixed(1) + '%' : '—'}</div><div style="font-size:12.5px;font-weight:800;color:var(--muted)">${total !== null ? scoreToLetter(total) : ''}</div></div></div>
       ${g.length ? `<div class="comp-row comp-hd"><div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div></div>` : ''}
       ${rows}
-      <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button></div>
+      <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="addComp('${c.id}')">➕ إضافة مكوّن</button><button class="btn btn-ghost btn-sm" onclick="openCourseDetail('${c.id}')">📖 فتح المقرر</button></div>
     </div>`;
   }).join('');
 }
@@ -1183,8 +1485,57 @@ function addComp(cid){ const c = getCourse(cid); c.grades = c.grades || []; c.gr
 function removeComp(cid, i){ const c = getCourse(cid); c.grades.splice(i,1); save(); renderGrades(); }
 function updateComp(cid, i, field, val){ const c = getCourse(cid); if(!c.grades[i]) return; c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0); save(); renderGrades(); }
 
+/* ====== حاسبة المعدل السريعة (gpaCourses) ====== */
+function renderGPA(){
+  const el = document.getElementById('gpaContent');
+  if(!el) return;
+  let tp = 0, tc = 0;
+  state.gpaCourses.forEach(c => {
+    const cr = +c.credits || 0, pt = GRADE_POINTS[c.grade] || 0;
+    if(cr > 0){ tp += pt * cr; tc += cr; }
+  });
+  const gpa = tc ? (tp / tc) : 0;
+  el.innerHTML = `
+    <div class="stats" style="margin-bottom:16px">
+      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div><div><b>${gpa.toFixed(2)}</b><span>المعدل السريع</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${tc}</b><span>ساعة معتمدة</span></div></div>
+      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📚</div><div><b>${state.gpaCourses.length}</b><span>مقرر مُدخل</span></div></div>
+    </div>
+    <div class="card" style="margin-bottom:16px;padding:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="gpaName" placeholder="اسم المقرر" style="flex:2;min-width:140px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
+        <input id="gpaCredits" type="number" placeholder="ساعات" min="1" max="10" value="3" style="width:80px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
+        <select id="gpaGrade" style="padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}</select>
+        <button class="btn btn-primary btn-sm" onclick="addGpaCourse()">➕ إضافة</button>
+      </div>
+    </div>
+    ${state.gpaCourses.length ? `
+      <div class="table-wrap"><table>
+        <thead><tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr></thead>
+        <tbody>${state.gpaCourses.map((c, i) => `<tr>
+          <td><b>${esc(c.name)}</b></td><td>${c.credits}</td>
+          <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
+          <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
+          <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td></tr>`).join('')}</tbody>
+      </table></div>
+      <div style="text-align:center;margin-top:14px"><button class="btn btn-ghost btn-sm" onclick="clearGPA()">🗑️ حذف الكل</button></div>
+    ` : `<div class="empty" style="padding:30px 20px"><div class="e-ico">⚡</div><b>لا توجد مدخلات</b><p>أضف مقرراً بسرعة مع تقديره النهائي</p></div>`}
+  `;
+}
+function addGpaCourse(){
+  const name = document.getElementById('gpaName').value.trim();
+  const credits = +document.getElementById('gpaCredits').value || 0;
+  const grade = document.getElementById('gpaGrade').value;
+  if(!name){ toast('⚠️ اكتب اسم المقرر'); return; }
+  if(credits <= 0){ toast('⚠️ عدد ساعات غير صحيح'); return; }
+  state.gpaCourses.push({ name, credits, grade });
+  save(); renderGPA(); toast('✅ تمت الإضافة');
+}
+function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); }
+function clearGPA(){ if(!confirm('حذف كل المقررات من الحاسبة السريعة؟')) return; state.gpaCourses = []; save(); renderGPA(); }
+
 /* ============================================================
-   17) بومودورو
+   18) بومودورو
 ============================================================ */
 let pomo = { mode: 'work', running: false, remaining: 25 * 60, total: 25 * 60, timer: null };
 const RING_C = 552.92;
@@ -1241,7 +1592,7 @@ document.getElementById('pomoReset').addEventListener('click', () => pomoSetMode
 document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
 
 /* ============================================================
-   18) المذاكرة
+   19) المذاكرة
 ============================================================ */
 function renderStudy(){
   const sel = document.getElementById('pomoCourse');
@@ -1295,12 +1646,13 @@ function savePomoSettings(){
 function clearAll(){
   if(!confirm('سيتم حذف كل بياناتك نهائياً. متأكد؟')) return;
   state = defaultState();
+  currentCourseId = null;
   save(); applySettings(); renderAll(); closeModal();
   toast('🗑️ تم حذف كل البيانات');
 }
 
 /* ============================================================
-   19) applySettings (معدّلة - تشمل بداية الفصل + شارة الأسبوع)
+   20) applySettings
 ============================================================ */
 function applySettings(){
   document.documentElement.dataset.theme = state.settings.theme || 'light';
@@ -1322,7 +1674,7 @@ function applySettings(){
 }
 
 /* ============================================================
-   20) حالة المزامنة
+   21) حالة المزامنة
 ============================================================ */
 function renderSyncStatus(){
   const el = document.getElementById('syncStatusContent');
@@ -1367,7 +1719,7 @@ function renderSyncStatus(){
 }
 
 /* ============================================================
-   21) الإضافة السريعة
+   22) الإضافة السريعة
 ============================================================ */
 function quickAdd(){
   openModal('إضافة سريعة', `
@@ -1379,13 +1731,12 @@ function quickAdd(){
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
-// ✅ إصلاح: حماية العنصر غير الموجود
 const _quickAddBtn = document.getElementById('quickAddBtn');
 if(_quickAddBtn) _quickAddBtn.addEventListener('click', quickAdd);
 document.getElementById('fab').addEventListener('click', quickAdd);
 
 /* ============================================================
-   22) الهامبرغر + الفلاتر
+   23) الهامبرغر + الفلاتر
 ============================================================ */
 document.getElementById('hamburger').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
@@ -1406,15 +1757,16 @@ document.getElementById('taskFilters').addEventListener('click', e => {
 });
 
 /* ============================================================
-   23) رندرة كل شيء
+   24) رندرة كل شيء
 ============================================================ */
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
-  renderExams(); renderGrades(); renderStudy(); pomoRender();
+  renderExams(); renderGrades(); renderGPA(); renderStudy(); pomoRender();
+  if(currentCourseId) renderCourseDetail();
 }
 
 /* ============================================================
-   24) الإضافة السريعة للجدول
+   25) الإضافة السريعة للجدول
 ============================================================ */
 let qaItems = [];
 function openQuickAdd(){
@@ -1497,7 +1849,7 @@ function qaClose(){
 })();
 
 /* ============================================================
-   25) تلقرام + المزامنة
+   26) تلقرام + المزامنة
 ============================================================ */
 let pollTimer = null;
 let syncTimeout = null;
@@ -1777,17 +2129,16 @@ function updateTgStatus(){
 })();
 
 /* ============================================================
-   26) عدّاد الغياب
+   27) الحضور والغياب
 ============================================================ */
 function calcAttendance(){
-  const SEMESTER_WEEKS_LOCAL = 16;
   const MAX_PERCENT = 0.25;
   const res = {};
   (state.courses || []).forEach(c => {
     const daysSet = new Set();
     (state.schedule || []).filter(s => s.courseId === c.id).forEach(s => daysSet.add(s.day));
     const daysPerWeek = daysSet.size;
-    const totalDays = daysPerWeek * SEMESTER_WEEKS_LOCAL;
+    const totalDays = daysPerWeek * SEMESTER_WEEKS;
     const absentDates = new Set();
     (state.attendance || []).forEach(a => {
       if(a.status !== 'absent' && a.status !== 'excused') return;
@@ -1839,7 +2190,7 @@ function renderAttendancePage(){
         const barPercent = Math.min((d.percent / 25) * 100, 100);
         return `<div class="card" style="padding:20px;border-right:4px solid ${color}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
-            <div><h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px">${esc(d.course.name)}</h3>
+            <div><h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px;cursor:pointer" onclick="openCourseDetail('${d.course.id}')">${esc(d.course.name)} →</h3>
               <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.daysPerWeek} يوم أسبوعياً · ${d.total} يوم في الفصل</span></div>
             <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center;min-width:90px">
               <b style="font-family:'Tajawal';font-size:22px;display:block;line-height:1">${d.percent.toFixed(2)}%</b>
@@ -1858,57 +2209,6 @@ function renderAttendancePage(){
       }).join('')}
     </div>`;
 }
-
-/* ============================================================
-   27) حاسبة المعدل
-============================================================ */
-function renderGPA(){
-  const el = document.getElementById('gpaContent');
-  if(!el) return;
-  let tp = 0, tc = 0;
-  state.gpaCourses.forEach(c => {
-    const cr = +c.credits || 0, pt = GRADE_POINTS[c.grade] || 0;
-    if(cr > 0){ tp += pt * cr; tc += cr; }
-  });
-  const gpa = tc ? (tp / tc) : 0;
-  el.innerHTML = `
-    <div class="stats" style="margin-bottom:20px">
-      <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎓</div><div><b>${gpa.toFixed(2)}</b><span>المعدل الفصلي</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${tc}</b><span>ساعة معتمدة</span></div></div>
-      <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📚</div><div><b>${state.gpaCourses.length}</b><span>مقرر</span></div></div>
-    </div>
-    <div class="card" style="margin-bottom:16px;padding:16px">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="gpaName" placeholder="اسم المقرر" style="flex:2;min-width:140px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <input id="gpaCredits" type="number" placeholder="ساعات" min="1" max="10" value="3" style="width:80px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <select id="gpaGrade" style="padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}</select>
-        <button class="btn btn-primary btn-sm" onclick="addGpaCourse()">➕ إضافة</button>
-      </div>
-    </div>
-    ${state.gpaCourses.length ? `
-      <div class="table-wrap"><table>
-        <thead><tr><th>المقرر</th><th>الساعات</th><th>التقدير</th><th>النقاط</th><th></th></tr></thead>
-        <tbody>${state.gpaCourses.map((c, i) => `<tr>
-          <td><b>${esc(c.name)}</b></td><td>${c.credits}</td>
-          <td><span style="background:var(--p-light);color:var(--p);padding:4px 12px;border-radius:20px;font-weight:700">${c.grade}</span></td>
-          <td>${(GRADE_POINTS[c.grade] * c.credits).toFixed(2)}</td>
-          <td><button class="mini-btn del" onclick="removeGpaCourse(${i})">✕</button></td></tr>`).join('')}</tbody>
-      </table></div>
-      <div style="text-align:center;margin-top:14px"><button class="btn btn-ghost btn-sm" onclick="clearGPA()">🗑️ حذف الكل</button></div>
-    ` : `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراتك لحساب المعدل</p></div>`}
-  `;
-}
-function addGpaCourse(){
-  const name = document.getElementById('gpaName').value.trim();
-  const credits = +document.getElementById('gpaCredits').value || 0;
-  const grade = document.getElementById('gpaGrade').value;
-  if(!name){ toast('⚠️ اكتب اسم المقرر'); return; }
-  if(credits <= 0){ toast('⚠️ عدد ساعات غير صحيح'); return; }
-  state.gpaCourses.push({ name, credits, grade });
-  save(); renderGPA(); toast('✅ تمت الإضافة');
-}
-function removeGpaCourse(i){ state.gpaCourses.splice(i,1); save(); renderGPA(); }
-function clearGPA(){ if(!confirm('حذف كل المقررات؟')) return; state.gpaCourses = []; save(); renderGPA(); }
 
 /* ============================================================
    28) النوم والماء
@@ -2036,6 +2336,7 @@ function loadArchive(i){
   state.tasks = d.tasks || []; state.exams = d.exams || [];
   state.studyLog = d.studyLog || []; state.attendance = d.attendance || [];
   state.gpaCourses = d.gpaCourses || [];
+  currentCourseId = null;
   save(); closeModal(); renderAll(); renderArchive();
   toast('✅ تمت الاستعادة');
 }
@@ -2045,15 +2346,14 @@ function deleteArchive(i){
 }
 
 /* ============================================================
-   30) إضافة صفحات جديدة
+   30) إضافة الصفحات الديناميكية (الحضور، الصحة، الأرشيف)
 ============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
   if(!content) return;
   const pages = [
-    { id:'attendance', ico:'📋', title:'عدّاد الغياب', sub:'تتبع غياباتك' },
-    { id:'gpa', ico:'🎓', title:'حاسبة المعدل', sub:'احسب معدلك' },
-    { id:'wellness', ico:'💪', title:'النوم والماء', sub:'صحتك أولاً' },
+    { id:'attendance', ico:'📋', title:'الحضور والغياب', sub:'تتبع غياباتك وحد الحرمان' },
+    { id:'wellness', ico:'😴', title:'النوم والماء', sub:'صحتك أولاً' },
     { id:'archive', ico:'🗂️', title:'أرشيف الفصول', sub:'سجل كل فصولك' }
   ];
   pages.forEach(p => {
@@ -2067,7 +2367,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   31) بناء القائمة الجانبية
+   31) بناء القائمة الجانبية بالترتيب الجديد
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -2082,10 +2382,25 @@ function deleteArchive(i){
     b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
     return b;
   };
+  // 🔄 الترتيب الجديد
   const groups = [
-    { title:'📚 الدراسة', items:[['schedule','📅','الجدول الدراسي'],['courses','📚','المقررات'],['tasks','✅','المهام والواجبات'],['exams','⏰','الاختبارات']] },
-    { title:'📊 السجل الأكاديمي', items:[['grades','📊','الدرجات'],['gpa','🎓','حاسبة المعدل'],['attendance','📋','عدّاد الغياب'],['archive','🗂️','أرشيف الفصول']] },
-    { title:'🎯 الإنتاجية والصحة', items:[['study','🍅','المذاكرة'],['wellness','💪','النوم والماء']] }
+    { title:'📚 الدراسة', items:[
+      ['courses','📚','المقررات'],
+      ['schedule','📅','الجدول الدراسي'],
+      ['tasks','✅','المهام والواجبات'],
+      ['exams','⏰','الاختبارات']
+    ]},
+    { title:'📊 الأداء الأكاديمي', items:[
+      ['grades','🎓','المعدل والدرجات'],
+      ['attendance','📋','الحضور والغياب'],
+      ['archive','🗂️','أرشيف الفصول']
+    ]},
+    { title:'🎯 الإنتاجية', items:[
+      ['study','🍅','مؤقّت المذاكرة']
+    ]},
+    { title:'💪 الصحة', items:[
+      ['wellness','😴','النوم والماء']
+    ]}
   ];
   nav.innerHTML = '';
   if(homeBtn) nav.appendChild(homeBtn);
@@ -2105,9 +2420,9 @@ function deleteArchive(i){
         setTimeout(() => {
           try{
             if(v === 'attendance') renderAttendancePage();
-            if(v === 'gpa') renderGPA();
             if(v === 'wellness') renderWellness();
             if(v === 'archive') renderArchive();
+            if(v === 'grades'){ renderGrades(); renderGPA(); }
           }catch(e){}
         }, 60);
       });
@@ -2116,8 +2431,9 @@ function deleteArchive(i){
     nav.appendChild(group);
   });
   const current = (location.hash.slice(1) || 'dashboard');
+  const target = current === 'course-detail' ? 'courses' : current;
   nav.querySelectorAll('.nav-group').forEach(g => {
-    if(g.querySelector(`[data-view="${current}"]`)) g.classList.remove('collapsed');
+    if(g.querySelector(`[data-view="${target}"]`)) g.classList.remove('collapsed');
   });
 })();
 
@@ -2179,24 +2495,21 @@ document.addEventListener('keydown', e => {
 });
 
 /* ============================================================
-   35) التهيئة النهائية (بعد كل التعريفات)
+   35) التهيئة النهائية
 ============================================================ */
 function init(){
   applySettings();
   renderAll();
   document.getElementById('topDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   const h = location.hash.slice(1);
-  if(h && document.getElementById('view-' + h)) go(h);
-  // رندرة الصفحات الديناميكية
+  if(h && document.getElementById('view-' + h) && h !== 'course-detail') go(h);
   try{ renderAttendancePage(); }catch(e){}
-  try{ renderGPA(); }catch(e){}
   try{ renderWellness(); }catch(e){}
   try{ renderArchive(); }catch(e){}
   try{ renderSyncStatus(); }catch(e){}
   renderWeekBadge();
 }
 
-// التشغيل النهائي
 init();
 </script>
 </body>

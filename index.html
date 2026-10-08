@@ -49,15 +49,40 @@ ul{list-style:none}
 .brand-txt b{display:block;font-family:'Tajawal';font-size:17px;font-weight:800;line-height:1.2}
 .brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
 .nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
+
+/* 🏠 زر الرئيسية المميز */
+.home-btn{
+  display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;
+  font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;
+  background:linear-gradient(135deg,var(--p),var(--p-dark));
+  box-shadow:0 10px 24px rgba(13,148,136,.32);
+  margin-bottom:16px;position:relative;overflow:hidden;
+}
+.home-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent 40%,rgba(212,165,55,.35));
+  pointer-events:none;
+}
+.home-btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(13,148,136,.42)}
+.home-btn.active{background:linear-gradient(135deg,var(--p-dark),#0a5f52)}
+.home-btn .ico{font-size:22px;width:26px;text-align:center;flex-shrink:0;position:relative;z-index:1}
+.home-btn span:not(.ico){position:relative;z-index:1}
+.home-btn .sub{
+  display:block;font-size:10.5px;font-weight:600;opacity:.85;
+  letter-spacing:.3px;margin-top:-2px;
+}
+
 .nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right}
 .nav-btn:hover{background:var(--hover);color:var(--text)}
 .nav-btn.active{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
 .nav-btn .ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
 .nav-btn .badge{margin-inline-start:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;min-width:22px;text-align:center}
 .nav-btn.active .badge{background:rgba(255,255,255,.28)}
+
 .sidebar-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px}
-.icon-btn{width:40px;height:40px;border-radius:11px;background:var(--hover);display:grid;place-items:center;font-size:17px;transition:var(--t);flex:1}
+.icon-btn{width:44px;height:44px;border-radius:12px;background:var(--hover);display:grid;place-items:center;font-size:19px;transition:var(--t);flex:1;color:var(--text)}
 .icon-btn:hover{background:var(--p);color:#fff;transform:translateY(-2px)}
+.icon-btn.active{background:var(--p);color:#fff}
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 22px;height:70px;display:flex;align-items:center;gap:16px}
 .hamburger{display:none;width:42px;height:42px;border-radius:11px;background:var(--hover);place-items:center;font-size:20px}
@@ -186,11 +211,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .comp-row input{padding:9px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-size:13.5px;width:100%;transition:var(--t)}
 .comp-row input:focus{outline:none;border-color:var(--p);background:var(--card)}
 .comp-hd{font-size:12px;color:var(--muted);font-weight:800}
-.note{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);transition:var(--t);position:relative}
-.note:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
-.note h4{font-size:16px;margin-bottom:8px;padding-inline-end:30px}
-.note p{font-size:13.5px;color:var(--muted);white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:hidden}
-.note .n-date{font-size:11.5px;color:var(--muted);font-weight:700;margin-top:12px;display:block}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field{display:flex;flex-direction:column;gap:7px}
 .field.full{grid-column:1/-1}
@@ -278,19 +298,17 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <div class="brand-txt"><b>مُساعد الجامعة</b><span>نظّم دراستك بذكاء</span></div>
     </div>
     <nav class="nav">
-      <button class="nav-btn active" data-view="dashboard"><span class="ico">🏠</span> الرئيسية</button>
-      <button class="nav-btn" data-view="schedule"><span class="ico">📅</span> الجدول الدراسي</button>
-      <button class="nav-btn" data-view="courses"><span class="ico">📚</span> المقررات</button>
-      <button class="nav-btn" data-view="tasks"><span class="ico">✅</span> المهام والواجبات<span class="badge" id="badgeTasks" style="display:none">0</span></button>
-      <button class="nav-btn" data-view="exams"><span class="ico">⏰</span> الاختبارات<span class="badge" id="badgeExams" style="display:none">0</span></button>
-      <button class="nav-btn" data-view="study"><span class="ico">🍅</span> المذاكرة</button>
-      <button class="nav-btn" data-view="grades"><span class="ico">📊</span> الدرجات</button>
-      <button class="nav-btn" data-view="notes"><span class="ico">📝</span> الملاحظات</button>
-      <button class="nav-btn" data-view="settings"><span class="ico">⚙️</span> الإعدادات</button>
+      <button class="home-btn active" data-view="dashboard">
+        <span class="ico">🏠</span>
+        <span>
+          لوحة اليوم
+          <span class="sub">نظرة عامة على دراستك</span>
+        </span>
+      </button>
     </nav>
     <div class="sidebar-foot">
       <button class="icon-btn" id="themeBtn" title="تبديل المظهر">🌙</button>
-      <button class="icon-btn" id="quickAddBtn" title="إضافة سريعة">➕</button>
+      <button class="icon-btn" id="settingsBtn" title="الإعدادات" data-view="settings">⚙️</button>
     </div>
   </aside>
   <div class="overlay" id="overlay"></div>
@@ -299,7 +317,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
     <header class="topbar">
       <button class="hamburger" id="hamburger">☰</button>
       <div>
-        <div class="page-title" id="pageTitle">الرئيسية</div>
+        <div class="page-title" id="pageTitle">لوحة اليوم</div>
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
@@ -441,14 +459,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div id="gradesList"></div>
       </section>
 
-      <section class="view" id="view-notes">
-        <div class="sec-head">
-          <div><h2>📝 الملاحظات</h2><p id="notesCount"></p></div>
-          <button class="btn btn-primary btn-sm" onclick="openNoteForm()">➕ ملاحظة جديدة</button>
-        </div>
-        <div class="grid g3" id="notesGrid"></div>
-      </section>
-
       <section class="view" id="view-settings">
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
 
@@ -523,7 +533,7 @@ let taskFilter = 'all';
 
 function defaultState(){
   return {
-    courses: [], schedule: [], tasks: [], exams: [], notes: [],
+    courses: [], schedule: [], tasks: [], exams: [],
     studyLog: [], settings: { theme:'light', pomo:{ work:25, short:5, long:15 } }
   };
 }
@@ -554,20 +564,19 @@ function toast(msg){ const t = document.getElementById('toast'); t.textContent =
 function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
 
 const VIEW_META = {
-  dashboard: ['الرئيسية','نظرة عامة على يومك الدراسي'],
+  dashboard: ['لوحة اليوم','نظرة عامة على يومك الدراسي'],
   schedule:  ['الجدول الدراسي','محاضراتك خلال الأسبوع'],
   courses:   ['المقررات','كل مقرراتك في مكان واحد'],
   tasks:     ['المهام والواجبات','تابع كل ما عليك تسليمه'],
   exams:     ['الاختبارات','مواعيد الكويزات والاختبارات'],
   study:     ['المذاكرة','مؤقّت التركيز وسجل الساعات'],
   grades:    ['الدرجات','احسب معدلك ومستواك'],
-  notes:     ['الملاحظات','دوّن كل ما يهمك'],
   settings:  ['الإعدادات','تخصيص التطبيق والبيانات']
 };
 function go(view){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view)?.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.nav-btn, .home-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   const [t,s] = VIEW_META[view] || ['',''];
   document.getElementById('pageTitle').textContent = t;
   document.getElementById('pageSub').textContent = s;
@@ -576,7 +585,9 @@ function go(view){
   window.scrollTo({ top:0, behavior:'smooth' });
   location.hash = view;
 }
-document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => go(b.dataset.view)));
+document.querySelectorAll('.nav-btn, .home-btn, [data-view]').forEach(b => {
+  b.addEventListener('click', () => go(b.dataset.view));
+});
 
 function setTheme(t){
   state.settings.theme = t;
@@ -641,7 +652,6 @@ function deleteCourse(id){
   state.schedule = state.schedule.filter(s => s.courseId !== id);
   state.tasks = state.tasks.filter(t => t.courseId !== id);
   state.exams = state.exams.filter(e => e.courseId !== id);
-  state.notes = state.notes.filter(n => n.courseId !== id);
   save(); renderAll(); toast('🗑️ تم الحذف');
 }
 
@@ -680,7 +690,7 @@ function deleteClass(id){
   save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
 }
 
-function openTaskForm(id, presetType){
+function openTaskForm(id){
   const t = id ? state.tasks.find(x => x.id === id) : null;
   const typeOpts = TASK_TYPES.map(x => `<option ${t?.type===x?'selected':''}>${x}</option>`).join('');
   openModal(t ? 'تعديل مهمة' : 'إضافة مهمة', `
@@ -750,26 +760,6 @@ function saveExam(id){
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
 function deleteExam(id){ state.exams = state.exams.filter(e => e.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
-
-function openNoteForm(id){
-  const n = id ? state.notes.find(x => x.id === id) : null;
-  openModal(n ? 'تعديل ملاحظة' : 'ملاحظة جديدة', `
-    <div class="form-grid">
-      <div class="field full"><label>العنوان <span class="req">*</span></label><input id="nTitle" placeholder="عنوان الملاحظة" value="${esc(n?.title||'')}"></div>
-      <div class="field full"><label>المقرر</label><select id="nCourse"><option value="">— عام —</option>${courseOptions(n?.courseId)}</select></div>
-      <div class="field full"><label>المحتوى</label><textarea id="nBody" style="min-height:160px" placeholder="اكتب هنا...">${esc(n?.body||'')}</textarea></div>
-    </div>
-  `, `${n ? `<button class="btn btn-danger" onclick="deleteNote('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveNote('${id||''}')">💾 حفظ</button>`);
-}
-function saveNote(id){
-  const title = document.getElementById('nTitle').value.trim();
-  if(!title){ toast('⚠️ اكتب عنوان الملاحظة'); return; }
-  const data = { title, courseId: document.getElementById('nCourse').value, body: document.getElementById('nBody').value };
-  if(id){ Object.assign(state.notes.find(x => x.id === id), data, { updated: todayISO() }); }
-  else{ state.notes.push({ id: uid(), ...data, updated: todayISO() }); }
-  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
-}
-function deleteNote(id){ state.notes = state.notes.filter(n => n.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
 function renderDashboard(){
   const today = todayISO();
@@ -875,8 +865,10 @@ function renderTasks(){
   document.getElementById('tasksCount').textContent = `${state.tasks.length} مهمة · ${open.length} متبقية`;
   const lateCount = open.filter(t => daysUntil(t.due) < 0).length;
   const badge = document.getElementById('badgeTasks');
-  if(open.length){ badge.style.display = ''; badge.textContent = lateCount || open.length; }
-  else badge.style.display = 'none';
+  if(badge){
+    if(open.length){ badge.style.display = ''; badge.textContent = lateCount || open.length; }
+    else badge.style.display = 'none';
+  }
   let arr = state.tasks.slice();
   const td = todayISO();
   if(taskFilter === 'today') arr = arr.filter(t => t.due === td);
@@ -921,8 +913,10 @@ function renderExams(){
   document.getElementById('examsCount').textContent = `${state.exams.length} اختبار · ${upcoming.length} قادم`;
   const badge = document.getElementById('badgeExams');
   const soon = upcoming.filter(e => daysUntil(e.date) <= 7).length;
-  if(soon){ badge.style.display = ''; badge.textContent = soon; }
-  else badge.style.display = 'none';
+  if(badge){
+    if(soon){ badge.style.display = ''; badge.textContent = soon; }
+    else badge.style.display = 'none';
+  }
   if(!state.exams.length){
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">⏰</div><b>لا توجد اختبارات</b><p>أضف مواعيد الكويزات والاختبارات</p><button class="btn btn-primary" onclick="openExamForm()">➕ إضافة اختبار</button></div>`;
     return;
@@ -942,21 +936,6 @@ function renderExams(){
       ${e.notes ? `<div style="font-size:13px;color:var(--muted);background:var(--hover);padding:10px 12px;border-radius:10px;margin-bottom:12px">${esc(e.notes)}</div>` : ''}
       <div class="exam-actions"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="openExamForm('${e.id}')">✏️ تعديل</button><button class="btn btn-danger btn-sm" onclick="deleteExam('${e.id}')">🗑️</button></div></div>`;
   }).join('');
-}
-
-function renderNotes(){
-  const grid = document.getElementById('notesGrid');
-  document.getElementById('notesCount').textContent = state.notes.length ? `${state.notes.length} ملاحظة` : 'لم تضف أي ملاحظة بعد';
-  if(!state.notes.length){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="e-ico">📝</div><b>لا توجد ملاحظات</b><p>دوّن أفكارك ونقاط المذاكرة المهمة</p><button class="btn btn-primary" onclick="openNoteForm()">➕ ملاحظة جديدة</button></div>`;
-    return;
-  }
-  const sorted = state.notes.slice().sort((a,b) => (b.updated||'').localeCompare(a.updated||''));
-  grid.innerHTML = sorted.map(n => `<div class="note"><h4>${esc(n.title)}</h4>
-    ${n.courseId ? `<span class="tag" style="background:${courseColor(n.courseId)}22;color:${courseColor(n.courseId)}">${esc(courseName(n.courseId))}</span>` : ''}
-    <p style="margin-top:10px">${esc(n.body)}</p>
-    <span class="n-date">آخر تحديث: ${fmtDate(n.updated)}</span>
-    <div style="display:flex;gap:6px;margin-top:12px"><button class="mini-btn" onclick="openNoteForm('${n.id}')">✏️</button><button class="mini-btn del" onclick="deleteNote('${n.id}')">🗑️</button></div></div>`).join('');
 }
 
 function scoreToPoints(p){
@@ -1150,7 +1129,6 @@ function applySettings(){
   pomoRender();
 }
 
-// ⭐ حالة المزامنة
 function renderSyncStatus(){
   const el = document.getElementById('syncStatusContent');
   if(!el) return;
@@ -1200,7 +1178,6 @@ function quickAdd(){
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExamForm()">⏰ اختبار / كويز جديد</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openClassForm()">📅 محاضرة في الجدول</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openCourseForm()">📚 مقرر جديد</button>
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openNoteForm()">📝 ملاحظة جديدة</button>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
@@ -1227,7 +1204,7 @@ document.getElementById('taskFilters').addEventListener('click', e => {
 
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
-  renderExams(); renderNotes(); renderGrades(); renderStudy(); pomoRender();
+  renderExams(); renderGrades(); renderStudy(); pomoRender();
 }
 
 function init(){
@@ -1473,10 +1450,9 @@ async function doSync(silent = true){
         chatId,
         tasks: state.tasks, exams: state.exams, courses: state.courses,
         schedule: state.schedule, attendance: state.attendance,
-        notes: state.notes, gpaCourses: state.gpaCourses,
-        wellness: state.wellness, archive: state.archive,
-        skills: state.skills, studyLog: state.studyLog,
-        settings: state.settings
+        gpaCourses: state.gpaCourses, wellness: state.wellness,
+        archive: state.archive, skills: state.skills,
+        studyLog: state.studyLog, settings: state.settings
       })
     });
     localStorage.setItem('localModified', Date.now().toString());
@@ -1522,10 +1498,7 @@ async function loadFromCloud(){
   try{
     const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
     const data = await r.json();
-    if(!data || !data.lastSync){
-      await doSync(true);
-      return;
-    }
+    if(!data || !data.lastSync){ await doSync(true); return; }
     const localModified = parseInt(localStorage.getItem('localModified') || '0');
     const cloudModified = new Date(data.lastSync).getTime();
     if(cloudModified > localModified){
@@ -1534,7 +1507,6 @@ async function loadFromCloud(){
       state.courses = data.courses || [];
       state.schedule = data.schedule || [];
       state.attendance = data.attendance || [];
-      state.notes = data.notes || [];
       state.gpaCourses = data.gpaCourses || [];
       if(data.wellness) state.wellness = data.wellness;
       if(data.archive) state.archive = data.archive;
@@ -1542,8 +1514,7 @@ async function loadFromCloud(){
       if(data.studyLog) state.studyLog = data.studyLog;
       if(data.settings) state.settings = { ...state.settings, ...data.settings };
       localStorage.setItem('localModified', String(cloudModified));
-      save();
-      renderAll();
+      save(); renderAll();
       if(typeof renderWeekBadge === 'function') renderWeekBadge();
       if(typeof renderSchedule === 'function') renderSchedule();
       toast('✅ تم تحديث بياناتك من السحابة');
@@ -1582,9 +1553,7 @@ function showSyncBadge(status){
   }
 }
 
-// ⭐ مزامنة تلقائية كل 5 ثواني
 let autoSyncTimer = null;
-
 async function checkCloudUpdates(){
   if(document.hidden) return;
   const chatId = getMyChatId();
@@ -1604,7 +1573,6 @@ async function checkCloudUpdates(){
         state.courses = data.courses || [];
         state.schedule = data.schedule || [];
         state.attendance = data.attendance || [];
-        state.notes = data.notes || [];
         state.gpaCourses = data.gpaCourses || [];
         if(data.wellness) state.wellness = data.wellness;
         if(data.archive) state.archive = data.archive;
@@ -1625,7 +1593,6 @@ async function checkCloudUpdates(){
     }
   }catch(e){}
 }
-
 function startAutoSync(){
   if(autoSyncTimer) clearInterval(autoSyncTimer);
   autoSyncTimer = setInterval(checkCloudUpdates, 5000);
@@ -1633,23 +1600,14 @@ function startAutoSync(){
 function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
-
 setTimeout(() => {
   if(getMyChatId()){
-    loadFromCloud().then(() => {
-      startAutoSync();
-      renderSyncStatus();
-    });
+    loadFromCloud().then(() => { startAutoSync(); renderSyncStatus(); });
   }
 }, 1500);
-
 document.addEventListener('visibilitychange', () => {
-  if(document.hidden){
-    stopAutoSync();
-  } else if(getMyChatId()){
-    checkCloudUpdates();
-    startAutoSync();
-  }
+  if(document.hidden){ stopAutoSync(); }
+  else if(getMyChatId()){ checkCloudUpdates(); startAutoSync(); }
 });
 
 async function testTelegram(){
@@ -1660,14 +1618,12 @@ async function testTelegram(){
     toast('✅ تحقق من تلقرام');
   }catch(e){ toast('⚠️ فشل'); }
 }
-
 function connectTelegram(){
   const code = String(Math.floor(1000 + Math.random() * 9000));
   localStorage.setItem('tg_pending', code);
   localStorage.setItem('tg_pending_time', Date.now().toString());
   startPoll(code);
-  const tgUrl = 'https://t.me/' + TG_BOT + '?start=' + code;
-  window.location.href = tgUrl;
+  window.location.href = 'https://t.me/' + TG_BOT + '?start=' + code;
 }
 function startPoll(code){
   if(pollTimer) clearInterval(pollTimer);
@@ -1708,28 +1664,15 @@ function updateTgStatus(){
   if(!el) return;
   const id = getMyChatId();
   const pending = localStorage.getItem('tg_pending');
-  if(id){
-    el.innerHTML = '✅ <b>مربوط بنجاح</b>';
-    el.style.background = 'var(--ok-bg)';
-    el.style.color = 'var(--ok)';
-  } else if(pending){
-    el.innerHTML = '⏳ <b>اضغط START في تلقرام</b>';
-    el.style.background = 'var(--warn-bg)';
-    el.style.color = 'var(--warn)';
-  } else {
-    el.innerHTML = '⚠️ <b>غير مربوط</b>';
-    el.style.background = 'var(--hover)';
-    el.style.color = 'var(--muted)';
-  }
+  if(id){ el.innerHTML = '✅ <b>مربوط بنجاح</b>'; el.style.background = 'var(--ok-bg)'; el.style.color = 'var(--ok)'; }
+  else if(pending){ el.innerHTML = '⏳ <b>اضغط START في تلقرام</b>'; el.style.background = 'var(--warn-bg)'; el.style.color = 'var(--warn)'; }
+  else{ el.innerHTML = '⚠️ <b>غير مربوط</b>'; el.style.background = 'var(--hover)'; el.style.color = 'var(--muted)'; }
 }
 (function resumePending(){
   const pending = localStorage.getItem('tg_pending');
   const t = parseInt(localStorage.getItem('tg_pending_time') || '0');
   if(pending && Date.now() - t < 600000){ startPoll(pending); }
-  else if(pending){
-    localStorage.removeItem('tg_pending');
-    localStorage.removeItem('tg_pending_time');
-  }
+  else if(pending){ localStorage.removeItem('tg_pending'); localStorage.removeItem('tg_pending_time'); }
 })();
 
 const _origSave = save;
@@ -1753,6 +1696,7 @@ save = function(){ _origSave(); if(getMyChatId()) syncToTelegram(true); };
 if(!state.wellness) state.wellness = { sleepGoal:8, waterGoal:8, log:[] };
 if(!state.archive) state.archive = [];
 if(!Array.isArray(state.attendance)) state.attendance = [];
+if(!Array.isArray(state.gpaCourses)) state.gpaCourses = [];
 
 function calcAttendance(){
   const SEMESTER_WEEKS = 16;
@@ -1802,7 +1746,7 @@ function renderAttendancePage(){
       <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">🎯</div><div><b>25%</b><span>حد الحرمان</span></div></div>
     </div>
     <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;line-height:1.9;font-weight:600">
-      💡 <b>طريقة الحساب:</b><br>• كل <b>يوم محاضرة</b> = غياب واحد (حتى لو المادة ساعتين بنفس اليوم)
+      💡 <b>طريقة الحساب:</b><br>• كل <b>يوم محاضرة</b> = غياب واحد
       <br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
     </div>
     <div style="display:grid;gap:14px">
@@ -1836,7 +1780,6 @@ function renderAttendancePage(){
 
 const GRADE_POINTS = { 'A+':5,'A':4.75,'B+':4.5,'B':4,'C+':3.5,'C':3,'D+':2.5,'D':2,'F':0 };
 const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
-if(!Array.isArray(state.gpaCourses)) state.gpaCourses = [];
 
 function renderGPA(){
   const el = document.getElementById('gpaContent');
@@ -1980,8 +1923,8 @@ function createArchive(){
     data: JSON.parse(JSON.stringify({
       courses: state.courses || [], schedule: state.schedule || [],
       tasks: state.tasks || [], exams: state.exams || [],
-      notes: state.notes || [], studyLog: state.studyLog || [],
-      attendance: state.attendance || [], gpaCourses: state.gpaCourses || []
+      studyLog: state.studyLog || [], attendance: state.attendance || [],
+      gpaCourses: state.gpaCourses || []
     }))
   });
   save(); renderArchive(); toast('✅ تمت الأرشفة');
@@ -2004,8 +1947,8 @@ function loadArchive(i){
   const d = a.data;
   state.courses = d.courses || []; state.schedule = d.schedule || [];
   state.tasks = d.tasks || []; state.exams = d.exams || [];
-  state.notes = d.notes || []; state.studyLog = d.studyLog || [];
-  state.attendance = d.attendance || []; state.gpaCourses = d.gpaCourses || [];
+  state.studyLog = d.studyLog || []; state.attendance = d.attendance || [];
+  state.gpaCourses = d.gpaCourses || [];
   save(); closeModal(); renderAll(); renderArchive();
   toast('✅ تمت الاستعادة');
 }
@@ -2036,6 +1979,7 @@ function deleteArchive(i){
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
   if(!nav) return;
+  const homeBtn = nav.querySelector('.home-btn');
   const existing = {};
   nav.querySelectorAll('.nav-btn').forEach(b => { existing[b.dataset.view] = b; b.remove(); });
   const newBtn = (view, ico, label) => {
@@ -2046,12 +1990,12 @@ function deleteArchive(i){
     return b;
   };
   const groups = [
-    { title:'📌 الرئيسية', items:[['dashboard','🏠','الرئيسية'],['schedule','📅','الجدول الدراسي'],['courses','📚','المقررات'],['tasks','✅','المهام والواجبات'],['exams','⏰','الاختبارات']] },
-    { title:'📊 الأكاديمي', items:[['grades','📊','الدرجات'],['gpa','🎓','حاسبة المعدل'],['attendance','📋','عدّاد الغياب'],['archive','🗂️','أرشيف الفصول']] },
-    { title:'🎯 المذاكرة والصحة', items:[['study','🍅','المذاكرة'],['wellness','💪','النوم والماء']] },
-    { title:'⚙️ أدوات', items:[['notes','📝','الملاحظات'],['settings','⚙️','الإعدادات']] }
+    { title:'📚 الدراسة', items:[['schedule','📅','الجدول الدراسي'],['courses','📚','المقررات'],['tasks','✅','المهام والواجبات'],['exams','⏰','الاختبارات']] },
+    { title:'📊 السجل الأكاديمي', items:[['grades','📊','الدرجات'],['gpa','🎓','حاسبة المعدل'],['attendance','📋','عدّاد الغياب'],['archive','🗂️','أرشيف الفصول']] },
+    { title:'🎯 الإنتاجية والصحة', items:[['study','🍅','المذاكرة'],['wellness','💪','النوم والماء']] }
   ];
   nav.innerHTML = '';
+  if(homeBtn) nav.appendChild(homeBtn);
   groups.forEach(g => {
     const group = document.createElement('div');
     group.className = 'nav-group collapsed';

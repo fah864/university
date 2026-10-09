@@ -49,30 +49,29 @@ ul{list-style:none}
 .brand-txt b{display:block;font-family:'Tajawal';font-size:17px;font-weight:800;line-height:1.2}
 .brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
 .nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-.home-btn{display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;background:linear-gradient(135deg,var(--p),var(--p-dark));box-shadow:0 10px 24px rgba(13,148,136,.32);margin-bottom:16px;position:relative;overflow:hidden}
+.home-btn{display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;background:linear-gradient(135deg,var(--p),var(--p-dark));box-shadow:0 10px 24px rgba(13,148,136,.32);margin-bottom:16px;position:relative;overflow:hidden;cursor:pointer}
 .home-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(212,165,55,.35));pointer-events:none}
 .home-btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(13,148,136,.42)}
 .home-btn.active{background:linear-gradient(135deg,var(--p-dark),#0a5f52)}
 .home-btn .ico{font-size:22px;width:26px;text-align:center;flex-shrink:0;position:relative;z-index:1}
 .home-btn span:not(.ico){position:relative;z-index:1}
 .home-btn .sub{display:block;font-size:10.5px;font-weight:600;opacity:.85;letter-spacing:.3px;margin-top:-2px}
-.nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right}
+.nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right;cursor:pointer}
 .nav-btn:hover{background:var(--hover);color:var(--text)}
 .nav-btn.active{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
 .nav-btn .ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
 .nav-btn .badge{margin-inline-start:auto;background:var(--danger);color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;min-width:22px;text-align:center}
 .nav-btn.active .badge{background:rgba(255,255,255,.28)}
 .sidebar-foot{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px}
-.icon-btn{width:44px;height:44px;border-radius:12px;background:var(--hover);display:grid;place-items:center;font-size:19px;transition:var(--t);flex:1;color:var(--text)}
+.icon-btn{width:44px;height:44px;border-radius:12px;background:var(--hover);display:grid;place-items:center;font-size:19px;transition:var(--t);flex:1;color:var(--text);cursor:pointer}
 .icon-btn:hover{background:var(--p);color:#fff;transform:translateY(-2px)}
 .icon-btn.active{background:var(--p);color:#fff}
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 22px;height:70px;display:flex;align-items:center;gap:16px}
-.hamburger{display:none;width:42px;height:42px;border-radius:11px;background:var(--hover);place-items:center;font-size:20px}
+.hamburger{display:none;width:42px;height:42px;border-radius:11px;background:var(--hover);place-items:center;font-size:20px;cursor:pointer}
 .page-title{font-size:19px;font-weight:800}
 .page-sub{font-size:12.5px;color:var(--muted);font-weight:600}
 .topbar-spacer{flex:1}
-.topbar-date{font-size:13px;color:var(--muted);font-weight:700;background:var(--hover);padding:8px 14px;border-radius:11px;white-space:nowrap}
 .content{padding:24px 22px 90px;max-width:1400px;width:100%;margin-inline:auto}
 .view{display:none;animation:fade .35s ease both}
 .view.active{display:block}
@@ -80,7 +79,7 @@ ul{list-style:none}
 .sec-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
 .sec-head h2{font-size:21px}
 .sec-head p{font-size:13.5px;color:var(--muted);font-weight:600}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;transition:var(--t);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:12px;font-weight:700;font-size:14.5px;transition:var(--t);white-space:nowrap;cursor:pointer}
 .btn-primary{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.26)}
 .btn-primary:hover{background:var(--p-dark);transform:translateY(-2px)}
 .btn-ghost{background:var(--hover);color:var(--text)}
@@ -99,7 +98,7 @@ ul{list-style:none}
 .grid{display:grid;gap:16px}
 .g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
 .g3{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
-.up-item{display:flex;align-items:center;gap:14px;padding:14px;border-radius:13px;background:var(--hover);margin-bottom:10px;transition:var(--t)}
+.up-item{display:flex;align-items:center;gap:14px;padding:14px;border-radius:13px;background:var(--hover);margin-bottom:10px;transition:var(--t);cursor:pointer}
 .up-item:hover{transform:translateX(-5px)}
 .up-item:last-child{margin-bottom:0}
 .up-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
@@ -142,14 +141,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .cls b{display:block;font-size:12.5px;line-height:1.3;margin-bottom:2px}
 .cls span{font-size:10.5px;opacity:.9;display:block}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.chip{padding:8px 16px;border-radius:20px;font-size:13.5px;font-weight:700;background:var(--card);border:1.5px solid var(--border);color:var(--muted);transition:var(--t)}
+.chip{padding:8px 16px;border-radius:20px;font-size:13.5px;font-weight:700;background:var(--card);border:1.5px solid var(--border);color:var(--muted);transition:var(--t);cursor:pointer}
 .chip:hover{border-color:var(--p);color:var(--p)}
 .chip.active{background:var(--p);border-color:var(--p);color:#fff}
 .task{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border);margin-bottom:10px;transition:var(--t);box-shadow:var(--shadow)}
 .task:hover{border-color:var(--p);transform:translateX(-4px)}
 .task.done{opacity:.55}
 .task.done .task-title{text-decoration:line-through}
-.chk{width:24px;height:24px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:grid;place-items:center;transition:var(--t);font-size:14px;color:transparent}
+.chk{width:24px;height:24px;border-radius:8px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;display:grid;place-items:center;transition:var(--t);font-size:14px;color:transparent;cursor:pointer}
 .chk:hover{border-color:var(--p)}
 .task.done .chk{background:var(--ok);border-color:var(--ok);color:#fff}
 .task-main{flex:1;min-width:0}
@@ -157,7 +156,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .task-sub{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;color:var(--muted);font-weight:600}
 .tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px}
 .task-actions{display:flex;gap:4px;flex-shrink:0}
-.mini-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;background:var(--hover);transition:var(--t)}
+.mini-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;background:var(--hover);transition:var(--t);cursor:pointer}
 .mini-btn:hover{background:var(--p);color:#fff}
 .mini-btn.del:hover{background:var(--danger)}
 .exam-item{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border);margin-bottom:10px;transition:var(--t);box-shadow:var(--shadow);border-right:4px solid var(--danger)}
@@ -177,9 +176,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .ring-txt b{font-family:'Tajawal';font-size:44px;font-weight:800;line-height:1;letter-spacing:1px}
 .ring-txt span{font-size:13px;color:var(--muted);font-weight:700;margin-top:6px}
-.pomo-modes{display:flex;gap:8px;justify-content:center;margin-bottom:22px}
-.pomo-ctrl{display:flex;gap:10px;justify-content:center}
-.pomo-ctrl .btn{padding:13px 30px;font-size:15px}
+.pomo-modes{display:flex;gap:8px;justify-content:center;margin-bottom:22px;flex-wrap:wrap}
+.pomo-ctrl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pomo-ctrl .btn{padding:13px 22px;font-size:14px}
 .week-bars{display:flex;align-items:flex-end;gap:8px;height:150px;padding:10px 0;margin-top:10px}
 .wbar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
 .wbar-fill{width:100%;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--p),var(--p-dark));min-height:4px;transition:height .5s ease}
@@ -202,7 +201,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .field textarea{resize:vertical;min-height:100px}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--p);background:var(--card);box-shadow:0 0 0 4px color-mix(in srgb,var(--p) 12%,transparent)}
 .color-pick{display:flex;gap:9px;flex-wrap:wrap}
-.color-pick button{width:34px;height:34px;border-radius:11px;border:3px solid transparent;transition:var(--t)}
+.color-pick button{width:34px;height:34px;border-radius:11px;border:3px solid transparent;transition:var(--t);cursor:pointer}
 .color-pick button.sel{border-color:var(--text);transform:scale(1.12)}
 .modal-bg{position:fixed;inset:0;background:rgba(8,20,35,.62);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
 .modal-bg.open{display:flex;animation:fade .22s ease}
@@ -210,14 +209,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 @keyframes pop{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:none}}
 .modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:2;border-radius:22px 22px 0 0}
 .modal-head h3{font-size:19px}
-.modal-head button{width:36px;height:36px;border-radius:10px;background:var(--hover);display:grid;place-items:center;font-size:18px}
+.modal-head button{width:36px;height:36px;border-radius:10px;background:var(--hover);display:grid;place-items:center;font-size:18px;cursor:pointer}
 .modal-head button:hover{background:var(--danger-bg);color:var(--danger)}
 .modal-body{padding:24px}
 .modal-foot{padding:16px 24px 24px;display:flex;gap:10px}
 .modal-foot .btn{flex:1}
 .toast{position:fixed;bottom:26px;right:50%;transform:translate(50%,120px);background:var(--text);color:var(--bg);padding:13px 26px;border-radius:14px;font-weight:700;font-size:14.5px;z-index:500;transition:transform .4s cubic-bezier(.34,1.4,.64,1);box-shadow:var(--shadow-lg);max-width:90vw;text-align:center}
 .toast.show{transform:translate(50%,0)}
-.fab{position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t)}
+.fab{position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t);cursor:pointer}
 .fab:hover{transform:translateY(-4px) rotate(90deg);background:var(--p-dark)}
 .prog{height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:10px}
 .prog i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--p),#2dd4bf);transition:width .6s ease}
@@ -243,8 +242,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 @media(max-width:640px){
   .content{padding:18px 14px 90px}
   .topbar{padding:0 10px;height:60px;gap:6px}
-  .topbar-date{display:none}
-  .topbar-spacer{display:none}
   .topbar > div:nth-of-type(1){min-width:0;flex:1;overflow:hidden}
   .page-title{font-size:14px;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .page-sub{font-size:10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -307,20 +304,18 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .cd-item .ci-main b{display:block;font-size:14.5px;font-weight:700;margin-bottom:3px}
 .cd-item .ci-main span{font-size:12.5px;color:var(--muted);font-weight:600}
 .cd-item .ci-side{font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap}
-.back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;background:var(--hover);color:var(--text);font-weight:700;font-size:14px;transition:var(--t);margin-bottom:16px}
+.back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;background:var(--hover);color:var(--text);font-weight:700;font-size:14px;transition:var(--t);margin-bottom:16px;cursor:pointer}
 .back-btn:hover{background:var(--p);color:#fff;transform:translateX(4px)}
 .grade-summary-box{background:linear-gradient(135deg,var(--cd-color,var(--p)),color-mix(in srgb,var(--cd-color,var(--p)) 70%,#0f766e));color:#fff;padding:18px 22px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;box-shadow:0 10px 25px color-mix(in srgb,var(--cd-color,var(--p)) 30%,transparent)}
 .grade-summary-box b{font-family:'Tajawal';font-size:32px;font-weight:800;line-height:1}
 .grade-summary-box span{font-size:13px;font-weight:700;opacity:.9}
 .add-type-grid{display:grid;gap:12px}
-.add-type-btn{display:flex;align-items:center;gap:14px;padding:18px;border-radius:14px;background:var(--card);border:2px solid var(--border);transition:var(--t);text-align:right}
+.add-type-btn{display:flex;align-items:center;gap:14px;padding:18px;border-radius:14px;background:var(--card);border:2px solid var(--border);transition:var(--t);text-align:right;cursor:pointer}
 .add-type-btn:hover{border-color:var(--p);background:var(--hover);transform:translateX(-4px)}
 .add-type-btn .at-ico{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
 .add-type-btn .at-main{flex:1}
 .add-type-btn .at-main b{display:block;font-size:16px;font-weight:800;margin-bottom:3px}
 .add-type-btn .at-main span{font-size:12.5px;color:var(--muted);font-weight:600}
-
-/* ===== 🕌 العبادة ===== */
 .prayer-row{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-radius:12px;background:var(--hover);margin-bottom:7px;transition:var(--t)}
 .prayer-row.next{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
 .prayer-row.past{opacity:.55}
@@ -341,40 +336,20 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .wird-big{font-family:'Tajawal';font-size:44px;font-weight:800;color:var(--p);line-height:1}
 .wird-goal{font-size:14px;color:var(--muted);font-weight:700;margin-top:6px}
 .wird-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.teeth-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.teeth-btn{padding:16px 12px;border-radius:14px;background:var(--hover);border:2px solid var(--border);font-weight:800;font-size:14px;transition:var(--t);text-align:center;cursor:pointer}
+.teeth-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.teeth-btn{padding:22px 12px;border-radius:16px;background:var(--hover);border:2px solid var(--border);font-weight:800;font-size:14.5px;transition:var(--t);text-align:center;cursor:pointer}
 .teeth-btn:hover{border-color:var(--p)}
 .teeth-btn.done{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
-.teeth-btn .t-ico{font-size:26px;display:block;margin-bottom:6px}
+.teeth-btn .t-ico{font-size:32px;display:block;margin-bottom:8px}
 @media(max-width:640px){
   .prayer-name{font-size:13.5px}
   .prayer-time{font-size:15px}
   .adhkar-text{font-size:13.5px;line-height:1.8}
   .wird-big{font-size:36px}
-  .teeth-btn{font-size:12.5px;padding:14px 10px}
-  .teeth-btn .t-ico{font-size:22px}
+  .teeth-btn{font-size:13px;padding:18px 10px}
+  .teeth-btn .t-ico{font-size:26px}
 }
-
-/* ===== ⏱️ المؤقت العائم ===== */
-.floating-timer{
-  position:fixed;
-  bottom:100px;
-  right:26px;
-  z-index:90;
-  background:linear-gradient(135deg,var(--p),var(--p-dark));
-  color:#fff;
-  border-radius:18px;
-  padding:10px 14px;
-  display:none;
-  align-items:center;
-  gap:10px;
-  box-shadow:0 12px 30px rgba(13,148,136,.5);
-  cursor:grab;
-  user-select:none;
-  touch-action:none;
-  min-width:130px;
-  transition:transform .2s;
-}
+.floating-timer{position:fixed;bottom:100px;right:26px;z-index:90;background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-radius:18px;padding:10px 14px;display:none;align-items:center;gap:10px;box-shadow:0 12px 30px rgba(13,148,136,.5);cursor:grab;user-select:none;touch-action:none;min-width:130px;transition:transform .2s}
 .floating-timer.show{display:flex}
 .floating-timer:active{cursor:grabbing}
 .floating-timer.paused{background:linear-gradient(135deg,var(--warn),#b45309)}
@@ -403,7 +378,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <div class="brand-logo">🎓</div>
       <div class="brand-txt"><b>مُساعد الجامعة</b><span>نظّم دراستك بذكاء</span></div>
     </div>
-    <nav class="nav">
+    <nav class="nav" id="mainNav">
       <button class="home-btn active" data-view="dashboard">
         <span class="ico">🏠</span>
         <span>لوحة اليوم<span class="sub">نظرة عامة على دراستك</span></span>
@@ -432,7 +407,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">📅 —</div>
         <div class="date-badge" id="wbDateBadge">—</div>
       </div>
-      <div class="topbar-date" id="topDate"></div>
     </header>
 
     <div class="content">
@@ -506,10 +480,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
       <section class="view" id="view-grades">
         <div class="sec-head">
-          <div>
-            <h2>🎓 المعدل والدرجات</h2>
-            <p>كل مقرراتك في جدول واحد — تفصيلي أو تقدير مباشر</p>
-          </div>
+          <div><h2>🎓 المعدل والدرجات</h2><p>كل مقرراتك في جدول واحد — تفصيلي أو تقدير مباشر</p></div>
           <button class="btn btn-primary btn-sm" onclick="openAddGradeForm()">➕ مقرر خارجي</button>
         </div>
         <div class="stats" id="gpaStats"></div>
@@ -543,13 +514,14 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             <div class="pomo-ctrl">
               <button class="btn btn-primary" id="pomoStart">▶ ابدأ</button>
               <button class="btn btn-ghost" id="pomoReset">↺ تصفير</button>
+              <button class="btn btn-ghost" id="pipBtn" onclick="togglePipTimer()">📺 نافذة عائمة</button>
             </div>
             <div class="field" style="margin-top:22px;text-align:right">
               <label>المقرر الذي تذاكره الآن</label>
               <select id="pomoCourse"></select>
             </div>
             <div style="margin-top:14px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.7">
-              💡 المؤقّت يكمل عمله حتى لو خرجت من الموقع — يظهر لك مؤقت عائم تلقائياً
+              💡 المؤقّت يكمل عمله حتى لو خرجت من الموقع — استخدم <b>النافذة العائمة</b> ليبقى ظاهراً معك
             </div>
           </div>
           <div class="card">
@@ -580,7 +552,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
       <section class="view" id="view-worship">
         <div class="sec-head">
-          <div><h2>🕌 العبادة</h2><p>مواقيت الصلاة · الأذكار · الورد اليومي</p></div>
+          <div><h2>🕌 مواقيت الصلاة</h2><p>الصلوات الخمس + الورد اليومي</p></div>
         </div>
         <div class="card" style="margin-bottom:16px">
           <div class="sec-head" style="margin-bottom:12px">
@@ -591,21 +563,46 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             <div class="empty" style="padding:20px"><b>جاري التحميل...</b></div>
           </div>
         </div>
-        <div class="card" style="margin-bottom:16px">
-          <div class="sec-head" style="margin-bottom:12px">
-            <h3 style="font-size:17px">📿 الأذكار</h3>
-          </div>
-          <div class="filters" style="margin-bottom:14px" id="adhkarTabs">
-            <button class="chip active" data-period="morning">☀️ أذكار الصباح</button>
-            <button class="chip" data-period="evening">🌙 أذكار المساء</button>
-          </div>
-          <div id="adhkarList"></div>
-        </div>
         <div class="card">
           <div class="sec-head" style="margin-bottom:12px">
             <h3 style="font-size:17px">📖 الورد اليومي</h3>
           </div>
           <div id="wirdContent"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-adhkar">
+        <div class="sec-head">
+          <div><h2>📿 الأذكار</h2><p>أذكار الصباح والمساء من حصن المسلم</p></div>
+        </div>
+        <div class="card">
+          <div class="filters" style="margin-bottom:16px" id="adhkarTabs">
+            <button class="chip active" data-period="morning">☀️ أذكار الصباح</button>
+            <button class="chip" data-period="evening">🌙 أذكار المساء</button>
+          </div>
+          <div id="adhkarList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-teeth">
+        <div class="sec-head">
+          <div><h2>🦷 نظافة الأسنان</h2><p>توصية: مرتين يومياً — صباحاً وقبل النوم</p></div>
+        </div>
+        <div class="card" style="padding:22px;margin-bottom:16px">
+          <div class="teeth-grid">
+            <button class="teeth-btn" id="teethMorningBtn" onclick="toggleTeeth('morning')">
+              <span class="t-ico">🌅</span>
+              تفريش الصباح
+            </button>
+            <button class="teeth-btn" id="teethNightBtn" onclick="toggleTeeth('night')">
+              <span class="t-ico">🌙</span>
+              تفريش الليل
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام</h3>
+          <div id="teethStats"></div>
         </div>
       </section>
 
@@ -787,7 +784,9 @@ const VIEW_META = {
   tasks:     ['المهام والاختبارات','تابع كل ما عليك تسليمه والاختبارات القادمة'],
   grades:    ['المعدل والدرجات','احسب معدلك وتابع درجاتك التفصيلية'],
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
-  worship:   ['العبادة','مواقيت الصلاة · الأذكار · الورد اليومي'],
+  worship:   ['مواقيت الصلاة','الصلوات الخمس + الورد اليومي'],
+  adhkar:    ['الأذكار','أذكار الصباح والمساء'],
+  teeth:     ['نظافة الأسنان','تفريش الصباح والمساء'],
   wellness:  ['النوم والماء','صحتك أولاً'],
   attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
   archive:   ['أرشيف الفصول','سجل كل فصولك السابقة'],
@@ -795,7 +794,9 @@ const VIEW_META = {
 };
 function go(view){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + view)?.classList.add('active');
+  const targetView = document.getElementById('view-' + view);
+  if(!targetView){ console.warn('view not found:', view); return; }
+  targetView.classList.add('active');
   const hl = (view === 'course-detail') ? 'courses' : view;
   document.querySelectorAll('.nav-btn, .home-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === hl);
@@ -805,8 +806,9 @@ function go(view){
   document.getElementById('pageSub').textContent = s;
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+  document.body.style.overflow = '';
   window.scrollTo({ top:0, behavior:'smooth' });
-  if(view !== 'course-detail') location.hash = view;
+  if(view !== 'course-detail'){ try{ location.hash = view; }catch(e){} }
   document.querySelectorAll('.nav-group').forEach(g => {
     if(g.querySelector(`[data-view="${view}"]`)) g.classList.remove('collapsed');
   });
@@ -814,15 +816,24 @@ function go(view){
     try{
       if(view === 'attendance') renderAttendancePage();
       if(view === 'wellness') renderWellness();
-      if(view === 'worship'){ renderPrayerTimes(); renderAdhkar(); renderWird(); }
+      if(view === 'worship'){ renderPrayerTimes(); renderWird(); }
+      if(view === 'adhkar') renderAdhkar();
+      if(view === 'teeth') renderTeeth();
       if(view === 'archive') renderArchive();
       if(view === 'grades') renderGrades();
       if(view === 'settings') renderSyncStatus();
       if(view === 'course-detail') renderCourseDetail();
       if(view === 'courses') renderCourses();
-    }catch(e){}
+    }catch(e){ console.error(e); }
   }, 60);
 }
+// Event delegation for ALL navigation (more robust)
+document.body.addEventListener('click', function(e){
+  const target = e.target.closest('[data-view]');
+  if(!target || !target.dataset.view) return;
+  e.preventDefault();
+  go(target.dataset.view);
+});
 
 /* ============================================================
    5) الثيم
@@ -923,11 +934,10 @@ function renderCourseDetail(){
     <div class="cd-stat"><b style="color:${c.color}">${lectures.length}</b><span>📅 محاضرة أسبوعياً</span></div>
     <div class="cd-stat"><b style="color:var(--warn)">${openTasks}</b><span>✅ مهمة متبقية</span></div>
     <div class="cd-stat"><b style="color:var(--danger)">${exams.filter(e => daysUntil(e.date) >= 0).length}</b><span>⏰ اختبار قادم</span></div>
-    <div class="cd-stat"><b style="color:var(--ok)">${total !== null ? total.toFixed(1) + '%' : '—'}</b><span>📊 معدل الدرجات</span></div>
-  `;
+    <div class="cd-stat"><b style="color:var(--ok)">${total !== null ? total.toFixed(1) + '%' : '—'}</b><span>📊 معدل الدرجات</span></div>`;
   let lecturesHTML = '';
   if(!lectures.length){
-    lecturesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📅</div><b style="font-size:15px">لا توجد محاضرات</b><p style="font-size:12.5px">أضف محاضرات هذا المقرر من الجدول</p></div>`;
+    lecturesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📅</div><b style="font-size:15px">لا توجد محاضرات</b></div>`;
   } else {
     lecturesHTML = lectures.map(s => `
       <div class="cd-item">
@@ -938,7 +948,7 @@ function renderCourseDetail(){
   }
   let tasksHTML = '';
   if(!tasks.length){
-    tasksHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">✅</div><b style="font-size:15px">لا توجد مهام</b><p style="font-size:12.5px">أضف مهمة جديدة من زر "مهمة"</p></div>`;
+    tasksHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">✅</div><b style="font-size:15px">لا توجد مهام</b></div>`;
   } else {
     tasksHTML = tasks.map(t => {
       const d = daysUntil(t.due);
@@ -956,7 +966,7 @@ function renderCourseDetail(){
   }
   let examsHTML = '';
   if(!exams.length){
-    examsHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">⏰</div><b style="font-size:15px">لا توجد اختبارات</b><p style="font-size:12.5px">أضف اختباراً جديداً</p></div>`;
+    examsHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">⏰</div><b style="font-size:15px">لا توجد اختبارات</b></div>`;
   } else {
     examsHTML = exams.map(e => {
       const d = daysUntil(e.date);
@@ -975,7 +985,7 @@ function renderCourseDetail(){
   let gradesHTML = '';
   const g = c.grades || [];
   if(!g.length){
-    gradesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📊</div><b style="font-size:15px">لا توجد درجات</b><p style="font-size:12.5px">أضف مكونات الدرجة من صفحة "المعدل والدرجات"</p></div>`;
+    gradesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📊</div><b style="font-size:15px">لا توجد درجات</b></div>`;
   } else {
     gradesHTML = g.map(x => {
       const scoreColor = (+x.score >= 80) ? 'var(--ok)' : (+x.score >= 60) ? 'var(--warn)' : 'var(--danger)';
@@ -1183,8 +1193,8 @@ function renderDashboard(){
   document.getElementById('dashLeft').textContent = total - done;
   document.getElementById('dashLate').textContent = late.length;
   const items = [
-    ...openTasks.map(t => ({ kind:'مهمة', ico:'📝', title:t.title, date:t.due, courseId:t.courseId })),
-    ...upcomingExams.map(e => ({ kind:'اختبار', ico:'⏰', title:e.title, date:e.date, courseId:e.courseId }))
+    ...openTasks.map(t => ({ kind:'task', id:t.id, ico:'📝', title:t.title, date:t.due, courseId:t.courseId })),
+    ...upcomingExams.map(e => ({ kind:'exam', id:e.id, ico:'⏰', title:e.title, date:e.date, courseId:e.courseId }))
   ].sort((a,b) => a.date.localeCompare(b.date)).slice(0,6);
   const upEl = document.getElementById('dashUpcoming');
   if(!items.length){
@@ -1197,8 +1207,9 @@ function renderDashboard(){
       else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; }
       else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; }
       else { txt = `بعد ${d} يوم`; bg = 'var(--ok-bg)'; }
-      return `<div class="up-item"><div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
-        <div class="up-info"><b>${it.ico} ${esc(it.title)}</b><span>${it.kind} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span></div>
+      const clickHandler = it.kind === 'task' ? `openTaskForm('${it.id}')` : `openExamForm('${it.id}')`;
+      return `<div class="up-item" onclick="${clickHandler}"><div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
+        <div class="up-info"><b>${it.ico} ${esc(it.title)}</b><span>${it.kind === 'task' ? 'مهمة' : 'اختبار'} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span></div>
         <div class="up-time" style="background:${bg}">${txt}</div></div>`;
     }).join('');
   }
@@ -1210,7 +1221,7 @@ function renderDashboard(){
   }else{
     tdEl.innerHTML = todays.map(s => {
       const c = getCourse(s.courseId);
-      return `<div class="up-item"><div class="up-dot" style="background:${courseColor(s.courseId)}"></div>
+      return `<div class="up-item" onclick="go('schedule')"><div class="up-dot" style="background:${courseColor(s.courseId)}"></div>
         <div class="up-info"><b>${esc(courseName(s.courseId))}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span></div>
         <div class="up-time" style="background:var(--hover);color:var(--muted)">${c?.teacher ? esc(c.teacher) : ''}</div></div>`;
     }).join('');
@@ -1483,18 +1494,10 @@ function renderGrades(){
   const allRows = [];
   state.courses.forEach(c => {
     const g = getCourseGrade(c);
-    allRows.push({
-      source:'course', id:c.id, name:c.name, code:c.code,
-      credits:+c.credits||0, color:c.color, teacher:c.teacher,
-      type: g ? g.type : 'empty', score: g ? g.score : null, letter: g ? g.letter : null,
-      grades: c.grades || []
-    });
+    allRows.push({ source:'course', id:c.id, name:c.name, code:c.code, credits:+c.credits||0, color:c.color, teacher:c.teacher, type: g ? g.type : 'empty', score: g ? g.score : null, letter: g ? g.letter : null, grades: c.grades || [] });
   });
   state.gpaCourses.forEach((gc, idx) => {
-    allRows.push({
-      source:'external', idx, name:gc.name, code:'', credits:+gc.credits||0,
-      color:'#64748b', teacher:'', type:'letter', score:null, letter:gc.grade, grades:[]
-    });
+    allRows.push({ source:'external', idx, name:gc.name, code:'', credits:+gc.credits||0, color:'#64748b', teacher:'', type:'letter', score:null, letter:gc.grade, grades:[] });
   });
   let pts = 0, cr = 0;
   allRows.forEach(r => {
@@ -1508,8 +1511,7 @@ function renderGrades(){
   statsEl.innerHTML = `
     <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${gpa.toFixed(2)}</b><span>المعدل التقديري (من 5)</span></div></div>
     <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${cr}</b><span>ساعة محسوبة</span></div></div>
-    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${gradedCount}/${allRows.length}</b><span>مقررات مُقيّمة</span></div></div>
-  `;
+    <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${gradedCount}/${allRows.length}</b><span>مقررات مُقيّمة</span></div></div>`;
   if(!allRows.length){
     listEl.innerHTML = `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراً من قسم "المقررات" — أو مقرراً خارجياً</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button><button class="btn btn-ghost" onclick="openAddGradeForm()">➕ مقرر خارجي</button></div></div>`;
     return;
@@ -1636,8 +1638,7 @@ function openAddGradeForm(){
         <select id="agGrade">${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}</select></div>
     </div>
     <div style="background:var(--p-light);padding:12px 14px;border-radius:12px;font-size:12.5px;line-height:1.8;margin-top:14px;font-weight:600">
-      💡 استخدم هذا لـ <b>المقررات الخارجية</b> فقط (فصول سابقة، مقررات مُعادلة).<br>
-      أما مقرراتك المسجّلة → تجدها تلقائياً في الجدول.
+      💡 استخدم هذا لـ <b>المقررات الخارجية</b> فقط (فصول سابقة، مقررات مُعادلة).
     </div>
   `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExternalGrade()">💾 حفظ</button>`);
 }
@@ -1652,7 +1653,7 @@ function saveExternalGrade(){
 }
 
 /* ============================================================
-   18) بومودورو — بنظام Timestamp (يكمل خارج التطبيق)
+   18) بومودورو — Timestamp + PiP
 ============================================================ */
 const RING_C = 552.92;
 let pomo = {
@@ -1663,6 +1664,9 @@ let pomo = {
   total: 25 * 60,
   intervalId: null
 };
+let pipWindow = null;
+let pipDocInterval = null;
+
 function pomoDuration(mode){ const p = state.settings.pomo; return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60; }
 function pomoLabel(mode){ return mode === 'work' ? 'وقت التركيز' : mode === 'short' ? 'راحة قصيرة' : 'راحة طويلة'; }
 function pomoGetRemaining(){
@@ -1707,7 +1711,6 @@ function pomoRender(){
     ringFg.style.strokeDashoffset = (RING_C * prog).toFixed(2);
   }
   if(startBtn) startBtn.textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
-  // المؤقّت العائم
   const ft = document.getElementById('floatingTimer');
   const ftTime = document.getElementById('ftTime');
   const ftLabel = document.getElementById('ftLabel');
@@ -1728,6 +1731,8 @@ function pomoRender(){
       ft.classList.remove('show');
     }
   }
+  // PiP update
+  updatePipTimer();
 }
 function pomoStartTimer(){
   if(pomo.running) return;
@@ -1773,7 +1778,7 @@ function pomoResetCurrent(){
 function pomoNotify(title, body){
   try{
     if('Notification' in window && Notification.permission === 'granted'){
-      new Notification(title, { body, tag: 'pomo', icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%230d9488"/><text y="72" x="50" text-anchor="middle" font-size="58">🎓</text></svg>' });
+      new Notification(title, { body, tag: 'pomo' });
     }
   }catch(e){}
 }
@@ -1835,6 +1840,129 @@ function pomoResumeIfNeeded(){
   document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === pomo.mode));
   pomoRender();
 }
+
+/* ===== PiP Timer (نافذة عائمة) ===== */
+async function togglePipTimer(){
+  // If already open → close
+  if(pipWindow && !pipWindow.closed){
+    try{ pipWindow.close(); }catch(e){}
+    pipWindow = null;
+    if(pipDocInterval){ clearInterval(pipDocInterval); pipDocInterval = null; }
+    updatePipButton();
+    return;
+  }
+  // Check support
+  if(!('documentPictureInPicture' in window)){
+    toast('⚠️ النافذة العائمة غير مدعومة في هذا المتصفح — استخدم الفلوتنق تايمر داخل الصفحة');
+    return;
+  }
+  if(!pomo.running && pomo.pausedRemaining === null){
+    toast('⚠️ ابدأ المؤقّت أولاً');
+    return;
+  }
+  try{
+    pipWindow = await documentPictureInPicture.requestWindow({
+      width: 320,
+      height: 180
+    });
+    // Copy styles (best effort)
+    try{
+      [...document.styleSheets].forEach(ss => {
+        try{
+          const rules = [...ss.cssRules].map(r => r.cssText).join('\n');
+          const style = pipWindow.document.createElement('style');
+          style.textContent = rules;
+          pipWindow.document.head.appendChild(style);
+        }catch(e){
+          if(ss.href){
+            const link = pipWindow.document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = ss.href;
+            pipWindow.document.head.appendChild(link);
+          }
+        }
+      });
+    }catch(e){}
+    // Build PiP UI
+    pipWindow.document.body.innerHTML = `
+      <div class="pip-timer-wrap">
+        <div class="pip-timer">
+          <div class="pip-mode" id="pipMode">🎯 تركيز</div>
+          <div class="pip-time" id="pipTime">25:00</div>
+          <div class="pip-controls">
+            <button class="pip-btn" id="pipToggle" title="تشغيل/إيقاف">⏸</button>
+            <button class="pip-btn" id="pipReset" title="تصفير">↺</button>
+          </div>
+        </div>
+      </div>
+    `;
+    const pipStyle = pipWindow.document.createElement('style');
+    pipStyle.textContent = `
+      *{box-sizing:border-box}
+      body{margin:0;font-family:'Cairo','Tajawal',system-ui,sans-serif;background:transparent;overflow:hidden;width:100vw;height:100vh}
+      .pip-timer-wrap{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff}
+      .pip-timer{text-align:center;padding:10px;width:100%}
+      .pip-mode{font-size:13px;font-weight:800;opacity:.92;margin-bottom:6px}
+      .pip-time{font-family:'Tajawal','Cairo',sans-serif;font-size:52px;font-weight:800;line-height:1;letter-spacing:2px}
+      .pip-controls{display:flex;gap:10px;justify-content:center;margin-top:14px}
+      .pip-btn{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.25);border:none;color:#fff;font-size:20px;cursor:pointer;transition:.2s;font-family:inherit}
+      .pip-btn:hover{background:rgba(255,255,255,.45)}
+    `;
+    pipWindow.document.head.appendChild(pipStyle);
+    // Wire buttons
+    pipWindow.document.getElementById('pipToggle').addEventListener('click', pomoToggle);
+    pipWindow.document.getElementById('pipReset').addEventListener('click', () => {
+      if(confirm('تصفير المؤقّت؟')) pomoResetCurrent();
+    });
+    // Close handler
+    pipWindow.addEventListener('pagehide', () => {
+      pipWindow = null;
+      if(pipDocInterval){ clearInterval(pipDocInterval); pipDocInterval = null; }
+      updatePipButton();
+    });
+    // Update loop
+    updatePipTimer();
+    if(pipDocInterval) clearInterval(pipDocInterval);
+    pipDocInterval = setInterval(updatePipTimer, 500);
+    updatePipButton();
+    toast('📺 المؤقّت في وضع عائم');
+  }catch(e){
+    console.error('PiP error', e);
+    toast('⚠️ فشل فتح النافذة العائمة');
+  }
+}
+function updatePipTimer(){
+  if(!pipWindow || pipWindow.closed) return;
+  try{
+    const remaining = pomoGetRemaining();
+    const timeStr = pomoFormat(remaining);
+    const timeEl = pipWindow.document.getElementById('pipTime');
+    const modeEl = pipWindow.document.getElementById('pipMode');
+    const toggleEl = pipWindow.document.getElementById('pipToggle');
+    const wrapEl = pipWindow.document.querySelector('.pip-timer-wrap');
+    if(timeEl) timeEl.textContent = timeStr;
+    if(modeEl){
+      const emoji = pomo.mode === 'work' ? '🎯' : pomo.mode === 'short' ? '☕' : '🛋️';
+      modeEl.textContent = emoji + ' ' + pomoLabel(pomo.mode);
+    }
+    if(toggleEl) toggleEl.textContent = pomo.running ? '⏸' : '▶';
+    if(wrapEl){
+      if(!pomo.running) wrapEl.style.background = 'linear-gradient(135deg,#d97706,#b45309)';
+      else if(pomo.mode !== 'work') wrapEl.style.background = 'linear-gradient(135deg,#0891b2,#0e7490)';
+      else wrapEl.style.background = 'linear-gradient(135deg,#0d9488,#0f766e)';
+    }
+  }catch(e){}
+}
+function updatePipButton(){
+  const btn = document.getElementById('pipBtn');
+  if(!btn) return;
+  if(pipWindow && !pipWindow.closed){
+    btn.textContent = '✖ إغلاق العائم';
+  } else {
+    btn.textContent = '📺 نافذة عائمة';
+  }
+}
+
 document.getElementById('pomoStart').addEventListener('click', () => {
   if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
   pomoToggle();
@@ -1844,11 +1972,10 @@ document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEve
   if(confirm(`تغيير الوضع إلى "${pomoLabel(c.dataset.mode)}"؟ (سيفقد الوقت الحالي)`)) pomoSetMode(c.dataset.mode);
 }));
 
-/* ===== المؤقّت العائم — سحب ===== */
+/* ===== Floating timer drag ===== */
 (function floatingTimerDrag(){
   const ft = document.getElementById('floatingTimer');
   if(!ft) return;
-  // استرجاع الموضع
   try{
     const pos = JSON.parse(localStorage.getItem('ft_pos') || 'null');
     if(pos && typeof pos.x === 'number' && typeof pos.y === 'number'){
@@ -2503,7 +2630,7 @@ function renderAttendancePage(){
 }
 
 /* ============================================================
-   28) النوم والماء + الأسنان
+   28) النوم والماء
 ============================================================ */
 function renderWellness(){
   const el = document.getElementById('wellnessContent');
@@ -2523,7 +2650,6 @@ function renderWellness(){
     }
     const maxSleep = Math.max(...last7.map(x => x.sleep), w.sleepGoal);
     const maxWater = Math.max(...last7.map(x => x.water), w.waterGoal);
-    const teethLog = state.health.teethLog.find(l => l.date === today) || { date: today, morning: false, night: false };
     el.innerHTML = `
       <div class="grid g2" style="margin-bottom:16px">
         <div class="card" style="padding:22px">
@@ -2539,27 +2665,6 @@ function renderWellness(){
           <div style="text-align:center"><button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button><button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير</button></div>
         </div>
       </div>
-      <div class="card" style="padding:22px;margin-bottom:16px">
-        <div style="text-align:center;margin-bottom:16px">
-          <div style="font-size:52px;line-height:1">🦷</div>
-          <h3 style="font-size:19px;margin-top:8px">نظافة الأسنان</h3>
-        </div>
-        <div class="teeth-grid">
-          <button class="teeth-btn ${teethLog.morning ? 'done' : ''}" onclick="toggleTeeth('morning')">
-            <span class="t-ico">🌅</span>
-            تفريش الصباح
-            ${teethLog.morning ? '<div style="font-size:11px;margin-top:4px">✓ تم</div>' : ''}
-          </button>
-          <button class="teeth-btn ${teethLog.night ? 'done' : ''}" onclick="toggleTeeth('night')">
-            <span class="t-ico">🌙</span>
-            تفريش الليل
-            ${teethLog.night ? '<div style="font-size:11px;margin-top:4px">✓ تم</div>' : ''}
-          </button>
-        </div>
-        <div style="margin-top:14px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:600">
-          💡 التوصية: مرتين يومياً — صباحاً وقبل النوم
-        </div>
-      </div>
       <div class="card" style="padding:20px;margin-bottom:16px">
         <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - النوم</h3>
         <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.sleep || ''}</span><div class="wbar-fill" style="height:${Math.max((d.sleep/maxSleep)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
@@ -2567,8 +2672,7 @@ function renderWellness(){
       <div class="card" style="padding:20px">
         <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - الماء</h3>
         <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val" style="color:#0891b2">${d.water || ''}</span><div class="wbar-fill" style="height:${Math.max((d.water/maxWater)*100, 3)}%;background:linear-gradient(180deg,#0891b2,#0e7490)"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
-      </div>
-    `;
+      </div>`;
   }catch(e){ el.innerHTML = '<div class="empty"><b>خطأ في العرض</b></div>'; }
 }
 function getOrCreateTodayWellness(){
@@ -2580,16 +2684,44 @@ function getOrCreateTodayWellness(){
 function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); renderDashWorship(); toast(`😴 سجّلت ${h} ساعات`); }
 function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); renderDashWorship(); }
 function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); renderDashWorship(); }
+
+/* ============================================================
+   29) نظافة الأسنان
+============================================================ */
+function renderTeeth(){
+  const today = todayISO();
+  let log = state.health.teethLog.find(l => l.date === today);
+  if(!log){ log = { date: today, morning: false, night: false }; }
+  const mBtn = document.getElementById('teethMorningBtn');
+  const nBtn = document.getElementById('teethNightBtn');
+  if(mBtn){ mBtn.classList.toggle('done', log.morning); mBtn.innerHTML = `<span class="t-ico">🌅</span>تفريش الصباح${log.morning ? '<div style="font-size:11px;margin-top:6px">✓ تم</div>' : ''}`; }
+  if(nBtn){ nBtn.classList.toggle('done', log.night); nBtn.innerHTML = `<span class="t-ico">🌙</span>تفريش الليل${log.night ? '<div style="font-size:11px;margin-top:6px">✓ تم</div>' : ''}`; }
+  // Stats
+  const statsEl = document.getElementById('teethStats');
+  if(statsEl){
+    const last7 = [];
+    for(let i = 6; i >= 0; i--){
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const iso = todayISO(d);
+      const l = state.health.teethLog.find(x => x.date === iso) || { morning:false, night:false };
+      const cnt = (l.morning?1:0) + (l.night?1:0);
+      last7.push({ day: DAYS_SHORT[d.getDay()], count: cnt });
+    }
+    const maxC = 2;
+    statsEl.innerHTML = `<div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.count || ''}</span><div class="wbar-fill" style="height:${Math.max((d.count/maxC)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>`;
+  }
+}
 function toggleTeeth(period){
   const today = todayISO();
   let log = state.health.teethLog.find(l => l.date === today);
   if(!log){ log = { date: today, morning: false, night: false }; state.health.teethLog.push(log); }
   log[period] = !log[period];
-  save(); renderWellness(); renderDashWorship();
+  save(); renderTeeth(); renderDashWorship();
+  toast(log[period] ? '✅ تم التسجيل' : '↺ تم الإلغاء');
 }
 
 /* ============================================================
-   29) الأرشيف
+   30) الأرشيف
 ============================================================ */
 function renderArchive(){
   const el = document.getElementById('archiveContent');
@@ -2619,8 +2751,7 @@ function renderArchive(){
             <span>📋 ${(a.data.tasks?.length || 0) + (a.data.exams?.length || 0)} مهمة واختبار</span>
           </div></div>`).join('')}
       </div>
-    ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي</p></div>`}
-  `;
+    ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي</p></div>`}`;
 }
 function createArchive(){
   const name = document.getElementById('archiveName').value.trim();
@@ -2645,8 +2776,7 @@ function viewArchive(i){
         <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div><div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
         <div>📝 <b>${d.tasks?.length || 0}</b> مهمة</div><div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
       </div>
-    </div>
-  `, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>`);
+    </div>`, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>`);
 }
 function loadArchive(i){
   const a = state.archive[i]; if(!a) return;
@@ -2666,7 +2796,7 @@ function deleteArchive(i){
 }
 
 /* ============================================================
-   30) العبادة — مواقيت + أذكار + ورد
+   31) العبادة — مواقيت + أذكار + ورد
 ============================================================ */
 const PRAYER_NAMES = {
   Fajr: { ar:'الفجر', ico:'🌄' },
@@ -2772,8 +2902,7 @@ function changePrayerCity(){
       • مكة: <code>Makkah / SA</code><br>
       • المدينة: <code>Madinah / SA</code><br>
       • الدمام: <code>Dammam / SA</code>
-    </div>
-  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="savePrayerCity()">💾 حفظ</button>`);
+    </div>`, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="savePrayerCity()">💾 حفظ</button>`);
 }
 async function savePrayerCity(){
   const city = document.getElementById('pcCity').value.trim();
@@ -2810,6 +2939,10 @@ function renderAdhkar(){
       </div>
     </div>`;
   }).join('');
+  // Sync tabs
+  document.querySelectorAll('#adhkarTabs .chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.period === period);
+  });
 }
 function toggleAdhkar(idx){
   const period = state.worship.adhkarTab || 'morning';
@@ -2856,8 +2989,7 @@ function renderWird(){
       </div>
     </div>
     <h4 style="font-size:14px;margin:16px 0 10px">📊 آخر 7 أيام</h4>
-    <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.pages || ''}</span><div class="wbar-fill" style="height:${Math.max((d.pages/maxPages)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
-  `;
+    <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.pages || ''}</span><div class="wbar-fill" style="height:${Math.max((d.pages/maxPages)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>`;
 }
 function addWird(n){
   const today = todayISO();
@@ -2902,7 +3034,7 @@ function renderDashWorship(){
     const h = Math.floor(diff/60), m = diff%60;
     const remain = h > 0 ? `${h}س ${m}د` : `${m}د`;
     nextPrayerHTML = `
-      <div style="background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;padding:16px;border-radius:14px;margin-bottom:12px">
+      <div style="background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;padding:16px;border-radius:14px;margin-bottom:12px;cursor:pointer" onclick="go('worship')">
         <div style="font-size:12px;opacity:.9;font-weight:700;margin-bottom:6px">الصلاة القادمة</div>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
           <div style="font-family:'Tajawal';font-size:24px;font-weight:800">${info.ico} ${info.ar}</div>
@@ -2913,7 +3045,7 @@ function renderDashWorship(){
         </div>
       </div>`;
   } else {
-    nextPrayerHTML = `<div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:12px;font-size:13px;color:var(--muted);text-align:center;font-weight:600">جاري تحميل المواقيت...</div>`;
+    nextPrayerHTML = `<div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:12px;font-size:13px;color:var(--muted);text-align:center;font-weight:600;cursor:pointer" onclick="go('worship')">جاري تحميل المواقيت...</div>`;
   }
   const morningKey = `${today}_morning`;
   const eveningKey = `${today}_evening`;
@@ -2929,39 +3061,38 @@ function renderDashWorship(){
   el.innerHTML = `
     ${nextPrayerHTML}
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('adhkar')">
         <div style="font-size:20px">📿</div>
         <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أذكار الصباح</div>
         <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${mDone}/${mTotal}</div>
       </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('adhkar')">
         <div style="font-size:20px">🌙</div>
         <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أذكار المساء</div>
         <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${eDone}/${eTotal}</div>
       </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('worship')">
         <div style="font-size:20px">📖</div>
         <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">الورد اليومي</div>
         <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wirdLog.pages}/${state.worship.wird.goal}</div>
       </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('teeth')">
         <div style="font-size:20px">🦷</div>
         <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">تفريش الأسنان</div>
         <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${teethCount}/2</div>
       </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
         <div style="font-size:20px">😴</div>
         <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">ساعات النوم</div>
         <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.sleep}/${w.sleepGoal}</div>
       </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
         <div style="font-size:20px">💧</div>
         <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أكواب الماء</div>
         <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.water}/${w.waterGoal}</div>
       </div>
     </div>
-    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('worship')">فتح صفحة العبادة →</button>
-  `;
+    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('worship')">فتح صفحة العبادة →</button>`;
 }
 document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2974,7 +3105,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 });
 
 /* ============================================================
-   31) إضافة الصفحات الديناميكية
+   32) إضافة الصفحات الديناميكية
 ============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
@@ -2995,7 +3126,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 })();
 
 /* ============================================================
-   32) بناء القائمة الجانبية
+   33) بناء القائمة الجانبية
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -3025,10 +3156,12 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
       ['study','🍅','مؤقّت المذاكرة']
     ]},
     { title:'🕌 العبادة', items:[
-      ['worship','🕌','الصلوات والأذكار']
+      ['worship','🕌','مواقيت الصلاة'],
+      ['adhkar','📿','الأذكار']
     ]},
     { title:'💪 الصحة', items:[
-      ['wellness','😴','النوم والماء']
+      ['wellness','😴','النوم والماء'],
+      ['teeth','🦷','نظافة الأسنان']
     ]}
   ];
   nav.innerHTML = '';
@@ -3043,19 +3176,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
     group.appendChild(title);
     g.items.forEach(([v, ico, label]) => {
       const b = newBtn(v, ico, label);
-      b.onclick = null;
-      b.addEventListener('click', () => {
-        go(v);
-        setTimeout(() => {
-          try{
-            if(v === 'attendance') renderAttendancePage();
-            if(v === 'wellness') renderWellness();
-            if(v === 'worship'){ renderPrayerTimes(); renderAdhkar(); renderWird(); }
-            if(v === 'archive') renderArchive();
-            if(v === 'grades') renderGrades();
-          }catch(e){}
-        }, 60);
-      });
+      b.dataset.view = v;
       group.appendChild(b);
     });
     nav.appendChild(group);
@@ -3068,7 +3189,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 })();
 
 /* ============================================================
-   33) تحسينات الموبايل
+   34) تحسينات الموبايل
 ============================================================ */
 (function fixMobile(){
   const sidebar = document.getElementById('sidebar');
@@ -3084,7 +3205,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 })();
 
 /* ============================================================
-   34) شارة الأسبوع
+   35) شارة الأسبوع
 ============================================================ */
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
@@ -3123,41 +3244,39 @@ function saveSemesterStart(){
 }
 
 /* ============================================================
-   35) اختصارات الكيبورد
+   36) اختصارات الكيبورد
 ============================================================ */
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
 
 /* ============================================================
-   36) التهيئة النهائية
+   37) التهيئة النهائية
 ============================================================ */
 async function init(){
-  // استرجاع المؤقّت أولاً
   pomoResumeIfNeeded();
   applySettings();
   renderAll();
-  const topDate = document.getElementById('topDate');
-  if(topDate) topDate.textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   const h = location.hash.slice(1);
   if(h && document.getElementById('view-' + h) && h !== 'course-detail') go(h);
   try{ renderAttendancePage(); }catch(e){}
   try{ renderWellness(); }catch(e){}
+  try{ renderTeeth(); }catch(e){}
   try{ renderArchive(); }catch(e){}
   try{ renderSyncStatus(); }catch(e){}
   renderWeekBadge();
-  // تحميل مواقيت الصلاة
+  // Load prayer times async
   await fetchPrayerTimes();
   try{ renderPrayerTimes(); renderAdhkar(); renderWird(); renderDashWorship(); }catch(e){}
 }
 init();
 
-// ملاحظة: عند العودة للتبويب، المؤقّت يعيد الحساب تلقائياً من الوقت الفعلي
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
     pomoRender();
     renderDashWorship();
     renderPrayerTimes();
+    renderTeeth();
   }
 });
 window.addEventListener('focus', () => {

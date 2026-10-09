@@ -256,8 +256,39 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 }
 @media(max-width:640px){
   .content{padding:18px 14px 90px}
-  .topbar{padding:0 14px;height:64px}
+  .topbar{padding:0 10px;height:60px;gap:6px}
   .topbar-date{display:none}
+  .topbar-spacer{display:none}
+
+  /* 🔧 إصلاح العنوان */
+  .topbar > div:nth-of-type(1){
+    min-width:0;
+    flex:1;
+    overflow:hidden;
+  }
+  .page-title{
+    font-size:14px;
+    font-weight:800;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .page-sub{
+    font-size:10px;
+    line-height:1.15;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* تصغير الأزرار */
+  .hamburger{width:36px;height:36px;font-size:17px;flex-shrink:0}
+  .week-badge{font-size:10px;padding:4px 8px;flex-shrink:0}
+  .sync-badge{font-size:10px;padding:4px 8px;flex-shrink:0}
+  .sync-badge span:not(#syncIcon){display:none}
+
+  /* باقي الإعدادات */
   .form-grid{grid-template-columns:1fr}
   .comp-row{grid-template-columns:1fr 66px 66px 34px;gap:6px}
   .stats{grid-template-columns:1fr 1fr;gap:10px}

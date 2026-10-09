@@ -304,12 +304,29 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .week-badge:hover{transform:translateY(-2px)}
 .week-badge.warn{background:var(--warn-bg);color:var(--warn)}
 .week-badge.danger{background:var(--danger-bg);color:var(--danger)}
-.wb-date{display:none}
-
+/* 🆕 مجموعة شارات الأسبوع والتاريخ */
+.week-badge-group{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  flex-shrink:0;
+}
+.date-badge{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 14px;
+  border-radius:11px;
+  font-size:13px;
+  font-weight:800;
+  background:var(--hover);
+  color:var(--text);
+  border:1px solid var(--border);
+  white-space:nowrap;
+}
 @media(max-width:640px){
-  .wb-from{display:none}
-  .wb-date{display:inline;margin-inline-start:5px;opacity:.8;font-weight:700;font-size:10.5px}
+  .week-badge-group{gap:4px}
   .week-badge{font-size:10.5px;padding:5px 9px}
+  .date-badge{font-size:10.5px;padding:5px 9px}
 }
 .sync-badge{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:11px;font-size:13px;font-weight:800;background:var(--ok-bg);color:var(--ok);white-space:nowrap;cursor:pointer;transition:all .4s ease;opacity:1}
 .sync-badge:hover{transform:translateY(-2px)}
@@ -402,9 +419,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <span id="syncIcon">☁️</span>
         <span id="syncText">مزامن</span>
       </div>
-      <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">
-  <span id="wbText">📅 —</span>
-  <span id="wbDate" class="wb-date"></span>
+      <div class="week-badge-group">
+  <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">📅 —</div>
+  <div class="date-badge" id="wbDateBadge">—</div>
 </div>
       <div class="topbar-date" id="topDate"></div>
     </header>
@@ -2655,28 +2672,28 @@ function getSemesterWeek(){
   return { week: Math.min(week, SEMESTER_WEEKS), remaining: Math.max(0, SEMESTER_WEEKS - week), current: week <= SEMESTER_WEEKS, past: week > SEMESTER_WEEKS };
 }
 function renderWeekBadge(){
-  const el = document.getElementById('weekBadge');
-  if(!el) return;
-  const wbText = document.getElementById('wbText');
-  const wbDate = document.getElementById('wbDate');
-  if(!wbText) return;
+  const wb = document.getElementById('weekBadge');
+  const wbDateBadge = document.getElementById('wbDateBadge');
+  if(!wb) return;
 
-  // 📅 التاريخ القصير دايماً
-  const today = new Date();
-  if(wbDate) wbDate.textContent = today.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+  // 📅 تحديث مربع التاريخ
+  if(wbDateBadge){
+    const today = new Date();
+    wbDateBadge.textContent = today.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
+  }
 
   const w = getSemesterWeek();
-  if(!w){ wbText.textContent = '📅 حدد بداية الفصل'; el.className = 'week-badge'; return; }
-  if(w.beforeStart){ wbText.textContent = `⏳ باقي ${w.daysLeft} يوم`; el.className = 'week-badge'; return; }
-  if(w.past){ wbText.textContent = `✅ انتهى الفصل`; el.className = 'week-badge'; return; }
+  if(!w){ wb.textContent = '📅 حدد بداية'; wb.className = 'week-badge'; return; }
+  if(w.beforeStart){ wb.textContent = `⏳ باقي ${w.daysLeft} يوم`; wb.className = 'week-badge'; return; }
+  if(w.past){ wb.textContent = `✅ انتهى الفصل`; wb.className = 'week-badge'; return; }
 
-  // 🆕 الشكل الجديد: "الأسبوع 7" + "من 16" (يختفي في الجوال)
-  wbText.innerHTML = `📅 الأسبوع ${w.week}<span class="wb-from"> من ${SEMESTER_WEEKS}</span>`;
+  // 📅 مربع الأسبوع (أخضر)
+  wb.textContent = `📅 الأسبوع ${w.week}`;
 
-  if(w.week >= 13) el.className = 'week-badge danger';
-  else if(w.week >= 10) el.className = 'week-badge warn';
-  else el.className = 'week-badge';
-  el.title = `باقي ${w.remaining} أسبوع`;
+  if(w.week >= 13) wb.className = 'week-badge danger';
+  else if(w.week >= 10) wb.className = 'week-badge warn';
+  else wb.className = 'week-badge';
+  wb.title = `باقي ${w.remaining} أسبوع`;
 }
 function saveSemesterStart(){
   const val = document.getElementById('setSemesterStart').value;

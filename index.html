@@ -49,26 +49,13 @@ ul{list-style:none}
 .brand-txt b{display:block;font-family:'Tajawal';font-size:17px;font-weight:800;line-height:1.2}
 .brand-txt span{font-size:11px;color:var(--muted);font-weight:600}
 .nav{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px}
-.home-btn{
-  display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;
-  font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;
-  background:linear-gradient(135deg,var(--p),var(--p-dark));
-  box-shadow:0 10px 24px rgba(13,148,136,.32);
-  margin-bottom:16px;position:relative;overflow:hidden;
-}
-.home-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,transparent 40%,rgba(212,165,55,.35));
-  pointer-events:none;
-}
+.home-btn{display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;font-weight:800;font-size:16px;color:#fff;transition:var(--t);width:100%;text-align:right;background:linear-gradient(135deg,var(--p),var(--p-dark));box-shadow:0 10px 24px rgba(13,148,136,.32);margin-bottom:16px;position:relative;overflow:hidden}
+.home-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(212,165,55,.35));pointer-events:none}
 .home-btn:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(13,148,136,.42)}
 .home-btn.active{background:linear-gradient(135deg,var(--p-dark),#0a5f52)}
 .home-btn .ico{font-size:22px;width:26px;text-align:center;flex-shrink:0;position:relative;z-index:1}
 .home-btn span:not(.ico){position:relative;z-index:1}
-.home-btn .sub{
-  display:block;font-size:10.5px;font-weight:600;opacity:.85;
-  letter-spacing:.3px;margin-top:-2px;
-}
+.home-btn .sub{display:block;font-size:10.5px;font-weight:600;opacity:.85;letter-spacing:.3px;margin-top:-2px}
 .nav-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;font-weight:700;font-size:15px;color:var(--muted);transition:var(--t);width:100%;text-align:right}
 .nav-btn:hover{background:var(--hover);color:var(--text)}
 .nav-btn.active{background:var(--p);color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
@@ -173,7 +160,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .mini-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px;background:var(--hover);transition:var(--t)}
 .mini-btn:hover{background:var(--p);color:#fff}
 .mini-btn.del:hover{background:var(--danger)}
-/* ===== بطاقة اختبار داخل القائمة ===== */
 .exam-item{display:flex;align-items:flex-start;gap:14px;padding:16px;border-radius:14px;background:var(--card);border:1px solid var(--border);margin-bottom:10px;transition:var(--t);box-shadow:var(--shadow);border-right:4px solid var(--danger)}
 .exam-item:hover{border-color:var(--danger);transform:translateX(-4px)}
 .exam-item.past{opacity:.5;border-right-color:var(--muted)}
@@ -259,36 +245,10 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .topbar{padding:0 10px;height:60px;gap:6px}
   .topbar-date{display:none}
   .topbar-spacer{display:none}
-
-  /* 🔧 إصلاح العنوان */
-  .topbar > div:nth-of-type(1){
-    min-width:0;
-    flex:1;
-    overflow:hidden;
-  }
-  .page-title{
-    font-size:14px;
-    font-weight:800;
-    line-height:1.15;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .page-sub{
-    font-size:10px;
-    line-height:1.15;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  /* تصغير الأزرار */
+  .topbar > div:nth-of-type(1){min-width:0;flex:1;overflow:hidden}
+  .page-title{font-size:14px;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .page-sub{font-size:10px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hamburger{width:36px;height:36px;font-size:17px;flex-shrink:0}
-  .week-badge{font-size:10px;padding:4px 8px;flex-shrink:0}
-  .sync-badge{font-size:10px;padding:4px 8px;flex-shrink:0}
-  .sync-badge span:not(#syncIcon){display:none}
-
-  /* باقي الإعدادات */
   .form-grid{grid-template-columns:1fr}
   .comp-row{grid-template-columns:1fr 66px 66px 34px;gap:6px}
   .stats{grid-template-columns:1fr 1fr;gap:10px}
@@ -304,25 +264,8 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .week-badge:hover{transform:translateY(-2px)}
 .week-badge.warn{background:var(--warn-bg);color:var(--warn)}
 .week-badge.danger{background:var(--danger-bg);color:var(--danger)}
-/* 🆕 مجموعة شارات الأسبوع والتاريخ */
-.week-badge-group{
-  display:flex;
-  gap:6px;
-  align-items:center;
-  flex-shrink:0;
-}
-.date-badge{
-  display:inline-flex;
-  align-items:center;
-  padding:8px 14px;
-  border-radius:11px;
-  font-size:13px;
-  font-weight:800;
-  background:var(--hover);
-  color:var(--text);
-  border:1px solid var(--border);
-  white-space:nowrap;
-}
+.week-badge-group{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.date-badge{display:inline-flex;align-items:center;padding:8px 14px;border-radius:11px;font-size:13px;font-weight:800;background:var(--hover);color:var(--text);border:1px solid var(--border);white-space:nowrap}
 @media(max-width:640px){
   .week-badge-group{gap:4px}
   .week-badge{font-size:10.5px;padding:5px 9px}
@@ -334,7 +277,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .sync-badge.error{background:var(--danger-bg);color:var(--danger)}
 .sync-badge.hidden{opacity:0;pointer-events:none}
 @media(max-width:640px){
-  .week-badge{font-size:11.5px;padding:6px 10px}
   .sync-badge{font-size:11.5px;padding:6px 10px}
   .sync-badge span:not(#syncIcon){display:none}
 }
@@ -370,17 +312,87 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .grade-summary-box{background:linear-gradient(135deg,var(--cd-color,var(--p)),color-mix(in srgb,var(--cd-color,var(--p)) 70%,#0f766e));color:#fff;padding:18px 22px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px;box-shadow:0 10px 25px color-mix(in srgb,var(--cd-color,var(--p)) 30%,transparent)}
 .grade-summary-box b{font-family:'Tajawal';font-size:32px;font-weight:800;line-height:1}
 .grade-summary-box span{font-size:13px;font-weight:700;opacity:.9}
-/* بطاقة اختيار نوع الإضافة */
 .add-type-grid{display:grid;gap:12px}
-.add-type-btn{
-  display:flex;align-items:center;gap:14px;padding:18px;border-radius:14px;
-  background:var(--card);border:2px solid var(--border);transition:var(--t);text-align:right;
-}
+.add-type-btn{display:flex;align-items:center;gap:14px;padding:18px;border-radius:14px;background:var(--card);border:2px solid var(--border);transition:var(--t);text-align:right}
 .add-type-btn:hover{border-color:var(--p);background:var(--hover);transform:translateX(-4px)}
 .add-type-btn .at-ico{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
 .add-type-btn .at-main{flex:1}
 .add-type-btn .at-main b{display:block;font-size:16px;font-weight:800;margin-bottom:3px}
 .add-type-btn .at-main span{font-size:12.5px;color:var(--muted);font-weight:600}
+
+/* ===== 🕌 العبادة ===== */
+.prayer-row{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-radius:12px;background:var(--hover);margin-bottom:7px;transition:var(--t)}
+.prayer-row.next{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
+.prayer-row.past{opacity:.55}
+.prayer-name{font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
+.prayer-time{font-family:'Tajawal';font-size:17px;font-weight:800}
+.prayer-next-badge{font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.28);margin-inline-start:8px}
+.adhkar-item{background:var(--hover);border-radius:14px;padding:16px;margin-bottom:10px;transition:var(--t)}
+.adhkar-item.done{background:var(--ok-bg);border:1px solid var(--ok)}
+.adhkar-item.done .adhkar-text{opacity:.6}
+.adhkar-text{font-size:14.5px;line-height:1.9;margin-bottom:10px;word-break:break-word}
+.adhkar-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.adhkar-count{font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;background:var(--p-light);color:var(--p-dark)}
+.adhkar-source{font-size:11px;color:var(--muted);font-weight:600}
+.adhkar-chk{width:36px;height:36px;border-radius:11px;background:var(--card);border:2px solid var(--border);display:grid;place-items:center;font-size:18px;color:transparent;cursor:pointer;transition:var(--t);flex-shrink:0}
+.adhkar-chk:hover{border-color:var(--p)}
+.adhkar-item.done .adhkar-chk{background:var(--ok);border-color:var(--ok);color:#fff}
+.wird-progress{background:var(--hover);padding:18px;border-radius:14px;text-align:center;margin-bottom:14px}
+.wird-big{font-family:'Tajawal';font-size:44px;font-weight:800;color:var(--p);line-height:1}
+.wird-goal{font-size:14px;color:var(--muted);font-weight:700;margin-top:6px}
+.wird-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.teeth-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.teeth-btn{padding:16px 12px;border-radius:14px;background:var(--hover);border:2px solid var(--border);font-weight:800;font-size:14px;transition:var(--t);text-align:center;cursor:pointer}
+.teeth-btn:hover{border-color:var(--p)}
+.teeth-btn.done{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.teeth-btn .t-ico{font-size:26px;display:block;margin-bottom:6px}
+@media(max-width:640px){
+  .prayer-name{font-size:13.5px}
+  .prayer-time{font-size:15px}
+  .adhkar-text{font-size:13.5px;line-height:1.8}
+  .wird-big{font-size:36px}
+  .teeth-btn{font-size:12.5px;padding:14px 10px}
+  .teeth-btn .t-ico{font-size:22px}
+}
+
+/* ===== ⏱️ المؤقت العائم ===== */
+.floating-timer{
+  position:fixed;
+  bottom:100px;
+  right:26px;
+  z-index:90;
+  background:linear-gradient(135deg,var(--p),var(--p-dark));
+  color:#fff;
+  border-radius:18px;
+  padding:10px 14px;
+  display:none;
+  align-items:center;
+  gap:10px;
+  box-shadow:0 12px 30px rgba(13,148,136,.5);
+  cursor:grab;
+  user-select:none;
+  touch-action:none;
+  min-width:130px;
+  transition:transform .2s;
+}
+.floating-timer.show{display:flex}
+.floating-timer:active{cursor:grabbing}
+.floating-timer.paused{background:linear-gradient(135deg,var(--warn),#b45309)}
+.floating-timer.break{background:linear-gradient(135deg,#0891b2,#0e7490)}
+.ft-ico{font-size:22px;flex-shrink:0;pointer-events:none}
+.ft-body{flex:1;min-width:0;pointer-events:none}
+.ft-time{font-family:'Tajawal';font-size:20px;font-weight:800;line-height:1;letter-spacing:.5px}
+.ft-label{font-size:10px;font-weight:700;opacity:.9;margin-top:2px}
+.ft-controls{display:flex;gap:4px;flex-shrink:0}
+.ft-btn{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:14px;color:#fff;transition:all .2s;cursor:pointer}
+.ft-btn:hover{background:rgba(255,255,255,.45)}
+@media(max-width:640px){
+  .floating-timer{bottom:90px;right:14px;padding:8px 12px;min-width:110px;border-radius:16px}
+  .ft-ico{font-size:18px}
+  .ft-time{font-size:17px}
+  .ft-label{font-size:9px}
+  .ft-btn{width:28px;height:28px;font-size:12px;border-radius:8px}
+}
 </style>
 </head>
 <body>
@@ -394,10 +406,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
     <nav class="nav">
       <button class="home-btn active" data-view="dashboard">
         <span class="ico">🏠</span>
-        <span>
-          لوحة اليوم
-          <span class="sub">نظرة عامة على دراستك</span>
-        </span>
+        <span>لوحة اليوم<span class="sub">نظرة عامة على دراستك</span></span>
       </button>
     </nav>
     <div class="sidebar-foot">
@@ -420,9 +429,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <span id="syncText">مزامن</span>
       </div>
       <div class="week-badge-group">
-  <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">📅 —</div>
-  <div class="date-badge" id="wbDateBadge">—</div>
-</div>
+        <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">📅 —</div>
+        <div class="date-badge" id="wbDateBadge">—</div>
+      </div>
       <div class="topbar-date" id="topDate"></div>
     </header>
 
@@ -439,6 +448,10 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">📅 محاضرات اليوم</h2></div>
             <div id="dashToday"></div>
           </div>
+        </div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">🕌 العبادة والصحة</h2></div>
+          <div id="dashWorship"></div>
         </div>
         <div class="card">
           <div class="sec-head" style="margin-bottom:14px">
@@ -499,16 +512,13 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
           </div>
           <button class="btn btn-primary btn-sm" onclick="openAddGradeForm()">➕ مقرر خارجي</button>
         </div>
-
         <div class="stats" id="gpaStats"></div>
-
         <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:1.9;font-weight:600">
           💡 <b>كيف يعمل؟</b><br>
           • <b>مقرراتك المسجّلة</b> تظهر تلقائياً في الجدول — أدخل مكوناتها أو تقديراً مباشراً<br>
           • <b>المقررات الخارجية</b> (فصول سابقة) أضفها من زر "مقرر خارجي"<br>
           • <b>المعدل</b> يُحسب تلقائياً من كل المقررات
         </div>
-
         <div id="gradesList"></div>
       </section>
 
@@ -538,6 +548,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
               <label>المقرر الذي تذاكره الآن</label>
               <select id="pomoCourse"></select>
             </div>
+            <div style="margin-top:14px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.7">
+              💡 المؤقّت يكمل عمله حتى لو خرجت من الموقع — يظهر لك مؤقت عائم تلقائياً
+            </div>
           </div>
           <div class="card">
             <div class="sec-head" style="margin-bottom:6px"><h2 style="font-size:18px">📊 إحصائيات المذاكرة</h2></div>
@@ -552,7 +565,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             </div>
           </div>
         </div>
-
         <div class="card" style="margin-top:20px">
           <div class="sec-head" style="margin-bottom:14px">
             <h2 style="font-size:18px">⏱️ مدد البومودورو (بالدقائق)</h2>
@@ -566,9 +578,39 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
+      <section class="view" id="view-worship">
+        <div class="sec-head">
+          <div><h2>🕌 العبادة</h2><p>مواقيت الصلاة · الأذكار · الورد اليومي</p></div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="sec-head" style="margin-bottom:12px">
+            <h3 style="font-size:17px">🕌 مواقيت الصلاة</h3>
+            <button class="btn btn-ghost btn-sm" onclick="changePrayerCity()">📍 تغيير المدينة</button>
+          </div>
+          <div id="prayerTimesContent">
+            <div class="empty" style="padding:20px"><b>جاري التحميل...</b></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="sec-head" style="margin-bottom:12px">
+            <h3 style="font-size:17px">📿 الأذكار</h3>
+          </div>
+          <div class="filters" style="margin-bottom:14px" id="adhkarTabs">
+            <button class="chip active" data-period="morning">☀️ أذكار الصباح</button>
+            <button class="chip" data-period="evening">🌙 أذكار المساء</button>
+          </div>
+          <div id="adhkarList"></div>
+        </div>
+        <div class="card">
+          <div class="sec-head" style="margin-bottom:12px">
+            <h3 style="font-size:17px">📖 الورد اليومي</h3>
+          </div>
+          <div id="wirdContent"></div>
+        </div>
+      </section>
+
       <section class="view" id="view-settings">
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
-
         <div class="grid g2">
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">📅 الفصل الدراسي</h3>
@@ -580,13 +622,11 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             </div>
             <button class="btn btn-primary btn-sm" onclick="saveSemesterStart()">💾 حفظ تاريخ البداية</button>
           </div>
-
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">🔄 حالة المزامنة</h3>
             <div id="syncStatusContent"></div>
           </div>
         </div>
-
         <div class="card" style="margin-top:16px">
           <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
           <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
@@ -601,7 +641,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
           </div>
         </div>
-
         <div class="card" style="margin-top:16px">
           <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
           <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
@@ -620,6 +659,17 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
     <div class="modal-head"><h3 id="modalTitle">عنوان</h3><button onclick="closeModal()">✕</button></div>
     <div class="modal-body" id="modalBody"></div>
     <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="floating-timer" id="floatingTimer">
+  <span class="ft-ico" id="ftIco">🎯</span>
+  <div class="ft-body">
+    <div class="ft-time" id="ftTime">25:00</div>
+    <div class="ft-label" id="ftLabel">تركيز</div>
+  </div>
+  <div class="ft-controls">
+    <button class="ft-btn" id="ftToggle" title="تشغيل/إيقاف">⏸</button>
   </div>
 </div>
 
@@ -648,6 +698,7 @@ const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
 const SEMESTER_WEEKS = 16;
+const POMO_STORE_KEY = 'uni_pomo_state';
 
 /* ============================================================
    2) الحالة
@@ -657,6 +708,16 @@ function defaultState(){
     courses: [], schedule: [], tasks: [], exams: [],
     studyLog: [], attendance: [], gpaCourses: [], archive: [],
     wellness: { sleepGoal:8, waterGoal:8, log:[] },
+    health: { teethLog: [] },
+    worship: {
+      city: 'Riyadh',
+      country: 'SA',
+      prayerTimes: null,
+      prayerTimesDate: null,
+      adhkarProgress: {},
+      adhkarTab: 'morning',
+      wird: { goal: 20, log: [] }
+    },
     settings: { theme:'light', pomo:{ work:25, short:5, long:15 } }
   };
 }
@@ -671,6 +732,12 @@ function loadState(){
     merged.settings.pomo = { ...def.settings.pomo, ...((s.settings && s.settings.pomo) || {}) };
     merged.wellness = { ...def.wellness, ...(s.wellness || {}) };
     if(!Array.isArray(merged.wellness.log)) merged.wellness.log = [];
+    merged.health = { ...def.health, ...(s.health || {}) };
+    if(!Array.isArray(merged.health.teethLog)) merged.health.teethLog = [];
+    merged.worship = { ...def.worship, ...(s.worship || {}) };
+    merged.worship.wird = { ...def.worship.wird, ...((s.worship && s.worship.wird) || {}) };
+    if(!Array.isArray(merged.worship.wird.log)) merged.worship.wird.log = [];
+    if(!merged.worship.adhkarProgress || typeof merged.worship.adhkarProgress !== 'object') merged.worship.adhkarProgress = {};
     if(!Array.isArray(merged.courses)) merged.courses = [];
     if(!Array.isArray(merged.schedule)) merged.schedule = [];
     if(!Array.isArray(merged.tasks)) merged.tasks = [];
@@ -720,6 +787,7 @@ const VIEW_META = {
   tasks:     ['المهام والاختبارات','تابع كل ما عليك تسليمه والاختبارات القادمة'],
   grades:    ['المعدل والدرجات','احسب معدلك وتابع درجاتك التفصيلية'],
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
+  worship:   ['العبادة','مواقيت الصلاة · الأذكار · الورد اليومي'],
   wellness:  ['النوم والماء','صحتك أولاً'],
   attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
   archive:   ['أرشيف الفصول','سجل كل فصولك السابقة'],
@@ -728,12 +796,10 @@ const VIEW_META = {
 function go(view){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view)?.classList.add('active');
-
   const hl = (view === 'course-detail') ? 'courses' : view;
   document.querySelectorAll('.nav-btn, .home-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === hl);
   });
-
   const [t,s] = VIEW_META[view] || ['',''];
   document.getElementById('pageTitle').textContent = t;
   document.getElementById('pageSub').textContent = s;
@@ -741,15 +807,14 @@ function go(view){
   document.getElementById('overlay').classList.remove('show');
   window.scrollTo({ top:0, behavior:'smooth' });
   if(view !== 'course-detail') location.hash = view;
-
   document.querySelectorAll('.nav-group').forEach(g => {
     if(g.querySelector(`[data-view="${view}"]`)) g.classList.remove('collapsed');
   });
-
   setTimeout(() => {
     try{
       if(view === 'attendance') renderAttendancePage();
       if(view === 'wellness') renderWellness();
+      if(view === 'worship'){ renderPrayerTimes(); renderAdhkar(); renderWird(); }
       if(view === 'archive') renderArchive();
       if(view === 'grades') renderGrades();
       if(view === 'settings') renderSyncStatus();
@@ -758,9 +823,6 @@ function go(view){
     }catch(e){}
   }, 60);
 }
-document.querySelectorAll('.nav-btn, .home-btn, [data-view]').forEach(b => {
-  b.addEventListener('click', () => go(b.dataset.view));
-});
 
 /* ============================================================
    5) الثيم
@@ -852,20 +914,17 @@ function renderCourseDetail(){
   if(!currentCourseId){ go('courses'); return; }
   const c = getCourse(currentCourseId);
   if(!c){ go('courses'); return; }
-
   const lectures = state.schedule.filter(s => s.courseId === c.id).sort((a,b) => a.day - b.day || toMin(a.start) - toMin(b.start));
   const tasks = state.tasks.filter(t => t.courseId === c.id).sort((a,b) => a.due.localeCompare(b.due));
   const exams = state.exams.filter(e => e.courseId === c.id).sort((a,b) => a.date.localeCompare(b.date));
   const total = courseTotal(c);
   const openTasks = tasks.filter(t => !t.done).length;
-
   const statsHTML = `
     <div class="cd-stat"><b style="color:${c.color}">${lectures.length}</b><span>📅 محاضرة أسبوعياً</span></div>
     <div class="cd-stat"><b style="color:var(--warn)">${openTasks}</b><span>✅ مهمة متبقية</span></div>
     <div class="cd-stat"><b style="color:var(--danger)">${exams.filter(e => daysUntil(e.date) >= 0).length}</b><span>⏰ اختبار قادم</span></div>
     <div class="cd-stat"><b style="color:var(--ok)">${total !== null ? total.toFixed(1) + '%' : '—'}</b><span>📊 معدل الدرجات</span></div>
   `;
-
   let lecturesHTML = '';
   if(!lectures.length){
     lecturesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📅</div><b style="font-size:15px">لا توجد محاضرات</b><p style="font-size:12.5px">أضف محاضرات هذا المقرر من الجدول</p></div>`;
@@ -873,15 +932,10 @@ function renderCourseDetail(){
     lecturesHTML = lectures.map(s => `
       <div class="cd-item">
         <div class="ci-ico">📅</div>
-        <div class="ci-main">
-          <b>${DAYS[s.day]}</b>
-          <span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span>
-        </div>
+        <div class="ci-main"><b>${DAYS[s.day]}</b><span>${s.start} - ${s.end}${s.room ? ' · ' + esc(s.room) : ''}</span></div>
         <div class="ci-side" style="background:${c.color}22;color:${c.color}">${toMin(s.end) - toMin(s.start)} د</div>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
-
   let tasksHTML = '';
   if(!tasks.length){
     tasksHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">✅</div><b style="font-size:15px">لا توجد مهام</b><p style="font-size:12.5px">أضف مهمة جديدة من زر "مهمة"</p></div>`;
@@ -894,19 +948,12 @@ function renderCourseDetail(){
       else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
       else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
       else { txt = `بعد ${d}ي`; bg = 'var(--hover)'; col = 'var(--muted)'; }
-      return `
-        <div class="cd-item" style="${t.done?'opacity:.6':''}">
-          <div class="ci-ico">${t.done ? '✅' : '📝'}</div>
-          <div class="ci-main">
-            <b style="${t.done?'text-decoration:line-through':''}">${esc(t.title)}</b>
-            <span>${esc(t.type)} · ${fmtDate(t.due)}</span>
-          </div>
-          <div class="ci-side" style="background:${bg};color:${col}">${txt}</div>
-        </div>
-      `;
+      return `<div class="cd-item" style="${t.done?'opacity:.6':''}">
+        <div class="ci-ico">${t.done ? '✅' : '📝'}</div>
+        <div class="ci-main"><b style="${t.done?'text-decoration:line-through':''}">${esc(t.title)}</b><span>${esc(t.type)} · ${fmtDate(t.due)}</span></div>
+        <div class="ci-side" style="background:${bg};color:${col}">${txt}</div></div>`;
     }).join('');
   }
-
   let examsHTML = '';
   if(!exams.length){
     examsHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">⏰</div><b style="font-size:15px">لا توجد اختبارات</b><p style="font-size:12.5px">أضف اختباراً جديداً</p></div>`;
@@ -919,19 +966,12 @@ function renderCourseDetail(){
       else if(d === 1){ txt = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
       else if(d <= 7){ txt = `بعد ${d}ي`; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
       else { txt = `بعد ${d}ي`; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
-      return `
-        <div class="cd-item">
-          <div class="ci-ico">⏰</div>
-          <div class="ci-main">
-            <b>${esc(e.title)}</b>
-            <span>${esc(e.type)} · ${fmtDate(e.date)}${e.time ? ' · ' + e.time : ''}${e.place ? ' · ' + esc(e.place) : ''}</span>
-          </div>
-          <div class="ci-side" style="background:${bg};color:${col}">${txt}</div>
-        </div>
-      `;
+      return `<div class="cd-item">
+        <div class="ci-ico">⏰</div>
+        <div class="ci-main"><b>${esc(e.title)}</b><span>${esc(e.type)} · ${fmtDate(e.date)}${e.time ? ' · ' + e.time : ''}${e.place ? ' · ' + esc(e.place) : ''}</span></div>
+        <div class="ci-side" style="background:${bg};color:${col}">${txt}</div></div>`;
     }).join('');
   }
-
   let gradesHTML = '';
   const g = c.grades || [];
   if(!g.length){
@@ -939,22 +979,13 @@ function renderCourseDetail(){
   } else {
     gradesHTML = g.map(x => {
       const scoreColor = (+x.score >= 80) ? 'var(--ok)' : (+x.score >= 60) ? 'var(--warn)' : 'var(--danger)';
-      return `
-        <div class="cd-item">
-          <div class="ci-ico">📝</div>
-          <div class="ci-main">
-            <b>${esc(x.name || 'مكوّن')}</b>
-            <span>الوزن: ${x.weight}%</span>
-          </div>
-          <div class="ci-side" style="background:${scoreColor}22;color:${scoreColor}">${x.score}%</div>
-        </div>
-      `;
+      return `<div class="cd-item"><div class="ci-ico">📝</div>
+        <div class="ci-main"><b>${esc(x.name || 'مكوّن')}</b><span>الوزن: ${x.weight}%</span></div>
+        <div class="ci-side" style="background:${scoreColor}22;color:${scoreColor}">${x.score}%</div></div>`;
     }).join('');
   }
-
   el.innerHTML = `
     <button class="back-btn" onclick="go('courses')">→ رجوع للمقررات</button>
-
     <div class="cd-header" style="--cd-color:${c.color}">
       <div class="cd-top">
         <div class="cd-title">
@@ -972,61 +1003,31 @@ function renderCourseDetail(){
       </div>
       <div class="cd-stat-row">${statsHTML}</div>
     </div>
-
     ${total !== null ? `
       <div class="grade-summary-box" style="--cd-color:${c.color}">
-        <div>
-          <span>المعدل الحالي في المقرر</span>
-          <div><b>${total.toFixed(1)}%</b></div>
-        </div>
-        <div style="text-align:center">
-          <span>التقدير المتوقع</span>
-          <div style="font-family:'Tajawal';font-size:26px;font-weight:800">${scoreToLetter(total)}</div>
-        </div>
-      </div>
-    ` : ''}
-
+        <div><span>المعدل الحالي في المقرر</span><div><b>${total.toFixed(1)}%</b></div></div>
+        <div style="text-align:center"><span>التقدير المتوقع</span>
+          <div style="font-family:'Tajawal';font-size:26px;font-weight:800">${scoreToLetter(total)}</div></div>
+      </div>` : ''}
     <div class="cd-section">
-      <div class="cd-section-head">
-        <h3>📅 المحاضرات (${lectures.length})</h3>
-        <button class="btn btn-ghost btn-sm" onclick="openClassFormForCourse('${c.id}')">➕ إضافة محاضرة</button>
-      </div>
+      <div class="cd-section-head"><h3>📅 المحاضرات (${lectures.length})</h3>
+        <button class="btn btn-ghost btn-sm" onclick="openClassFormForCourse('${c.id}')">➕ إضافة محاضرة</button></div>
       ${lecturesHTML}
     </div>
-
     <div class="cd-section">
-      <div class="cd-section-head">
-        <h3>📋 المهام والاختبارات (${tasks.length + exams.length})</h3>
-        <button class="btn btn-ghost btn-sm" onclick="openTaskFormForCourse('${c.id}')">➕ إضافة مهمة</button>
-      </div>
+      <div class="cd-section-head"><h3>📋 المهام والاختبارات (${tasks.length + exams.length})</h3>
+        <button class="btn btn-ghost btn-sm" onclick="openTaskFormForCourse('${c.id}')">➕ إضافة مهمة</button></div>
       ${tasksHTML}
       ${examsHTML}
     </div>
-
     <div class="cd-section">
-      <div class="cd-section-head">
-        <h3>📊 الدرجات التفصيلية</h3>
-        <button class="btn btn-ghost btn-sm" onclick="go('grades')">فتح المعدل والدرجات</button>
-      </div>
+      <div class="cd-section-head"><h3>📊 الدرجات التفصيلية</h3>
+        <button class="btn btn-ghost btn-sm" onclick="go('grades')">فتح المعدل والدرجات</button></div>
       ${gradesHTML}
-    </div>
-  `;
+    </div>`;
 }
-
-function openTaskFormForCourse(cid){
-  openTaskForm();
-  setTimeout(() => {
-    const sel = document.getElementById('tCourse');
-    if(sel){ sel.value = cid; }
-  }, 30);
-}
-function openClassFormForCourse(cid){
-  openClassForm();
-  setTimeout(() => {
-    const sel = document.getElementById('clCourse');
-    if(sel){ sel.value = cid; }
-  }, 30);
-}
+function openTaskFormForCourse(cid){ openTaskForm(); setTimeout(() => { const sel = document.getElementById('tCourse'); if(sel){ sel.value = cid; } }, 30); }
+function openClassFormForCourse(cid){ openClassForm(); setTimeout(() => { const sel = document.getElementById('clCourse'); if(sel){ sel.value = cid; } }, 30); }
 
 /* ============================================================
    9) المحاضرات
@@ -1061,30 +1062,21 @@ function saveClass(id){
   else{ state.schedule.push({ id: uid(), courseId, day, start, end, room }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-function deleteClass(id){
-  state.schedule = state.schedule.filter(s => s.id !== id);
-  save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
-}
+function deleteClass(id){ state.schedule = state.schedule.filter(s => s.id !== id); save(); closeModal(); renderAll(); toast('🗑️ تم الحذف'); }
 
 /* ============================================================
-   10) نموذج اختيار نوع الإضافة (مهمة أو اختبار)
+   10) نموذج اختيار نوع الإضافة
 ============================================================ */
 function openAddForm(){
   openModal('➕ إضافة جديدة', `
     <div class="add-type-grid">
       <button class="add-type-btn" onclick="closeModal();openTaskForm()">
         <div class="at-ico" style="background:var(--warn-bg);color:var(--warn)">📝</div>
-        <div class="at-main">
-          <b>مهمة / واجب</b>
-          <span>واجبات، مشاريع، تقارير، بحوث</span>
-        </div>
+        <div class="at-main"><b>مهمة / واجب</b><span>واجبات، مشاريع، تقارير، بحوث</span></div>
       </button>
       <button class="add-type-btn" onclick="closeModal();openExamForm()">
         <div class="at-ico" style="background:var(--danger-bg);color:var(--danger)">⏰</div>
-        <div class="at-main">
-          <b>اختبار / كويز</b>
-          <span>ميدتيرم، فاينل، كويز، اختبار عملي</span>
-        </div>
+        <div class="at-main"><b>اختبار / كويز</b><span>ميدتيرم، فاينل، كويز، اختبار عملي</span></div>
       </button>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إلغاء</button>`);
@@ -1223,6 +1215,7 @@ function renderDashboard(){
         <div class="up-time" style="background:var(--hover);color:var(--muted)">${c?.teacher ? esc(c.teacher) : ''}</div></div>`;
     }).join('');
   }
+  renderDashWorship();
 }
 
 /* ============================================================
@@ -1234,7 +1227,6 @@ function classDateThisWeek(dayIdx){
   return todayISO(d);
 }
 function getAttFor(cid, date){ return state.attendance.find(a => a.classId === cid && a.date === date); }
-
 function renderSchedule(){
   const nowDay = new Date().getDay();
   const hours = [];
@@ -1268,7 +1260,6 @@ function renderSchedule(){
   </div>`;
   document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
 }
-
 function openAttPopup(classId, date){
   const s = state.schedule.find(x => x.id === classId);
   if(!s) return;
@@ -1365,31 +1356,16 @@ function renderCourses(){
 }
 
 /* ============================================================
-   16) رندرة المهام والاختبارات (موحّدة)
+   16) رندرة المهام والاختبارات
 ============================================================ */
 function renderTasks(){
   const list = document.getElementById('tasksList');
   const openTasksCount = state.tasks.filter(t => !t.done).length;
   const upcomingExamsCount = state.exams.filter(e => daysUntil(e.date) >= 0).length;
   document.getElementById('tasksCount').textContent = `${state.tasks.length} مهمة · ${state.exams.length} اختبار · ${openTasksCount + upcomingExamsCount} متبقي`;
-
-  // بناء قائمة موحّدة
   let items = [];
-  state.tasks.forEach(t => {
-    items.push({
-      kind:'task', date:t.due, done:!!t.done,
-      data:t
-    });
-  });
-  state.exams.forEach(e => {
-    const past = daysUntil(e.date) < 0;
-    items.push({
-      kind:'exam', date:e.date, done:past,
-      data:e
-    });
-  });
-
-  // الفلترة
+  state.tasks.forEach(t => { items.push({ kind:'task', date:t.due, done:!!t.done, data:t }); });
+  state.exams.forEach(e => { const past = daysUntil(e.date) < 0; items.push({ kind:'exam', date:e.date, done:past, data:e }); });
   const td = todayISO();
   if(taskFilter === 'tasks') items = items.filter(x => x.kind === 'task');
   else if(taskFilter === 'exams') items = items.filter(x => x.kind === 'exam');
@@ -1398,30 +1374,24 @@ function renderTasks(){
   else if(taskFilter === 'late') items = items.filter(x => x.kind === 'task' && !x.data.done && daysUntil(x.date) < 0);
   else if(taskFilter === 'open') items = items.filter(x => !x.done);
   else if(taskFilter === 'done') items = items.filter(x => x.done);
-
-  // الترتيب: المتبقي حسب التاريخ، المنجز في الأسفل
   items.sort((a,b) => {
     if(a.done !== b.done) return a.done ? 1 : -1;
     return a.date.localeCompare(b.date);
   });
-
   if(!items.length){
     list.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا يوجد شيء هنا</b><p>أضف مهمة أو اختبار جديد، أو غيّر الفلتر</p><button class="btn btn-primary" onclick="openAddForm()">➕ إضافة جديدة</button></div>`;
     return;
   }
-
   const prioMap = {
     high: { t:'🔴 عالية', bg:'var(--danger-bg)', c:'var(--danger)' },
     med:  { t:'🟡 متوسطة', bg:'var(--warn-bg)', c:'var(--warn)' },
     low:  { t:'🟢 منخفضة', bg:'var(--ok-bg)', c:'var(--ok)' }
   };
-
   list.innerHTML = items.map(it => {
     if(it.kind === 'task') return renderTaskItem(it.data, prioMap);
     return renderExamItem(it.data);
   }).join('');
 }
-
 function renderTaskItem(t, prioMap){
   const d = daysUntil(t.due);
   let dueTxt, dueBg;
@@ -1449,7 +1419,6 @@ function renderTaskItem(t, prioMap){
     </div>
   </div>`;
 }
-
 function renderExamItem(e){
   const d = daysUntil(e.date);
   let dueTxt, dueBg;
@@ -1479,7 +1448,7 @@ function renderExamItem(e){
 }
 
 /* ============================================================
-   17) الدرجات والمعدل (موحّد)
+   17) الدرجات والمعدل
 ============================================================ */
 function scoreToPoints(p){
   if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
@@ -1501,57 +1470,32 @@ function courseTotal(c){
   return g.reduce((a,x) => a + (+x.score||0) * (+x.weight||0), 0) / totalW;
 }
 function letterToPoints(letter){ return GRADE_POINTS[letter] || 0; }
-
 function getCourseGrade(c){
   const detailed = courseTotal(c);
-  if(detailed !== null){
-    return { type:'detailed', score: detailed, letter: scoreToLetter(detailed) };
-  }
-  if(c.manualLetter){
-    return { type:'letter', score: null, letter: c.manualLetter };
-  }
+  if(detailed !== null) return { type:'detailed', score: detailed, letter: scoreToLetter(detailed) };
+  if(c.manualLetter) return { type:'letter', score: null, letter: c.manualLetter };
   return null;
 }
-
 function renderGrades(){
   const statsEl = document.getElementById('gpaStats');
   const listEl = document.getElementById('gradesList');
   if(!statsEl || !listEl) return;
-
   const allRows = [];
   state.courses.forEach(c => {
     const g = getCourseGrade(c);
     allRows.push({
-      source: 'course',
-      id: c.id,
-      name: c.name,
-      code: c.code,
-      credits: +c.credits || 0,
-      color: c.color,
-      teacher: c.teacher,
-      type: g ? g.type : 'empty',
-      score: g ? g.score : null,
-      letter: g ? g.letter : null,
+      source:'course', id:c.id, name:c.name, code:c.code,
+      credits:+c.credits||0, color:c.color, teacher:c.teacher,
+      type: g ? g.type : 'empty', score: g ? g.score : null, letter: g ? g.letter : null,
       grades: c.grades || []
     });
   });
-
   state.gpaCourses.forEach((gc, idx) => {
     allRows.push({
-      source: 'external',
-      idx,
-      name: gc.name,
-      code: '',
-      credits: +gc.credits || 0,
-      color: '#64748b',
-      teacher: '',
-      type: 'letter',
-      score: null,
-      letter: gc.grade,
-      grades: []
+      source:'external', idx, name:gc.name, code:'', credits:+gc.credits||0,
+      color:'#64748b', teacher:'', type:'letter', score:null, letter:gc.grade, grades:[]
     });
   });
-
   let pts = 0, cr = 0;
   allRows.forEach(r => {
     if(!r.letter) return;
@@ -1561,27 +1505,22 @@ function renderGrades(){
   });
   const gpa = cr ? (pts / cr) : 0;
   const gradedCount = allRows.filter(r => r.letter).length;
-
   statsEl.innerHTML = `
     <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${gpa.toFixed(2)}</b><span>المعدل التقديري (من 5)</span></div></div>
     <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${cr}</b><span>ساعة محسوبة</span></div></div>
     <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${gradedCount}/${allRows.length}</b><span>مقررات مُقيّمة</span></div></div>
   `;
-
   if(!allRows.length){
     listEl.innerHTML = `<div class="empty"><div class="e-ico">📊</div><b>لا توجد مقررات</b><p>أضف مقرراً من قسم "المقررات" — أو مقرراً خارجياً</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button><button class="btn btn-ghost" onclick="openAddGradeForm()">➕ مقرر خارجي</button></div></div>`;
     return;
   }
-
   listEl.innerHTML = allRows.map((r, i) => buildGradeRow(r, i)).join('');
 }
-
 function buildGradeRow(r, i){
   const isExternal = r.source === 'external';
   const rowId = `grade-row-${r.source}-${i}`;
   let statusBadge = '';
   let actions = '';
-
   if(r.type === 'detailed'){
     const letter = r.letter;
     const pColor = letter.startsWith('A') ? 'var(--ok)' : letter.startsWith('B') ? 'var(--p)' : letter.startsWith('C') ? 'var(--warn)' : 'var(--danger)';
@@ -1591,8 +1530,7 @@ function buildGradeRow(r, i){
     statusBadge = `
       <select onchange="updateLetterGrade('${r.source}', ${isExternal ? r.idx : i}, this.value)" style="padding:6px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);font-weight:800;font-size:14px;color:var(--p);cursor:pointer">
         ${GRADE_OPTIONS.map(g => `<option ${g === r.letter ? 'selected':''}>${g}</option>`).join('')}
-      </select>
-    `;
+      </select>`;
     actions = isExternal
       ? `<button class="mini-btn del" onclick="removeExternalGrade(${r.idx})">✕</button>`
       : `<button class="btn btn-ghost btn-sm" onclick="addComponentsToCourse('${r.id}')">📝 تفصيلي</button>`;
@@ -1603,10 +1541,8 @@ function buildGradeRow(r, i){
         <option value="">— تقدير —</option>
         ${GRADE_OPTIONS.map(g => `<option>${g}</option>`).join('')}
       </select>
-      <button class="btn btn-ghost btn-sm" onclick="addComponentsToCourse('${r.id}')">📝 تفصيلي</button>
-    `;
+      <button class="btn btn-ghost btn-sm" onclick="addComponentsToCourse('${r.id}')">📝 تفصيلي</button>`;
   }
-
   let detailsHTML = '';
   if(r.type === 'detailed' && r.grades.length){
     const totalW = r.grades.reduce((a, x) => a + (+x.weight || 0), 0);
@@ -1624,10 +1560,8 @@ function buildGradeRow(r, i){
           <span style="font-size:12.5px;color:var(--muted);font-weight:700">مجموع الأوزان: ${totalW}%</span>
           ${totalW !== 100 ? `<span style="font-size:12px;color:var(--warn);font-weight:700">⚠️ المجموع مو 100%</span>` : '<span style="font-size:12px;color:var(--ok);font-weight:700">✓</span>'}
         </div>
-      </div>
-    `;
+      </div>`;
   }
-
   return `
     <div class="card" style="padding:0;margin-bottom:12px;border-right:4px solid ${r.color};overflow:hidden">
       <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
@@ -1635,30 +1569,21 @@ function buildGradeRow(r, i){
           <h3 style="font-size:16px;color:${r.color};margin-bottom:2px">${esc(r.name)}${isExternal ? ' <span style="font-size:10.5px;background:var(--muted);color:#fff;padding:2px 8px;border-radius:20px;font-weight:700">خارجي</span>' : ''}</h3>
           <span style="font-size:12.5px;color:var(--muted);font-weight:600">${r.code ? esc(r.code) + ' · ' : ''}${r.credits} ساعات${r.teacher ? ' · ' + esc(r.teacher) : ''}</span>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          ${statusBadge}
-          ${actions}
-        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${statusBadge}${actions}</div>
       </div>
       ${detailsHTML}
-    </div>
-  `;
+    </div>`;
 }
-
 function toggleGradeExpand(rowId){
   const el = document.getElementById(rowId);
   if(el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
-
 function updateLetterGrade(source, idx, letter){
   if(!letter) return;
   if(source === 'course'){
     const c = state.courses[idx];
     if(!c) return;
-    if(!c.grades || !c.grades.length){
-      c.manualLetter = letter;
-      save(); renderGrades(); toast('✅ تم الحفظ');
-    }
+    if(!c.grades || !c.grades.length){ c.manualLetter = letter; save(); renderGrades(); toast('✅ تم الحفظ'); }
   } else {
     const gc = state.gpaCourses[idx];
     if(!gc) return;
@@ -1666,7 +1591,6 @@ function updateLetterGrade(source, idx, letter){
     save(); renderGrades(); toast('✅ تم الحفظ');
   }
 }
-
 function addComponentsToCourse(courseId){
   const c = getCourse(courseId);
   if(!c) return;
@@ -1688,34 +1612,19 @@ function addComponentsToCourse(courseId){
     toast('📝 أضفت مكونات جاهزة — عدّلها');
   }
 }
-
 function removeExternalGrade(i){
   if(!confirm('حذف هذا المقرر من الحساب؟')) return;
   state.gpaCourses.splice(i, 1);
   save(); renderGrades(); toast('🗑️ تم');
 }
-
-function addComp(cid){
-  const c = getCourse(cid);
-  if(!c) return;
-  c.grades = c.grades || [];
-  c.grades.push({ name:'', weight:10, score:0 });
-  save(); renderGrades();
-}
-function removeComp(cid, i){
-  const c = getCourse(cid);
-  if(!c.grades) return;
-  c.grades.splice(i, 1);
-  if(!c.grades.length) delete c.grades;
-  save(); renderGrades();
-}
+function addComp(cid){ const c = getCourse(cid); if(!c) return; c.grades = c.grades || []; c.grades.push({ name:'', weight:10, score:0 }); save(); renderGrades(); }
+function removeComp(cid, i){ const c = getCourse(cid); if(!c.grades) return; c.grades.splice(i, 1); if(!c.grades.length) delete c.grades; save(); renderGrades(); }
 function updateComp(cid, i, field, val){
   const c = getCourse(cid);
   if(!c.grades || !c.grades[i]) return;
   c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
   save(); renderGrades();
 }
-
 function openAddGradeForm(){
   openModal('➕ إضافة مقرر خارجي', `
     <div class="form-grid">
@@ -1732,7 +1641,6 @@ function openAddGradeForm(){
     </div>
   `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExternalGrade()">💾 حفظ</button>`);
 }
-
 function saveExternalGrade(){
   const name = document.getElementById('agName').value.trim();
   const credits = +document.getElementById('agCredits').value || 0;
@@ -1744,79 +1652,281 @@ function saveExternalGrade(){
 }
 
 /* ============================================================
-   18) بومودورو
+   18) بومودورو — بنظام Timestamp (يكمل خارج التطبيق)
 ============================================================ */
-let pomo = { mode: 'work', running: false, remaining: 25 * 60, total: 25 * 60, timer: null };
 const RING_C = 552.92;
+let pomo = {
+  mode: 'work',
+  running: false,
+  endTimestamp: null,
+  pausedRemaining: null,
+  total: 25 * 60,
+  intervalId: null
+};
 function pomoDuration(mode){ const p = state.settings.pomo; return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60; }
 function pomoLabel(mode){ return mode === 'work' ? 'وقت التركيز' : mode === 'short' ? 'راحة قصيرة' : 'راحة طويلة'; }
-function pomoRender(){
-  const m = Math.floor(pomo.remaining / 60);
-  const s = pomo.remaining % 60;
-  document.getElementById('pomoTime').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  document.getElementById('pomoLabel').textContent = pomoLabel(pomo.mode);
-  const prog = pomo.total ? (pomo.total - pomo.remaining) / pomo.total : 0;
-  document.getElementById('ringFg').style.strokeDashoffset = (RING_C * prog).toFixed(2);
-  document.getElementById('pomoStart').textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
+function pomoGetRemaining(){
+  if(pomo.running && pomo.endTimestamp) return Math.max(0, Math.round((pomo.endTimestamp - Date.now()) / 1000));
+  if(pomo.pausedRemaining !== null) return pomo.pausedRemaining;
+  return pomo.total;
 }
-function pomoSetMode(mode){
+function pomoSaveState(){
+  try{
+    localStorage.setItem(POMO_STORE_KEY, JSON.stringify({
+      mode: pomo.mode,
+      running: pomo.running,
+      endTimestamp: pomo.endTimestamp,
+      pausedRemaining: pomo.pausedRemaining,
+      total: pomo.total
+    }));
+  }catch(e){}
+}
+function pomoLoadState(){
+  try{
+    const raw = localStorage.getItem(POMO_STORE_KEY);
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+function pomoFormat(sec){
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function pomoRender(){
+  const remaining = pomoGetRemaining();
+  const timeStr = pomoFormat(remaining);
+  const timeEl = document.getElementById('pomoTime');
+  const labelEl = document.getElementById('pomoLabel');
+  const startBtn = document.getElementById('pomoStart');
+  const ringFg = document.getElementById('ringFg');
+  if(timeEl) timeEl.textContent = timeStr;
+  if(labelEl) labelEl.textContent = pomoLabel(pomo.mode);
+  if(ringFg){
+    const prog = pomo.total ? (pomo.total - remaining) / pomo.total : 0;
+    ringFg.style.strokeDashoffset = (RING_C * prog).toFixed(2);
+  }
+  if(startBtn) startBtn.textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
+  // المؤقّت العائم
+  const ft = document.getElementById('floatingTimer');
+  const ftTime = document.getElementById('ftTime');
+  const ftLabel = document.getElementById('ftLabel');
+  const ftIco = document.getElementById('ftIco');
+  const ftToggle = document.getElementById('ftToggle');
+  if(ft){
+    const show = pomo.running || (pomo.pausedRemaining !== null && pomo.pausedRemaining < pomo.total);
+    if(show){
+      ft.classList.add('show');
+      ft.classList.remove('paused', 'break');
+      if(!pomo.running) ft.classList.add('paused');
+      if(pomo.mode !== 'work') ft.classList.add('break');
+      if(ftTime) ftTime.textContent = timeStr;
+      if(ftLabel) ftLabel.textContent = pomoLabel(pomo.mode);
+      if(ftIco) ftIco.textContent = pomo.mode === 'work' ? '🎯' : pomo.mode === 'short' ? '☕' : '🛋️';
+      if(ftToggle) ftToggle.textContent = pomo.running ? '⏸' : '▶';
+    } else {
+      ft.classList.remove('show');
+    }
+  }
+}
+function pomoStartTimer(){
+  if(pomo.running) return;
+  const remaining = pomoGetRemaining();
+  if(remaining <= 0) return;
+  pomo.endTimestamp = Date.now() + remaining * 1000;
+  pomo.running = true;
+  pomo.pausedRemaining = null;
+  clearInterval(pomo.intervalId);
+  pomo.intervalId = setInterval(pomoTick, 250);
+  pomoSaveState();
+  pomoRender();
+}
+function pomoPauseTimer(){
+  if(!pomo.running) return;
+  pomo.pausedRemaining = pomoGetRemaining();
+  pomo.running = false;
+  pomo.endTimestamp = null;
+  clearInterval(pomo.intervalId);
+  pomoSaveState();
+  pomoRender();
+}
+function pomoToggle(){
+  if(pomo.running) pomoPauseTimer();
+  else pomoStartTimer();
+}
+function pomoSetMode(mode, silent){
+  clearInterval(pomo.intervalId);
   pomo.mode = mode;
   pomo.running = false;
-  clearInterval(pomo.timer);
+  pomo.endTimestamp = null;
   pomo.total = pomoDuration(mode);
-  pomo.remaining = pomo.total;
+  pomo.pausedRemaining = pomo.total;
   document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
+  if(!silent) pomoSaveState();
+  pomoRender();
+}
+function pomoResetCurrent(){
+  pomoSetMode(pomo.mode, false);
+  try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
+  toast('↺ تم التصفير');
+}
+function pomoNotify(title, body){
+  try{
+    if('Notification' in window && Notification.permission === 'granted'){
+      new Notification(title, { body, tag: 'pomo', icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%230d9488"/><text y="72" x="50" text-anchor="middle" font-size="58">🎓</text></svg>' });
+    }
+  }catch(e){}
+}
+function pomoComplete(){
+  clearInterval(pomo.intervalId);
+  const wasWork = pomo.mode === 'work';
+  const completedTotal = pomo.total;
+  pomo.running = false;
+  pomo.endTimestamp = null;
+  pomo.pausedRemaining = null;
+  if(wasWork){
+    const cid = document.getElementById('pomoCourse')?.value || '';
+    const mins = Math.round(completedTotal / 60);
+    state.studyLog.push({ id: uid(), date: todayISO(), courseId: cid, minutes: mins });
+    save();
+    if(document.getElementById('studyToday')) renderStudy();
+    if(document.getElementById('dashStats')) renderDashboard();
+    pomoNotify('🎉 انتهى وقت التركيز', `أكملت ${mins} دقيقة — خذ راحة الآن!`);
+    toast(`🎉 أنهيت ${mins} دقيقة تركيز!`);
+  } else {
+    pomoNotify('☕ انتهت الراحة', 'يلا نرجع للتركيز 💪');
+    toast('☕ انتهت الراحة، يلا نرجع!');
+  }
+  const nextMode = wasWork ? 'short' : 'work';
+  pomo.mode = nextMode;
+  pomo.total = pomoDuration(nextMode);
+  pomo.pausedRemaining = pomo.total;
+  document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === nextMode));
+  try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
   pomoRender();
 }
 function pomoTick(){
-  if(pomo.remaining <= 0){
-    clearInterval(pomo.timer);
-    pomo.running = false;
-    if(pomo.mode === 'work'){
-      const cid = document.getElementById('pomoCourse').value;
-      const mins = Math.round(pomo.total / 60);
-      state.studyLog.push({ id: uid(), date: todayISO(), courseId: cid, minutes: mins });
-      save(); renderStudy();
-      toast(`🎉 أنهيت ${mins} دقيقة تركيز!`);
-      try{ new Notification('انتهى وقت التركيز', { body:'خذ راحة الآن 👏' }); }catch(e){}
-    }else{ toast('☕ انتهت الراحة، يلا نرجع!'); }
-    pomoSetMode(pomo.mode === 'work' ? 'short' : 'work');
+  const remaining = pomoGetRemaining();
+  if(remaining <= 0 && pomo.running){
+    pomoComplete();
     return;
   }
-  pomo.remaining--;
+  pomoRender();
+}
+function pomoResumeIfNeeded(){
+  const saved = pomoLoadState();
+  if(!saved) return;
+  if(saved.endTimestamp && saved.endTimestamp > Date.now()){
+    pomo.mode = saved.mode || 'work';
+    pomo.total = saved.total || pomoDuration(pomo.mode);
+    pomo.running = true;
+    pomo.endTimestamp = saved.endTimestamp;
+    clearInterval(pomo.intervalId);
+    pomo.intervalId = setInterval(pomoTick, 250);
+  } else if(saved.endTimestamp && saved.endTimestamp <= Date.now()){
+    pomo.mode = saved.mode || 'work';
+    pomo.total = saved.total || pomoDuration(pomo.mode);
+    setTimeout(() => pomoComplete(), 300);
+  } else if(saved.pausedRemaining !== null && saved.pausedRemaining < (saved.total || 0)){
+    pomo.mode = saved.mode || 'work';
+    pomo.total = saved.total || pomoDuration(pomo.mode);
+    pomo.pausedRemaining = saved.pausedRemaining;
+  }
+  document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === pomo.mode));
   pomoRender();
 }
 document.getElementById('pomoStart').addEventListener('click', () => {
-  if(pomo.running){ clearInterval(pomo.timer); pomo.running = false; }
-  else{
-    if(pomo.remaining <= 0) pomo.remaining = pomoDuration(pomo.mode);
-    if(!pomo.total) pomo.total = pomoDuration(pomo.mode);
-    pomo.running = true;
-    pomo.timer = setInterval(pomoTick, 1000);
-    if('Notification' in window && Notification.permission === 'default'){ Notification.requestPermission(); }
-  }
-  pomoRender();
+  if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+  pomoToggle();
 });
-document.getElementById('pomoReset').addEventListener('click', () => pomoSetMode(pomo.mode));
-document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', () => pomoSetMode(c.dataset.mode)));
+document.getElementById('pomoReset').addEventListener('click', pomoResetCurrent);
+document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', () => {
+  if(confirm(`تغيير الوضع إلى "${pomoLabel(c.dataset.mode)}"؟ (سيفقد الوقت الحالي)`)) pomoSetMode(c.dataset.mode);
+}));
+
+/* ===== المؤقّت العائم — سحب ===== */
+(function floatingTimerDrag(){
+  const ft = document.getElementById('floatingTimer');
+  if(!ft) return;
+  // استرجاع الموضع
+  try{
+    const pos = JSON.parse(localStorage.getItem('ft_pos') || 'null');
+    if(pos && typeof pos.x === 'number' && typeof pos.y === 'number'){
+      ft.style.left = pos.x + 'px';
+      ft.style.top = pos.y + 'px';
+      ft.style.right = 'auto';
+      ft.style.bottom = 'auto';
+    }
+  }catch(e){}
+  let drag = { active:false, offsetX:0, offsetY:0, moved:false };
+  ft.addEventListener('pointerdown', e => {
+    if(e.target.closest('.ft-btn')) return;
+    drag.active = true;
+    drag.moved = false;
+    const rect = ft.getBoundingClientRect();
+    drag.offsetX = e.clientX - rect.left;
+    drag.offsetY = e.clientY - rect.top;
+    try{ ft.setPointerCapture(e.pointerId); }catch(_){}
+    e.preventDefault();
+  });
+  ft.addEventListener('pointermove', e => {
+    if(!drag.active) return;
+    const x = e.clientX - drag.offsetX;
+    const y = e.clientY - drag.offsetY;
+    const maxX = window.innerWidth - ft.offsetWidth;
+    const maxY = window.innerHeight - ft.offsetHeight;
+    const cx = Math.max(4, Math.min(x, maxX - 4));
+    const cy = Math.max(4, Math.min(y, maxY - 4));
+    ft.style.left = cx + 'px';
+    ft.style.top = cy + 'px';
+    ft.style.right = 'auto';
+    ft.style.bottom = 'auto';
+    drag.moved = true;
+  });
+  ft.addEventListener('pointerup', e => {
+    if(!drag.active) return;
+    drag.active = false;
+    try{ ft.releasePointerCapture(e.pointerId); }catch(_){}
+    if(drag.moved){
+      const left = parseFloat(ft.style.left) || 0;
+      const top = parseFloat(ft.style.top) || 0;
+      try{ localStorage.setItem('ft_pos', JSON.stringify({ x: left, y: top })); }catch(_){}
+    }
+  });
+  ft.addEventListener('pointercancel', () => { drag.active = false; });
+  ft.addEventListener('click', e => {
+    if(drag.moved){ drag.moved = false; return; }
+    if(e.target.closest('.ft-btn')) return;
+    go('study');
+  });
+  document.getElementById('ftToggle').addEventListener('click', e => {
+    e.stopPropagation();
+    pomoToggle();
+  });
+})();
 
 /* ============================================================
    19) المذاكرة
 ============================================================ */
 function renderStudy(){
   const sel = document.getElementById('pomoCourse');
-  const cur = sel.value;
-  sel.innerHTML = `<option value="">— بدون تحديد —</option>` + state.courses.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
-  if(cur) sel.value = cur;
+  if(sel){
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">— بدون تحديد —</option>` + state.courses.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+    if(cur) sel.value = cur;
+  }
   const today = todayISO();
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
   const weekStart = todayISO(weekAgo);
   const todayMin = state.studyLog.filter(l => l.date === today).reduce((a,b) => a + b.minutes, 0);
   const weekMin = state.studyLog.filter(l => l.date >= weekStart).reduce((a,b) => a + b.minutes, 0);
   const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
-  document.getElementById('studyToday').textContent = todayMin;
-  document.getElementById('studyWeek').textContent = weekMin;
-  document.getElementById('studyTotal').textContent = totalMin;
+  const st = document.getElementById('studyToday');
+  const sw = document.getElementById('studyWeek');
+  const stt = document.getElementById('studyTotal');
+  if(st) st.textContent = todayMin;
+  if(sw) sw.textContent = weekMin;
+  if(stt) stt.textContent = totalMin;
   const bars = [];
   for(let i = 6; i >= 0; i--){
     const d = new Date(); d.setDate(d.getDate() - i);
@@ -1825,9 +1935,9 @@ function renderStudy(){
     bars.push({ iso, mins, day: DAYS_SHORT[d.getDay()] });
   }
   const max = Math.max(...bars.map(b => b.mins), 60);
-  document.getElementById('weekBars').innerHTML = bars.map(b => `<div class="wbar"><span class="wbar-val">${b.mins || ''}</span><div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div><span class="wbar-lbl">${b.day}</span></div>`).join('');
+  const wb = document.getElementById('weekBars');
+  if(wb) wb.innerHTML = bars.map(b => `<div class="wbar"><span class="wbar-val">${b.mins || ''}</span><div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div><span class="wbar-lbl">${b.day}</span></div>`).join('');
 }
-
 function openManualLog(){
   openModal('إضافة وقت مذاكرة', `
     <div class="form-grid">
@@ -1843,19 +1953,26 @@ function saveManualLog(){
   state.studyLog.push({ id: uid(), date: document.getElementById('mlDate').value || todayISO(), courseId: document.getElementById('mlCourse').value, minutes });
   save(); closeModal(); renderStudy(); renderDashboard(); toast('✅ تم الحفظ');
 }
-
 function savePomoSettings(){
   state.settings.pomo = {
     work: Math.max(1, +document.getElementById('setWork').value || 25),
     short: Math.max(1, +document.getElementById('setShort').value || 5),
     long: Math.max(1, +document.getElementById('setLong').value || 15)
   };
-  save(); pomoSetMode(pomo.mode); toast('✅ تم حفظ الإعدادات');
+  save();
+  if(!pomo.running && (pomo.pausedRemaining === null || pomo.pausedRemaining === pomo.total)){
+    pomo.total = pomoDuration(pomo.mode);
+    pomo.pausedRemaining = pomo.total;
+    pomoSaveState();
+    pomoRender();
+  }
+  toast('✅ تم حفظ الإعدادات');
 }
 function clearAll(){
   if(!confirm('سيتم حذف كل بياناتك نهائياً. متأكد؟')) return;
   state = defaultState();
   currentCourseId = null;
+  try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
   save(); applySettings(); renderAll(); closeModal();
   toast('🗑️ تم حذف كل البيانات');
 }
@@ -1877,7 +1994,7 @@ function applySettings(){
   const semEl = document.getElementById('setSemesterStart');
   if(semEl) semEl.value = state.settings.semesterStart || '';
   pomo.total = pomoDuration(pomo.mode);
-  pomo.remaining = pomo.total;
+  if(!pomo.running && (pomo.pausedRemaining === null)) pomo.pausedRemaining = pomo.total;
   pomoRender();
   if(typeof renderWeekBadge === 'function') renderWeekBadge();
 }
@@ -1910,25 +2027,16 @@ function renderSyncStatus(){
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
-      <div style="background:var(--hover);padding:12px 8px;border-radius:10px">
-        <div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--p)">${state.courses.length}</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700">مقرر</div>
-      </div>
-      <div style="background:var(--hover);padding:12px 8px;border-radius:10px">
-        <div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--warn)">${openTasks}</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700">مهمة متبقية</div>
-      </div>
-      <div style="background:var(--hover);padding:12px 8px;border-radius:10px">
-        <div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--danger)">${upcomingExams}</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700">اختبار قادم</div>
-      </div>
+      <div style="background:var(--hover);padding:12px 8px;border-radius:10px"><div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--p)">${state.courses.length}</div><div style="font-size:11px;color:var(--muted);font-weight:700">مقرر</div></div>
+      <div style="background:var(--hover);padding:12px 8px;border-radius:10px"><div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--warn)">${openTasks}</div><div style="font-size:11px;color:var(--muted);font-weight:700">مهمة متبقية</div></div>
+      <div style="background:var(--hover);padding:12px 8px;border-radius:10px"><div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--danger)">${upcomingExams}</div><div style="font-size:11px;color:var(--muted);font-weight:700">اختبار قادم</div></div>
     </div>
     ${chatId ? `<button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="doSync(false)">🔄 مزامنة الآن</button>` : ''}
   `;
 }
 
 /* ============================================================
-   22) الإضافة السريعة (FAB)
+   22) الإضافة السريعة
 ============================================================ */
 function quickAdd(){
   openModal('إضافة سريعة', `
@@ -1953,7 +2061,6 @@ document.getElementById('overlay').addEventListener('click', () => {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 });
-
 document.getElementById('taskFilters').addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if(!chip) return;
@@ -2061,10 +2168,8 @@ function qaClose(){
 let pollTimer = null;
 let syncTimeout = null;
 let syncBadgeHideTimer = null;
-
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
-
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
     updateTgStatus();
@@ -2075,14 +2180,12 @@ window.addEventListener('focus', () => {
   updateTgStatus();
   if(getMyChatId()) syncToTelegram(true);
 });
-
 function syncToTelegram(silent = true){
   const chatId = getMyChatId();
   if(!chatId) return;
   if(syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => doSync(silent), 800);
 }
-
 async function doSync(silent = true){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -2096,6 +2199,7 @@ async function doSync(silent = true){
         tasks: state.tasks, exams: state.exams, courses: state.courses,
         schedule: state.schedule, attendance: state.attendance,
         gpaCourses: state.gpaCourses, wellness: state.wellness,
+        health: state.health, worship: state.worship,
         archive: state.archive, skills: state.skills,
         studyLog: state.studyLog, settings: state.settings
       })
@@ -2109,7 +2213,6 @@ async function doSync(silent = true){
     if(!silent) toast('⚠️ فشلت المزامنة');
   }
 }
-
 async function syncAttendanceFromServer(){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -2135,7 +2238,6 @@ async function syncAttendanceFromServer(){
     }
   }catch(e){}
 }
-
 async function loadFromCloud(){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -2154,6 +2256,8 @@ async function loadFromCloud(){
       state.attendance = data.attendance || [];
       state.gpaCourses = data.gpaCourses || [];
       if(data.wellness) state.wellness = data.wellness;
+      if(data.health) state.health = data.health;
+      if(data.worship) state.worship = data.worship;
       if(data.archive) state.archive = data.archive;
       if(data.skills) state.skills = data.skills;
       if(data.studyLog) state.studyLog = data.studyLog;
@@ -2170,11 +2274,8 @@ async function loadFromCloud(){
     } else {
       showSyncBadge('success');
     }
-  }catch(e){
-    showSyncBadge('error');
-  }
+  }catch(e){ showSyncBadge('error'); }
 }
-
 function showSyncBadge(status){
   const badge = document.getElementById('syncBadge');
   const icon = document.getElementById('syncIcon');
@@ -2182,22 +2283,10 @@ function showSyncBadge(status){
   if(!badge) return;
   if(syncBadgeHideTimer) clearTimeout(syncBadgeHideTimer);
   badge.classList.remove('hidden', 'loading', 'error');
-  if(status === 'loading'){
-    badge.classList.add('loading');
-    icon.textContent = '⏳';
-    text.textContent = 'جاري';
-  } else if(status === 'success'){
-    icon.textContent = '✅';
-    text.textContent = 'الآن';
-    syncBadgeHideTimer = setTimeout(() => { badge.classList.add('hidden'); }, 3000);
-  } else if(status === 'error'){
-    badge.classList.add('error');
-    icon.textContent = '⚠️';
-    text.textContent = 'فشل';
-    syncBadgeHideTimer = setTimeout(() => { badge.classList.add('hidden'); }, 5000);
-  }
+  if(status === 'loading'){ badge.classList.add('loading'); icon.textContent = '⏳'; text.textContent = 'جاري'; }
+  else if(status === 'success'){ icon.textContent = '✅'; text.textContent = 'الآن'; syncBadgeHideTimer = setTimeout(() => badge.classList.add('hidden'), 3000); }
+  else if(status === 'error'){ badge.classList.add('error'); icon.textContent = '⚠️'; text.textContent = 'فشل'; syncBadgeHideTimer = setTimeout(() => badge.classList.add('hidden'), 5000); }
 }
-
 let autoSyncTimer = null;
 async function checkCloudUpdates(){
   if(document.hidden) return;
@@ -2220,6 +2309,8 @@ async function checkCloudUpdates(){
         state.attendance = data.attendance || [];
         state.gpaCourses = data.gpaCourses || [];
         if(data.wellness) state.wellness = data.wellness;
+        if(data.health) state.health = data.health;
+        if(data.worship) state.worship = data.worship;
         if(data.archive) state.archive = data.archive;
         if(data.skills) state.skills = data.skills;
         if(data.studyLog) state.studyLog = data.studyLog;
@@ -2246,15 +2337,12 @@ function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
 setTimeout(() => {
-  if(getMyChatId()){
-    loadFromCloud().then(() => { startAutoSync(); renderSyncStatus(); });
-  }
+  if(getMyChatId()) loadFromCloud().then(() => { startAutoSync(); renderSyncStatus(); });
 }, 1500);
 document.addEventListener('visibilitychange', () => {
-  if(document.hidden){ stopAutoSync(); }
+  if(document.hidden) stopAutoSync();
   else if(getMyChatId()){ checkCloudUpdates(); startAutoSync(); }
 });
-
 async function testTelegram(){
   const chatId = getMyChatId();
   if(!chatId){ toast('⚠️ اربط أولاً'); return; }
@@ -2316,10 +2404,9 @@ function updateTgStatus(){
 (function resumePending(){
   const pending = localStorage.getItem('tg_pending');
   const t = parseInt(localStorage.getItem('tg_pending_time') || '0');
-  if(pending && Date.now() - t < 600000){ startPoll(pending); }
+  if(pending && Date.now() - t < 600000) startPoll(pending);
   else if(pending){ localStorage.removeItem('tg_pending'); localStorage.removeItem('tg_pending_time'); }
 })();
-
 (function initTGUI(){
   updateTgStatus();
   setInterval(() => {
@@ -2364,11 +2451,10 @@ function calcAttendance(){
     const lates = lateDates.size;
     const percent = totalDays > 0 ? (absences / totalDays) * 100 : 0;
     const maxAbsences = Math.floor(totalDays * MAX_PERCENT);
-    res[c.id] = { course: c, total: totalDays, daysPerWeek: daysPerWeek, absences: absences, lates: lates, max: maxAbsences, percent: percent, remaining: Math.max(0, maxAbsences - absences) };
+    res[c.id] = { course: c, total: totalDays, daysPerWeek, absences, lates, max: maxAbsences, percent, remaining: Math.max(0, maxAbsences - absences) };
   });
   return res;
 }
-
 function renderAttendancePage(){
   const el = document.getElementById('attendanceContent');
   if(!el) return;
@@ -2385,8 +2471,7 @@ function renderAttendancePage(){
       <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">🎯</div><div><b>25%</b><span>حد الحرمان</span></div></div>
     </div>
     <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;line-height:1.9;font-weight:600">
-      💡 <b>طريقة الحساب:</b><br>• كل <b>يوم محاضرة</b> = غياب واحد
-      <br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
+      💡 <b>طريقة الحساب:</b><br>• كل <b>يوم محاضرة</b> = غياب واحد<br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
     </div>
     <div style="display:grid;gap:14px">
       ${Object.values(data).map(d => {
@@ -2394,7 +2479,7 @@ function renderAttendancePage(){
         const color = used >= 18.75 ? 'var(--danger)' : used >= 12.5 ? 'var(--warn)' : 'var(--ok)';
         const bg = used >= 18.75 ? 'var(--danger-bg)' : used >= 12.5 ? 'var(--warn-bg)' : 'var(--ok-bg)';
         const emoji = used >= 18.75 ? '🚨' : used >= 12.5 ? '⚠️' : '✅';
-        const barPercent = Math.min((d.percent / 25) * 100, 100);
+        const barPercent = Math.min((used / 25) * 100, 100);
         return `<div class="card" style="padding:20px;border-right:4px solid ${color}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
             <div><h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px;cursor:pointer" onclick="openCourseDetail('${d.course.id}')">${esc(d.course.name)} →</h3>
@@ -2418,7 +2503,7 @@ function renderAttendancePage(){
 }
 
 /* ============================================================
-   28) النوم والماء
+   28) النوم والماء + الأسنان
 ============================================================ */
 function renderWellness(){
   const el = document.getElementById('wellnessContent');
@@ -2438,6 +2523,7 @@ function renderWellness(){
     }
     const maxSleep = Math.max(...last7.map(x => x.sleep), w.sleepGoal);
     const maxWater = Math.max(...last7.map(x => x.water), w.waterGoal);
+    const teethLog = state.health.teethLog.find(l => l.date === today) || { date: today, morning: false, night: false };
     el.innerHTML = `
       <div class="grid g2" style="margin-bottom:16px">
         <div class="card" style="padding:22px">
@@ -2451,6 +2537,27 @@ function renderWellness(){
           <div style="text-align:center;margin-bottom:14px"><b style="font-family:'Tajawal';font-size:42px;color:#0891b2">${todayLog.water}</b><span style="font-size:15px;color:var(--muted)"> / ${w.waterGoal} أكواب</span></div>
           <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${waterPct}%;background:#0891b2"></i></div>
           <div style="text-align:center"><button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button><button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير</button></div>
+        </div>
+      </div>
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <div style="text-align:center;margin-bottom:16px">
+          <div style="font-size:52px;line-height:1">🦷</div>
+          <h3 style="font-size:19px;margin-top:8px">نظافة الأسنان</h3>
+        </div>
+        <div class="teeth-grid">
+          <button class="teeth-btn ${teethLog.morning ? 'done' : ''}" onclick="toggleTeeth('morning')">
+            <span class="t-ico">🌅</span>
+            تفريش الصباح
+            ${teethLog.morning ? '<div style="font-size:11px;margin-top:4px">✓ تم</div>' : ''}
+          </button>
+          <button class="teeth-btn ${teethLog.night ? 'done' : ''}" onclick="toggleTeeth('night')">
+            <span class="t-ico">🌙</span>
+            تفريش الليل
+            ${teethLog.night ? '<div style="font-size:11px;margin-top:4px">✓ تم</div>' : ''}
+          </button>
+        </div>
+        <div style="margin-top:14px;text-align:center;font-size:12.5px;color:var(--muted);font-weight:600">
+          💡 التوصية: مرتين يومياً — صباحاً وقبل النوم
         </div>
       </div>
       <div class="card" style="padding:20px;margin-bottom:16px">
@@ -2470,9 +2577,16 @@ function getOrCreateTodayWellness(){
   if(!log){ log = { date: today, sleep: 0, water: 0 }; state.wellness.log.push(log); }
   return log;
 }
-function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); toast(`😴 سجّلت ${h} ساعات`); }
-function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); }
-function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); }
+function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); renderDashWorship(); toast(`😴 سجّلت ${h} ساعات`); }
+function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); renderDashWorship(); }
+function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); renderDashWorship(); }
+function toggleTeeth(period){
+  const today = todayISO();
+  let log = state.health.teethLog.find(l => l.date === today);
+  if(!log){ log = { date: today, morning: false, night: false }; state.health.teethLog.push(log); }
+  log[period] = !log[period];
+  save(); renderWellness(); renderDashWorship();
+}
 
 /* ============================================================
    29) الأرشيف
@@ -2552,7 +2666,315 @@ function deleteArchive(i){
 }
 
 /* ============================================================
-   30) إضافة الصفحات الديناميكية
+   30) العبادة — مواقيت + أذكار + ورد
+============================================================ */
+const PRAYER_NAMES = {
+  Fajr: { ar:'الفجر', ico:'🌄' },
+  Sunrise: { ar:'الشروق', ico:'☀️' },
+  Dhuhr: { ar:'الظهر', ico:'🌞' },
+  Asr: { ar:'العصر', ico:'🌤️' },
+  Maghrib: { ar:'المغرب', ico:'🌇' },
+  Isha: { ar:'العشاء', ico:'🌙' }
+};
+const ADHKAR = {
+  morning: [
+    { text: 'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ. اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ', count: 1, source: 'آية الكرسي' },
+    { text: 'قُلْ هُوَ اللَّهُ أَحَدٌ ۝ اللَّهُ الصَّمَدُ ۝ لَمْ يَلِدْ وَلَمْ يُولَدْ ۝ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ', count: 3, source: 'سورة الإخلاص' },
+    { text: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ مِنْ شَرِّ مَا خَلَقَ ۝ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ۝ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ۝ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ', count: 3, source: 'سورة الفلق' },
+    { text: 'قُلْ أَعُوذُ بِرَبِّ النَّاسِ ۝ مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ ۝ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ۝ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ۝ مِنَ الْجِنَّةِ وَالنَّاسِ', count: 3, source: 'سورة الناس' },
+    { text: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', count: 1, source: 'رواه مسلم' },
+    { text: 'اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ', count: 1, source: 'رواه الترمذي' },
+    { text: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ', count: 1, source: 'سيد الاستغفار' },
+    { text: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', count: 7, source: 'رواه أبو داود' },
+    { text: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ', count: 3, source: 'رواه أبو داود والترمذي' },
+    { text: 'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', count: 3, source: 'رواه أبو داود' },
+    { text: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', count: 100, source: 'رواه مسلم' },
+    { text: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', count: 10, source: 'رواه النسائي' }
+  ],
+  evening: [
+    { text: 'أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ. اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...', count: 1, source: 'آية الكرسي' },
+    { text: 'قُلْ هُوَ اللَّهُ أَحَدٌ...', count: 3, source: 'سورة الإخلاص' },
+    { text: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ...', count: 3, source: 'سورة الفلق' },
+    { text: 'قُلْ أَعُوذُ بِرَبِّ النَّاسِ...', count: 3, source: 'سورة الناس' },
+    { text: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', count: 1, source: 'رواه مسلم' },
+    { text: 'اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ', count: 1, source: 'رواه الترمذي' },
+    { text: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ...', count: 1, source: 'سيد الاستغفار' },
+    { text: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', count: 7, source: 'رواه أبو داود' },
+    { text: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ', count: 3, source: 'رواه أبو داود والترمذي' },
+    { text: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', count: 3, source: 'رواه مسلم' },
+    { text: 'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', count: 3, source: 'رواه أبو داود' },
+    { text: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', count: 100, source: 'رواه مسلم' }
+  ]
+};
+async function fetchPrayerTimes(){
+  const today = todayISO();
+  if(state.worship.prayerTimes && state.worship.prayerTimesDate === today) return state.worship.prayerTimes;
+  try{
+    const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(state.worship.city)}&country=${state.worship.country}&method=4`;
+    const r = await fetch(url);
+    const data = await r.json();
+    if(data.code === 200){
+      state.worship.prayerTimes = data.data.timings;
+      state.worship.prayerTimesDate = today;
+      save();
+      return data.data.timings;
+    }
+  }catch(e){ console.log('prayer fetch error:', e); }
+  return null;
+}
+function renderPrayerTimes(){
+  const el = document.getElementById('prayerTimesContent');
+  if(!el) return;
+  const times = state.worship.prayerTimes;
+  if(!times){
+    el.innerHTML = '<div class="empty" style="padding:20px"><b>جاري التحميل...</b><p>اتصل بالإنترنت لحفظ المواقيت</p></div>';
+    return;
+  }
+  const now = new Date();
+  const currentMin = now.getHours() * 60 + now.getMinutes();
+  const prayers = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+  let nextIdx = prayers.findIndex(p => toMin(times[p]) > currentMin);
+  if(nextIdx === -1) nextIdx = 0;
+  el.innerHTML = prayers.map((p, i) => {
+    const info = PRAYER_NAMES[p];
+    const time = times[p];
+    const isPast = toMin(time) < currentMin && i !== nextIdx;
+    const isNext = i === nextIdx;
+    const cls = isNext ? 'prayer-row next' : isPast ? 'prayer-row past' : 'prayer-row';
+    let remain = '';
+    if(isNext){
+      let diff = toMin(time) - currentMin;
+      if(diff < 0) diff += 24*60;
+      const h = Math.floor(diff/60), m = diff%60;
+      remain = h > 0 ? `${h}س ${m}د` : `${m}د`;
+    }
+    return `<div class="${cls}">
+      <div class="prayer-name">${info.ico} ${info.ar}</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        ${isNext ? `<span class="prayer-next-badge">باقي ${remain}</span>` : ''}
+        <span class="prayer-time">${time}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function changePrayerCity(){
+  openModal('📍 تغيير المدينة', `
+    <div class="form-grid">
+      <div class="field"><label>المدينة</label>
+        <input id="pcCity" value="${esc(state.worship.city)}" placeholder="Riyadh"></div>
+      <div class="field"><label>الدولة (رمز)</label>
+        <input id="pcCountry" value="${esc(state.worship.country)}" placeholder="SA"></div>
+    </div>
+    <div style="background:var(--p-light);padding:12px;border-radius:12px;font-size:12.5px;line-height:1.7;margin-top:14px;font-weight:600">
+      💡 <b>أمثلة:</b><br>
+      • الرياض: <code>Riyadh / SA</code><br>
+      • جدة: <code>Jeddah / SA</code><br>
+      • مكة: <code>Makkah / SA</code><br>
+      • المدينة: <code>Madinah / SA</code><br>
+      • الدمام: <code>Dammam / SA</code>
+    </div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="savePrayerCity()">💾 حفظ</button>`);
+}
+async function savePrayerCity(){
+  const city = document.getElementById('pcCity').value.trim();
+  const country = document.getElementById('pcCountry').value.trim().toUpperCase();
+  if(!city || !country){ toast('⚠️ اكمل الحقول'); return; }
+  state.worship.city = city;
+  state.worship.country = country;
+  state.worship.prayerTimes = null;
+  state.worship.prayerTimesDate = null;
+  save(); closeModal();
+  await fetchPrayerTimes();
+  renderPrayerTimes();
+  renderDashWorship();
+  toast('✅ تم تحديث المدينة');
+}
+function renderAdhkar(){
+  const el = document.getElementById('adhkarList');
+  if(!el) return;
+  const period = state.worship.adhkarTab || 'morning';
+  const list = ADHKAR[period] || [];
+  const today = todayISO();
+  const progressKey = `${today}_${period}`;
+  const done = state.worship.adhkarProgress[progressKey] || [];
+  el.innerHTML = list.map((a, i) => {
+    const isDone = done.includes(i);
+    return `<div class="adhkar-item ${isDone ? 'done' : ''}">
+      <div class="adhkar-text">${a.text}</div>
+      <div class="adhkar-meta">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="adhkar-count">${a.count} ${a.count > 1 ? 'مرات' : 'مرة'}</span>
+          <span class="adhkar-source">📚 ${a.source}</span>
+        </div>
+        <button class="adhkar-chk" onclick="toggleAdhkar(${i})">✓</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleAdhkar(idx){
+  const period = state.worship.adhkarTab || 'morning';
+  const today = todayISO();
+  const key = `${today}_${period}`;
+  if(!state.worship.adhkarProgress[key]) state.worship.adhkarProgress[key] = [];
+  const arr = state.worship.adhkarProgress[key];
+  const pos = arr.indexOf(idx);
+  if(pos >= 0) arr.splice(pos, 1);
+  else arr.push(idx);
+  save();
+  renderAdhkar();
+  renderDashWorship();
+}
+function renderWird(){
+  const el = document.getElementById('wirdContent');
+  if(!el) return;
+  const today = todayISO();
+  const wird = state.worship.wird;
+  const todayLog = wird.log.find(l => l.date === today) || { date: today, pages: 0 };
+  const goal = wird.goal || 20;
+  const pct = Math.min(100, Math.round((todayLog.pages / goal) * 100));
+  const last7 = [];
+  for(let i = 6; i >= 0; i--){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const iso = todayISO(d);
+    const log = wird.log.find(l => l.date === iso) || { pages: 0 };
+    last7.push({ day: DAYS_SHORT[d.getDay()], pages: log.pages });
+  }
+  const maxPages = Math.max(...last7.map(x => x.pages), goal);
+  el.innerHTML = `
+    <div class="wird-progress">
+      <div class="wird-big">${todayLog.pages}</div>
+      <div class="wird-goal">من ${goal} صفحة اليوم</div>
+      <div class="prog" style="height:10px;margin-top:12px"><i style="width:${pct}%"></i></div>
+      <div class="wird-btns">
+        <button class="btn btn-ghost btn-sm" onclick="addWird(-1)">− 1</button>
+        <button class="btn btn-primary btn-sm" onclick="addWird(1)">+ 1 صفحة</button>
+        <button class="btn btn-ghost btn-sm" onclick="addWird(5)">+ 5 صفحات</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetWird()">↺ تصفير</button>
+      </div>
+      <div style="margin-top:12px">
+        <button class="btn btn-ghost btn-sm" onclick="editWirdGoal()">🎯 تعديل الهدف اليومي (${goal} صفحة)</button>
+      </div>
+    </div>
+    <h4 style="font-size:14px;margin:16px 0 10px">📊 آخر 7 أيام</h4>
+    <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.pages || ''}</span><div class="wbar-fill" style="height:${Math.max((d.pages/maxPages)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
+  `;
+}
+function addWird(n){
+  const today = todayISO();
+  let log = state.worship.wird.log.find(l => l.date === today);
+  if(!log){ log = { date: today, pages: 0 }; state.worship.wird.log.push(log); }
+  log.pages = Math.max(0, log.pages + n);
+  save(); renderWird(); renderDashWorship();
+}
+function resetWird(){
+  const today = todayISO();
+  const log = state.worship.wird.log.find(l => l.date === today);
+  if(log){ log.pages = 0; save(); renderWird(); renderDashWorship(); }
+}
+function editWirdGoal(){
+  openModal('🎯 الهدف اليومي', `
+    <div class="field"><label>عدد الصفحات</label>
+      <input type="number" id="wirdGoal" min="1" max="200" value="${state.worship.wird.goal || 20}"></div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveWirdGoal()">💾 حفظ</button>`);
+}
+function saveWirdGoal(){
+  const g = +document.getElementById('wirdGoal').value || 20;
+  state.worship.wird.goal = Math.max(1, g);
+  save(); closeModal(); renderWird(); renderDashWorship();
+  toast('✅ تم');
+}
+function renderDashWorship(){
+  const el = document.getElementById('dashWorship');
+  if(!el) return;
+  const times = state.worship.prayerTimes;
+  const today = todayISO();
+  let nextPrayerHTML = '';
+  if(times){
+    const now = new Date();
+    const curMin = now.getHours()*60 + now.getMinutes();
+    const prayers = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+    let nextIdx = prayers.findIndex(p => toMin(times[p]) > curMin);
+    if(nextIdx === -1) nextIdx = 0;
+    const p = prayers[nextIdx];
+    const info = PRAYER_NAMES[p];
+    let diff = toMin(times[p]) - curMin;
+    if(diff < 0) diff += 24*60;
+    const h = Math.floor(diff/60), m = diff%60;
+    const remain = h > 0 ? `${h}س ${m}د` : `${m}د`;
+    nextPrayerHTML = `
+      <div style="background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;padding:16px;border-radius:14px;margin-bottom:12px">
+        <div style="font-size:12px;opacity:.9;font-weight:700;margin-bottom:6px">الصلاة القادمة</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-family:'Tajawal';font-size:24px;font-weight:800">${info.ico} ${info.ar}</div>
+          <div style="text-align:left">
+            <div style="font-family:'Tajawal';font-size:22px;font-weight:800;line-height:1">${times[p]}</div>
+            <div style="font-size:11px;opacity:.9;font-weight:700">باقي ${remain}</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    nextPrayerHTML = `<div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:12px;font-size:13px;color:var(--muted);text-align:center;font-weight:600">جاري تحميل المواقيت...</div>`;
+  }
+  const morningKey = `${today}_morning`;
+  const eveningKey = `${today}_evening`;
+  const mDone = (state.worship.adhkarProgress[morningKey]||[]).length;
+  const eDone = (state.worship.adhkarProgress[eveningKey]||[]).length;
+  const mTotal = ADHKAR.morning.length;
+  const eTotal = ADHKAR.evening.length;
+  const wirdLog = state.worship.wird.log.find(l => l.date === today) || { pages: 0 };
+  const teethLog = state.health.teethLog.find(l => l.date === today) || { morning: false, night: false };
+  const teethCount = (teethLog.morning?1:0) + (teethLog.night?1:0);
+  const w = state.wellness;
+  const wLog = w.log.find(l => l.date === today) || { sleep: 0, water: 0 };
+  el.innerHTML = `
+    ${nextPrayerHTML}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+        <div style="font-size:20px">📿</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أذكار الصباح</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${mDone}/${mTotal}</div>
+      </div>
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+        <div style="font-size:20px">🌙</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أذكار المساء</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${eDone}/${eTotal}</div>
+      </div>
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+        <div style="font-size:20px">📖</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">الورد اليومي</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wirdLog.pages}/${state.worship.wird.goal}</div>
+      </div>
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+        <div style="font-size:20px">🦷</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">تفريش الأسنان</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${teethCount}/2</div>
+      </div>
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+        <div style="font-size:20px">😴</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">ساعات النوم</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.sleep}/${w.sleepGoal}</div>
+      </div>
+      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center">
+        <div style="font-size:20px">💧</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أكواب الماء</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.water}/${w.waterGoal}</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('worship')">فتح صفحة العبادة →</button>
+  `;
+}
+document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#adhkarTabs .chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    state.worship.adhkarTab = btn.dataset.period;
+    save();
+    renderAdhkar();
+  });
+});
+
+/* ============================================================
+   31) إضافة الصفحات الديناميكية
 ============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
@@ -2573,7 +2995,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   31) بناء القائمة الجانبية (الترتيب الجديد)
+   32) بناء القائمة الجانبية
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -2588,7 +3010,6 @@ function deleteArchive(i){
     b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
     return b;
   };
-  // 🔄 الترتيب الجديد: الجدول → المقررات → المهام والاختبارات
   const groups = [
     { title:'📚 الدراسة', items:[
       ['schedule','📅','الجدول الدراسي'],
@@ -2603,6 +3024,9 @@ function deleteArchive(i){
     { title:'🎯 الإنتاجية', items:[
       ['study','🍅','مؤقّت المذاكرة']
     ]},
+    { title:'🕌 العبادة', items:[
+      ['worship','🕌','الصلوات والأذكار']
+    ]},
     { title:'💪 الصحة', items:[
       ['wellness','😴','النوم والماء']
     ]}
@@ -2615,7 +3039,7 @@ function deleteArchive(i){
     const title = document.createElement('div');
     title.className = 'nav-group-title';
     title.textContent = g.title;
-    title.addEventListener('click', () => { group.classList.toggle('collapsed'); });
+    title.addEventListener('click', () => group.classList.toggle('collapsed'));
     group.appendChild(title);
     g.items.forEach(([v, ico, label]) => {
       const b = newBtn(v, ico, label);
@@ -2626,6 +3050,7 @@ function deleteArchive(i){
           try{
             if(v === 'attendance') renderAttendancePage();
             if(v === 'wellness') renderWellness();
+            if(v === 'worship'){ renderPrayerTimes(); renderAdhkar(); renderWird(); }
             if(v === 'archive') renderArchive();
             if(v === 'grades') renderGrades();
           }catch(e){}
@@ -2643,7 +3068,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   32) تحسينات الموبايل
+   33) تحسينات الموبايل
 ============================================================ */
 (function fixMobile(){
   const sidebar = document.getElementById('sidebar');
@@ -2659,7 +3084,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   33) شارة الأسبوع
+   34) شارة الأسبوع
 ============================================================ */
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
@@ -2675,21 +3100,15 @@ function renderWeekBadge(){
   const wb = document.getElementById('weekBadge');
   const wbDateBadge = document.getElementById('wbDateBadge');
   if(!wb) return;
-
-  // 📅 تحديث مربع التاريخ
   if(wbDateBadge){
     const today = new Date();
     wbDateBadge.textContent = today.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
   }
-
   const w = getSemesterWeek();
   if(!w){ wb.textContent = '📅 حدد بداية'; wb.className = 'week-badge'; return; }
   if(w.beforeStart){ wb.textContent = `⏳ باقي ${w.daysLeft} يوم`; wb.className = 'week-badge'; return; }
   if(w.past){ wb.textContent = `✅ انتهى الفصل`; wb.className = 'week-badge'; return; }
-
-  // 📅 مربع الأسبوع (أخضر)
   wb.textContent = `📅 الأسبوع ${w.week}`;
-
   if(w.week >= 13) wb.className = 'week-badge danger';
   else if(w.week >= 10) wb.className = 'week-badge warn';
   else wb.className = 'week-badge';
@@ -2704,19 +3123,22 @@ function saveSemesterStart(){
 }
 
 /* ============================================================
-   34) اختصارات الكيبورد
+   35) اختصارات الكيبورد
 ============================================================ */
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
 
 /* ============================================================
-   35) التهيئة النهائية
+   36) التهيئة النهائية
 ============================================================ */
-function init(){
+async function init(){
+  // استرجاع المؤقّت أولاً
+  pomoResumeIfNeeded();
   applySettings();
   renderAll();
-  document.getElementById('topDate').textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  const topDate = document.getElementById('topDate');
+  if(topDate) topDate.textContent = new Date().toLocaleDateString('ar-EG', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
   const h = location.hash.slice(1);
   if(h && document.getElementById('view-' + h) && h !== 'course-detail') go(h);
   try{ renderAttendancePage(); }catch(e){}
@@ -2724,9 +3146,23 @@ function init(){
   try{ renderArchive(); }catch(e){}
   try{ renderSyncStatus(); }catch(e){}
   renderWeekBadge();
+  // تحميل مواقيت الصلاة
+  await fetchPrayerTimes();
+  try{ renderPrayerTimes(); renderAdhkar(); renderWird(); renderDashWorship(); }catch(e){}
 }
-
 init();
+
+// ملاحظة: عند العودة للتبويب، المؤقّت يعيد الحساب تلقائياً من الوقت الفعلي
+document.addEventListener('visibilitychange', () => {
+  if(!document.hidden){
+    pomoRender();
+    renderDashWorship();
+    renderPrayerTimes();
+  }
+});
+window.addEventListener('focus', () => {
+  pomoRender();
+});
 </script>
 </body>
 </html>

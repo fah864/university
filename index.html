@@ -574,7 +574,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             </div>
             <div style="margin-top:14px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.7">
               💡 المؤقّت يعمل تلقائياً: تركيز ← راحة قصيرة ← تركيز ← راحة طويلة — بدون تدخل منك<br>
-              + يجيك إشعار على تلقرام بعد كل مرحلة
+              + يجيك إشعار على تلقرام بعد كل مرحلة (حتى لو سكّرت الموقع) ✅
             </div>
           </div>
           <div class="card">
@@ -1858,7 +1858,7 @@ function saveExternalGrade(){
 }
 
 /* ============================================================
-   18) بومودورو — تلقائي بالكامل
+   18) بومودورو — تلقائي بالكامل + مزامنة مع السيرفر
 ============================================================ */
 const RING_C = 552.92;
 let pomo = {
@@ -1941,6 +1941,41 @@ function pomoRender(){
     }
   }
 }
+
+// 🆕 المزامنة مع السيرفر
+function syncPomoStartToServer(mode, total, endTimestamp){
+  const chatId = getMyChatId();
+  if(!chatId) return;
+  try{
+    fetch(TG_WORKER + '/pomo-start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatId, mode, total, endTimestamp })
+    }).catch(() => {});
+  }catch(e){}
+}
+function syncPomoCancelToServer(){
+  const chatId = getMyChatId();
+  if(!chatId) return;
+  try{
+    fetch(TG_WORKER + '/pomo-cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatId })
+    }).catch(() => {});
+  }catch(e){}
+}
+async function loadPomoFromServer(){
+  const chatId = getMyChatId();
+  if(!chatId) return null;
+  try{
+    const r = await fetch(TG_WORKER + '/pomo-status?chatId=' + chatId);
+    const data = await r.json();
+    if(data && data.endTimestamp && data.endTimestamp > Date.now()) return data;
+  }catch(e){}
+  return null;
+}
+
 function pomoStartTimer(){
   if(pomo.running) return;
   const remaining = pomoGetRemaining();
@@ -1951,6 +1986,7 @@ function pomoStartTimer(){
   clearInterval(pomo.intervalId);
   pomo.intervalId = setInterval(pomoTick, 250);
   pomoSaveState();
+  syncPomoStartToServer(pomo.mode, pomo.total, pomo.endTimestamp);
   pomoRender();
 }
 function pomoPauseTimer(){
@@ -1960,6 +1996,7 @@ function pomoPauseTimer(){
   pomo.endTimestamp = null;
   clearInterval(pomo.intervalId);
   pomoSaveState();
+  syncPomoCancelToServer();
   pomoRender();
 }
 function pomoToggle(){
@@ -1982,15 +2019,16 @@ function pomoResetCurrent(){
   pomo.workCount = 0;
   pomoSetMode('work', false);
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
+  syncPomoCancelToServer();
   toast('↺ تم التصفير — اضغط ابدأ للبدء من جديد');
 }
 
-// 🆕 إشعار تلقرام عند انتهاء المؤقّت
+// 🆕 إشعار تلقرام عند انتهاء المؤقّت (يشتغل فوري + يمسح KV)
 async function sendPomoNotification(mode, minutes){
   const chatId = localStorage.getItem('tg_chat_id');
   if(!chatId) return;
   try{
-    await fetch('https://floral-firefly-f4de.fahadnaih6.workers.dev/pomo-done', {
+    await fetch(TG_WORKER + '/pomo-done', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chatId, mode, minutes })
@@ -2001,12 +2039,11 @@ async function sendPomoNotification(mode, minutes){
 function pomoNotify(title, body){
   try{
     if('Notification' in window && Notification.permission === 'granted'){
-      new Notification(title, { body, tag: 'pomo' });
+      new Notification(title, { body, tag: 'pomo_' + Date.now() });
     }
   }catch(e){}
 }
 
-// 🆕 التبديل التلقائي بين التركيز والراحة
 function pomoComplete(){
   clearInterval(pomo.intervalId);
   const completedMode = pomo.mode;
@@ -2018,7 +2055,6 @@ function pomoComplete(){
   pomo.endTimestamp = null;
   pomo.pausedRemaining = null;
 
-  // 📤 إشعار تلقرام
   sendPomoNotification(completedMode, completedMins);
 
   if(wasWork){
@@ -2039,7 +2075,6 @@ function pomoComplete(){
     toast('🛋️ انتهت الراحة — يلا نرجع!');
   }
 
-  // تحديد الوضع التالي تلقائياً
   let nextMode;
   if(wasWork){
     if(pomo.workCount >= 2){
@@ -2059,7 +2094,6 @@ function pomoComplete(){
   pomoSaveState();
   pomoRender();
 
-  // ⏱️ تشغيل الوضع التالي تلقائياً بعد 2 ثانية
   setTimeout(() => {
     if(!pomo.running && pomo.pausedRemaining === pomo.total){
       pomoStartTimer();
@@ -2077,7 +2111,22 @@ function pomoTick(){
   }
   pomoRender();
 }
-function pomoResumeIfNeeded(){
+async function pomoResumeIfNeeded(){
+  // 🆕 أول شي: شوف السيرفر
+  const serverTimer = await loadPomoFromServer();
+  if(serverTimer){
+    pomo.mode = serverTimer.mode || 'work';
+    pomo.total = serverTimer.total || pomoDuration(pomo.mode);
+    pomo.running = true;
+    pomo.endTimestamp = serverTimer.endTimestamp;
+    clearInterval(pomo.intervalId);
+    pomo.intervalId = setInterval(pomoTick, 250);
+    pomoSaveState();
+    document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === pomo.mode));
+    pomoRender();
+    return;
+  }
+  // Fallback: state محلي
   const saved = pomoLoadState();
   if(!saved) return;
   pomo.workCount = saved.workCount || 0;
@@ -2238,6 +2287,7 @@ function clearAll(){
   state = defaultState();
   currentCourseId = null;
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
+  syncPomoCancelToServer();
   save(); applySettings(); renderAll(); closeModal();
   toast('🗑️ تم حذف كل البيانات');
 }
@@ -2656,6 +2706,7 @@ function unlinkTelegram(){
   localStorage.removeItem('tg_pending');
   localStorage.removeItem('tg_pending_time');
   if(pollTimer) clearInterval(pollTimer);
+  syncPomoCancelToServer();
   toast('🔓 تم الفك');
   setTimeout(() => location.reload(), 600);
 }

@@ -1969,6 +1969,24 @@ function pomoResetCurrent(){
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
   toast('↺ تم التصفير');
 }
+
+// 🆕 إرسال إشعار انتهاء المؤقّت إلى تلقرام
+async function sendPomoNotification(mode, minutes){
+  const chatId = localStorage.getItem('tg_chat_id');
+  if(!chatId) return;
+  try{
+    await fetch('https://floral-firefly-f4de.fahadnaih6.workers.dev/pomo-done', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chatId,
+        mode,       // work / short / long
+        minutes
+      })
+    });
+  }catch(e){ console.log('pomo notify error:', e); }
+}
+  
 function pomoNotify(title, body){
   try{
     if('Notification' in window && Notification.permission === 'granted'){
@@ -1976,13 +1994,19 @@ function pomoNotify(title, body){
     }
   }catch(e){}
 }
-function pomoComplete(){
+  function pomoComplete(){
   clearInterval(pomo.intervalId);
-  const wasWork = pomo.mode === 'work';
+  const justFinished = pomo.mode; // work / short / long
+  const wasWork = justFinished === 'work';
   const completedTotal = pomo.total;
   pomo.running = false;
   pomo.endTimestamp = null;
   pomo.pausedRemaining = null;
+
+  // 🆕 إرسال إشعار تلقرام
+  const mins = Math.round(completedTotal / 60);
+  sendPomoNotification(justFinished, mins);
+
   if(wasWork){
     let cid = document.getElementById('pomoCourse')?.value || '';
     if(cid && !getCourse(cid)) cid = '';

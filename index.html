@@ -123,7 +123,6 @@ ul{list-style:none}
 .course-actions{display:flex;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
 .course-actions button{flex:1;padding:8px;border-radius:9px;font-size:13px;font-weight:700;background:var(--hover);transition:var(--t)}
 .course-actions button:hover{background:var(--p);color:#fff}
-/* ====== Academic strip CSS ====== */
 .acad-strip{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:18px}
 .acad-strip-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .acad-strip-title{font-family:'Tajawal';font-size:18px;font-weight:800}
@@ -160,7 +159,6 @@ ul{list-style:none}
   .acad-week-dates{font-size:9px}
   .acad-countdown{font-size:11px;padding:7px 11px}
 }
-/* ====== end academic strip CSS ====== */
 .sched-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:auto;box-shadow:var(--shadow)}
 .sched-inner{min-width:900px}
 .sched-head{display:grid;grid-template-columns:64px 1fr;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--card);z-index:5}
@@ -575,7 +573,8 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
               <select id="pomoCourse"></select>
             </div>
             <div style="margin-top:14px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.7">
-              💡 المؤقّت يكمل عمله حتى لو خرجت من الموقع — استخدم <b>المؤقّت العائم</b> ليبقى ظاهراً معك
+              💡 المؤقّت يعمل تلقائياً: تركيز ← راحة قصيرة ← تركيز ← راحة طويلة — بدون تدخل منك<br>
+              + يجيك إشعار على تلقرام بعد كل مرحلة
             </div>
           </div>
           <div class="card">
@@ -717,6 +716,17 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   </div>
 </div>
 
+<div class="floating-timer" id="floatingTimer">
+  <span class="ft-ico" id="ftIco">🎯</span>
+  <div class="ft-body">
+    <div class="ft-time" id="ftTime">25:00</div>
+    <div class="ft-label" id="ftLabel">تركيز</div>
+  </div>
+  <div class="ft-controls">
+    <button class="ft-btn" id="ftToggle" title="تشغيل/إيقاف">⏸</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <button class="fab" id="fab" title="إضافة سريعة">＋</button>
 
@@ -828,9 +838,7 @@ function to12(time24){
   if(h === 0) h = 12;
   return `${h}:${m} ${ampm}`;
 }
-function fmtTimeRange(start, end){
-  return `${to12(start)} — ${to12(end)}`;
-}
+function fmtTimeRange(start, end){ return `${to12(start)} — ${to12(end)}`; }
 
 /* ============================================================
    3.5) pruneOldLogs + save
@@ -1026,7 +1034,6 @@ function go(view){
     }catch(e){ console.error(e); }
   }, 60);
 }
-// Event delegation for ALL navigation (more robust)
 document.body.addEventListener('click', function(e){
   const target = e.target.closest('[data-view]');
   if(!target || !target.dataset.view) return;
@@ -1851,7 +1858,7 @@ function saveExternalGrade(){
 }
 
 /* ============================================================
-   18) بومودورو — Timestamp
+   18) بومودورو — تلقائي بالكامل
 ============================================================ */
 const RING_C = 552.92;
 let pomo = {
@@ -1860,7 +1867,8 @@ let pomo = {
   endTimestamp: null,
   pausedRemaining: null,
   total: 25 * 60,
-  intervalId: null
+  intervalId: null,
+  workCount: 0
 };
 
 function pomoDuration(mode){ const p = state.settings.pomo; return (mode === 'work' ? p.work : mode === 'short' ? p.short : p.long) * 60; }
@@ -1877,7 +1885,8 @@ function pomoSaveState(){
       running: pomo.running,
       endTimestamp: pomo.endTimestamp,
       pausedRemaining: pomo.pausedRemaining,
-      total: pomo.total
+      total: pomo.total,
+      workCount: pomo.workCount || 0
     }));
   }catch(e){}
 }
@@ -1901,7 +1910,11 @@ function pomoRender(){
   const startBtn = document.getElementById('pomoStart');
   const ringFg = document.getElementById('ringFg');
   if(timeEl) timeEl.textContent = timeStr;
-  if(labelEl) labelEl.textContent = pomoLabel(pomo.mode);
+  if(labelEl){
+    const base = pomoLabel(pomo.mode);
+    const cnt = pomo.mode === 'work' ? ` (${pomo.workCount || 0}/2)` : '';
+    labelEl.textContent = base + cnt;
+  }
   if(ringFg){
     const prog = pomo.total ? (pomo.total - remaining) / pomo.total : 0;
     ringFg.style.strokeDashoffset = (RING_C * prog).toFixed(2);
@@ -1965,12 +1978,14 @@ function pomoSetMode(mode, silent){
   pomoRender();
 }
 function pomoResetCurrent(){
-  pomoSetMode(pomo.mode, false);
+  if(!confirm('تصفير المؤقّت وإيقاف الدورة التلقائية؟')) return;
+  pomo.workCount = 0;
+  pomoSetMode('work', false);
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
-  toast('↺ تم التصفير');
+  toast('↺ تم التصفير — اضغط ابدأ للبدء من جديد');
 }
 
-// 🆕 إرسال إشعار انتهاء المؤقّت إلى تلقرام
+// 🆕 إشعار تلقرام عند انتهاء المؤقّت
 async function sendPomoNotification(mode, minutes){
   const chatId = localStorage.getItem('tg_chat_id');
   if(!chatId) return;
@@ -1978,15 +1993,11 @@ async function sendPomoNotification(mode, minutes){
     await fetch('https://floral-firefly-f4de.fahadnaih6.workers.dev/pomo-done', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chatId,
-        mode,       // work / short / long
-        minutes
-      })
+      body: JSON.stringify({ chatId, mode, minutes })
     });
   }catch(e){ console.log('pomo notify error:', e); }
 }
-  
+
 function pomoNotify(title, body){
   try{
     if('Notification' in window && Notification.permission === 'granted'){
@@ -1994,40 +2005,69 @@ function pomoNotify(title, body){
     }
   }catch(e){}
 }
-  function pomoComplete(){
+
+// 🆕 التبديل التلقائي بين التركيز والراحة
+function pomoComplete(){
   clearInterval(pomo.intervalId);
-  const justFinished = pomo.mode; // work / short / long
-  const wasWork = justFinished === 'work';
+  const completedMode = pomo.mode;
+  const wasWork = completedMode === 'work';
   const completedTotal = pomo.total;
+  const completedMins = Math.round(completedTotal / 60);
+
   pomo.running = false;
   pomo.endTimestamp = null;
   pomo.pausedRemaining = null;
 
-  // 🆕 إرسال إشعار تلقرام
-  const mins = Math.round(completedTotal / 60);
-  sendPomoNotification(justFinished, mins);
+  // 📤 إشعار تلقرام
+  sendPomoNotification(completedMode, completedMins);
 
   if(wasWork){
     let cid = document.getElementById('pomoCourse')?.value || '';
     if(cid && !getCourse(cid)) cid = '';
-    const mins = Math.round(completedTotal / 60);
-    state.studyLog.push({ id: uid(), date: todayISO(), courseId: cid, minutes: mins });
+    state.studyLog.push({ id: uid(), date: todayISO(), courseId: cid, minutes: completedMins });
     save();
     if(document.getElementById('studyToday')) renderStudy();
     if(document.getElementById('dashStats')) renderDashboard();
-    pomoNotify('🎉 انتهى وقت التركيز', `أكملت ${mins} دقيقة — خذ راحة الآن!`);
-    toast(`🎉 أنهيت ${mins} دقيقة تركيز!`);
-  } else {
-    pomoNotify('☕ انتهت الراحة', 'يلا نرجع للتركيز 💪');
-    toast('☕ انتهت الراحة، يلا نرجع!');
+    pomoNotify('🎉 انتهى وقت التركيز', `أكملت ${completedMins} دقيقة — خذ راحة الآن!`);
+    toast(`🎉 أنهيت ${completedMins} دقيقة تركيز!`);
+    pomo.workCount = (pomo.workCount || 0) + 1;
+  } else if(completedMode === 'short'){
+    pomoNotify('☕ انتهت الراحة القصيرة', 'يلا نرجع للتركيز 💪');
+    toast('☕ انتهت الراحة — يلا نرجع!');
+  } else if(completedMode === 'long'){
+    pomoNotify('🛋️ انتهت الراحة الطويلة', 'وقت التركيز من جديد 💪');
+    toast('🛋️ انتهت الراحة — يلا نرجع!');
   }
-  const nextMode = wasWork ? 'short' : 'work';
+
+  // تحديد الوضع التالي تلقائياً
+  let nextMode;
+  if(wasWork){
+    if(pomo.workCount >= 2){
+      nextMode = 'long';
+      pomo.workCount = 0;
+    } else {
+      nextMode = 'short';
+    }
+  } else {
+    nextMode = 'work';
+  }
+
   pomo.mode = nextMode;
   pomo.total = pomoDuration(nextMode);
   pomo.pausedRemaining = pomo.total;
   document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === nextMode));
-  try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
+  pomoSaveState();
   pomoRender();
+
+  // ⏱️ تشغيل الوضع التالي تلقائياً بعد 2 ثانية
+  setTimeout(() => {
+    if(!pomo.running && pomo.pausedRemaining === pomo.total){
+      pomoStartTimer();
+      const emoji = nextMode === 'work' ? '🎯' : nextMode === 'short' ? '☕' : '🛋️';
+      const label = nextMode === 'work' ? 'تركيز' : nextMode === 'short' ? 'راحة قصيرة' : 'راحة طويلة';
+      toast(`${emoji} بدأ ${label} تلقائياً`);
+    }
+  }, 2000);
 }
 function pomoTick(){
   const remaining = pomoGetRemaining();
@@ -2040,6 +2080,7 @@ function pomoTick(){
 function pomoResumeIfNeeded(){
   const saved = pomoLoadState();
   if(!saved) return;
+  pomo.workCount = saved.workCount || 0;
   if(saved.endTimestamp && saved.endTimestamp > Date.now()){
     pomo.mode = saved.mode || 'work';
     pomo.total = saved.total || pomoDuration(pomo.mode);
@@ -2795,7 +2836,6 @@ function renderTeeth(){
   const nBtn = document.getElementById('teethNightBtn');
   if(mBtn){ mBtn.classList.toggle('done', log.morning); mBtn.innerHTML = `<span class="t-ico">🌅</span>تفريش الصباح${log.morning ? '<div style="font-size:11px;margin-top:6px">✓ تم</div>' : ''}`; }
   if(nBtn){ nBtn.classList.toggle('done', log.night); nBtn.innerHTML = `<span class="t-ico">🌙</span>تفريش الليل${log.night ? '<div style="font-size:11px;margin-top:6px">✓ تم</div>' : ''}`; }
-  // Stats
   const statsEl = document.getElementById('teethStats');
   if(statsEl){
     const last7 = [];
@@ -3038,7 +3078,6 @@ function renderAdhkar(){
       </div>
     </div>`;
   }).join('');
-  // Sync tabs
   document.querySelectorAll('#adhkarTabs .chip').forEach(b => {
     b.classList.toggle('active', b.dataset.period === period);
   });
@@ -3375,7 +3414,6 @@ async function init(){
   renderWeekBadge();
   acadSelectedWeek = currentAcademicWeek();
   renderAcademicStrip();
-  // Load prayer times async
   await fetchPrayerTimes();
   try{ renderPrayerTimes(); renderAdhkar(); renderWird(); renderDashWorship(); }catch(e){}
 }

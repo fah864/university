@@ -144,6 +144,8 @@ ul{list-style:none}
 .acad-week:hover{border-color:var(--p);transform:translateY(-2px)}
 .acad-week.current{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;box-shadow:0 8px 18px rgba(13,148,136,.32)}
 .acad-week.past{opacity:.5}
+.acad-week.today{border-color:var(--p);background:var(--p-light);color:var(--p-dark);font-weight:900}
+html[data-theme="dark"] .acad-week.today{background:#0f3d38;color:#5eead4;border-color:#14b8a6}
 .acad-week-num{font-family:'Tajawal';font-size:16px;font-weight:800;line-height:1.1}
 .acad-week-dates{font-size:10px;font-weight:700;opacity:.85;margin-top:3px;line-height:1.3}
 .acad-week-events{display:flex;gap:2px;justify-content:center;margin-top:4px;font-size:12px;min-height:14px}
@@ -274,6 +276,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .nav-group.collapsed .nav-btn{display:none}
 .nav-group .nav-btn{animation:slideDown .25s ease;margin-inline-start:6px;width:calc(100% - 6px);font-size:14.5px;padding:11px 14px}
 @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 .sidebar{height:100vh;height:100dvh}
 @media(max-width:980px){
   .sidebar{position:fixed;right:0;top:0;bottom:0;height:auto;max-height:100dvh;width:min(85vw,310px);padding-bottom:env(safe-area-inset-bottom,0px);overflow:hidden;transform:translateX(100%);box-shadow:-10px 0 40px rgba(0,0,0,.25);transition:var(--t);z-index:60}
@@ -1014,8 +1017,11 @@ function renderAcademicStrip(){
     const hasExam = events.some(e => e.type === 'exam');
     let cls = 'acad-week';
     if(isPast) cls += ' past';
-    if(isCurrent && !isSelected) cls += ' current';
-    if(isSelected && !hasHoliday && !hasExam) cls += ' current';
+    if(isSelected){
+      cls += ' current';
+    } else if(isCurrent){
+      cls += ' today';
+    }
     if(hasHoliday) cls += ' holiday';
     if(hasExam) cls += ' exam';
     const evIcos = events.slice(0, 3).map(e => e.ico).join('');
@@ -2935,14 +2941,206 @@ function renderSyncStatus(){
 function quickAdd(){
   openModal('إضافة سريعة', `
     <div style="display:grid;gap:10px">
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openTaskForm()">📝 مهمة / واجب جديد</button>
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExamForm()">⏰ اختبار / كويز جديد</button>
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openClassForm()">📅 محاضرة في الجدول</button>
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openCourseForm()">📚 مقرر جديد</button>
-      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExpenseForm()">💸 مصروف جديد</button>
+      <button class="btn btn-primary btn-block" style="justify-content:center;padding:16px;font-size:15px;background:linear-gradient(135deg,#0d9488,#0891b2);box-shadow:0 8px 24px rgba(13,148,136,.35)" onclick="closeModal();openAiModal()">
+        🤖 <span style="margin-inline-start:6px">إضافة بالذكاء الاصطناعي</span>
+      </button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openTaskForm()">📝 مهمة</button>
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openExamForm()">⏰ اختبار</button>
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openClassForm()">📅 محاضرة</button>
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openCourseForm()">📚 مقرر</button>
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px;grid-column:1/-1" onclick="closeModal();openExpenseForm()">💸 مصروف جديد</button>
+      </div>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
+
+/* ============================================================
+   🤖 الذكاء الاصطناعي — نافذة الإدخال
+============================================================ */
+let aiFileData = null;
+
+function openAiModal(){
+  aiFileData = null;
+  openModal('🤖 إضافة بالذكاء الاصطناعي', `
+    <div style="background:linear-gradient(135deg,#0d948820,#0891b220);padding:14px 16px;border-radius:14px;margin-bottom:16px;border:1px solid #0d948840">
+      <div style="font-size:13.5px;line-height:1.8;font-weight:600;color:var(--text)">
+        💡 <b>اكتب</b> أو <b>ارفع صورة</b> — AI يفهم ويسجّل تلقائياً
+      </div>
+      <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.7">
+        • "تغديت مع الشباب بـ 45 ريال"<br>
+        • "اختبار تمريض البالغين نظري يوم الأحد 8 ص"<br>
+        • "صورة التقويم الأكاديمي" 📸
+      </div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>📝 النص (اختياري إذا رفعت صورة)</label>
+      <textarea id="aiText" placeholder="اكتب هنا بأي لهجة..." style="min-height:100px;resize:vertical"></textarea>
+    </div>
+
+    <div class="field" style="margin-bottom:14px">
+      <label>📸 أو ارفع صورة (اختياري)</label>
+      <input type="file" id="aiImage" accept="image/*" style="padding:10px;font-size:13px" onchange="aiImageSelected(this)">
+      <div id="aiImagePreview" style="display:none;margin-top:10px;position:relative">
+        <img id="aiImageThumb" style="width:100%;border-radius:12px;max-height:200px;object-fit:cover;border:2px solid var(--p)">
+        <button onclick="aiRemoveImage()" style="position:absolute;top:6px;left:6px;background:var(--danger);color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(220,38,38,.4)">✕</button>
+      </div>
+    </div>
+
+    <div id="aiLoading" style="display:none;text-align:center;padding:16px">
+      <div style="display:inline-block;width:30px;height:30px;border:3px solid var(--p-light);border-top-color:var(--p);border-radius:50%;animation:spin 1s linear infinite"></div>
+      <div style="font-size:13px;color:var(--muted);font-weight:700;margin-top:8px">جاري التحليل...</div>
+    </div>
+  `, `
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" id="aiSubmitBtn" onclick="submitAiInput()" style="background:linear-gradient(135deg,#0d9488,#0891b2)">✨ تحليل</button>
+  `);
+}
+
+function aiImageSelected(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5 * 1024 * 1024){
+    toast('⚠️ الصورة كبيرة — الحد 5MB');
+    input.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const base64Full = e.target.result;
+    const base64 = base64Full.split(',')[1];
+    aiFileData = { data: base64, mimeType: file.type };
+    document.getElementById('aiImageThumb').src = base64Full;
+    document.getElementById('aiImagePreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function aiRemoveImage(){
+  aiFileData = null;
+  const inp = document.getElementById('aiImage');
+  if(inp) inp.value = '';
+  const prev = document.getElementById('aiImagePreview');
+  if(prev) prev.style.display = 'none';
+}
+
+async function submitAiInput(){
+  const textEl = document.getElementById('aiText');
+  const text = textEl ? textEl.value.trim() : '';
+
+  if(!text && !aiFileData){
+    toast('⚠️ اكتب نص أو ارفع صورة');
+    return;
+  }
+
+  const btn = document.getElementById('aiSubmitBtn');
+  const loader = document.getElementById('aiLoading');
+  if(btn) btn.style.display = 'none';
+  if(loader) loader.style.display = 'block';
+
+  try{
+    const chatId = getMyChatId();
+    const res = await fetch(TG_WORKER + '/ai-parse', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chatId,
+        text,
+        image: aiFileData,
+        courses: state.courses.map(c => ({ id: c.id, name: c.name, code: c.code })),
+        today: todayISO()
+      })
+    });
+
+    const data = await res.json();
+
+    if(!data.ok){
+      throw new Error(data.error || 'فشل التحليل');
+    }
+
+    handleAiResult(data);
+
+  }catch(e){
+    console.error(e);
+    if(btn) btn.style.display = 'block';
+    if(loader) loader.style.display = 'none';
+    toast('❌ فشل — ' + (e.message || 'حاول مرة ثانية'));
+  }
+}
+
+function handleAiResult(result){
+  closeModal();
+
+  const action = result.action;
+  const d = result.data || {};
+
+  if(action === 'add_expense'){
+    state.money.expenses.push({
+      id: uid(),
+      amount: +d.amount || 0,
+      category: d.category || 'other',
+      note: d.note || '',
+      date: d.date || todayISO(),
+      created: Date.now()
+    });
+    save();
+    renderBalance(); renderExpenses(); renderDashboard();
+    toast('💰 تم إضافة مصروف: ' + d.amount + ' ر.س');
+    go('expenses');
+    return;
+  }
+
+  if(action === 'add_exam'){
+    state.exams.push({
+      id: uid(),
+      title: d.title || 'اختبار',
+      courseId: d.courseId || '',
+      type: d.type || 'ميدتيرم',
+      date: d.date || todayISO(),
+      time: d.time || '',
+      place: d.place || '',
+      notes: 'أُضيف بواسطة AI 🤖'
+    });
+    save();
+    renderAll(); renderDashboard();
+    toast('⏰ تم إضافة اختبار: ' + (d.title || ''));
+    go('tasks');
+    return;
+  }
+
+  if(action === 'add_task'){
+    state.tasks.push({
+      id: uid(),
+      title: d.title || 'مهمة',
+      courseId: d.courseId || '',
+      type: d.type || 'واجب',
+      due: d.due || todayISO(),
+      priority: d.priority || 'med',
+      notes: 'أُضيف بواسطة AI 🤖',
+      done: false,
+      created: todayISO()
+    });
+    save();
+    renderAll(); renderDashboard();
+    toast('📝 تم إضافة مهمة: ' + (d.title || ''));
+    go('tasks');
+    return;
+  }
+
+  if(action === 'setup_semester'){
+    if(d.startDate) state.settings.semesterStart = d.startDate;
+    if(d.weeks) state.settings.semesterWeeks = d.weeks;
+    save();
+    applySettings(); renderWeekBadge(); renderAcademicStrip();
+    toast('📅 تم إعداد الفصل: ' + (d.weeks || 16) + ' أسبوع');
+    go('schedule');
+    return;
+  }
+
+  toast('🤖 ' + (result.message || 'ما فهمت — حاول بصيغة أوضح'));
+}
+
 document.getElementById('fab').addEventListener('click', quickAdd);
 
 /* ============================================================

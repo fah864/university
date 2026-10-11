@@ -86,6 +86,8 @@ ul{list-style:none}
 .btn-ghost:hover{background:var(--border)}
 .btn-danger{background:var(--danger-bg);color:var(--danger)}
 .btn-danger:hover{background:var(--danger);color:#fff}
+.btn-danger-solid{background:var(--danger);color:#fff;box-shadow:0 8px 20px rgba(220,38,38,.26)}
+.btn-danger-solid:hover{background:#b91c1c;transform:translateY(-2px)}
 .btn-sm{padding:8px 14px;font-size:13px;border-radius:10px}
 .btn-block{width:100%}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
@@ -239,8 +241,9 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .color-pick{display:flex;gap:9px;flex-wrap:wrap}
 .color-pick button{width:34px;height:34px;border-radius:11px;border:3px solid transparent;transition:var(--t);cursor:pointer}
 .color-pick button.sel{border-color:var(--text);transform:scale(1.12)}
-.modal-bg{position:fixed;inset:0;background:rgba(8,20,35,.62);backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-bg{position:fixed;inset:0;background:rgba(8,20,35,.62);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:200;display:none;align-items:center;justify-content:center;padding:18px}
 .modal-bg.open{display:flex;animation:fade .22s ease}
+#confirmBg{z-index:280;background:rgba(8,20,35,.75)}
 .modal{background:var(--card);border-radius:22px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:pop .3s cubic-bezier(.34,1.4,.64,1)}
 @keyframes pop{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:none}}
 .modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:2;border-radius:22px 22px 0 0}
@@ -250,6 +253,13 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .modal-body{padding:24px}
 .modal-foot{padding:16px 24px 24px;display:flex;gap:10px}
 .modal-foot .btn{flex:1}
+.confirm-ico-wrap{width:80px;height:80px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;font-size:42px;line-height:1}
+.confirm-ico-wrap.danger{background:var(--danger-bg);color:var(--danger)}
+.confirm-ico-wrap.warn{background:var(--warn-bg);color:var(--warn)}
+.confirm-ico-wrap.info{background:var(--p-light);color:var(--p-dark)}
+.confirm-ico-wrap.ok{background:var(--ok-bg);color:var(--ok)}
+.confirm-title{text-align:center;font-size:20px;font-weight:800;font-family:'Tajawal';margin-bottom:10px;color:var(--text)}
+.confirm-msg{text-align:center;font-size:15px;line-height:1.8;font-weight:600;color:var(--muted);word-break:break-word;padding:0 8px}
 .toast{position:fixed;bottom:26px;right:50%;transform:translate(50%,120px);background:var(--text);color:var(--bg);padding:13px 26px;border-radius:14px;font-weight:700;font-size:14.5px;z-index:500;transition:transform .4s cubic-bezier(.34,1.4,.64,1);box-shadow:var(--shadow-lg);max-width:90vw;text-align:center}
 .toast.show{transform:translate(50%,0)}
 .fab{position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t);cursor:pointer}
@@ -380,7 +390,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .ft-label{font-size:9px}
   .ft-btn{width:28px;height:28px;font-size:12px;border-radius:8px}
 }
-/* ===== Money Section ===== */
 .money-card{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-radius:var(--r);padding:24px;box-shadow:0 15px 35px rgba(13,148,136,.3);margin-bottom:16px}
 .money-amount{font-family:'Tajawal';font-size:48px;font-weight:800;line-height:1;margin:8px 0}
 .money-label{font-size:13px;font-weight:700;opacity:.9}
@@ -629,7 +638,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 
       <section class="view" id="view-balance">
         <div class="sec-head">
-          <div><h2>💵 الرصيد</h2><p>نظرة شاملة على مصروفك الشهري</p></div>
+          <div><h2>💵 الرصيد</h2><p>نظرة شاملة على مصروفك</p></div>
           <button class="btn btn-ghost btn-sm" onclick="openSalaryForm()">⚙️ تعديل الراتب</button>
         </div>
         <div id="balanceContent"></div>
@@ -644,7 +653,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
           <button class="chip active" data-f="all">الكل</button>
           <button class="chip" data-f="today">اليوم</button>
           <button class="chip" data-f="week">هذا الأسبوع</button>
-          <button class="chip" data-f="month">هذا الشهر</button>
         </div>
         <div id="expensesList"></div>
       </section>
@@ -714,6 +722,21 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   </div>
 </div>
 
+<!-- 🆕 Custom Confirm Dialog -->
+<div class="modal-bg" id="confirmBg">
+  <div class="modal" style="max-width:400px">
+    <div style="padding:28px 24px 20px">
+      <div class="confirm-ico-wrap danger" id="confirmIcoWrap"><span id="confirmIco">⚠️</span></div>
+      <div class="confirm-title" id="confirmTitle">تأكيد</div>
+      <div class="confirm-msg" id="confirmMsg">هل أنت متأكد؟</div>
+    </div>
+    <div style="padding:8px 20px 22px;display:flex;gap:10px">
+      <button class="btn btn-ghost" id="confirmCancelBtn" style="flex:1">إلغاء</button>
+      <button class="btn btn-danger-solid" id="confirmOkBtn" style="flex:1">موافق</button>
+    </div>
+  </div>
+</div>
+
 <div class="floating-timer" id="floatingTimer">
   <span class="ft-ico" id="ftIco">🎯</span>
   <div class="ft-body">
@@ -766,6 +789,53 @@ const EXPENSE_CATS = [
 ];
 
 /* ============================================================
+   1.5) 🆕 Custom Confirm Dialog
+============================================================ */
+function appConfirm(message, options = {}){
+  return new Promise(resolve => {
+    const bg = document.getElementById('confirmBg');
+    const icoWrap = document.getElementById('confirmIcoWrap');
+    const ico = document.getElementById('confirmIco');
+    const titleEl = document.getElementById('confirmTitle');
+    const msgEl = document.getElementById('confirmMsg');
+    const okBtn = document.getElementById('confirmOkBtn');
+    const cancelBtn = document.getElementById('confirmCancelBtn');
+
+    const variant = options.variant || 'danger';
+    icoWrap.className = 'confirm-ico-wrap ' + variant;
+    ico.textContent = options.emoji || (variant === 'danger' ? '🗑️' : variant === 'warn' ? '⚠️' : variant === 'ok' ? '✅' : '❓');
+    titleEl.textContent = options.title || 'تأكيد';
+    msgEl.textContent = message;
+    okBtn.textContent = options.okText || 'موافق';
+    cancelBtn.textContent = options.cancelText || 'إلغاء';
+
+    if(variant === 'danger'){
+      okBtn.className = 'btn btn-danger-solid';
+    } else {
+      okBtn.className = 'btn btn-primary';
+    }
+
+    let resolved = false;
+    const doResolve = (val) => {
+      if(resolved) return;
+      resolved = true;
+      document.removeEventListener('keydown', escHandler);
+      bg.classList.remove('open');
+      resolve(val);
+    };
+
+    const escHandler = (e) => { if(e.key === 'Escape') doResolve(false); };
+
+    okBtn.onclick = () => doResolve(true);
+    cancelBtn.onclick = () => doResolve(false);
+    bg.onclick = (e) => { if(e.target === bg) doResolve(false); };
+    document.addEventListener('keydown', escHandler);
+
+    bg.classList.add('open');
+  });
+}
+
+/* ============================================================
    2) الحالة
 ============================================================ */
 function defaultState(){
@@ -776,7 +846,7 @@ function defaultState(){
     health: { teethLog: [] },
     money: {
       salary: 0,
-      salaryDay: 25,
+      salaryExactDate: null,
       expenses: [],
       goals: []
     },
@@ -997,7 +1067,7 @@ const VIEW_META = {
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
   teeth:     ['نظافة الأسنان','تفريش الصباح والمساء'],
   wellness:  ['النوم والماء','صحتك أولاً'],
-  balance:   ['الرصيد','نظرة على مصروفك الشهري'],
+  balance:   ['الرصيد','نظرة على مصروفك'],
   expenses:  ['المصاريف','سجل كل مصروف'],
   goals:     ['الأهداف المالية','أهدافك وحصالتك'],
   attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
@@ -1074,7 +1144,7 @@ function openModal(title, bodyHTML, footHTML){
 }
 function closeModal(){ modalBg.classList.remove('open'); }
 modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && modalBg.classList.contains('open')) closeModal(); });
 
 /* ============================================================
    7) المقررات
@@ -1114,8 +1184,11 @@ function saveCourse(id){
   else{ state.courses.push({ id: uid(), ...data, grades: [] }); }
   save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
 }
-function deleteCourse(id){
-  if(!confirm('سيتم حذف المقرر وكل ما يتعلق به. متابعة؟')) return;
+async function deleteCourse(id){
+  const ok = await appConfirm('سيتم حذف المقرر وكل ما يتعلق به (المحاضرات، المهام، الاختبارات). متابعة؟', {
+    title: 'حذف المقرر', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
   state.courses = state.courses.filter(c => c.id !== id);
   state.schedule = state.schedule.filter(s => s.courseId !== id);
   state.tasks = state.tasks.filter(t => t.courseId !== id);
@@ -1557,8 +1630,11 @@ function saveAttNote(classId, date){
   if(att){ att.note = n.value.trim(); save(); renderSchedule(); closeModal(); toast('💾 تم'); }
   else{ toast('ℹ️ الحالة حاضر'); }
 }
-function clearAtt(classId, date){
-  if(!confirm('حذف سجل الحضور؟')) return;
+async function clearAtt(classId, date){
+  const ok = await appConfirm('حذف سجل الحضور لهذا اليوم؟', {
+    title: 'حذف السجل', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
   state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
   save(); renderSchedule(); closeModal(); toast('🗑️ تم');
 }
@@ -1860,8 +1936,11 @@ function addComponentsToCourse(courseId){
     toast('📝 أضفت المكونات — عدّل الدرجات');
   }
 }
-function removeExternalGrade(i){
-  if(!confirm('حذف هذا المقرر من الحساب؟')) return;
+async function removeExternalGrade(i){
+  const ok = await appConfirm('حذف هذا المقرر من الحساب؟', {
+    title: 'حذف المقرر الخارجي', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
   state.gpaCourses.splice(i, 1);
   save(); renderGrades(); toast('🗑️ تم');
 }
@@ -1953,20 +2032,38 @@ function saveExternalGrade(){
 /* ============================================================
    17.5) المصروف — الرصيد + المصاريف + الأهداف
 ============================================================ */
+function getLastSalaryDate(){
+  const m = state.money;
+  if(!m.salaryExactDate) return null;
+  return new Date(m.salaryExactDate + 'T00:00:00');
+}
+function getNextSalaryDate(){
+  const last = getLastSalaryDate();
+  if(!last) return null;
+  const next = new Date(last);
+  next.setMonth(next.getMonth() + 1);
+  return next;
+}
+function getDaysToSalary(){
+  const next = getNextSalaryDate();
+  if(!next) return 0;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.max(0, Math.ceil((next - today) / 86400000));
+}
 function getCurrentMonthExpenses(){
-  const now = new Date();
-  const monthStart = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
-  return (state.money.expenses || []).filter(e => e.date >= monthStart);
+  const last = getLastSalaryDate();
+  if(!last) return state.money.expenses || [];
+  const lastISO = todayISO(last);
+  return (state.money.expenses || []).filter(e => e.date >= lastISO);
+}
+function getCycleLabel(){
+  const last = getLastSalaryDate();
+  if(!last) return '';
+  const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  return `من ${last.getDate()} ${months[last.getMonth()]} إلى الآن`;
 }
 function getTotalSpent(){ return getCurrentMonthExpenses().reduce((a,b) => a + (+b.amount||0), 0); }
 function getRemaining(){ return (state.money.salary || 0) - getTotalSpent(); }
-function getDaysToSalary(){
-  const today = new Date();
-  const day = state.money.salaryDay || 25;
-  let next = new Date(today.getFullYear(), today.getMonth(), day);
-  if(today.getDate() >= day) next = new Date(today.getFullYear(), today.getMonth()+1, day);
-  return Math.ceil((next - today) / 86400000);
-}
 
 function renderBalance(){
   const el = document.getElementById('balanceContent');
@@ -1976,25 +2073,24 @@ function renderBalance(){
   const remaining = salary - spent;
   const pct = salary > 0 ? Math.min(100, Math.round((spent / salary) * 100)) : 0;
   const daysToSalary = getDaysToSalary();
+  const cycleLabel = getCycleLabel();
 
-  if(salary === 0){
+  if(salary === 0 || !state.money.salaryExactDate){
     el.innerHTML = `
       <div class="card" style="padding:40px;text-align:center">
         <div style="font-size:56px;margin-bottom:12px">💰</div>
-        <h3 style="font-size:19px;margin-bottom:8px">ابدأ بإضافة راتبك</h3>
-        <p style="color:var(--muted);margin-bottom:20px">لتشوف مصاريفك وتحسبها صح</p>
-        <button class="btn btn-primary" onclick="openSalaryForm()">➕ إضافة الراتب</button>
+        <h3 style="font-size:19px;margin-bottom:8px">ابدأ بإعداد راتبك</h3>
+        <p style="color:var(--muted);margin-bottom:20px">حدد المبلغ وتاريخ نزول الراتب لتبدأ التتبع</p>
+        <button class="btn btn-primary" onclick="openSalaryForm()">➕ إعداد الراتب</button>
       </div>`;
     return;
   }
 
-  // لون شريط التقدم
   let barColor = 'var(--ok)', statusText = '✅ بخير', statusBg = 'var(--ok-bg)';
   if(pct >= 90){ barColor = 'var(--danger)'; statusText = '🚨 وقف!'; statusBg = 'var(--danger-bg)'; }
   else if(pct >= 75){ barColor = 'var(--danger)'; statusText = '⚠️ خفّف'; statusBg = 'var(--warn-bg)'; }
   else if(pct >= 50){ barColor = 'var(--warn)'; statusText = '🟡 متوسطة'; statusBg = 'var(--warn-bg)'; }
 
-  // توزيع المصاريف
   const monthExp = getCurrentMonthExpenses();
   const byCat = {};
   monthExp.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + (+e.amount||0); });
@@ -2008,7 +2104,6 @@ function renderBalance(){
     </div>`;
   }).join('');
 
-  // الأهداف المختصرة
   const activeGoals = (state.money.goals || []).filter(g => (g.saved||0) < g.target).slice(0, 3);
   const goalsHTML = activeGoals.length ? activeGoals.map(g => {
     const p = Math.min(100, Math.round(((g.saved||0)/g.target)*100));
@@ -2021,9 +2116,10 @@ function renderBalance(){
 
   el.innerHTML = `
     <div class="money-card">
-      <div class="money-label">💰 الراتب / المكافأة الشهرية</div>
+      <div class="money-label">💰 الراتب / المكافأة</div>
       <div class="money-amount">${fmtMoney(salary)} ر.س</div>
-      <div class="money-label" style="margin-top:8px">📅 باقي ${daysToSalary} يوم على الراتب</div>
+      ${daysToSalary > 0 ? `<div class="money-label" style="margin-top:8px">📅 باقي ${daysToSalary} يوم على الراتب الجاي</div>` : ''}
+      <div class="money-label" style="margin-top:4px;font-size:11px;opacity:.75">🔄 ${cycleLabel}</div>
       <div class="money-row">
         <div class="money-item"><b>${fmtMoney(spent)}</b><span>💸 المصروف</span></div>
         <div class="money-item"><b>${fmtMoney(remaining)}</b><span>✅ المتبقي</span></div>
@@ -2064,23 +2160,31 @@ function renderBalance(){
 }
 
 function openSalaryForm(){
+  const m = state.money;
   openModal('💰 الراتب / المكافأة', `
     <div class="form-grid">
-      <div class="field full"><label>المبلغ الشهري (ر.س) <span class="req">*</span></label>
-        <input id="salaryAmount" type="number" min="0" step="0.01" value="${state.money.salary || ''}" placeholder="2000"></div>
-      <div class="field full"><label>يوم الاستلام من الشهر</label>
-        <input id="salaryDay" type="number" min="1" max="31" value="${state.money.salaryDay || 25}">
-        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:4px">مثال: 25 = يوم 25 من كل شهر</div>
+      <div class="field full"><label>المبلغ (ر.س) <span class="req">*</span></label>
+        <input id="salaryAmount" type="number" min="0" step="0.01" value="${m.salary || ''}" placeholder="2000"></div>
+      
+      <div class="field full">
+        <label>تاريخ نزول الراتب الحالي <span class="req">*</span></label>
+        <input id="salaryExactDate" type="date" value="${m.salaryExactDate || todayISO()}">
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.7">
+          💡 <b>أنا أحدد</b> متى نزل الراتب — كل المصاريف من هذا التاريخ تُحسب<br>
+          📅 لما ييجي الراتب الجديد، ارجع هنا وحدّث التاريخ
+        </div>
       </div>
     </div>
   `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveSalary()">💾 حفظ</button>`);
 }
 function saveSalary(){
   const amount = +document.getElementById('salaryAmount').value || 0;
-  const day = Math.max(1, Math.min(31, +document.getElementById('salaryDay').value || 25));
+  const exactDate = document.getElementById('salaryExactDate').value;
+  if(!exactDate){ toast('⚠️ حدد تاريخ الراتب'); return; }
   state.money.salary = amount;
-  state.money.salaryDay = day;
-  save(); closeModal(); renderBalance(); toast('✅ تم الحفظ');
+  state.money.salaryExactDate = exactDate;
+  save(); closeModal(); renderBalance(); renderExpenses();
+  toast('✅ تم الحفظ');
 }
 
 function openExpenseForm(id){
@@ -2105,7 +2209,6 @@ function openExpenseForm(id){
     </div>
   `, `${e ? `<button class="btn btn-danger" onclick="deleteExpense('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExpense('${id||''}')">💾 حفظ</button>`);
 
-  // اختيار التصنيف
   let selectedCat = e?.category || 'food';
   const grid = document.getElementById('catGrid');
   grid.querySelectorAll('.cat-btn').forEach(btn => {
@@ -2118,7 +2221,6 @@ function openExpenseForm(id){
       });
     });
   });
-
   window._selectedExpCat = () => selectedCat;
 }
 function saveExpense(id){
@@ -2137,8 +2239,11 @@ function saveExpense(id){
   renderBalance(); renderExpenses();
   toast('✅ تم الحفظ');
 }
-function deleteExpense(id){
-  if(!confirm('حذف هذا المصروف؟')) return;
+async function deleteExpense(id){
+  const ok = await appConfirm('حذف هذا المصروف؟', {
+    title: 'حذف المصروف', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
   state.money.expenses = state.money.expenses.filter(e => e.id !== id);
   save(); closeModal(); renderBalance(); renderExpenses(); toast('🗑️ تم');
 }
@@ -2151,12 +2256,10 @@ function renderExpenses(){
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 6*86400000);
   const weekStart = todayISO(weekAgo);
-  const monthStart = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
 
   let items = all;
   if(expenseFilter === 'today') items = all.filter(e => e.date === today);
   else if(expenseFilter === 'week') items = all.filter(e => e.date >= weekStart);
-  else if(expenseFilter === 'month') items = all.filter(e => e.date >= monthStart);
 
   const totalShown = items.reduce((a,b) => a + (+b.amount||0), 0);
   document.getElementById('expensesCount').textContent = items.length
@@ -2288,8 +2391,11 @@ function saveGoal(id){
   }
   save(); closeModal(); renderGoals(); renderBalance(); toast('✅ تم الحفظ');
 }
-function deleteGoal(id){
-  if(!confirm('حذف هذا الهدف؟')) return;
+async function deleteGoal(id){
+  const ok = await appConfirm('حذف هذا الهدف؟', {
+    title: 'حذف الهدف', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
   state.money.goals = state.money.goals.filter(g => g.id !== id);
   save(); closeModal(); renderGoals(); renderBalance(); toast('🗑️ تم');
 }
@@ -2310,7 +2416,6 @@ function doDeposit(id){
   const g = state.money.goals.find(x => x.id === id);
   if(!g) return;
   g.saved = (g.saved||0) + amt;
-  // نضيف مصروف من التصنيفات "أخرى" ما نضيف — التحويش مو مصروف
   save(); closeModal(); renderGoals(); renderBalance();
   if((g.saved||0) >= g.target) toast('🎉 مبروك! حققت هدفك!');
   else toast(`✅ تم إيداع ${fmtMoney(amt)} ر.س`);
@@ -2345,7 +2450,7 @@ document.getElementById('expenseFilters').addEventListener('click', e => {
 });
 
 /* ============================================================
-   18) بومودورو — تلقائي بالكامل + مزامنة مع السيرفر
+   18) بومودورو
 ============================================================ */
 const RING_C = 552.92;
 let pomo = {
@@ -2368,25 +2473,17 @@ function pomoGetRemaining(){
 function pomoSaveState(){
   try{
     localStorage.setItem(POMO_STORE_KEY, JSON.stringify({
-      mode: pomo.mode,
-      running: pomo.running,
-      endTimestamp: pomo.endTimestamp,
-      pausedRemaining: pomo.pausedRemaining,
-      total: pomo.total,
-      workCount: pomo.workCount || 0
+      mode: pomo.mode, running: pomo.running, endTimestamp: pomo.endTimestamp,
+      pausedRemaining: pomo.pausedRemaining, total: pomo.total, workCount: pomo.workCount || 0
     }));
   }catch(e){}
 }
 function pomoLoadState(){
-  try{
-    const raw = localStorage.getItem(POMO_STORE_KEY);
-    if(!raw) return null;
-    return JSON.parse(raw);
-  }catch(e){ return null; }
+  try{ const raw = localStorage.getItem(POMO_STORE_KEY); if(!raw) return null; return JSON.parse(raw); }
+  catch(e){ return null; }
 }
 function pomoFormat(sec){
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
+  const m = Math.floor(sec / 60); const s = sec % 60;
   return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 function pomoRender(){
@@ -2434,8 +2531,7 @@ function syncPomoStartToServer(mode, total, endTimestamp){
   if(!chatId) return;
   try{
     fetch(TG_WORKER + '/pomo-start', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chatId, mode, total, endTimestamp })
     }).catch(() => {});
   }catch(e){}
@@ -2445,8 +2541,7 @@ function syncPomoCancelToServer(){
   if(!chatId) return;
   try{
     fetch(TG_WORKER + '/pomo-cancel', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chatId })
     }).catch(() => {});
   }catch(e){}
@@ -2500,8 +2595,11 @@ function pomoSetMode(mode, silent){
   if(!silent) pomoSaveState();
   pomoRender();
 }
-function pomoResetCurrent(){
-  if(!confirm('تصفير المؤقّت وإيقاف الدورة التلقائية؟')) return;
+async function pomoResetCurrent(){
+  const ok = await appConfirm('تصفير المؤقّت وإيقاف الدورة التلقائية؟', {
+    title: 'تصفير المؤقّت', emoji: '🔄', okText: 'تصفير', variant: 'warn'
+  });
+  if(!ok) return;
   pomo.workCount = 0;
   pomoSetMode('work', false);
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
@@ -2514,8 +2612,7 @@ async function sendPomoNotification(mode, minutes){
   if(!chatId) return;
   try{
     await fetch(TG_WORKER + '/pomo-done', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chatId, mode, minutes })
     });
   }catch(e){ console.log('pomo notify error:', e); }
@@ -2562,15 +2659,9 @@ function pomoComplete(){
 
   let nextMode;
   if(wasWork){
-    if(pomo.workCount >= 2){
-      nextMode = 'long';
-      pomo.workCount = 0;
-    } else {
-      nextMode = 'short';
-    }
-  } else {
-    nextMode = 'work';
-  }
+    if(pomo.workCount >= 2){ nextMode = 'long'; pomo.workCount = 0; }
+    else { nextMode = 'short'; }
+  } else { nextMode = 'work'; }
 
   pomo.mode = nextMode;
   pomo.total = pomoDuration(nextMode);
@@ -2590,10 +2681,7 @@ function pomoComplete(){
 }
 function pomoTick(){
   const remaining = pomoGetRemaining();
-  if(remaining <= 0 && pomo.running){
-    pomoComplete();
-    return;
-  }
+  if(remaining <= 0 && pomo.running){ pomoComplete(); return; }
   pomoRender();
 }
 async function pomoResumeIfNeeded(){
@@ -2638,8 +2726,12 @@ document.getElementById('pomoStart').addEventListener('click', () => {
   pomoToggle();
 });
 document.getElementById('pomoReset').addEventListener('click', pomoResetCurrent);
-document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', () => {
-  if(confirm(`تغيير الوضع إلى "${pomoLabel(c.dataset.mode)}"؟ (سيفقد الوقت الحالي)`)) pomoSetMode(c.dataset.mode);
+document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', async () => {
+  if(c.dataset.mode === pomo.mode) return;
+  const ok = await appConfirm(`تغيير الوضع إلى "${pomoLabel(c.dataset.mode)}"؟ (سيفقد الوقت الحالي)`, {
+    title: 'تغيير الوضع', emoji: '🔄', okText: 'تغيير', variant: 'warn'
+  });
+  if(ok) pomoSetMode(c.dataset.mode);
 }));
 
 /* ===== Floating timer drag ===== */
@@ -2658,8 +2750,7 @@ document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEve
   let drag = { active:false, offsetX:0, offsetY:0, moved:false };
   ft.addEventListener('pointerdown', e => {
     if(e.target.closest('.ft-btn')) return;
-    drag.active = true;
-    drag.moved = false;
+    drag.active = true; drag.moved = false;
     const rect = ft.getBoundingClientRect();
     drag.offsetX = e.clientX - rect.left;
     drag.offsetY = e.clientY - rect.top;
@@ -2765,8 +2856,11 @@ function savePomoSettings(){
   }
   toast('✅ تم حفظ الإعدادات');
 }
-function clearAll(){
-  if(!confirm('سيتم حذف كل بياناتك نهائياً. متأكد؟')) return;
+async function clearAll(){
+  const ok = await appConfirm('سيتم حذف كل بياناتك نهائياً (المقررات، المهام، الدرجات، المصروف). هذا الإجراء لا يمكن التراجع عنه!', {
+    title: 'حذف كل البيانات', emoji: '⚠️', okText: 'حذف الكل', variant: 'danger'
+  });
+  if(!ok) return;
   state = defaultState();
   currentCourseId = null;
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
@@ -2944,8 +3038,13 @@ function qaSave(){
   closeModal(); renderAll();
   toast(`✅ تم حفظ ${n} محاضرة`);
 }
-function qaClose(){
-  if(qaItems.length && !confirm(`عندك ${qaItems.length} محاضرة لم تُحفظ. تبي تغلق؟`)) return;
+async function qaClose(){
+  if(qaItems.length){
+    const ok = await appConfirm(`عندك ${qaItems.length} محاضرة لم تُحفظ. تبي تغلق؟`, {
+      title: 'محاضرات غير محفوظة', emoji: '⚠️', okText: 'إغلاق', variant: 'warn'
+    });
+    if(!ok) return;
+  }
   qaItems = []; closeModal();
 }
 (function injectQA(){
@@ -2994,15 +3093,13 @@ async function doSync(silent = true){
   try{
     showSyncBadge('loading');
     await fetch(TG_WORKER + '/save', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
+      method:'POST', headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({
         chatId,
         tasks: state.tasks, exams: state.exams, courses: state.courses,
         schedule: state.schedule, attendance: state.attendance,
         gpaCourses: state.gpaCourses, wellness: state.wellness,
-        health: state.health,
-        money: state.money,
+        health: state.health, money: state.money,
         archive: state.archive,
         studyLog: state.studyLog, settings: state.settings
       })
@@ -3186,8 +3283,11 @@ function startPoll(code){
     }catch(e){}
   }, 1500);
 }
-function unlinkTelegram(){
-  if(!confirm('فك الربط؟')) return;
+async function unlinkTelegram(){
+  const ok = await appConfirm('فك الربط بتلقرام؟ لن تصلك إشعارات حتى تربط مرة ثانية.', {
+    title: 'فك الربط', emoji: '🔓', okText: 'فك', variant: 'warn'
+  });
+  if(!ok) return;
   localStorage.removeItem('tg_chat_id');
   localStorage.removeItem('tg_pending');
   localStorage.removeItem('tg_pending_time');
@@ -3454,9 +3554,12 @@ function viewArchive(i){
       </div>
     </div>`, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>`);
 }
-function loadArchive(i){
+async function loadArchive(i){
   const a = state.archive[i]; if(!a) return;
-  if(!confirm('سيتم استبدال البيانات. متابعة؟')) return;
+  const ok = await appConfirm('سيتم استبدال البيانات الحالية ببيانات الأرشيف. متابعة؟', {
+    title: 'استعادة الأرشيف', emoji: '🔄', okText: 'استعادة', variant: 'warn'
+  });
+  if(!ok) return;
   const d = a.data;
   state.courses = d.courses || []; state.schedule = d.schedule || [];
   state.tasks = d.tasks || []; state.exams = d.exams || [];
@@ -3466,8 +3569,11 @@ function loadArchive(i){
   save(); closeModal(); renderAll(); renderArchive();
   toast('✅ تمت الاستعادة');
 }
-function deleteArchive(i){
-  if(!confirm('حذف هذا الأرشيف؟')) return;
+async function deleteArchive(i){
+  const ok = await appConfirm('حذف هذا الأرشيف؟', {
+    title: 'حذف الأرشيف', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
   state.archive.splice(i, 1); save(); renderArchive(); toast('🗑️ تم');
 }
 

@@ -515,7 +515,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         <div class="stats" id="gpaStats"></div>
         <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:1.9;font-weight:600">
           💡 <b>كيف يعمل؟</b><br>
-          • <b>مقرراتك المسجّلة</b> تظهر تلقائياً في الجدول — أدخل مكوناتها أو تقديراً مباشراً<br>
+          • <b>مقرراتك المسجّلة</b> تظهر تلقائياً في الجدول — اضغط "تفصيلي" لإضافة المكونات (واجبات 20% · كويز 10% · ميدتيرم 30% · نهائي 40%)<br>
           • <b>المقررات الخارجية</b> (فصول سابقة) أضفها من زر "مقرر خارجي"<br>
           • <b>المعدل</b> يُحسب تلقائياً من كل المقررات
         </div>
@@ -1678,12 +1678,13 @@ function renderGrades(){
 function buildGradeRow(r, i){
   const isExternal = r.source === 'external';
   const rowId = `grade-row-${r.source}-${i}`;
+  const badgeId = `badge-${rowId}`;
   let statusBadge = '';
   let actions = '';
   if(r.type === 'detailed'){
     const letter = r.letter;
     const pColor = letter.startsWith('A') ? 'var(--ok)' : letter.startsWith('B') ? 'var(--p)' : letter.startsWith('C') ? 'var(--warn)' : 'var(--danger)';
-    statusBadge = `<span style="background:${pColor}22;color:${pColor};padding:6px 12px;border-radius:20px;font-weight:800;font-size:13px">${r.score.toFixed(1)}% · ${letter}</span>`;
+    statusBadge = `<span id="${badgeId}" style="background:${pColor}22;color:${pColor};padding:6px 12px;border-radius:20px;font-weight:800;font-size:13px">${r.score.toFixed(1)}% · ${letter}</span>`;
     actions = `<button class="btn btn-ghost btn-sm" onclick="toggleGradeExpand('${rowId}')">📝 تعديل المكونات</button>`;
   } else if(r.type === 'letter'){
     statusBadge = `
@@ -1709,15 +1710,15 @@ function buildGradeRow(r, i){
       <div id="${rowId}" style="display:none;padding:16px;border-top:1px solid var(--border);background:var(--hover)">
         <div class="comp-row comp-hd"><div>المكوّن</div><div>الوزن %</div><div>الدرجة %</div><div></div></div>
         ${r.grades.map((x, j) => `<div class="comp-row">
-          <input value="${esc(x.name)}" onchange="updateComp('${r.id}',${j},'name',this.value)" placeholder="اسم المكوّن">
-          <input type="number" value="${x.weight}" min="0" max="100" onchange="updateComp('${r.id}',${j},'weight',this.value)" placeholder="الوزن">
-          <input type="number" value="${x.score}" min="0" max="100" onchange="updateComp('${r.id}',${j},'score',this.value)" placeholder="الدرجة">
+          <input value="${esc(x.name)}" oninput="updateComp('${r.id}',${j},'name',this.value)" placeholder="اسم المكوّن">
+          <input type="number" value="${x.weight}" min="0" max="100" oninput="updateComp('${r.id}',${j},'weight',this.value)" placeholder="الوزن">
+          <input type="number" value="${x.score}" min="0" max="100" oninput="updateComp('${r.id}',${j},'score',this.value)" placeholder="الدرجة">
           <button class="mini-btn del" onclick="removeComp('${r.id}',${j})">✕</button>
         </div>`).join('')}
         <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="addComp('${r.id}')">➕ إضافة مكوّن</button>
-          <span style="font-size:12.5px;color:var(--muted);font-weight:700">مجموع الأوزان: ${totalW}%</span>
-          ${totalW !== 100 ? `<span style="font-size:12px;color:var(--warn);font-weight:700">⚠️ المجموع مو 100%</span>` : '<span style="font-size:12px;color:var(--ok);font-weight:700">✓</span>'}
+          <span id="totalW-${rowId}" style="font-size:12.5px;color:var(--muted);font-weight:700">مجموع الأوزان: ${totalW}%</span>
+          <span style="font-size:12px;color:var(--ok);font-weight:700">✓</span>
         </div>
       </div>`;
   }
@@ -1756,8 +1757,9 @@ function addComponentsToCourse(courseId){
   if(!c.grades) c.grades = [];
   if(!c.grades.length){
     c.grades.push({ name:'واجبات', weight:20, score:0 });
+    c.grades.push({ name:'كويز',   weight:10, score:0 });
     c.grades.push({ name:'ميدتيرم', weight:30, score:0 });
-    c.grades.push({ name:'نهائي', weight:50, score:0 });
+    c.grades.push({ name:'نهائي',   weight:40, score:0 });
     delete c.manualLetter;
     save(); renderGrades();
     setTimeout(() => {
@@ -1768,7 +1770,7 @@ function addComponentsToCourse(courseId){
         }
       });
     }, 50);
-    toast('📝 أضفت مكونات جاهزة — عدّلها');
+    toast('📝 أضفت المكونات — عدّل الدرجات');
   }
 }
 function removeExternalGrade(i){
@@ -1776,13 +1778,66 @@ function removeExternalGrade(i){
   state.gpaCourses.splice(i, 1);
   save(); renderGrades(); toast('🗑️ تم');
 }
-function addComp(cid){ const c = getCourse(cid); if(!c) return; c.grades = c.grades || []; c.grades.push({ name:'', weight:10, score:0 }); save(); renderGrades(); }
-function removeComp(cid, i){ const c = getCourse(cid); if(!c.grades) return; c.grades.splice(i, 1); if(!c.grades.length) delete c.grades; save(); renderGrades(); }
+function preserveGradeOpen(cid, renderFn){
+  const wasOpen = {};
+  state.courses.forEach((cc, idx) => {
+    const el = document.getElementById(`grade-row-course-${idx}`);
+    if(el) wasOpen[cc.id] = el.style.display === 'block';
+  });
+  renderFn();
+  setTimeout(() => {
+    state.courses.forEach((cc, idx) => {
+      if(wasOpen[cc.id]){
+        const el = document.getElementById(`grade-row-course-${idx}`);
+        if(el) el.style.display = 'block';
+      }
+    });
+  }, 10);
+}
+function addComp(cid){
+  const c = getCourse(cid);
+  if(!c) return;
+  c.grades = c.grades || [];
+  c.grades.push({ name:'', weight:10, score:0 });
+  save();
+  preserveGradeOpen(cid, () => renderGrades());
+}
+function removeComp(cid, i){
+  const c = getCourse(cid);
+  if(!c.grades) return;
+  c.grades.splice(i, 1);
+  if(!c.grades.length) delete c.grades;
+  save();
+  preserveGradeOpen(cid, () => renderGrades());
+}
 function updateComp(cid, i, field, val){
   const c = getCourse(cid);
   if(!c.grades || !c.grades[i]) return;
   c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
-  save(); renderGrades();
+  save();
+  // نحدّث البادج ومجموع الأوزان فقط — بدون إعادة رندر
+  const total = courseTotal(c);
+  if(total !== null){
+    const letter = scoreToLetter(total);
+    const pColor = letter.startsWith('A') ? 'var(--ok)' : letter.startsWith('B') ? 'var(--p)' : letter.startsWith('C') ? 'var(--warn)' : 'var(--danger)';
+    state.courses.forEach((cc, idx) => {
+      if(cc.id === cid){
+        const badge = document.getElementById(`badge-grade-row-course-${idx}`);
+        if(badge){
+          badge.textContent = `${total.toFixed(1)}% · ${letter}`;
+          badge.style.background = `${pColor}22`;
+          badge.style.color = pColor;
+        }
+      }
+    });
+  }
+  const totalW = (c.grades || []).reduce((a, x) => a + (+x.weight || 0), 0);
+  state.courses.forEach((cc, idx) => {
+    if(cc.id === cid){
+      const el = document.getElementById(`totalW-grade-row-course-${idx}`);
+      if(el) el.textContent = `مجموع الأوزان: ${totalW}%`;
+    }
+  });
 }
 function openAddGradeForm(){
   openModal('➕ إضافة مقرر خارجي', `
@@ -2957,7 +3012,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   32) بناء القائمة الجانبية
+   32) بناء القائمة الجانبية — الإنتاجية الموحّدة
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -2983,10 +3038,8 @@ function deleteArchive(i){
       ['attendance','📋','الحضور والغياب'],
       ['archive','🗂️','أرشيف الفصول']
     ]},
-    { title:'🎯 الإنتاجية', items:[
-      ['study','🍅','مؤقّت المذاكرة']
-    ]},
-    { title:'💪 الصحة', items:[
+    { title:'🚀 الإنتاجية', items:[
+      ['study','🍅','مؤقّت المذاكرة'],
       ['wellness','😴','النوم والماء'],
       ['teeth','🦷','نظافة الأسنان']
     ]}

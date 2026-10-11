@@ -352,36 +352,12 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .add-type-btn .at-main{flex:1}
 .add-type-btn .at-main b{display:block;font-size:16px;font-weight:800;margin-bottom:3px}
 .add-type-btn .at-main span{font-size:12.5px;color:var(--muted);font-weight:600}
-.prayer-row{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;border-radius:12px;background:var(--hover);margin-bottom:7px;transition:var(--t)}
-.prayer-row.next{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;box-shadow:0 8px 20px rgba(13,148,136,.28)}
-.prayer-row.past{opacity:.55}
-.prayer-name{font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
-.prayer-time{font-family:'Tajawal';font-size:17px;font-weight:800}
-.prayer-next-badge{font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.28);margin-inline-start:8px}
-.adhkar-item{background:var(--hover);border-radius:14px;padding:16px;margin-bottom:10px;transition:var(--t)}
-.adhkar-item.done{background:var(--ok-bg);border:1px solid var(--ok)}
-.adhkar-item.done .adhkar-text{opacity:.6}
-.adhkar-text{font-size:14.5px;line-height:1.9;margin-bottom:10px;word-break:break-word}
-.adhkar-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.adhkar-count{font-size:12px;font-weight:800;padding:4px 12px;border-radius:20px;background:var(--p-light);color:var(--p-dark)}
-.adhkar-source{font-size:11px;color:var(--muted);font-weight:600}
-.adhkar-chk{width:36px;height:36px;border-radius:11px;background:var(--card);border:2px solid var(--border);display:grid;place-items:center;font-size:18px;color:transparent;cursor:pointer;transition:var(--t);flex-shrink:0}
-.adhkar-chk:hover{border-color:var(--p)}
-.adhkar-item.done .adhkar-chk{background:var(--ok);border-color:var(--ok);color:#fff}
-.wird-progress{background:var(--hover);padding:18px;border-radius:14px;text-align:center;margin-bottom:14px}
-.wird-big{font-family:'Tajawal';font-size:44px;font-weight:800;color:var(--p);line-height:1}
-.wird-goal{font-size:14px;color:var(--muted);font-weight:700;margin-top:6px}
-.wird-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 .teeth-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .teeth-btn{padding:22px 12px;border-radius:16px;background:var(--hover);border:2px solid var(--border);font-weight:800;font-size:14.5px;transition:var(--t);text-align:center;cursor:pointer}
 .teeth-btn:hover{border-color:var(--p)}
 .teeth-btn.done{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
 .teeth-btn .t-ico{font-size:32px;display:block;margin-bottom:8px}
 @media(max-width:640px){
-  .prayer-name{font-size:13.5px}
-  .prayer-time{font-size:15px}
-  .adhkar-text{font-size:13.5px;line-height:1.8}
-  .wird-big{font-size:36px}
   .teeth-btn{font-size:13px;padding:18px 10px}
   .teeth-btn .t-ico{font-size:26px}
 }
@@ -460,8 +436,8 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
           </div>
         </div>
         <div class="card" style="margin-bottom:20px">
-          <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">🕌 العبادة والصحة</h2></div>
-          <div id="dashWorship"></div>
+          <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">💪 صحتك اليوم</h2></div>
+          <div id="dashHealth"></div>
         </div>
         <div class="card">
           <div class="sec-head" style="margin-bottom:14px">
@@ -603,40 +579,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
-      <section class="view" id="view-worship">
-        <div class="sec-head">
-          <div><h2>🕌 مواقيت الصلاة</h2><p>الصلوات الخمس + الورد اليومي</p></div>
-        </div>
-        <div class="card" style="margin-bottom:16px">
-          <div class="sec-head" style="margin-bottom:12px">
-            <h3 style="font-size:17px">🕌 مواقيت الصلاة</h3>
-            <button class="btn btn-ghost btn-sm" onclick="changePrayerCity()">📍 تغيير المدينة</button>
-          </div>
-          <div id="prayerTimesContent">
-            <div class="empty" style="padding:20px"><b>جاري التحميل...</b></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="sec-head" style="margin-bottom:12px">
-            <h3 style="font-size:17px">📖 الورد اليومي</h3>
-          </div>
-          <div id="wirdContent"></div>
-        </div>
-      </section>
-
-      <section class="view" id="view-adhkar">
-        <div class="sec-head">
-          <div><h2>📿 الأذكار</h2><p>أذكار الصباح والمساء من حصن المسلم</p></div>
-        </div>
-        <div class="card">
-          <div class="filters" style="margin-bottom:16px" id="adhkarTabs">
-            <button class="chip active" data-period="morning">☀️ أذكار الصباح</button>
-            <button class="chip" data-period="evening">🌙 أذكار المساء</button>
-          </div>
-          <div id="adhkarList"></div>
-        </div>
-      </section>
-
       <section class="view" id="view-teeth">
         <div class="sec-head">
           <div><h2>🦷 نظافة الأسنان</h2><p>توصية: مرتين يومياً — صباحاً وقبل النوم</p></div>
@@ -763,15 +705,6 @@ function defaultState(){
     studyLog: [], attendance: [], gpaCourses: [], archive: [],
     wellness: { sleepGoal:8, waterGoal:8, log:[] },
     health: { teethLog: [] },
-    worship: {
-      city: 'Riyadh',
-      country: 'SA',
-      prayerTimes: null,
-      prayerTimesDate: null,
-      adhkarProgress: {},
-      adhkarTab: 'morning',
-      wird: { goal: 20, log: [] }
-    },
     settings: {
       theme:'light',
       pomo:{ work:25, short:5, long:15 },
@@ -793,10 +726,6 @@ function loadState(){
     if(!Array.isArray(merged.wellness.log)) merged.wellness.log = [];
     merged.health = { ...def.health, ...(s.health || {}) };
     if(!Array.isArray(merged.health.teethLog)) merged.health.teethLog = [];
-    merged.worship = { ...def.worship, ...(s.worship || {}) };
-    merged.worship.wird = { ...def.worship.wird, ...((s.worship && s.worship.wird) || {}) };
-    if(!Array.isArray(merged.worship.wird.log)) merged.worship.wird.log = [];
-    if(!merged.worship.adhkarProgress || typeof merged.worship.adhkarProgress !== 'object') merged.worship.adhkarProgress = {};
     if(!Array.isArray(merged.courses)) merged.courses = [];
     if(!Array.isArray(merged.schedule)) merged.schedule = [];
     if(!Array.isArray(merged.tasks)) merged.tasks = [];
@@ -848,11 +777,6 @@ function pruneOldLogs(){
   state.studyLog = state.studyLog.filter(l => l.date >= cutoff);
   state.wellness.log = state.wellness.log.filter(l => l.date >= cutoff);
   state.health.teethLog = state.health.teethLog.filter(l => l.date >= cutoff);
-  state.worship.wird.log = state.worship.wird.log.filter(l => l.date >= cutoff);
-  Object.keys(state.worship.adhkarProgress).forEach(k => {
-    const d = k.split('_')[0];
-    if(d < cutoff) delete state.worship.adhkarProgress[k];
-  });
 }
 function save(){
   try{
@@ -990,8 +914,6 @@ const VIEW_META = {
   tasks:     ['المهام والاختبارات','تابع كل ما عليك تسليمه والاختبارات القادمة'],
   grades:    ['المعدل والدرجات','احسب معدلك وتابع درجاتك التفصيلية'],
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
-  worship:   ['مواقيت الصلاة','الصلوات الخمس + الورد اليومي'],
-  adhkar:    ['الأذكار','أذكار الصباح والمساء'],
   teeth:     ['نظافة الأسنان','تفريش الصباح والمساء'],
   wellness:  ['النوم والماء','صحتك أولاً'],
   attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
@@ -1022,8 +944,6 @@ function go(view){
     try{
       if(view === 'attendance') renderAttendancePage();
       if(view === 'wellness') renderWellness();
-      if(view === 'worship'){ renderPrayerTimes(); renderWird(); }
-      if(view === 'adhkar') renderAdhkar();
       if(view === 'teeth') renderTeeth();
       if(view === 'archive') renderArchive();
       if(view === 'grades') renderGrades();
@@ -1432,7 +1352,39 @@ function renderDashboard(){
         <div class="up-time" style="background:var(--hover);color:var(--muted)">${c?.teacher ? esc(c.teacher) : ''}</div></div>`;
     }).join('');
   }
-  renderDashWorship();
+  renderDashHealth();
+}
+
+/* ============================================================
+   13.5) بطاقة الصحة في اللوحة
+============================================================ */
+function renderDashHealth(){
+  const el = document.getElementById('dashHealth');
+  if(!el) return;
+  const today = todayISO();
+  const teethLog = state.health.teethLog.find(l => l.date === today) || { morning: false, night: false };
+  const teethCount = (teethLog.morning?1:0) + (teethLog.night?1:0);
+  const w = state.wellness;
+  const wLog = w.log.find(l => l.date === today) || { sleep: 0, water: 0 };
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="background:var(--hover);padding:14px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('teeth')">
+        <div style="font-size:22px">🦷</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">تفريش الأسنان</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${teethCount}/2</div>
+      </div>
+      <div style="background:var(--hover);padding:14px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
+        <div style="font-size:22px">😴</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">ساعات النوم</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.sleep}/${w.sleepGoal}</div>
+      </div>
+      <div style="background:var(--hover);padding:14px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
+        <div style="font-size:22px">💧</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أكواب الماء</div>
+        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.water}/${w.waterGoal}</div>
+      </div>
+    </div>
+    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('wellness')">فتح صفحة الصحة →</button>`;
 }
 
 /* ============================================================
@@ -2516,7 +2468,7 @@ async function doSync(silent = true){
         tasks: state.tasks, exams: state.exams, courses: state.courses,
         schedule: state.schedule, attendance: state.attendance,
         gpaCourses: state.gpaCourses, wellness: state.wellness,
-        health: state.health, worship: state.worship,
+        health: state.health,
         archive: state.archive,
         studyLog: state.studyLog, settings: state.settings
       })
@@ -2574,7 +2526,6 @@ async function loadFromCloud(){
       state.gpaCourses = data.gpaCourses || [];
       if(data.wellness) state.wellness = data.wellness;
       if(data.health) state.health = data.health;
-      if(data.worship) state.worship = data.worship;
       if(data.archive) state.archive = data.archive;
       if(data.studyLog) state.studyLog = data.studyLog;
       if(data.settings) state.settings = { ...state.settings, ...data.settings };
@@ -2627,7 +2578,6 @@ async function checkCloudUpdates(){
         state.gpaCourses = data.gpaCourses || [];
         if(data.wellness) state.wellness = data.wellness;
         if(data.health) state.health = data.health;
-        if(data.worship) state.worship = data.worship;
         if(data.archive) state.archive = data.archive;
         if(data.studyLog) state.studyLog = data.studyLog;
         if(data.settings) state.settings = { ...state.settings, ...data.settings };
@@ -2872,9 +2822,9 @@ function getOrCreateTodayWellness(){
   if(!log){ log = { date: today, sleep: 0, water: 0 }; state.wellness.log.push(log); }
   return log;
 }
-function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); renderDashWorship(); toast(`😴 سجّلت ${h} ساعات`); }
-function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); renderDashWorship(); }
-function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); renderDashWorship(); }
+function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); renderDashHealth(); toast(`😴 سجّلت ${h} ساعات`); }
+function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); renderDashHealth(); }
+function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); renderDashHealth(); }
 
 /* ============================================================
    29) نظافة الأسنان
@@ -2906,7 +2856,7 @@ function toggleTeeth(period){
   let log = state.health.teethLog.find(l => l.date === today);
   if(!log){ log = { date: today, morning: false, night: false }; state.health.teethLog.push(log); }
   log[period] = !log[period];
-  save(); renderTeeth(); renderDashWorship();
+  save(); renderTeeth(); renderDashHealth();
   toast(log[period] ? '✅ تم التسجيل' : '↺ تم الإلغاء');
 }
 
@@ -2986,315 +2936,7 @@ function deleteArchive(i){
 }
 
 /* ============================================================
-   31) العبادة — مواقيت + أذكار + ورد
-============================================================ */
-const PRAYER_NAMES = {
-  Fajr: { ar:'الفجر', ico:'🌄' },
-  Sunrise: { ar:'الشروق', ico:'☀️' },
-  Dhuhr: { ar:'الظهر', ico:'🌞' },
-  Asr: { ar:'العصر', ico:'🌤️' },
-  Maghrib: { ar:'المغرب', ico:'🌇' },
-  Isha: { ar:'العشاء', ico:'🌙' }
-};
-const ADHKAR = {
-  morning: [
-    { text: '📖 اقرأ آية الكرسي من المصحف', count: 1, source: 'البقرة 255' },
-    { text: '📖 اقرأ سورة الإخلاص من المصحف', count: 3, source: 'سورة الإخلاص' },
-    { text: '📖 اقرأ سورة الفلق من المصحف', count: 3, source: 'سورة الفلق' },
-    { text: '📖 اقرأ سورة الناس من المصحف', count: 3, source: 'سورة الناس' },
-    { text: 'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', count: 1, source: 'رواه مسلم' },
-    { text: 'اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ', count: 1, source: 'رواه الترمذي' },
-    { text: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ', count: 1, source: 'سيد الاستغفار' },
-    { text: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', count: 7, source: 'رواه أبو داود' },
-    { text: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ', count: 3, source: 'رواه أبو داود والترمذي' },
-    { text: 'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', count: 3, source: 'رواه أبو داود' },
-    { text: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', count: 100, source: 'رواه مسلم' },
-    { text: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', count: 10, source: 'رواه النسائي' }
-  ],
-  evening: [
-    { text: '📖 اقرأ آية الكرسي من المصحف', count: 1, source: 'البقرة 255' },
-    { text: '📖 اقرأ سورة الإخلاص من المصحف', count: 3, source: 'سورة الإخلاص' },
-    { text: '📖 اقرأ سورة الفلق من المصحف', count: 3, source: 'سورة الفلق' },
-    { text: '📖 اقرأ سورة الناس من المصحف', count: 3, source: 'سورة الناس' },
-    { text: 'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', count: 1, source: 'رواه مسلم' },
-    { text: 'اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ', count: 1, source: 'رواه الترمذي' },
-    { text: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ', count: 1, source: 'سيد الاستغفار' },
-    { text: 'حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ، عَلَيْهِ تَوَكَّلْتُ، وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', count: 7, source: 'رواه أبو داود' },
-    { text: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ', count: 3, source: 'رواه أبو داود والترمذي' },
-    { text: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', count: 3, source: 'رواه مسلم' },
-    { text: 'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', count: 3, source: 'رواه أبو داود' },
-    { text: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', count: 100, source: 'رواه مسلم' }
-  ]
-};
-async function fetchPrayerTimes(){
-  const today = todayISO();
-  if(state.worship.prayerTimes && state.worship.prayerTimesDate === today) return state.worship.prayerTimes;
-  try{
-    const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(state.worship.city)}&country=${state.worship.country}&method=4`;
-    const r = await fetch(url);
-    const data = await r.json();
-    if(data.code === 200){
-      state.worship.prayerTimes = data.data.timings;
-      state.worship.prayerTimesDate = today;
-      save();
-      return data.data.timings;
-    }
-  }catch(e){ console.log('prayer fetch error:', e); }
-  return null;
-}
-function renderPrayerTimes(){
-  const el = document.getElementById('prayerTimesContent');
-  if(!el) return;
-  const times = state.worship.prayerTimes;
-  if(!times){
-    el.innerHTML = '<div class="empty" style="padding:20px"><b>جاري التحميل...</b><p>اتصل بالإنترنت لحفظ المواقيت</p></div>';
-    return;
-  }
-  const now = new Date();
-  const currentMin = now.getHours() * 60 + now.getMinutes();
-  const prayers = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-  let nextIdx = prayers.findIndex(p => toMin(times[p]) > currentMin);
-  if(nextIdx === -1) nextIdx = 0;
-  el.innerHTML = prayers.map((p, i) => {
-    const info = PRAYER_NAMES[p];
-    const time = times[p];
-    const isPast = toMin(time) < currentMin && i !== nextIdx;
-    const isNext = i === nextIdx;
-    const cls = isNext ? 'prayer-row next' : isPast ? 'prayer-row past' : 'prayer-row';
-    let remain = '';
-    if(isNext){
-      let diff = toMin(time) - currentMin;
-      if(diff < 0) diff += 24*60;
-      const h = Math.floor(diff/60), m = diff%60;
-      remain = h > 0 ? `${h}س ${m}د` : `${m}د`;
-    }
-    return `<div class="${cls}">
-      <div class="prayer-name">${info.ico} ${info.ar}</div>
-      <div style="display:flex;align-items:center;gap:6px">
-        ${isNext ? `<span class="prayer-next-badge">باقي ${remain}</span>` : ''}
-        <span class="prayer-time">${to12(time)}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-function changePrayerCity(){
-  openModal('📍 تغيير المدينة', `
-    <div class="form-grid">
-      <div class="field"><label>المدينة</label>
-        <input id="pcCity" value="${esc(state.worship.city)}" placeholder="Riyadh"></div>
-      <div class="field"><label>الدولة (رمز)</label>
-        <input id="pcCountry" value="${esc(state.worship.country)}" placeholder="SA"></div>
-    </div>
-    <div style="background:var(--p-light);padding:12px;border-radius:12px;font-size:12.5px;line-height:1.7;margin-top:14px;font-weight:600">
-      💡 <b>أمثلة:</b><br>
-      • الرياض: <code>Riyadh / SA</code><br>
-      • جدة: <code>Jeddah / SA</code><br>
-      • مكة: <code>Makkah / SA</code><br>
-      • المدينة: <code>Madinah / SA</code><br>
-      • الدمام: <code>Dammam / SA</code>
-    </div>`, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="savePrayerCity()">💾 حفظ</button>`);
-}
-async function savePrayerCity(){
-  const city = document.getElementById('pcCity').value.trim();
-  const country = document.getElementById('pcCountry').value.trim().toUpperCase();
-  if(!city || !country){ toast('⚠️ اكمل الحقول'); return; }
-  state.worship.city = city;
-  state.worship.country = country;
-  state.worship.prayerTimes = null;
-  state.worship.prayerTimesDate = null;
-  save(); closeModal();
-  await fetchPrayerTimes();
-  renderPrayerTimes();
-  renderDashWorship();
-  toast('✅ تم تحديث المدينة');
-}
-function renderAdhkar(){
-  const el = document.getElementById('adhkarList');
-  if(!el) return;
-  const period = state.worship.adhkarTab || 'morning';
-  const list = ADHKAR[period] || [];
-  const today = todayISO();
-  const progressKey = `${today}_${period}`;
-  const done = state.worship.adhkarProgress[progressKey] || [];
-  el.innerHTML = list.map((a, i) => {
-    const isDone = done.includes(i);
-    return `<div class="adhkar-item ${isDone ? 'done' : ''}">
-      <div class="adhkar-text">${a.text}</div>
-      <div class="adhkar-meta">
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <span class="adhkar-count">${a.count} ${a.count > 1 ? 'مرات' : 'مرة'}</span>
-          <span class="adhkar-source">📚 ${a.source}</span>
-        </div>
-        <button class="adhkar-chk" onclick="toggleAdhkar(${i})">✓</button>
-      </div>
-    </div>`;
-  }).join('');
-  document.querySelectorAll('#adhkarTabs .chip').forEach(b => {
-    b.classList.toggle('active', b.dataset.period === period);
-  });
-}
-function toggleAdhkar(idx){
-  const period = state.worship.adhkarTab || 'morning';
-  const today = todayISO();
-  const key = `${today}_${period}`;
-  if(!state.worship.adhkarProgress[key]) state.worship.adhkarProgress[key] = [];
-  const arr = state.worship.adhkarProgress[key];
-  const pos = arr.indexOf(idx);
-  if(pos >= 0) arr.splice(pos, 1);
-  else arr.push(idx);
-  save();
-  renderAdhkar();
-  renderDashWorship();
-}
-function renderWird(){
-  const el = document.getElementById('wirdContent');
-  if(!el) return;
-  const today = todayISO();
-  const wird = state.worship.wird;
-  const todayLog = wird.log.find(l => l.date === today) || { date: today, pages: 0 };
-  const goal = wird.goal || 20;
-  const pct = Math.min(100, Math.round((todayLog.pages / goal) * 100));
-  const last7 = [];
-  for(let i = 6; i >= 0; i--){
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const iso = todayISO(d);
-    const log = wird.log.find(l => l.date === iso) || { pages: 0 };
-    last7.push({ day: DAYS_SHORT[d.getDay()], pages: log.pages });
-  }
-  const maxPages = Math.max(...last7.map(x => x.pages), goal);
-  el.innerHTML = `
-    <div class="wird-progress">
-      <div class="wird-big">${todayLog.pages}</div>
-      <div class="wird-goal">من ${goal} صفحة اليوم</div>
-      <div class="prog" style="height:10px;margin-top:12px"><i style="width:${pct}%"></i></div>
-      <div class="wird-btns">
-        <button class="btn btn-ghost btn-sm" onclick="addWird(-1)">− 1</button>
-        <button class="btn btn-primary btn-sm" onclick="addWird(1)">+ 1 صفحة</button>
-        <button class="btn btn-ghost btn-sm" onclick="addWird(5)">+ 5 صفحات</button>
-        <button class="btn btn-ghost btn-sm" onclick="resetWird()">↺ تصفير</button>
-      </div>
-      <div style="margin-top:12px">
-        <button class="btn btn-ghost btn-sm" onclick="editWirdGoal()">🎯 تعديل الهدف اليومي (${goal} صفحة)</button>
-      </div>
-    </div>
-    <h4 style="font-size:14px;margin:16px 0 10px">📊 آخر 7 أيام</h4>
-    <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.pages || ''}</span><div class="wbar-fill" style="height:${Math.max((d.pages/maxPages)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>`;
-}
-function addWird(n){
-  const today = todayISO();
-  let log = state.worship.wird.log.find(l => l.date === today);
-  if(!log){ log = { date: today, pages: 0 }; state.worship.wird.log.push(log); }
-  log.pages = Math.max(0, log.pages + n);
-  save(); renderWird(); renderDashWorship();
-}
-function resetWird(){
-  const today = todayISO();
-  const log = state.worship.wird.log.find(l => l.date === today);
-  if(log){ log.pages = 0; save(); renderWird(); renderDashWorship(); }
-}
-function editWirdGoal(){
-  openModal('🎯 الهدف اليومي', `
-    <div class="field"><label>عدد الصفحات</label>
-      <input type="number" id="wirdGoal" min="1" max="200" value="${state.worship.wird.goal || 20}"></div>
-  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveWirdGoal()">💾 حفظ</button>`);
-}
-function saveWirdGoal(){
-  const g = +document.getElementById('wirdGoal').value || 20;
-  state.worship.wird.goal = Math.max(1, g);
-  save(); closeModal(); renderWird(); renderDashWorship();
-  toast('✅ تم');
-}
-function renderDashWorship(){
-  const el = document.getElementById('dashWorship');
-  if(!el) return;
-  const times = state.worship.prayerTimes;
-  const today = todayISO();
-  let nextPrayerHTML = '';
-  if(times){
-    const now = new Date();
-    const curMin = now.getHours()*60 + now.getMinutes();
-    const prayers = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
-    let nextIdx = prayers.findIndex(p => toMin(times[p]) > curMin);
-    if(nextIdx === -1) nextIdx = 0;
-    const p = prayers[nextIdx];
-    const info = PRAYER_NAMES[p];
-    let diff = toMin(times[p]) - curMin;
-    if(diff < 0) diff += 24*60;
-    const h = Math.floor(diff/60), m = diff%60;
-    const remain = h > 0 ? `${h}س ${m}د` : `${m}د`;
-    nextPrayerHTML = `
-      <div style="background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;padding:16px;border-radius:14px;margin-bottom:12px;cursor:pointer" onclick="go('worship')">
-        <div style="font-size:12px;opacity:.9;font-weight:700;margin-bottom:6px">الصلاة القادمة</div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <div style="font-family:'Tajawal';font-size:24px;font-weight:800">${info.ico} ${info.ar}</div>
-          <div style="text-align:left">
-            <div style="font-family:'Tajawal';font-size:22px;font-weight:800;line-height:1">${to12(times[p])}</div>
-            <div style="font-size:11px;opacity:.9;font-weight:700">باقي ${remain}</div>
-          </div>
-        </div>
-      </div>`;
-  } else {
-    nextPrayerHTML = `<div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:12px;font-size:13px;color:var(--muted);text-align:center;font-weight:600;cursor:pointer" onclick="go('worship')">جاري تحميل المواقيت...</div>`;
-  }
-  const morningKey = `${today}_morning`;
-  const eveningKey = `${today}_evening`;
-  const mDone = (state.worship.adhkarProgress[morningKey]||[]).length;
-  const eDone = (state.worship.adhkarProgress[eveningKey]||[]).length;
-  const mTotal = ADHKAR.morning.length;
-  const eTotal = ADHKAR.evening.length;
-  const wirdLog = state.worship.wird.log.find(l => l.date === today) || { pages: 0 };
-  const teethLog = state.health.teethLog.find(l => l.date === today) || { morning: false, night: false };
-  const teethCount = (teethLog.morning?1:0) + (teethLog.night?1:0);
-  const w = state.wellness;
-  const wLog = w.log.find(l => l.date === today) || { sleep: 0, water: 0 };
-  el.innerHTML = `
-    ${nextPrayerHTML}
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('adhkar')">
-        <div style="font-size:20px">📿</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أذكار الصباح</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${mDone}/${mTotal}</div>
-      </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('adhkar')">
-        <div style="font-size:20px">🌙</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أذكار المساء</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${eDone}/${eTotal}</div>
-      </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('worship')">
-        <div style="font-size:20px">📖</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">الورد اليومي</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wirdLog.pages}/${state.worship.wird.goal}</div>
-      </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('teeth')">
-        <div style="font-size:20px">🦷</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">تفريش الأسنان</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${teethCount}/2</div>
-      </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
-        <div style="font-size:20px">😴</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">ساعات النوم</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.sleep}/${w.sleepGoal}</div>
-      </div>
-      <div style="background:var(--hover);padding:12px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
-        <div style="font-size:20px">💧</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أكواب الماء</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.water}/${w.waterGoal}</div>
-      </div>
-    </div>
-    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('worship')">فتح صفحة العبادة →</button>`;
-}
-document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#adhkarTabs .chip').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    state.worship.adhkarTab = btn.dataset.period;
-    save();
-    renderAdhkar();
-  });
-});
-
-/* ============================================================
-   32) إضافة الصفحات الديناميكية
+   31) إضافة الصفحات الديناميكية
 ============================================================ */
 (function addPages(){
   const content = document.querySelector('.content');
@@ -3315,7 +2957,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 })();
 
 /* ============================================================
-   33) بناء القائمة الجانبية
+   32) بناء القائمة الجانبية
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -3343,10 +2985,6 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
     ]},
     { title:'🎯 الإنتاجية', items:[
       ['study','🍅','مؤقّت المذاكرة']
-    ]},
-    { title:'🕌 العبادة', items:[
-      ['worship','🕌','مواقيت الصلاة'],
-      ['adhkar','📿','الأذكار']
     ]},
     { title:'💪 الصحة', items:[
       ['wellness','😴','النوم والماء'],
@@ -3378,7 +3016,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 })();
 
 /* ============================================================
-   34) تحسينات الموبايل
+   33) تحسينات الموبايل
 ============================================================ */
 (function fixMobile(){
   const sidebar = document.getElementById('sidebar');
@@ -3394,7 +3032,7 @@ document.querySelectorAll('#adhkarTabs .chip').forEach(btn => {
 })();
 
 /* ============================================================
-   35) شارة الأسبوع
+   34) شارة الأسبوع
 ============================================================ */
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
@@ -3442,14 +3080,14 @@ function saveSemesterSettings(){
 }
 
 /* ============================================================
-   36) اختصارات الكيبورد
+   35) اختصارات الكيبورد
 ============================================================ */
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
 
 /* ============================================================
-   37) التهيئة النهائية
+   36) التهيئة النهائية
 ============================================================ */
 async function init(){
   pomoResumeIfNeeded();
@@ -3465,16 +3103,13 @@ async function init(){
   renderWeekBadge();
   acadSelectedWeek = currentAcademicWeek();
   renderAcademicStrip();
-  await fetchPrayerTimes();
-  try{ renderPrayerTimes(); renderAdhkar(); renderWird(); renderDashWorship(); }catch(e){}
 }
 init();
 
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
     pomoRender();
-    renderDashWorship();
-    renderPrayerTimes();
+    renderDashHealth();
     renderTeeth();
     renderAcademicStrip();
   }

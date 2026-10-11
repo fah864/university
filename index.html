@@ -380,6 +380,32 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   .ft-label{font-size:9px}
   .ft-btn{width:28px;height:28px;font-size:12px;border-radius:8px}
 }
+/* ===== Money Section ===== */
+.money-card{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-radius:var(--r);padding:24px;box-shadow:0 15px 35px rgba(13,148,136,.3);margin-bottom:16px}
+.money-amount{font-family:'Tajawal';font-size:48px;font-weight:800;line-height:1;margin:8px 0}
+.money-label{font-size:13px;font-weight:700;opacity:.9}
+.money-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.money-item{background:rgba(255,255,255,.15);border-radius:12px;padding:12px}
+.money-item b{display:block;font-family:'Tajawal';font-size:20px;font-weight:800;line-height:1;margin-bottom:4px}
+.money-item span{font-size:11.5px;opacity:.9;font-weight:700}
+.exp-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;transition:var(--t);box-shadow:var(--shadow)}
+.exp-item:hover{border-color:var(--p);transform:translateX(-4px)}
+.exp-ico{width:44px;height:44px;flex-shrink:0;border-radius:12px;display:grid;place-items:center;font-size:20px}
+.exp-main{flex:1;min-width:0}
+.exp-main b{display:block;font-size:14.5px;font-weight:700;margin-bottom:3px;word-break:break-word}
+.exp-main span{font-size:12px;color:var(--muted);font-weight:600}
+.exp-amount{font-family:'Tajawal';font-size:17px;font-weight:800;white-space:nowrap}
+.goal-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);transition:var(--t)}
+.goal-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.goal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.goal-title{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.goal-nums{display:flex;gap:16px;font-size:13px;font-weight:700;margin-bottom:10px;flex-wrap:wrap}
+.goal-nums b{font-family:'Tajawal';font-size:16px;font-weight:800}
+@media(max-width:640px){
+  .money-amount{font-size:38px}
+  .money-row{grid-template-columns:1fr}
+  .goal-nums{flex-direction:column;gap:6px}
+}
 </style>
 </head>
 <body>
@@ -601,6 +627,36 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
         </div>
       </section>
 
+      <section class="view" id="view-balance">
+        <div class="sec-head">
+          <div><h2>💵 الرصيد</h2><p>نظرة شاملة على مصروفك الشهري</p></div>
+          <button class="btn btn-ghost btn-sm" onclick="openSalaryForm()">⚙️ تعديل الراتب</button>
+        </div>
+        <div id="balanceContent"></div>
+      </section>
+
+      <section class="view" id="view-expenses">
+        <div class="sec-head">
+          <div><h2>📋 المصاريف</h2><p id="expensesCount"></p></div>
+          <button class="btn btn-primary btn-sm" onclick="openExpenseForm()">➕ إضافة مصروف</button>
+        </div>
+        <div class="filters" id="expenseFilters">
+          <button class="chip active" data-f="all">الكل</button>
+          <button class="chip" data-f="today">اليوم</button>
+          <button class="chip" data-f="week">هذا الأسبوع</button>
+          <button class="chip" data-f="month">هذا الشهر</button>
+        </div>
+        <div id="expensesList"></div>
+      </section>
+
+      <section class="view" id="view-goals">
+        <div class="sec-head">
+          <div><h2>🎯 الأهداف المالية</h2><p id="goalsCount"></p></div>
+          <button class="btn btn-primary btn-sm" onclick="openGoalForm()">➕ هدف جديد</button>
+        </div>
+        <div id="goalsList"></div>
+      </section>
+
       <section class="view" id="view-settings">
         <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
         <div class="grid g2">
@@ -695,6 +751,19 @@ const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
 const SEMESTER_WEEKS = 16;
 const POMO_STORE_KEY = 'uni_pomo_state';
+const EXPENSE_CATS = [
+  { id:'food', name:'أكل ومطاعم', ico:'🍔', color:'#f59e0b' },
+  { id:'coffee', name:'قهوة', ico:'☕', color:'#92400e' },
+  { id:'transport', name:'مواصلات', ico:'🚗', color:'#0891b2' },
+  { id:'books', name:'كتب وقرطاسية', ico:'📚', color:'#7c3aed' },
+  { id:'clothes', name:'ملابس', ico:'👕', color:'#db2777' },
+  { id:'entertainment', name:'ترفيه', ico:'🎬', color:'#dc2626' },
+  { id:'subscriptions', name:'اشتراكات', ico:'📱', color:'#0d9488' },
+  { id:'bills', name:'فواتير', ico:'🏠', color:'#4f46e5' },
+  { id:'health', name:'صحة', ico:'💊', color:'#059669' },
+  { id:'gifts', name:'هدايا', ico:'🎁', color:'#ea580c' },
+  { id:'other', name:'أخرى', ico:'🚨', color:'#64748b' }
+];
 
 /* ============================================================
    2) الحالة
@@ -705,6 +774,12 @@ function defaultState(){
     studyLog: [], attendance: [], gpaCourses: [], archive: [],
     wellness: { sleepGoal:8, waterGoal:8, log:[] },
     health: { teethLog: [] },
+    money: {
+      salary: 0,
+      salaryDay: 25,
+      expenses: [],
+      goals: []
+    },
     settings: {
       theme:'light',
       pomo:{ work:25, short:5, long:15 },
@@ -726,6 +801,9 @@ function loadState(){
     if(!Array.isArray(merged.wellness.log)) merged.wellness.log = [];
     merged.health = { ...def.health, ...(s.health || {}) };
     if(!Array.isArray(merged.health.teethLog)) merged.health.teethLog = [];
+    merged.money = { ...def.money, ...(s.money || {}) };
+    if(!Array.isArray(merged.money.expenses)) merged.money.expenses = [];
+    if(!Array.isArray(merged.money.goals)) merged.money.goals = [];
     if(!Array.isArray(merged.courses)) merged.courses = [];
     if(!Array.isArray(merged.schedule)) merged.schedule = [];
     if(!Array.isArray(merged.tasks)) merged.tasks = [];
@@ -739,6 +817,7 @@ function loadState(){
 }
 let state = loadState();
 let taskFilter = 'all';
+let expenseFilter = 'all';
 let currentCourseId = null;
 
 /* ============================================================
@@ -749,9 +828,11 @@ function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','
 function todayISO(d = new Date()){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function daysUntil(iso){ const t = new Date(); t.setHours(0,0,0,0); const d = new Date(iso + 'T00:00:00'); return Math.round((d - t) / 86400000); }
 function fmtDate(iso){ if(!iso) return '—'; const d = new Date(iso + 'T00:00:00'); return d.toLocaleDateString('ar-EG', { day:'numeric', month:'long' }); }
+function fmtMoney(n){ return Number(n||0).toLocaleString('ar-EG', { maximumFractionDigits: 2 }); }
 function getCourse(id){ return state.courses.find(c => c.id === id); }
 function courseName(id){ const c = getCourse(id); return c ? c.name : 'عام'; }
 function courseColor(id){ const c = getCourse(id); return c ? c.color : '#64748b'; }
+function getCatById(id){ return EXPENSE_CATS.find(c => c.id === id) || EXPENSE_CATS[EXPENSE_CATS.length-1]; }
 function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 2400); }
 function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
 function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
@@ -916,6 +997,9 @@ const VIEW_META = {
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
   teeth:     ['نظافة الأسنان','تفريش الصباح والمساء'],
   wellness:  ['النوم والماء','صحتك أولاً'],
+  balance:   ['الرصيد','نظرة على مصروفك الشهري'],
+  expenses:  ['المصاريف','سجل كل مصروف'],
+  goals:     ['الأهداف المالية','أهدافك وحصالتك'],
   attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
   archive:   ['أرشيف الفصول','سجل كل فصولك السابقة'],
   settings:  ['الإعدادات','تخصيص التطبيق والبيانات']
@@ -951,6 +1035,9 @@ function go(view){
       if(view === 'course-detail') renderCourseDetail();
       if(view === 'courses') renderCourses();
       if(view === 'schedule') renderAcademicStrip();
+      if(view === 'balance') renderBalance();
+      if(view === 'expenses') renderExpenses();
+      if(view === 'goals') renderGoals();
     }catch(e){ console.error(e); }
   }, 60);
 }
@@ -1815,7 +1902,6 @@ function updateComp(cid, i, field, val){
   if(!c.grades || !c.grades[i]) return;
   c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
   save();
-  // نحدّث البادج ومجموع الأوزان فقط — بدون إعادة رندر
   const total = courseTotal(c);
   if(total !== null){
     const letter = scoreToLetter(total);
@@ -1863,6 +1949,400 @@ function saveExternalGrade(){
   state.gpaCourses.push({ name, credits, grade });
   save(); closeModal(); renderGrades(); toast('✅ تمت الإضافة');
 }
+
+/* ============================================================
+   17.5) المصروف — الرصيد + المصاريف + الأهداف
+============================================================ */
+function getCurrentMonthExpenses(){
+  const now = new Date();
+  const monthStart = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+  return (state.money.expenses || []).filter(e => e.date >= monthStart);
+}
+function getTotalSpent(){ return getCurrentMonthExpenses().reduce((a,b) => a + (+b.amount||0), 0); }
+function getRemaining(){ return (state.money.salary || 0) - getTotalSpent(); }
+function getDaysToSalary(){
+  const today = new Date();
+  const day = state.money.salaryDay || 25;
+  let next = new Date(today.getFullYear(), today.getMonth(), day);
+  if(today.getDate() >= day) next = new Date(today.getFullYear(), today.getMonth()+1, day);
+  return Math.ceil((next - today) / 86400000);
+}
+
+function renderBalance(){
+  const el = document.getElementById('balanceContent');
+  if(!el) return;
+  const salary = state.money.salary || 0;
+  const spent = getTotalSpent();
+  const remaining = salary - spent;
+  const pct = salary > 0 ? Math.min(100, Math.round((spent / salary) * 100)) : 0;
+  const daysToSalary = getDaysToSalary();
+
+  if(salary === 0){
+    el.innerHTML = `
+      <div class="card" style="padding:40px;text-align:center">
+        <div style="font-size:56px;margin-bottom:12px">💰</div>
+        <h3 style="font-size:19px;margin-bottom:8px">ابدأ بإضافة راتبك</h3>
+        <p style="color:var(--muted);margin-bottom:20px">لتشوف مصاريفك وتحسبها صح</p>
+        <button class="btn btn-primary" onclick="openSalaryForm()">➕ إضافة الراتب</button>
+      </div>`;
+    return;
+  }
+
+  // لون شريط التقدم
+  let barColor = 'var(--ok)', statusText = '✅ بخير', statusBg = 'var(--ok-bg)';
+  if(pct >= 90){ barColor = 'var(--danger)'; statusText = '🚨 وقف!'; statusBg = 'var(--danger-bg)'; }
+  else if(pct >= 75){ barColor = 'var(--danger)'; statusText = '⚠️ خفّف'; statusBg = 'var(--warn-bg)'; }
+  else if(pct >= 50){ barColor = 'var(--warn)'; statusText = '🟡 متوسطة'; statusBg = 'var(--warn-bg)'; }
+
+  // توزيع المصاريف
+  const monthExp = getCurrentMonthExpenses();
+  const byCat = {};
+  monthExp.forEach(e => { byCat[e.category] = (byCat[e.category] || 0) + (+e.amount||0); });
+  const catRows = Object.entries(byCat).sort((a,b) => b[1] - a[1]).map(([cid, amt]) => {
+    const cat = getCatById(cid);
+    const catPct = spent > 0 ? Math.round((amt/spent)*100) : 0;
+    return `<div class="cd-item">
+      <div class="ci-ico">${cat.ico}</div>
+      <div class="ci-main"><b>${cat.name}</b><span>${catPct}% من مصروفك</span></div>
+      <div class="ci-side" style="background:${cat.color}22;color:${cat.color}">${fmtMoney(amt)} ر.س</div>
+    </div>`;
+  }).join('');
+
+  // الأهداف المختصرة
+  const activeGoals = (state.money.goals || []).filter(g => (g.saved||0) < g.target).slice(0, 3);
+  const goalsHTML = activeGoals.length ? activeGoals.map(g => {
+    const p = Math.min(100, Math.round(((g.saved||0)/g.target)*100));
+    return `<div class="cd-item" onclick="go('goals')" style="cursor:pointer">
+      <div class="ci-ico">${g.emoji||'🎯'}</div>
+      <div class="ci-main"><b>${esc(g.name)}</b><span>${fmtMoney(g.saved||0)} / ${fmtMoney(g.target)} ر.س</span></div>
+      <div class="ci-side" style="background:var(--p-light);color:var(--p-dark)">${p}%</div>
+    </div>`;
+  }).join('') : '';
+
+  el.innerHTML = `
+    <div class="money-card">
+      <div class="money-label">💰 الراتب / المكافأة الشهرية</div>
+      <div class="money-amount">${fmtMoney(salary)} ر.س</div>
+      <div class="money-label" style="margin-top:8px">📅 باقي ${daysToSalary} يوم على الراتب</div>
+      <div class="money-row">
+        <div class="money-item"><b>${fmtMoney(spent)}</b><span>💸 المصروف</span></div>
+        <div class="money-item"><b>${fmtMoney(remaining)}</b><span>✅ المتبقي</span></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+        <h3 style="font-size:17px">📊 تقدم الصرف</h3>
+        <span style="background:${statusBg};color:${barColor};padding:5px 12px;border-radius:20px;font-size:12.5px;font-weight:800">${statusText} · ${pct}%</span>
+      </div>
+      <div class="prog" style="height:14px"><i style="width:${pct}%;background:${barColor}"></i></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:700;margin-top:8px">
+        <span>0</span><span>${fmtMoney(salary)}</span>
+      </div>
+    </div>
+
+    ${catRows ? `
+      <div class="card" style="margin-bottom:16px">
+        <h3 style="font-size:17px;margin-bottom:14px">📈 توزيع المصروفات</h3>
+        ${catRows}
+      </div>` : ''}
+
+    ${goalsHTML ? `
+      <div class="card" style="margin-bottom:16px">
+        <div class="sec-head" style="margin-bottom:12px">
+          <h3 style="font-size:17px">🎯 أهدافك</h3>
+          <button class="btn btn-ghost btn-sm" onclick="go('goals')">عرض الكل</button>
+        </div>
+        ${goalsHTML}
+      </div>` : ''}
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary" style="flex:1" onclick="openExpenseForm()">➕ إضافة مصروف</button>
+      <button class="btn btn-ghost" onclick="go('expenses')">📋 كل المصاريف</button>
+    </div>
+  `;
+}
+
+function openSalaryForm(){
+  openModal('💰 الراتب / المكافأة', `
+    <div class="form-grid">
+      <div class="field full"><label>المبلغ الشهري (ر.س) <span class="req">*</span></label>
+        <input id="salaryAmount" type="number" min="0" step="0.01" value="${state.money.salary || ''}" placeholder="2000"></div>
+      <div class="field full"><label>يوم الاستلام من الشهر</label>
+        <input id="salaryDay" type="number" min="1" max="31" value="${state.money.salaryDay || 25}">
+        <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:4px">مثال: 25 = يوم 25 من كل شهر</div>
+      </div>
+    </div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveSalary()">💾 حفظ</button>`);
+}
+function saveSalary(){
+  const amount = +document.getElementById('salaryAmount').value || 0;
+  const day = Math.max(1, Math.min(31, +document.getElementById('salaryDay').value || 25));
+  state.money.salary = amount;
+  state.money.salaryDay = day;
+  save(); closeModal(); renderBalance(); toast('✅ تم الحفظ');
+}
+
+function openExpenseForm(id){
+  const e = id ? state.money.expenses.find(x => x.id === id) : null;
+  const catBtns = EXPENSE_CATS.map(c => `
+    <button type="button" data-cat="${c.id}" class="cat-btn ${e?.category === c.id ? 'sel' : ''}" style="background:${c.color}15;color:${c.color};border:2px solid ${e?.category === c.id ? c.color : 'transparent'};padding:10px 6px;border-radius:12px;font-weight:700;font-size:12.5px;transition:all .2s;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">
+      <span style="font-size:22px">${c.ico}</span>
+      <span>${c.name}</span>
+    </button>
+  `).join('');
+  openModal(e ? 'تعديل مصروف' : '💸 إضافة مصروف', `
+    <div class="form-grid">
+      <div class="field full"><label>المبلغ (ر.س) <span class="req">*</span></label>
+        <input id="expAmount" type="number" min="0" step="0.01" value="${e?.amount || ''}" placeholder="50"></div>
+      <div class="field full"><label>الوصف (اختياري)</label>
+        <input id="expNote" placeholder="مثال: غداء مع الشباب" value="${esc(e?.note||'')}"></div>
+      <div class="field full"><label>التاريخ</label>
+        <input id="expDate" type="date" value="${e?.date || todayISO()}"></div>
+      <div class="field full"><label>التصنيف <span class="req">*</span></label>
+        <div id="catGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${catBtns}</div>
+      </div>
+    </div>
+  `, `${e ? `<button class="btn btn-danger" onclick="deleteExpense('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveExpense('${id||''}')">💾 حفظ</button>`);
+
+  // اختيار التصنيف
+  let selectedCat = e?.category || 'food';
+  const grid = document.getElementById('catGrid');
+  grid.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedCat = btn.dataset.cat;
+      grid.querySelectorAll('.cat-btn').forEach(b => {
+        const c = getCatById(b.dataset.cat);
+        const isSel = b.dataset.cat === selectedCat;
+        b.style.borderColor = isSel ? c.color : 'transparent';
+      });
+    });
+  });
+
+  window._selectedExpCat = () => selectedCat;
+}
+function saveExpense(id){
+  const amount = +document.getElementById('expAmount').value || 0;
+  const note = document.getElementById('expNote').value.trim();
+  const date = document.getElementById('expDate').value || todayISO();
+  const category = window._selectedExpCat ? window._selectedExpCat() : 'food';
+  if(amount <= 0){ toast('⚠️ أدخل مبلغ صحيح'); return; }
+  if(id){
+    const it = state.money.expenses.find(x => x.id === id);
+    if(it) Object.assign(it, { amount, note, date, category });
+  } else {
+    state.money.expenses.push({ id: uid(), amount, note, date, category, created: Date.now() });
+  }
+  save(); closeModal();
+  renderBalance(); renderExpenses();
+  toast('✅ تم الحفظ');
+}
+function deleteExpense(id){
+  if(!confirm('حذف هذا المصروف؟')) return;
+  state.money.expenses = state.money.expenses.filter(e => e.id !== id);
+  save(); closeModal(); renderBalance(); renderExpenses(); toast('🗑️ تم');
+}
+
+function renderExpenses(){
+  const list = document.getElementById('expensesList');
+  if(!list) return;
+  const all = [...state.money.expenses].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  const today = todayISO();
+  const now = new Date();
+  const weekAgo = new Date(now.getTime() - 6*86400000);
+  const weekStart = todayISO(weekAgo);
+  const monthStart = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+
+  let items = all;
+  if(expenseFilter === 'today') items = all.filter(e => e.date === today);
+  else if(expenseFilter === 'week') items = all.filter(e => e.date >= weekStart);
+  else if(expenseFilter === 'month') items = all.filter(e => e.date >= monthStart);
+
+  const totalShown = items.reduce((a,b) => a + (+b.amount||0), 0);
+  document.getElementById('expensesCount').textContent = items.length
+    ? `${items.length} مصروف · الإجمالي: ${fmtMoney(totalShown)} ر.س`
+    : 'لا توجد مصاريف';
+
+  if(!items.length){
+    list.innerHTML = `<div class="empty"><div class="e-ico">💸</div><b>لا توجد مصاريف</b><p>ابدأ بتسجيل مصاريفك</p><button class="btn btn-primary" onclick="openExpenseForm()">➕ إضافة مصروف</button></div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(e => {
+    const cat = getCatById(e.category);
+    return `<div class="exp-item">
+      <div class="exp-ico" style="background:${cat.color}22;color:${cat.color}">${cat.ico}</div>
+      <div class="exp-main">
+        <b>${esc(e.note || cat.name)}</b>
+        <span>${cat.name} · ${fmtDate(e.date)}</span>
+      </div>
+      <div class="exp-amount" style="color:var(--danger)">-${fmtMoney(e.amount)}</div>
+      <button class="mini-btn" onclick="openExpenseForm('${e.id}')">✏️</button>
+      <button class="mini-btn del" onclick="deleteExpense('${e.id}')">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function renderGoals(){
+  const list = document.getElementById('goalsList');
+  if(!list) return;
+  const goals = state.money.goals || [];
+  const active = goals.filter(g => (g.saved||0) < g.target);
+  const done = goals.filter(g => (g.saved||0) >= g.target);
+  document.getElementById('goalsCount').textContent = goals.length
+    ? `${goals.length} هدف · ${done.length} مكتمل`
+    : 'لا توجد أهداف';
+
+  if(!goals.length){
+    list.innerHTML = `<div class="empty"><div class="e-ico">🎯</div><b>لا توجد أهداف</b><p>حدد أهدافك المالية وابدأ بالتحويش</p><button class="btn btn-primary" onclick="openGoalForm()">➕ هدف جديد</button></div>`;
+    return;
+  }
+
+  const renderGoal = (g) => {
+    const p = Math.min(100, Math.round(((g.saved||0)/g.target)*100));
+    const remain = Math.max(0, g.target - (g.saved||0));
+    const isDone = p >= 100;
+    return `<div class="goal-card">
+      <div class="goal-head">
+        <div class="goal-title">
+          <span style="font-size:26px">${g.emoji || '🎯'}</span>
+          <span>${esc(g.name)}</span>
+          ${isDone ? '<span style="background:var(--ok-bg);color:var(--ok);padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:800">✅ مكتمل</span>' : ''}
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="mini-btn" onclick="openGoalForm('${g.id}')">✏️</button>
+          <button class="mini-btn del" onclick="deleteGoal('${g.id}')">🗑️</button>
+        </div>
+      </div>
+      <div class="goal-nums">
+        <div style="color:${isDone ? 'var(--ok)' : 'var(--p)'}">💰 تم توفير: <b>${fmtMoney(g.saved||0)}</b> ر.س</div>
+        <div style="color:var(--muted)">🎯 الهدف: <b>${fmtMoney(g.target)}</b> ر.س</div>
+        <div style="color:var(--warn)">📉 باقي: <b>${fmtMoney(remain)}</b> ر.س</div>
+      </div>
+      <div class="prog" style="height:12px"><i style="width:${p}%;background:linear-gradient(90deg,${isDone?'var(--ok)':'var(--p)'},#2dd4bf)"></i></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:700;margin-top:8px">
+        <span>${p}%</span><span>${isDone ? '🎉 مبروك!' : 'استمر!'}</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" style="flex:1" onclick="addToGoal('${g.id}')">➕ إيداع</button>
+        ${(g.saved||0) > 0 ? `<button class="btn btn-ghost btn-sm" onclick="withdrawFromGoal('${g.id}')">➖ سحب</button>` : ''}
+      </div>
+    </div>`;
+  };
+
+  list.innerHTML = `
+    ${active.length ? active.map(renderGoal).join('') : ''}
+    ${done.length ? `
+      <h3 style="font-size:15px;margin:20px 0 12px;color:var(--ok)">✅ مكتملة (${done.length})</h3>
+      ${done.map(renderGoal).join('')}
+    ` : ''}
+  `;
+}
+
+function openGoalForm(id){
+  const g = id ? state.money.goals.find(x => x.id === id) : null;
+  const emojiOpts = ['🎯','💰','📱','💻','🎮','🚗','✈️','📚','🎁','🏠','👟','⌚','🎧','📷'];
+  const emojiBtns = emojiOpts.map(em => `
+    <button type="button" data-em="${em}" style="font-size:22px;padding:6px;border-radius:10px;background:${(g?.emoji||'🎯') === em ? 'var(--p-light)' : 'var(--hover)'};border:2px solid ${(g?.emoji||'🎯') === em ? 'var(--p)' : 'transparent'};transition:all .2s;cursor:pointer">${em}</button>
+  `).join('');
+  openModal(g ? 'تعديل هدف' : '🎯 هدف جديد', `
+    <div class="form-grid">
+      <div class="field full"><label>اسم الهدف <span class="req">*</span></label>
+        <input id="gName" placeholder="مثال: لابتوب جديد" value="${esc(g?.name||'')}"></div>
+      <div class="field full"><label>المبلغ المطلوب (ر.س) <span class="req">*</span></label>
+        <input id="gTarget" type="number" min="1" step="0.01" value="${g?.target||''}" placeholder="5000"></div>
+      <div class="field full"><label>المبلغ المُوفَّر حالياً</label>
+        <input id="gSaved" type="number" min="0" step="0.01" value="${g?.saved||0}"></div>
+      <div class="field full"><label>الأيقونة</label>
+        <div id="emojiGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px">${emojiBtns}</div>
+      </div>
+    </div>
+  `, `${g ? `<button class="btn btn-danger" onclick="deleteGoal('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveGoal('${id||''}')">💾 حفظ</button>`);
+
+  let selectedEmoji = g?.emoji || '🎯';
+  const grid = document.getElementById('emojiGrid');
+  grid.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedEmoji = btn.dataset.em;
+      grid.querySelectorAll('button').forEach(b => {
+        const isSel = b.dataset.em === selectedEmoji;
+        b.style.background = isSel ? 'var(--p-light)' : 'var(--hover)';
+        b.style.borderColor = isSel ? 'var(--p)' : 'transparent';
+      });
+    });
+  });
+  window._selectedGoalEmoji = () => selectedEmoji;
+}
+function saveGoal(id){
+  const name = document.getElementById('gName').value.trim();
+  const target = +document.getElementById('gTarget').value || 0;
+  const saved = +document.getElementById('gSaved').value || 0;
+  const emoji = window._selectedGoalEmoji ? window._selectedGoalEmoji() : '🎯';
+  if(!name){ toast('⚠️ اكتب اسم الهدف'); return; }
+  if(target <= 0){ toast('⚠️ أدخل المبلغ المطلوب'); return; }
+  if(id){
+    const it = state.money.goals.find(x => x.id === id);
+    if(it) Object.assign(it, { name, target, saved, emoji });
+  } else {
+    state.money.goals.push({ id: uid(), name, target, saved, emoji, created: Date.now() });
+  }
+  save(); closeModal(); renderGoals(); renderBalance(); toast('✅ تم الحفظ');
+}
+function deleteGoal(id){
+  if(!confirm('حذف هذا الهدف؟')) return;
+  state.money.goals = state.money.goals.filter(g => g.id !== id);
+  save(); closeModal(); renderGoals(); renderBalance(); toast('🗑️ تم');
+}
+function addToGoal(id){
+  const g = state.money.goals.find(x => x.id === id);
+  if(!g) return;
+  openModal(`💰 إيداع في: ${g.name}`, `
+    <div class="field"><label>المبلغ (ر.س)</label>
+      <input id="depAmt" type="number" min="1" step="0.01" value="100"></div>
+    <div style="background:var(--p-light);padding:10px 14px;border-radius:10px;font-size:12.5px;font-weight:700;margin-top:12px;color:var(--p-dark)">
+      💡 باقي: ${fmtMoney(Math.max(0, g.target - (g.saved||0)))} ر.س للوصول للهدف
+    </div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="doDeposit('${id}')">💾 إيداع</button>`);
+}
+function doDeposit(id){
+  const amt = +document.getElementById('depAmt').value || 0;
+  if(amt <= 0){ toast('⚠️ أدخل مبلغ صحيح'); return; }
+  const g = state.money.goals.find(x => x.id === id);
+  if(!g) return;
+  g.saved = (g.saved||0) + amt;
+  // نضيف مصروف من التصنيفات "أخرى" ما نضيف — التحويش مو مصروف
+  save(); closeModal(); renderGoals(); renderBalance();
+  if((g.saved||0) >= g.target) toast('🎉 مبروك! حققت هدفك!');
+  else toast(`✅ تم إيداع ${fmtMoney(amt)} ر.س`);
+}
+function withdrawFromGoal(id){
+  const g = state.money.goals.find(x => x.id === id);
+  if(!g) return;
+  openModal(`➖ سحب من: ${g.name}`, `
+    <div class="field"><label>المبلغ (ر.س)</label>
+      <input id="wdrAmt" type="number" min="1" step="0.01" value="${g.saved||0}"></div>
+    <div style="background:var(--warn-bg);padding:10px 14px;border-radius:10px;font-size:12.5px;font-weight:700;margin-top:12px;color:var(--warn)">
+      ⚠️ المُوفَّر حالياً: ${fmtMoney(g.saved||0)} ر.س
+    </div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="doWithdraw('${id}')">سحب</button>`);
+}
+function doWithdraw(id){
+  const amt = +document.getElementById('wdrAmt').value || 0;
+  if(amt <= 0){ toast('⚠️ أدخل مبلغ صحيح'); return; }
+  const g = state.money.goals.find(x => x.id === id);
+  if(!g) return;
+  g.saved = Math.max(0, (g.saved||0) - amt);
+  save(); closeModal(); renderGoals(); renderBalance(); toast('↩️ تم السحب');
+}
+
+document.getElementById('expenseFilters').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  document.querySelectorAll('#expenseFilters .chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  expenseFilter = chip.dataset.f;
+  renderExpenses();
+});
 
 /* ============================================================
    18) بومودورو — تلقائي بالكامل + مزامنة مع السيرفر
@@ -1949,7 +2429,6 @@ function pomoRender(){
   }
 }
 
-// 🆕 المزامنة مع السيرفر
 function syncPomoStartToServer(mode, total, endTimestamp){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -2030,7 +2509,6 @@ function pomoResetCurrent(){
   toast('↺ تم التصفير — اضغط ابدأ للبدء من جديد');
 }
 
-// 🆕 إشعار تلقرام عند انتهاء المؤقّت (يشتغل فوري + يمسح KV)
 async function sendPomoNotification(mode, minutes){
   const chatId = localStorage.getItem('tg_chat_id');
   if(!chatId) return;
@@ -2119,7 +2597,6 @@ function pomoTick(){
   pomoRender();
 }
 async function pomoResumeIfNeeded(){
-  // 🆕 أول شي: شوف السيرفر
   const serverTimer = await loadPomoFromServer();
   if(serverTimer){
     pomo.mode = serverTimer.mode || 'work';
@@ -2133,7 +2610,6 @@ async function pomoResumeIfNeeded(){
     pomoRender();
     return;
   }
-  // Fallback: state محلي
   const saved = pomoLoadState();
   if(!saved) return;
   pomo.workCount = saved.workCount || 0;
@@ -2369,6 +2845,7 @@ function quickAdd(){
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExamForm()">⏰ اختبار / كويز جديد</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openClassForm()">📅 محاضرة في الجدول</button>
       <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openCourseForm()">📚 مقرر جديد</button>
+      <button class="btn btn-ghost btn-block" style="justify-content:flex-start;padding:16px" onclick="closeModal();openExpenseForm()">💸 مصروف جديد</button>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
@@ -2400,6 +2877,7 @@ document.getElementById('taskFilters').addEventListener('click', e => {
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
   renderGrades(); renderStudy(); pomoRender();
+  renderBalance(); renderExpenses(); renderGoals();
   if(currentCourseId) renderCourseDetail();
 }
 
@@ -2524,6 +3002,7 @@ async function doSync(silent = true){
         schedule: state.schedule, attendance: state.attendance,
         gpaCourses: state.gpaCourses, wellness: state.wellness,
         health: state.health,
+        money: state.money,
         archive: state.archive,
         studyLog: state.studyLog, settings: state.settings
       })
@@ -2581,6 +3060,7 @@ async function loadFromCloud(){
       state.gpaCourses = data.gpaCourses || [];
       if(data.wellness) state.wellness = data.wellness;
       if(data.health) state.health = data.health;
+      if(data.money) state.money = { ...defaultState().money, ...data.money };
       if(data.archive) state.archive = data.archive;
       if(data.studyLog) state.studyLog = data.studyLog;
       if(data.settings) state.settings = { ...state.settings, ...data.settings };
@@ -2633,6 +3113,7 @@ async function checkCloudUpdates(){
         state.gpaCourses = data.gpaCourses || [];
         if(data.wellness) state.wellness = data.wellness;
         if(data.health) state.health = data.health;
+        if(data.money) state.money = { ...defaultState().money, ...data.money };
         if(data.archive) state.archive = data.archive;
         if(data.studyLog) state.studyLog = data.studyLog;
         if(data.settings) state.settings = { ...state.settings, ...data.settings };
@@ -3012,7 +3493,7 @@ function deleteArchive(i){
 })();
 
 /* ============================================================
-   32) بناء القائمة الجانبية — الإنتاجية الموحّدة
+   32) بناء القائمة الجانبية
 ============================================================ */
 (function rebuildNav(){
   const nav = document.querySelector('.nav');
@@ -3042,6 +3523,11 @@ function deleteArchive(i){
       ['study','🍅','مؤقّت المذاكرة'],
       ['wellness','😴','النوم والماء'],
       ['teeth','🦷','نظافة الأسنان']
+    ]},
+    { title:'💰 المصروف', items:[
+      ['balance','💵','الرصيد'],
+      ['expenses','📋','المصاريف'],
+      ['goals','🎯','الأهداف']
     ]}
   ];
   nav.innerHTML = '';
@@ -3153,6 +3639,9 @@ async function init(){
   try{ renderTeeth(); }catch(e){}
   try{ renderArchive(); }catch(e){}
   try{ renderSyncStatus(); }catch(e){}
+  try{ renderBalance(); }catch(e){}
+  try{ renderExpenses(); }catch(e){}
+  try{ renderGoals(); }catch(e){}
   renderWeekBadge();
   acadSelectedWeek = currentAcademicWeek();
   renderAcademicStrip();

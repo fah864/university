@@ -265,7 +265,7 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 .toast{position:fixed;bottom:26px;right:50%;transform:translate(50%,120px);background:var(--text);color:var(--bg);padding:13px 26px;border-radius:14px;font-weight:700;font-size:14.5px;z-index:500;transition:transform .4s cubic-bezier(.34,1.4,.64,1);box-shadow:var(--shadow-lg);max-width:90vw;text-align:center}
 .toast.show{transform:translate(50%,0)}
 .fab{position:fixed;bottom:26px;left:26px;width:56px;height:56px;border-radius:19px;background:var(--p);color:#fff;font-size:27px;display:grid;place-items:center;box-shadow:0 12px 30px rgba(13,148,136,.45);z-index:80;transition:var(--t);cursor:pointer}
-.fab:hover{transform:translateY(-4px) rotate(90deg);background:var(--p-dark)}
+.fab:hover{transform:translateY(-4px) scale(1.08);background:var(--p-dark)}
 .prog{height:8px;border-radius:20px;background:var(--border);overflow:hidden;margin-top:10px}
 .prog i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--p),#2dd4bf);transition:width .6s ease}
 .nav-group{margin-bottom:4px}
@@ -373,25 +373,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
 @media(max-width:640px){
   .teeth-btn{font-size:13px;padding:18px 10px}
   .teeth-btn .t-ico{font-size:26px}
-}
-.floating-timer{position:fixed;bottom:100px;right:26px;z-index:90;background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-radius:18px;padding:10px 14px;display:none;align-items:center;gap:10px;box-shadow:0 12px 30px rgba(13,148,136,.5);cursor:grab;user-select:none;touch-action:none;min-width:130px;transition:transform .2s}
-.floating-timer.show{display:none !important}
-.floating-timer:active{cursor:grabbing}
-.floating-timer.paused{background:linear-gradient(135deg,var(--warn),#b45309)}
-.floating-timer.break{background:linear-gradient(135deg,#0891b2,#0e7490)}
-.ft-ico{font-size:22px;flex-shrink:0;pointer-events:none}
-.ft-body{flex:1;min-width:0;pointer-events:none}
-.ft-time{font-family:'Tajawal';font-size:20px;font-weight:800;line-height:1;letter-spacing:.5px}
-.ft-label{font-size:10px;font-weight:700;opacity:.9;margin-top:2px}
-.ft-controls{display:flex;gap:4px;flex-shrink:0}
-.ft-btn{width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-size:14px;color:#fff;transition:all .2s;cursor:pointer}
-.ft-btn:hover{background:rgba(255,255,255,.45)}
-@media(max-width:640px){
-  .floating-timer{bottom:90px;right:14px;padding:8px 12px;min-width:110px;border-radius:16px}
-  .ft-ico{font-size:18px}
-  .ft-time{font-size:17px}
-  .ft-label{font-size:9px}
-  .ft-btn{width:28px;height:28px;font-size:12px;border-radius:8px}
 }
 .money-card{background:linear-gradient(135deg,var(--p),var(--p-dark));color:#fff;border-radius:var(--r);padding:24px;box-shadow:0 15px 35px rgba(13,148,136,.3);margin-bottom:16px}
 .money-amount{font-family:'Tajawal';font-size:48px;font-weight:800;line-height:1;margin:8px 0}
@@ -725,7 +706,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
   </div>
 </div>
 
-<!-- 🆕 Custom Confirm Dialog -->
 <div class="modal-bg" id="confirmBg">
   <div class="modal" style="max-width:400px">
     <div style="padding:28px 24px 20px">
@@ -737,17 +717,6 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
       <button class="btn btn-ghost" id="confirmCancelBtn" style="flex:1">إلغاء</button>
       <button class="btn btn-danger-solid" id="confirmOkBtn" style="flex:1">موافق</button>
     </div>
-  </div>
-</div>
-
-<div class="floating-timer" id="floatingTimer">
-  <span class="ft-ico" id="ftIco">🎯</span>
-  <div class="ft-body">
-    <div class="ft-time" id="ftTime">25:00</div>
-    <div class="ft-label" id="ftLabel">تركيز</div>
-  </div>
-  <div class="ft-controls">
-    <button class="ft-btn" id="ftToggle" title="تشغيل/إيقاف">⏸</button>
   </div>
 </div>
 
@@ -775,7 +744,6 @@ const GRADE_POINTS = { 'A+':5,'A':4.75,'B+':4.5,'B':4,'C+':3.5,'C':3,'D+':2.5,'D
 const GRADE_OPTIONS = ['A+','A','B+','B','C+','C','D+','D','F'];
 const TG_WORKER = 'https://floral-firefly-f4de.fahadnaih6.workers.dev';
 const TG_BOT = 'MyMuHelperBot';
-const SEMESTER_WEEKS = 16;
 const POMO_STORE_KEY = 'uni_pomo_state';
 const EXPENSE_CATS = [
   { id:'food', name:'أكل ومطاعم', ico:'🍔', color:'#f59e0b' },
@@ -792,7 +760,7 @@ const EXPENSE_CATS = [
 ];
 
 /* ============================================================
-   1.5) 🆕 Custom Confirm Dialog
+   1.5) Custom Confirm Dialog
 ============================================================ */
 function appConfirm(message, options = {}){
   return new Promise(resolve => {
@@ -921,7 +889,6 @@ function to12(time24){
   if(h === 0) h = 12;
   return `${h}:${m} ${ampm}`;
 }
-function fmtTimeRange(start, end){ return `${to12(start)} — ${to12(end)}`; }
 
 /* ============================================================
    3.5) pruneOldLogs + save
@@ -963,7 +930,8 @@ const ACADEMIC_EVENTS = [
 let acadSelectedWeek = null;
 
 function getWeekMonday(weekNum){
-  const start = new Date(ACADEMIC_START + 'T00:00:00');
+  const base = state.settings.semesterStart || ACADEMIC_START;
+  const start = new Date(base + 'T00:00:00');
   const d = new Date(start);
   d.setDate(d.getDate() + (weekNum - 1) * 7);
   return d;
@@ -975,7 +943,8 @@ function getWeekRange(weekNum){
   return { start, end };
 }
 function currentAcademicWeek(){
-  const start = new Date(ACADEMIC_START + 'T00:00:00');
+  const base = state.settings.semesterStart || ACADEMIC_START;
+  const start = new Date(base + 'T00:00:00');
   const today = new Date(); today.setHours(0,0,0,0);
   const diff = Math.floor((today - start) / 86400000);
   if(diff < 0) return 1;
@@ -1982,11 +1951,13 @@ function removeComp(cid, i){
   save();
   preserveGradeOpen(cid, () => renderGrades());
 }
+let _compSaveTimer = null;
 function updateComp(cid, i, field, val){
   const c = getCourse(cid);
   if(!c.grades || !c.grades[i]) return;
   c.grades[i][field] = field === 'name' ? val : (parseFloat(val) || 0);
-  save();
+  if(_compSaveTimer) clearTimeout(_compSaveTimer);
+  _compSaveTimer = setTimeout(() => { try{ save(); }catch(e){} }, 600);
   const total = courseTotal(c);
   if(total !== null){
     const letter = scoreToLetter(total);
@@ -2036,7 +2007,7 @@ function saveExternalGrade(){
 }
 
 /* ============================================================
-   17.5) المصروف — الرصيد + المصاريف + الأهداف
+   17.5) المصروف
 ============================================================ */
 function getLastSalaryDate(){
   const m = state.money;
@@ -2510,53 +2481,30 @@ function pomoRender(){
     ringFg.style.strokeDashoffset = (RING_C * prog).toFixed(2);
   }
   if(startBtn) startBtn.textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
-  const ft = document.getElementById('floatingTimer');
-  const ftTime = document.getElementById('ftTime');
-  const ftLabel = document.getElementById('ftLabel');
-  const ftIco = document.getElementById('ftIco');
-  const ftToggle = document.getElementById('ftToggle');
-  if(ft){
-    const show = pomo.running || (pomo.pausedRemaining !== null && pomo.pausedRemaining < pomo.total);
-    if(show){
-      ft.classList.add('show');
-      ft.classList.remove('paused', 'break');
-      if(!pomo.running) ft.classList.add('paused');
-      if(pomo.mode !== 'work') ft.classList.add('break');
-      if(ftTime) ftTime.textContent = timeStr;
-      if(ftLabel) ftLabel.textContent = pomoLabel(pomo.mode);
-      if(ftIco) ftIco.textContent = pomo.mode === 'work' ? '🎯' : pomo.mode === 'short' ? '☕' : '🛋️';
-      if(ftToggle) ftToggle.textContent = pomo.running ? '⏸' : '▶';
-    } else {
-      ft.classList.remove('show');
-    }
-  }
 }
 
 function syncPomoStartToServer(mode, total, endTimestamp){
-  const chatId = getMyChatId();
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   try{
     fetch(TG_WORKER + '/pomo-start', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chatId, mode, total, endTimestamp })
+      body: JSON.stringify({ ...authObj(), mode, total, endTimestamp })
     }).catch(() => {});
   }catch(e){}
 }
 function syncPomoCancelToServer(){
-  const chatId = getMyChatId();
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   try{
     fetch(TG_WORKER + '/pomo-cancel', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chatId })
+      body: JSON.stringify({ ...authObj() })
     }).catch(() => {});
   }catch(e){}
 }
 async function loadPomoFromServer(){
-  const chatId = getMyChatId();
-  if(!chatId) return null;
+  if(!getMyChatId()) return null;
   try{
-    const r = await fetch(TG_WORKER + '/pomo-status?chatId=' + chatId);
+    const r = await fetch(TG_WORKER + '/pomo-status?' + authQS());
     const data = await r.json();
     if(data && data.endTimestamp && data.endTimestamp > Date.now()) return data;
   }catch(e){}
@@ -2614,12 +2562,11 @@ async function pomoResetCurrent(){
 }
 
 async function sendPomoNotification(mode, minutes){
-  const chatId = localStorage.getItem('tg_chat_id');
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   try{
     await fetch(TG_WORKER + '/pomo-done', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chatId, mode, minutes })
+      body: JSON.stringify({ ...authObj(), mode, minutes })
     });
   }catch(e){ console.log('pomo notify error:', e); }
 }
@@ -2739,65 +2686,6 @@ document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEve
   });
   if(ok) pomoSetMode(c.dataset.mode);
 }));
-
-/* ===== Floating timer drag ===== */
-(function floatingTimerDrag(){
-  const ft = document.getElementById('floatingTimer');
-  if(!ft) return;
-  try{
-    const pos = JSON.parse(localStorage.getItem('ft_pos') || 'null');
-    if(pos && typeof pos.x === 'number' && typeof pos.y === 'number'){
-      ft.style.left = pos.x + 'px';
-      ft.style.top = pos.y + 'px';
-      ft.style.right = 'auto';
-      ft.style.bottom = 'auto';
-    }
-  }catch(e){}
-  let drag = { active:false, offsetX:0, offsetY:0, moved:false };
-  ft.addEventListener('pointerdown', e => {
-    if(e.target.closest('.ft-btn')) return;
-    drag.active = true; drag.moved = false;
-    const rect = ft.getBoundingClientRect();
-    drag.offsetX = e.clientX - rect.left;
-    drag.offsetY = e.clientY - rect.top;
-    try{ ft.setPointerCapture(e.pointerId); }catch(_){}
-    e.preventDefault();
-  });
-  ft.addEventListener('pointermove', e => {
-    if(!drag.active) return;
-    const x = e.clientX - drag.offsetX;
-    const y = e.clientY - drag.offsetY;
-    const maxX = window.innerWidth - ft.offsetWidth;
-    const maxY = window.innerHeight - ft.offsetHeight;
-    const cx = Math.max(4, Math.min(x, maxX - 4));
-    const cy = Math.max(4, Math.min(y, maxY - 4));
-    ft.style.left = cx + 'px';
-    ft.style.top = cy + 'px';
-    ft.style.right = 'auto';
-    ft.style.bottom = 'auto';
-    drag.moved = true;
-  });
-  ft.addEventListener('pointerup', e => {
-    if(!drag.active) return;
-    drag.active = false;
-    try{ ft.releasePointerCapture(e.pointerId); }catch(_){}
-    if(drag.moved){
-      const left = parseFloat(ft.style.left) || 0;
-      const top = parseFloat(ft.style.top) || 0;
-      try{ localStorage.setItem('ft_pos', JSON.stringify({ x: left, y: top })); }catch(_){}
-    }
-  });
-  ft.addEventListener('pointercancel', () => { drag.active = false; });
-  ft.addEventListener('click', e => {
-    if(drag.moved){ drag.moved = false; return; }
-    if(e.target.closest('.ft-btn')) return;
-    go('study');
-  });
-  document.getElementById('ftToggle').addEventListener('click', e => {
-    e.stopPropagation();
-    pomoToggle();
-  });
-})();
 
 /* ============================================================
    19) المذاكرة
@@ -2956,7 +2844,7 @@ function quickAdd(){
 }
 
 /* ============================================================
-   🤖 الذكاء الاصطناعي — نافذة الإدخال
+   🤖 الذكاء الاصطناعي
 ============================================================ */
 let aiFileData = null;
 
@@ -3040,12 +2928,11 @@ async function submitAiInput(){
   if(loader) loader.style.display = 'block';
 
   try{
-    const chatId = getMyChatId();
     const res = await fetch(TG_WORKER + '/ai-parse', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chatId,
+        ...authObj(),
         text,
         image: aiFileData,
         courses: state.courses.map(c => ({ id: c.id, name: c.name, code: c.code })),
@@ -3269,6 +3156,21 @@ let syncTimeout = null;
 let syncBadgeHideTimer = null;
 function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
+function getMyToken(){ return localStorage.getItem('tg_token') || ''; }
+function setMyToken(t){ if(t) localStorage.setItem('tg_token', t); }
+function authQS(){
+  const t = getMyToken();
+  const c = getMyChatId();
+  if(t) return 'token=' + encodeURIComponent(t);
+  return 'chatId=' + encodeURIComponent(c);
+}
+function authObj(){
+  const t = getMyToken();
+  const c = getMyChatId();
+  const o = { chatId: c };
+  if(t) o.token = t;
+  return o;
+}
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
     updateTgStatus();
@@ -3286,14 +3188,13 @@ function syncToTelegram(silent = true){
   syncTimeout = setTimeout(() => doSync(silent), 800);
 }
 async function doSync(silent = true){
-  const chatId = getMyChatId();
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   try{
     showSyncBadge('loading');
     await fetch(TG_WORKER + '/save', {
       method:'POST', headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({
-        chatId,
+        ...authObj(),
         tasks: state.tasks, exams: state.exams, courses: state.courses,
         schedule: state.schedule, attendance: state.attendance,
         gpaCourses: state.gpaCourses, wellness: state.wellness,
@@ -3312,10 +3213,9 @@ async function doSync(silent = true){
   }
 }
 async function syncAttendanceFromServer(){
-  const chatId = getMyChatId();
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   try{
-    const r = await fetch(TG_WORKER + '/get-attendance?chatId=' + chatId);
+    const r = await fetch(TG_WORKER + '/get-attendance?' + authQS());
     const serverAtt = await r.json();
     if(!Array.isArray(serverAtt)) return;
     let changed = false;
@@ -3337,11 +3237,10 @@ async function syncAttendanceFromServer(){
   }catch(e){}
 }
 async function loadFromCloud(){
-  const chatId = getMyChatId();
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   showSyncBadge('loading');
   try{
-    const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
+    const r = await fetch(TG_WORKER + '/load?' + authQS());
     const data = await r.json();
     if(!data || !data.lastSync){ await doSync(true); return; }
     const localModified = parseInt(localStorage.getItem('localModified') || '0');
@@ -3388,12 +3287,11 @@ function showSyncBadge(status){
 let autoSyncTimer = null;
 async function checkCloudUpdates(){
   if(document.hidden) return;
-  const chatId = getMyChatId();
-  if(!chatId) return;
+  if(!getMyChatId()) return;
   const lastSync = parseInt(localStorage.getItem('localModified') || '0');
   if(Date.now() - lastSync < 3000) return;
   try{
-    const r = await fetch(TG_WORKER + '/load?chatId=' + chatId);
+    const r = await fetch(TG_WORKER + '/load?' + authQS());
     const data = await r.json();
     if(!data || !data.lastSync) return;
     const cloudModified = new Date(data.lastSync).getTime();
@@ -3442,15 +3340,16 @@ document.addEventListener('visibilitychange', () => {
   else if(getMyChatId()){ checkCloudUpdates(); startAutoSync(); }
 });
 async function testTelegram(){
-  const chatId = getMyChatId();
-  if(!chatId){ toast('⚠️ اربط أولاً'); return; }
+  if(!getMyChatId()){ toast('⚠️ اربط أولاً'); return; }
   try{
-    await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ chatId }) });
+    await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ ...authObj() }) });
     toast('✅ تحقق من تلقرام');
   }catch(e){ toast('⚠️ فشل'); }
 }
 function connectTelegram(){
-  const code = String(Math.floor(1000 + Math.random() * 9000));
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for(let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   localStorage.setItem('tg_pending', code);
   localStorage.setItem('tg_pending_time', Date.now().toString());
   startPoll(code);
@@ -3472,6 +3371,7 @@ function startPoll(code){
       if(d.chatId){
         clearInterval(pollTimer);
         setMyChatId(String(d.chatId));
+        if(d.token) setMyToken(String(d.token));
         localStorage.removeItem('tg_pending');
         localStorage.removeItem('tg_pending_time');
         await doSync(true);
@@ -3486,10 +3386,15 @@ async function unlinkTelegram(){
     title: 'فك الربط', emoji: '🔓', okText: 'فك', variant: 'warn'
   });
   if(!ok) return;
+  const oldToken = getMyToken();
   localStorage.removeItem('tg_chat_id');
+  localStorage.removeItem('tg_token');
   localStorage.removeItem('tg_pending');
   localStorage.removeItem('tg_pending_time');
   if(pollTimer) clearInterval(pollTimer);
+  if(oldToken){
+    try{ fetch(TG_WORKER + '/unlink', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: oldToken }) }).catch(() => {}); }catch(e){}
+  }
   syncPomoCancelToServer();
   toast('🔓 تم الفك');
   setTimeout(() => location.reload(), 600);
@@ -3511,7 +3416,8 @@ function updateTgStatus(){
 })();
 (function initTGUI(){
   updateTgStatus();
-  setInterval(() => {
+  let ticks = 0;
+  const t = setInterval(() => {
     const linked = !!getMyChatId();
     const pending = localStorage.getItem('tg_pending');
     const c = document.getElementById('tgConnectBtn');
@@ -3521,6 +3427,7 @@ function updateTgStatus(){
       document.getElementById('tgTestBtn').style.display = linked ? '' : 'none';
     }
     updateTgStatus();
+    if(linked || ++ticks > 40) clearInterval(t);
   }, 1500);
 })();
 
@@ -3530,11 +3437,12 @@ function updateTgStatus(){
 function calcAttendance(){
   const MAX_PERCENT = 0.25;
   const res = {};
+  const weeks = state.settings.semesterWeeks || 16;
   (state.courses || []).forEach(c => {
     const daysSet = new Set();
     (state.schedule || []).filter(s => s.courseId === c.id).forEach(s => daysSet.add(s.day));
     const daysPerWeek = daysSet.size;
-    const totalDays = daysPerWeek * SEMESTER_WEEKS;
+    const totalDays = daysPerWeek * weeks;
     const absentDates = new Set();
     (state.attendance || []).forEach(a => {
       if(a.status !== 'absent' && a.status !== 'excused') return;
@@ -3884,8 +3792,9 @@ function getSemesterWeek(){
   const today = new Date(); today.setHours(0,0,0,0);
   const diffDays = Math.floor((today - startDate) / 86400000);
   if(diffDays < 0) return { week: 0, beforeStart: true, daysLeft: Math.abs(diffDays) };
+  const weeks = state.settings.semesterWeeks || 16;
   const week = Math.floor(diffDays / 7) + 1;
-  return { week: Math.min(week, SEMESTER_WEEKS), remaining: Math.max(0, SEMESTER_WEEKS - week), current: week <= SEMESTER_WEEKS, past: week > SEMESTER_WEEKS };
+  return { week: Math.min(week, weeks), remaining: Math.max(0, weeks - week), current: week <= weeks, past: week > weeks };
 }
 function renderWeekBadge(){
   const wb = document.getElementById('weekBadge');
@@ -3933,7 +3842,7 @@ document.addEventListener('keydown', e => {
    36) التهيئة النهائية
 ============================================================ */
 async function init(){
-  pomoResumeIfNeeded();
+  await pomoResumeIfNeeded();
   applySettings();
   renderAll();
   const h = location.hash.slice(1);

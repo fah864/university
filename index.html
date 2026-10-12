@@ -681,10 +681,52 @@ html[data-theme="dark"] .sched-day.today{color:#5eead4}
             <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام</button>
             <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
           </div>
-          <div style="margin-top:8px">
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
+            <button class="btn btn-ghost btn-sm" onclick="renewToken()" id="tgRenewBtn" style="display:none">🔑 تجديد التوكن</button>
           </div>
         </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="font-size:17px;margin-bottom:16px">🎯 أهداف الصحة</h3>
+          <div class="form-grid">
+            <div class="field"><label>ساعات النوم</label><input type="number" id="setSleepGoal" min="1" max="24" value="8"></div>
+            <div class="field"><label>أكواب الماء</label><input type="number" id="setWaterGoal" min="1" max="30" value="8"></div>
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveHealthGoals()">💾 حفظ الأهداف</button>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="font-size:17px;margin-bottom:16px">🩺 فحص الاتصال</h3>
+          <button class="btn btn-primary btn-block" onclick="runHealthCheck()">🔍 فحص شامل</button>
+          <div id="healthCheckResult" style="margin-top:14px"></div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="font-size:17px;margin-bottom:16px">📤 تصدير واستيراد</h3>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.7">
+            💡 نسخة احتياطية كاملة في ملف JSON
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" style="flex:1" onclick="exportData()">📤 تصدير</button>
+            <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('importFile').click()">📥 استيراد</button>
+            <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)">
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <h3 style="font-size:17px;margin-bottom:6px">🗑️ حذف جزئي</h3>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">احذف قسم محدد بدون المساس بالباقي</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('studyLog')">📊 سجل المذاكرة</button>
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('wellness')">😴 النوم والماء</button>
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('teeth')">🦷 الأسنان</button>
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('attendance')">📋 الحضور</button>
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('expenses')">💸 المصاريف</button>
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('archive')">🗂️ الأرشيف</button>
+          </div>
+        </div>
+
         <div class="card" style="margin-top:16px">
           <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
           <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
@@ -2781,6 +2823,10 @@ function applySettings(){
   if(semEl) semEl.value = state.settings.semesterStart || '';
   const weeksEl = document.getElementById('setSemesterWeeks');
   if(weeksEl) weeksEl.value = state.settings.semesterWeeks || 16;
+  const sleepEl = document.getElementById('setSleepGoal');
+  const waterEl = document.getElementById('setWaterGoal');
+  if(sleepEl) sleepEl.value = state.wellness.sleepGoal || 8;
+  if(waterEl) waterEl.value = state.wellness.waterGoal || 8;
   pomo.total = pomoDuration(pomo.mode);
   if(!pomo.running && (pomo.pausedRemaining === null)) pomo.pausedRemaining = pomo.total;
   pomoRender();
@@ -3425,6 +3471,8 @@ function updateTgStatus(){
       c.textContent = linked ? '🔄 إعادة ربط' : (pending ? '⏳ فتح تلقرام' : '🔗 ربط تلقرام');
       document.getElementById('tgUnlinkBtn').style.display = linked ? '' : 'none';
       document.getElementById('tgTestBtn').style.display = linked ? '' : 'none';
+      const renewBtn = document.getElementById('tgRenewBtn');
+      if(renewBtn) renewBtn.style.display = linked ? '' : 'none';
     }
     updateTgStatus();
     if(linked || ++ticks > 40) clearInterval(t);
@@ -3837,6 +3885,263 @@ function saveSemesterSettings(){
 document.addEventListener('keydown', e => {
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
 });
+
+/* ============================================================
+   37) تصدير/استيراد JSON
+============================================================ */
+function exportData(){
+  try{
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      state: state
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `uni-helper-backup-${todayISO()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('✅ تم تصدير النسخة');
+  }catch(e){
+    console.error(e);
+    toast('❌ فشل التصدير');
+  }
+}
+async function importData(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  if(file.size > 5 * 1024 * 1024){
+    toast('⚠️ الملف كبير — الحد 5MB');
+    input.value = '';
+    return;
+  }
+  const ok = await appConfirm('سيتم استبدال كل بياناتك الحالية بالبيانات المستوردة. متابعة؟', {
+    title: 'استيراد نسخة', emoji: '📥', okText: 'استيراد', variant: 'warn'
+  });
+  if(!ok){ input.value = ''; return; }
+  try{
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    const newState = parsed.state || parsed;
+    if(!newState || typeof newState !== 'object'){
+      throw new Error('ملف غير صالح');
+    }
+    const def = defaultState();
+    state = { ...def, ...newState };
+    state.settings = { ...def.settings, ...(newState.settings || {}) };
+    state.settings.pomo = { ...def.settings.pomo, ...((newState.settings && newState.settings.pomo) || {}) };
+    state.wellness = { ...def.wellness, ...(newState.wellness || {}) };
+    state.health = { ...def.health, ...(newState.health || {}) };
+    state.money = { ...def.money, ...(newState.money || {}) };
+    ['courses','schedule','tasks','exams','studyLog','attendance','gpaCourses','archive'].forEach(k => {
+      if(!Array.isArray(state[k])) state[k] = [];
+    });
+    if(!Array.isArray(state.wellness.log)) state.wellness.log = [];
+    if(!Array.isArray(state.health.teethLog)) state.health.teethLog = [];
+    if(!Array.isArray(state.money.expenses)) state.money.expenses = [];
+    if(!Array.isArray(state.money.goals)) state.money.goals = [];
+    save();
+    applySettings();
+    renderAll();
+    renderAttendancePage();
+    renderWellness();
+    renderTeeth();
+    renderArchive();
+    renderSyncStatus();
+    renderBalance();
+    renderExpenses();
+    renderGoals();
+    renderWeekBadge();
+    renderAcademicStrip();
+    toast('✅ تم الاستيراد بنجاح');
+  }catch(e){
+    console.error(e);
+    toast('❌ فشل الاستيراد: ' + (e.message || 'ملف غير صالح'));
+  }
+  input.value = '';
+}
+
+/* ============================================================
+   38) فحص الاتصال
+============================================================ */
+async function runHealthCheck(){
+  const el = document.getElementById('healthCheckResult');
+  if(!el) return;
+  el.innerHTML = `<div style="text-align:center;padding:14px"><div style="display:inline-block;width:26px;height:26px;border:3px solid var(--p-light);border-top-color:var(--p);border-radius:50%;animation:spin 1s linear infinite"></div></div>`;
+  const results = [];
+  results.push({
+    ok: navigator.onLine,
+    warn: false,
+    label: 'الاتصال بالإنترنت',
+    detail: navigator.onLine ? 'متصل ✅' : 'غير متصل'
+  });
+  const chatId = getMyChatId();
+  results.push({
+    ok: !!chatId,
+    warn: !chatId,
+    label: 'ربط تلقرام',
+    detail: chatId ? `مربوط (${chatId.slice(-4)})` : 'غير مربوط'
+  });
+  const token = getMyToken();
+  results.push({
+    ok: !!token,
+    warn: chatId && !token,
+    label: 'التوكن',
+    detail: token ? `${token.slice(0,8)}...` : 'مفقود — يُنصح بإعادة الربط'
+  });
+  let serverOk = false;
+  let serverTime = 0;
+  if(chatId){
+    try{
+      const t0 = Date.now();
+      const r = await fetch(TG_WORKER + '/load?' + authQS());
+      serverTime = Date.now() - t0;
+      serverOk = r.ok;
+    }catch(e){ serverOk = false; }
+  }
+  results.push({
+    ok: serverOk,
+    warn: !chatId,
+    label: 'استجابة السيرفر',
+    detail: serverOk ? `${serverTime}ms ✅` : (chatId ? 'فشل الاتصال' : 'غير مربوط')
+  });
+  const lastSync = parseInt(localStorage.getItem('localModified') || '0');
+  const diff = lastSync ? Math.round((Date.now() - lastSync) / 1000) : -1;
+  let syncStr = '—';
+  if(diff < 0) syncStr = 'لم تتم بعد';
+  else if(diff < 60) syncStr = 'الآن';
+  else if(diff < 3600) syncStr = `قبل ${Math.round(diff/60)} دقيقة`;
+  else if(diff < 86400) syncStr = `قبل ${Math.round(diff/3600)} ساعة`;
+  else syncStr = `قبل ${Math.round(diff/86400)} يوم`;
+  const syncOk = diff >= 0 && diff < 86400;
+  results.push({
+    ok: syncOk,
+    warn: lastSync > 0 && !syncOk,
+    label: 'آخر مزامنة',
+    detail: syncStr
+  });
+  let sizeKB = 0;
+  try{
+    const raw = localStorage.getItem(STORE_KEY) || '';
+    sizeKB = Math.round((raw.length * 2) / 1024);
+  }catch(e){}
+  results.push({
+    ok: sizeKB < 500,
+    warn: sizeKB >= 500,
+    label: 'حجم البيانات',
+    detail: `${sizeKB} KB`
+  });
+  results.push({
+    ok: true,
+    warn: false,
+    label: 'ملخص البيانات',
+    detail: `${state.courses.length} مقرر · ${state.tasks.length} مهمة · ${state.exams.length} اختبار · ${state.money.expenses.length} مصروف`
+  });
+  const rowsHTML = results.map(r => {
+    const ico = r.ok ? '✅' : (r.warn ? '⚠️' : '❌');
+    const color = r.ok ? 'var(--ok)' : (r.warn ? 'var(--warn)' : 'var(--danger)');
+    const bg = r.ok ? 'var(--ok-bg)' : (r.warn ? 'var(--warn-bg)' : 'var(--danger-bg)');
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:${bg};border-radius:10px;margin-bottom:6px">
+      <span style="font-size:16px">${ico}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:${color}">${r.label}</div>
+        <div style="font-size:11.5px;color:var(--muted);font-weight:600;word-break:break-word">${esc(r.detail)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div style="display:grid;gap:4px">${rowsHTML}</div>`;
+}
+
+/* ============================================================
+   39) حذف جزئي
+============================================================ */
+async function partialDelete(section){
+  const labels = {
+    studyLog: 'سجل المذاكرة',
+    wellness: 'سجل النوم والماء',
+    teeth: 'سجل تفريش الأسنان',
+    attendance: 'سجل الحضور والغياب',
+    expenses: 'المصاريف',
+    archive: 'الأرشيف'
+  };
+  const label = labels[section] || section;
+  const ok = await appConfirm(`سيتم حذف كل ${label} نهائياً. متابعة؟`, {
+    title: `حذف ${label}`, emoji: '🗑️', okText: 'حذف', variant: 'danger'
+  });
+  if(!ok) return;
+  if(section === 'studyLog') state.studyLog = [];
+  else if(section === 'wellness') state.wellness.log = [];
+  else if(section === 'teeth') state.health.teethLog = [];
+  else if(section === 'attendance') state.attendance = [];
+  else if(section === 'expenses') state.money.expenses = [];
+  else if(section === 'archive') state.archive = [];
+  save();
+  renderStudy(); renderWellness(); renderTeeth();
+  renderAttendancePage(); renderExpenses(); renderArchive();
+  renderDashboard(); renderDashHealth();
+  renderSyncStatus();
+  toast(`🗑️ تم حذف ${label}`);
+}
+
+/* ============================================================
+   40) تجديد التوكن
+============================================================ */
+function renewToken(){
+  if(!getMyChatId()){ toast('⚠️ اربط أولاً'); return; }
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for(let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  localStorage.setItem('tg_pending', code);
+  localStorage.setItem('tg_pending_time', Date.now().toString());
+  if(pollTimer) clearInterval(pollTimer);
+  const start = Date.now();
+  pollTimer = setInterval(async () => {
+    if(Date.now() - start > 600000){
+      clearInterval(pollTimer);
+      localStorage.removeItem('tg_pending');
+      localStorage.removeItem('tg_pending_time');
+      toast('⏰ انتهت صلاحية الكود');
+      return;
+    }
+    try{
+      const r = await fetch(TG_WORKER + '/poll?code=' + code);
+      const d = await r.json();
+      if(d.chatId && d.token){
+        clearInterval(pollTimer);
+        setMyChatId(String(d.chatId));
+        setMyToken(String(d.token));
+        localStorage.removeItem('tg_pending');
+        localStorage.removeItem('tg_pending_time');
+        await doSync(true);
+        updateTgStatus();
+        toast('🎉 تم تجديد التوكن!');
+        return;
+      }
+    }catch(e){}
+  }, 1500);
+  window.location.href = 'https://t.me/' + TG_BOT + '?start=' + code;
+  toast('📱 أرسل الكود في تلقرام');
+}
+
+/* ============================================================
+   41) أهداف الصحة
+============================================================ */
+function saveHealthGoals(){
+  const sleepEl = document.getElementById('setSleepGoal');
+  const waterEl = document.getElementById('setWaterGoal');
+  const sleep = Math.max(1, Math.min(24, +sleepEl.value || 8));
+  const water = Math.max(1, Math.min(30, +waterEl.value || 8));
+  state.wellness.sleepGoal = sleep;
+  state.wellness.waterGoal = water;
+  save();
+  renderWellness();
+  renderDashHealth();
+  toast('✅ تم حفظ الأهداف');
+}
 
 /* ============================================================
    36) التهيئة النهائية

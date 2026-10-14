@@ -3373,17 +3373,17 @@ async function checkCloudUpdates(){
 }
 function startAutoSync(){
   if(autoSyncTimer) clearInterval(autoSyncTimer);
-  autoSyncTimer = setInterval(checkCloudUpdates, 5000);
+  autoSyncTimer = null;
 }
 function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
 setTimeout(() => {
-  if(getMyChatId()) loadFromCloud().then(() => { startAutoSync(); renderSyncStatus(); });
+  if(getMyChatId()) loadFromCloud().then(() => { renderSyncStatus(); });
 }, 1500);
 document.addEventListener('visibilitychange', () => {
-  if(document.hidden) stopAutoSync();
-  else if(getMyChatId()){ checkCloudUpdates(); startAutoSync(); }
+  if(document.hidden) return;
+  if(getMyChatId()) checkCloudUpdates();
 });
 async function testTelegram(){
   if(!getMyChatId()){ toast('⚠️ اربط أولاً'); return; }

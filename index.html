@@ -2632,8 +2632,6 @@ function pomoComplete(){
   pomo.endTimestamp = null;
   pomo.pausedRemaining = null;
 
-  sendPomoNotification(completedMode, completedMins);
-
   if(wasWork){
     let cid = document.getElementById('pomoCourse')?.value || '';
     if(cid && !getCourse(cid)) cid = '';

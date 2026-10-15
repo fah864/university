@@ -1480,12 +1480,11 @@ function getTotalGoalSaved(){
   const last = getLastSalaryDate();
   const lastTs = last ? last.getTime() : 0;
   return (state.money.goals || []).reduce((sum, g) => {
-    if(Array.isArray(g.txs)){
-      const cycleNet = g.txs.filter(tx => tx.ts >= lastTs).reduce((a, tx) => a + (+tx.amount || 0), 0);
-      return sum + Math.max(0, cycleNet);
-    }
-    if(g.created && g.created >= lastTs) return sum + (+g.saved || 0);
-    return sum;
+    if(!Array.isArray(g.txs) || !g.txs.length) return sum; // ما فيه سجل → تجاهل
+    const cycleNet = g.txs
+      .filter(tx => tx.ts >= lastTs)
+      .reduce((a, tx) => a + (+tx.amount || 0), 0);
+    return sum + Math.max(0, cycleNet);
   }, 0);
 }
 function getTotalSpent(){ return getCurrentMonthExpenses().reduce((a,b) => a + (+b.amount||0), 0); }
@@ -3692,10 +3691,29 @@ function saveHealthGoals(){
   toast('✅ تم حفظ الأهداف');
 }
 
+// 🔄 Migration مرة واحدة: يحوّل الإيداعات القديمة لسجل بتاريخ قديم
+function migrateGoalsTx(){
+  let changed = false;
+  (state.money.goals || []).forEach(g => {
+    if(!Array.isArray(g.txs)){
+      if((g.saved || 0) > 0){
+        g.txs = [{ ts: 1, amount: +g.saved }]; // تاريخ 1970 → ما يُحسب بأي دورة
+      } else {
+        g.txs = [];
+      }
+      changed = true;
+    }
+  });
+  if(changed){
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+}
+
 /* ============================================================
    36) التهيئة النهائية
 ============================================================ */
 async function init(){
+  migrateGoalsTx();
   await pomoResumeIfNeeded();
   applySettings();
   renderAll();

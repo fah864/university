@@ -908,12 +908,23 @@ let currentCourseId = null;
 ============================================================ */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 function assertSafeImport(s){
+  const MAX_ITEMS = 5000;
   const idRe = /^[A-Za-z0-9_-]*$/;
   const colorRe = /^[#A-Za-z0-9(),.%\s-]*$/;
   const m = s.money || {};
-  const lists = [s.tasks, s.exams, s.courses, s.schedule, s.attendance, s.gpaCourses, s.archive, s.studyLog, m.expenses, m.goals];
-  for(const arr of lists){
+  const w = s.wellness || {};
+  const h = s.health || {};
+  const namedLists = [
+    ['tasks', s.tasks], ['exams', s.exams], ['courses', s.courses],
+    ['schedule', s.schedule], ['attendance', s.attendance],
+    ['gpaCourses', s.gpaCourses], ['archive', s.archive],
+    ['studyLog', s.studyLog], ['money.expenses', m.expenses],
+    ['money.goals', m.goals], ['wellness.log', w.log],
+    ['health.teethLog', h.teethLog]
+  ];
+  for(const [name, arr] of namedLists){
     if(!Array.isArray(arr)) continue;
+    if(arr.length > MAX_ITEMS) throw new Error(`الملف يحتوي ${arr.length} عنصر في "${name}" — الحد ${MAX_ITEMS}`);
     for(const it of arr){
       if(!it || typeof it !== 'object') continue;
       for(const k of ['id','courseId','classId']){
@@ -4012,6 +4023,8 @@ async function importData(input){
     renderWeekBadge();
     renderAcademicStrip();
     toast('✅ تم الاستيراد بنجاح');
+    // 🆕 ارفع للسحابة فوراً لتقليل نافذة التباعد بين الجهاز والسحابة
+    if(getMyChatId()) setTimeout(() => doSync(true), 300);
   }catch(e){
     console.error(e);
     toast('❌ فشل الاستيراد: ' + (e.message || 'ملف غير صالح'));

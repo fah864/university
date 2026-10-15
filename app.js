@@ -226,8 +226,7 @@ function save(){
 }
 
 /* ============ التقويم الأكاديمي (ديناميكي) ============ */
-const ACADEMIC_START = '2026-08-23'; // افتراضي لو المستخدم ما حدد بداية
-// الأحداث محفوظة كنِسَب (offset بالأيام من بداية الفصل)
+const ACADEMIC_START = '2026-08-23';
 const ACADEMIC_EVENTS_TEMPLATE = [
   { offset: -6,  title:'عودة هيئة التدريس',        ico:'👥', type:'info'    },
   { offset: 0,   title:'بداية الدراسة',             ico:'📚', type:'info'    },
@@ -246,7 +245,6 @@ const ACADEMIC_EVENTS_TEMPLATE = [
 ];
 let acadSelectedWeek = null;
 
-// يحسب تواريخ الأحداث ديناميكياً من بداية الفصل المحددة
 function getAcademicEvents(){
   const base = state.settings.semesterStart || ACADEMIC_START;
   const start = new Date(base + 'T00:00:00');
@@ -256,7 +254,6 @@ function getAcademicEvents(){
     return { date: todayISO(d), title: ev.title, ico: ev.ico, type: ev.type };
   });
 }
-// تاريخ بداية الاختبارات (ديناميكي — يوم 119 من الفصل)
 function getExamsStartDate(){
   const base = state.settings.semesterStart || ACADEMIC_START;
   const start = new Date(base + 'T00:00:00');
@@ -1818,21 +1815,31 @@ function pomoRender(){
   if(startBtn) startBtn.textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
 }
 
+// 🔧 MOD 5: sendBeacon + keepalive لضمان وصول الإلغاء
+function syncPomoCancelToServer(){
+  if(!getMyChatId()) return;
+  const payload = JSON.stringify({ ...authObj() });
+  try{
+    if(navigator.sendBeacon){
+      const blob = new Blob([payload], { type: 'text/plain;charset=UTF-8' });
+      if(navigator.sendBeacon(TG_WORKER + '/pomo-cancel', blob)) return;
+    }
+  }catch(e){}
+  try{
+    fetch(TG_WORKER + '/pomo-cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive: true
+    }).catch(() => {});
+  }catch(e){}
+}
 function syncPomoStartToServer(mode, total, endTimestamp){
   if(!getMyChatId()) return;
   try{
     fetch(TG_WORKER + '/pomo-start', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...authObj(), mode, total, endTimestamp })
-    }).catch(() => {});
-  }catch(e){}
-}
-function syncPomoCancelToServer(){
-  if(!getMyChatId()) return;
-  try{
-    fetch(TG_WORKER + '/pomo-cancel', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...authObj() })
     }).catch(() => {});
   }catch(e){}
 }
@@ -1859,6 +1866,7 @@ function pomoStartTimer(){
   syncPomoStartToServer(pomo.mode, pomo.total, pomo.endTimestamp);
   pomoRender();
 }
+// 🔧 MOD 2: أضف syncToTelegram بعد إلغاء السيرفر
 function pomoPauseTimer(){
   if(!pomo.running) return;
   pomo.pausedRemaining = pomoGetRemaining();
@@ -1867,14 +1875,17 @@ function pomoPauseTimer(){
   clearInterval(pomo.intervalId);
   pomoSaveState();
   syncPomoCancelToServer();
+  syncToTelegram(true);
   pomoRender();
 }
 function pomoToggle(){
   if(pomo.running) pomoPauseTimer();
   else pomoStartTimer();
 }
+// 🔧 MOD 3: تتبّع wasRunning وأبلغ السيرفر بعد التبديل
 function pomoSetMode(mode, silent){
   clearInterval(pomo.intervalId);
+  const wasRunning = pomo.running;
   pomo.mode = mode;
   pomo.running = false;
   pomo.endTimestamp = null;
@@ -1882,8 +1893,13 @@ function pomoSetMode(mode, silent){
   pomo.pausedRemaining = pomo.total;
   document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === mode));
   if(!silent) pomoSaveState();
+  if(wasRunning){
+    syncPomoCancelToServer();
+    syncToTelegram(true);
+  }
   pomoRender();
 }
+// 🔧 MOD 4: أضف syncToTelegram بعد التصفير
 async function pomoResetCurrent(){
   const ok = await appConfirm('تصفير المؤقّت وإيقاف الدورة التلقائية؟', {
     title: 'تصفير المؤقّت', emoji: '🔄', okText: 'تصفير', variant: 'warn'
@@ -1893,6 +1909,7 @@ async function pomoResetCurrent(){
   pomoSetMode('work', false);
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
   syncPomoCancelToServer();
+  syncToTelegram(true);
   toast('↺ تم التصفير — اضغط ابدأ للبدء من جديد');
 }
 
@@ -2510,6 +2527,7 @@ function syncToTelegram(silent = true){
   if(syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => doSync(silent), 800);
 }
+// 🔧 MOD 1: أضف pomoActive للـ payload
 async function doSync(silent = true){
   if(!getMyChatId()) return;
   const useForce = window.__forceSync === true;
@@ -2527,6 +2545,7 @@ async function doSync(silent = true){
         health: state.health, money: state.money,
         archive: state.archive,
         studyLog: state.studyLog, settings: state.settings,
+        pomoActive: pomo.running === true,
         force: useForce
       })
     });
@@ -2685,7 +2704,7 @@ function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
 
-// مستمعو الأحداث الموحّدون (بدل المتكررين في الكود القديم)
+// مستمعو الأحداث الموحّدون
 document.addEventListener('visibilitychange', () => {
   if(document.hidden) return;
   pomoRender();
@@ -2728,7 +2747,6 @@ function connectTelegram(){
   localStorage.setItem('tg_pending', code);
   localStorage.setItem('tg_pending_time', Date.now().toString());
   startPoll(code);
-  // 🆕 اعرض الكود أولاً قبل فتح تلقرام (حل مشكلة iOS)
   openModal('📱 ربط تلقرام', `
     <div style="text-align:center;padding:6px 0">
       <div style="font-size:14px;color:var(--muted);font-weight:700;margin-bottom:14px">
@@ -3315,7 +3333,6 @@ async function importData(input){
     renderWeekBadge();
     renderAcademicStrip();
     toast('✅ تم الاستيراد بنجاح');
-    // 🆕 ارفع للسحابة فوراً لتقليل نافذة التباعد بين الجهاز والسحابة
     if(getMyChatId()) setTimeout(() => doSync(true), 300);
   }catch(e){
     console.error(e);
@@ -3457,7 +3474,6 @@ function renewToken(){
   localStorage.setItem('tg_pending', code);
   localStorage.setItem('tg_pending_time', Date.now().toString());
   startPoll(code);
-  // 🆕 اعرض الكود أولاً (نفس حل مشكلة iOS في connectTelegram)
   openModal('🔑 تجديد التوكن', `
     <div style="text-align:center;padding:6px 0">
       <div style="font-size:14px;color:var(--muted);font-weight:700;margin-bottom:14px">

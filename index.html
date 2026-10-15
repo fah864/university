@@ -907,6 +907,33 @@ let currentCourseId = null;
    3) دوال مساعدة
 ============================================================ */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+function assertSafeImport(s){
+  const idRe = /^[A-Za-z0-9_-]*$/;
+  const colorRe = /^[#A-Za-z0-9(),.%\s-]*$/;
+  const m = s.money || {};
+  const lists = [s.tasks, s.exams, s.courses, s.schedule, s.attendance, s.gpaCourses, s.archive, s.studyLog, m.expenses, m.goals];
+  for(const arr of lists){
+    if(!Array.isArray(arr)) continue;
+    for(const it of arr){
+      if(!it || typeof it !== 'object') continue;
+      for(const k of ['id','courseId','classId']){
+        if(it[k] != null && !idRe.test(String(it[k]))) throw new Error('الملف يحتوي معرّفات غير آمنة');
+      }
+      if(it.color != null && !colorRe.test(String(it.color))) throw new Error('الملف يحتوي ألوان غير آمنة');
+    }
+  }
+}
+function fixUnsafeIds(){
+  const idRe = /^[A-Za-z0-9_-]{0,64}$/;
+  let changed = false;
+  for(const arr of [state.tasks, state.exams, state.schedule]){
+    if(!Array.isArray(arr)) continue;
+    for(const it of arr){
+      if(it && it.courseId != null && !idRe.test(String(it.courseId))){ it.courseId = ''; changed = true; }
+    }
+  }
+  if(changed){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+}
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function todayISO(d = new Date()){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function daysUntil(iso){ const t = new Date(); t.setHours(0,0,0,0); const d = new Date(iso + 'T00:00:00'); return Math.round((d - t) / 86400000); }
@@ -936,7 +963,7 @@ function to12(time24){
    3.5) pruneOldLogs + save
 ============================================================ */
 function pruneOldLogs(){
-  const cutoff = todayISO(new Date(Date.now() - 90*86400000));
+  const cutoff = todayISO(new Date(Date.now() - 365*86400000));
   state.studyLog = state.studyLog.filter(l => l.date >= cutoff);
   state.wellness.log = state.wellness.log.filter(l => l.date >= cutoff);
   state.health.teethLog = state.health.teethLog.filter(l => l.date >= cutoff);
@@ -946,7 +973,12 @@ function save(){
     pruneOldLogs();
     localStorage.setItem(STORE_KEY, JSON.stringify(state));
     localStorage.setItem('localModified', Date.now().toString());
-  }catch(e){}
+  }catch(e){
+    if(!window.__saveWarned){
+      window.__saveWarned = true;
+      try{ toast('⚠️ تعذّر الحفظ على الجهاز (التخزين ممتلئ أو التصفح خاص). صدّر نسخة احتياطية!'); }catch(_){}
+    }
+  }
   if(typeof syncToTelegram === 'function' && getMyChatId()) syncToTelegram(true);
 }
 
@@ -2546,7 +2578,7 @@ function syncPomoCancelToServer(){
 async function loadPomoFromServer(){
   if(!getMyChatId()) return null;
   try{
-    const r = await fetch(TG_WORKER + '/pomo-status?' + authQS());
+    const r = await fetch(TG_WORKER + '/pomo-status', { headers: authHeaders() });
     const data = await r.json();
     if(data && data.endTimestamp && data.endTimestamp > Date.now()) return data;
   }catch(e){}
@@ -2799,6 +2831,7 @@ async function clearAll(){
   currentCourseId = null;
   try{ localStorage.removeItem(POMO_STORE_KEY); }catch(e){}
   syncPomoCancelToServer();
+  if(getMyChatId()){ window.__forceSync = true; setTimeout(() => { window.__forceSync = false; }, 3000); }
   save(); applySettings(); renderAll(); closeModal();
   toast('🗑️ تم حذف كل البيانات');
 }
@@ -3026,7 +3059,7 @@ function handleAiResult(result){
     state.exams.push({
       id: uid(),
       title: d.title || 'اختبار',
-      courseId: d.courseId || '',
+      courseId: getCourse(d.courseId) ? d.courseId : '',
       type: d.type || 'ميدتيرم',
       date: d.date || todayISO(),
       time: d.time || '',
@@ -3044,7 +3077,7 @@ function handleAiResult(result){
     state.tasks.push({
       id: uid(),
       title: d.title || 'مهمة',
-      courseId: d.courseId || '',
+      courseId: getCourse(d.courseId) ? d.courseId : '',
       type: d.type || 'واجب',
       due: d.due || todayISO(),
       priority: d.priority || 'med',
@@ -3202,18 +3235,13 @@ function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
 function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
 function getMyToken(){ return localStorage.getItem('tg_token') || ''; }
 function setMyToken(t){ if(t) localStorage.setItem('tg_token', t); }
-function authQS(){
+function authHeaders(){
   const t = getMyToken();
-  const c = getMyChatId();
-  if(t) return 'token=' + encodeURIComponent(t);
-  return 'chatId=' + encodeURIComponent(c);
+  return t ? { 'Authorization': 'Bearer ' + t } : {};
 }
 function authObj(){
   const t = getMyToken();
-  const c = getMyChatId();
-  const o = { chatId: c };
-  if(t) o.token = t;
-  return o;
+  return t ? { token: t } : {};
 }
 document.addEventListener('visibilitychange', () => {
   if(!document.hidden){
@@ -3233,9 +3261,12 @@ function syncToTelegram(silent = true){
 }
 async function doSync(silent = true){
   if(!getMyChatId()) return;
+  const useForce = window.__forceSync === true;
+  window.__forceSync = false;
   try{
     showSyncBadge('loading');
-    await fetch(TG_WORKER + '/save', {
+    fixUnsafeIds();
+    const saveRes = await fetch(TG_WORKER + '/save', {
       method:'POST', headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({
         ...authObj(),
@@ -3244,9 +3275,28 @@ async function doSync(silent = true){
         gpaCourses: state.gpaCourses, wellness: state.wellness,
         health: state.health, money: state.money,
         archive: state.archive,
-        studyLog: state.studyLog, settings: state.settings
+        studyLog: state.studyLog, settings: state.settings,
+        force: useForce
       })
     });
+    if(saveRes.status === 401){
+      showSyncBadge('error');
+      toast('⚠️ انتهى الربط — اربط تلقرام من جديد');
+      return false;
+    }
+    if(saveRes.status === 409){
+      showSyncBadge('error');
+      toast('⛔ تم منع المزامنة: بياناتك المحلية فاضية والسحابة فيها بيانات');
+      return false;
+    }
+    if(saveRes.status === 422 || saveRes.status === 413){
+      showSyncBadge('error');
+      let why = '';
+      try{ const j = await saveRes.json(); why = j.detail || j.error || ''; }catch(_){}
+      toast('⛔ السيرفر رفض البيانات: ' + why);
+      return false;
+    }
+    if(!saveRes.ok) throw new Error('save failed');
     localStorage.setItem('localModified', Date.now().toString());
     showSyncBadge('success');
     if(!silent) toast('✅ تمت المزامنة');
@@ -3259,7 +3309,7 @@ async function doSync(silent = true){
 async function syncAttendanceFromServer(){
   if(!getMyChatId()) return;
   try{
-    const r = await fetch(TG_WORKER + '/get-attendance?' + authQS());
+    const r = await fetch(TG_WORKER + '/get-attendance', { headers: authHeaders() });
     const serverAtt = await r.json();
     if(!Array.isArray(serverAtt)) return;
     let changed = false;
@@ -3284,7 +3334,12 @@ async function loadFromCloud(){
   if(!getMyChatId()) return;
   showSyncBadge('loading');
   try{
-    const r = await fetch(TG_WORKER + '/load?' + authQS());
+    const r = await fetch(TG_WORKER + '/load', { headers: authHeaders() });
+    if(r.status === 401){
+      showSyncBadge('error');
+      toast('⚠️ انتهى الربط — اربط تلقرام من جديد');
+      return;
+    }
     const data = await r.json();
     if(!data || !data.lastSync){ await doSync(true); return; }
     const localModified = parseInt(localStorage.getItem('localModified') || '0');
@@ -3335,7 +3390,7 @@ async function checkCloudUpdates(){
   const lastSync = parseInt(localStorage.getItem('localModified') || '0');
   if(Date.now() - lastSync < 3000) return;
   try{
-    const r = await fetch(TG_WORKER + '/load?' + authQS());
+    const r = await fetch(TG_WORKER + '/load', { headers: authHeaders() });
     const data = await r.json();
     if(!data || !data.lastSync) return;
     const cloudModified = new Date(data.lastSync).getTime();
@@ -3418,7 +3473,7 @@ function startPoll(code){
         if(d.token) setMyToken(String(d.token));
         localStorage.removeItem('tg_pending');
         localStorage.removeItem('tg_pending_time');
-        await doSync(true);
+        await loadFromCloud();
         toast('🎉 تم الربط! جاري تحديث الصفحة...');
         setTimeout(() => location.reload(), 900);
       }
@@ -3928,6 +3983,7 @@ async function importData(input){
     if(!newState || typeof newState !== 'object'){
       throw new Error('ملف غير صالح');
     }
+    assertSafeImport(newState);
     const def = defaultState();
     state = { ...def, ...newState };
     state.settings = { ...def.settings, ...(newState.settings || {}) };
@@ -3996,7 +4052,7 @@ async function runHealthCheck(){
   if(chatId){
     try{
       const t0 = Date.now();
-      const r = await fetch(TG_WORKER + '/load?' + authQS());
+      const r = await fetch(TG_WORKER + '/load', { headers: authHeaders() });
       serverTime = Date.now() - t0;
       serverOk = r.ok;
     }catch(e){ serverOk = false; }
@@ -4114,7 +4170,7 @@ function renewToken(){
         setMyToken(String(d.token));
         localStorage.removeItem('tg_pending');
         localStorage.removeItem('tg_pending_time');
-        await doSync(true);
+        await loadFromCloud();
         updateTgStatus();
         toast('🎉 تم تجديد التوكن!');
         return;

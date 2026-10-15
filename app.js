@@ -225,26 +225,44 @@ function save(){
   if(typeof syncToTelegram === 'function' && getMyChatId()) syncToTelegram(true);
 }
 
-/* ============ التقويم الأكاديمي ============ */
-const ACADEMIC_START = '2026-08-23';
-const ACADEMIC_EXAMS_START = '2026-12-20';
-const ACADEMIC_EVENTS = [
-  { date:'2026-08-17', title:'عودة هيئة التدريس', ico:'👥', type:'info' },
-  { date:'2026-08-23', title:'بداية الدراسة', ico:'📚', type:'info' },
-  { date:'2026-08-26', title:'نهاية الحذف والإضافة', ico:'✏️', type:'info' },
-  { date:'2026-09-01', title:'نهاية التأجيل', ico:'📋', type:'info' },
-  { date:'2026-09-23', title:'اليوم الوطني', ico:'🇸🇦', type:'holiday' },
-  { date:'2026-09-24', title:'اليوم الوطني', ico:'🇸🇦', type:'holiday' },
-  { date:'2026-11-19', title:'إجازة منتصف الفصل', ico:'🎉', type:'holiday' },
-  { date:'2026-11-29', title:'استئناف الدراسة', ico:'📖', type:'info' },
-  { date:'2026-12-10', title:'نهاية الاعتذار', ico:'🚫', type:'info' },
-  { date:'2026-12-20', title:'بداية الاختبارات النهائية', ico:'📝', type:'exam' },
-  { date:'2027-01-05', title:'نهاية الاختبارات', ico:'🏁', type:'exam' },
-  { date:'2027-01-07', title:'إجازة منتصف العام', ico:'🎉', type:'holiday' },
-  { date:'2027-01-10', title:'رصد الدرجات', ico:'📊', type:'info' },
-  { date:'2027-01-17', title:'بداية الفصل الثاني', ico:'🚀', type:'info' }
+/* ============ التقويم الأكاديمي (ديناميكي) ============ */
+const ACADEMIC_START = '2026-08-23'; // افتراضي لو المستخدم ما حدد بداية
+// الأحداث محفوظة كنِسَب (offset بالأيام من بداية الفصل)
+const ACADEMIC_EVENTS_TEMPLATE = [
+  { offset: -6,  title:'عودة هيئة التدريس',        ico:'👥', type:'info'    },
+  { offset: 0,   title:'بداية الدراسة',             ico:'📚', type:'info'    },
+  { offset: 3,   title:'نهاية الحذف والإضافة',      ico:'✏️', type:'info'    },
+  { offset: 9,   title:'نهاية التأجيل',             ico:'📋', type:'info'    },
+  { offset: 31,  title:'اليوم الوطني',              ico:'🇸🇦', type:'holiday' },
+  { offset: 32,  title:'اليوم الوطني',              ico:'🇸🇦', type:'holiday' },
+  { offset: 88,  title:'إجازة منتصف الفصل',         ico:'🎉', type:'holiday' },
+  { offset: 98,  title:'استئناف الدراسة',           ico:'📖', type:'info'    },
+  { offset: 109, title:'نهاية الاعتذار',            ico:'🚫', type:'info'    },
+  { offset: 119, title:'بداية الاختبارات النهائية', ico:'📝', type:'exam'    },
+  { offset: 135, title:'نهاية الاختبارات',          ico:'🏁', type:'exam'    },
+  { offset: 137, title:'إجازة منتصف العام',         ico:'🎉', type:'holiday' },
+  { offset: 140, title:'رصد الدرجات',               ico:'📊', type:'info'    },
+  { offset: 147, title:'بداية الفصل الثاني',        ico:'🚀', type:'info'    }
 ];
 let acadSelectedWeek = null;
+
+// يحسب تواريخ الأحداث ديناميكياً من بداية الفصل المحددة
+function getAcademicEvents(){
+  const base = state.settings.semesterStart || ACADEMIC_START;
+  const start = new Date(base + 'T00:00:00');
+  return ACADEMIC_EVENTS_TEMPLATE.map(ev => {
+    const d = new Date(start);
+    d.setDate(d.getDate() + ev.offset);
+    return { date: todayISO(d), title: ev.title, ico: ev.ico, type: ev.type };
+  });
+}
+// تاريخ بداية الاختبارات (ديناميكي — يوم 119 من الفصل)
+function getExamsStartDate(){
+  const base = state.settings.semesterStart || ACADEMIC_START;
+  const start = new Date(base + 'T00:00:00');
+  start.setDate(start.getDate() + 119);
+  return start;
+}
 
 function getWeekMonday(weekNum){
   const base = state.settings.semesterStart || ACADEMIC_START;
@@ -270,7 +288,7 @@ function currentAcademicWeek(){
 function getEventsForWeek(weekNum){
   const { start, end } = getWeekRange(weekNum);
   const s = todayISO(start), e = todayISO(end);
-  return ACADEMIC_EVENTS.filter(ev => ev.date >= s && ev.date <= e);
+  return getAcademicEvents().filter(ev => ev.date >= s && ev.date <= e);
 }
 function renderAcademicStrip(){
   const weeks = state.settings.semesterWeeks || 16;
@@ -286,7 +304,7 @@ function renderAcademicStrip(){
   const fmtShort = d => d.toLocaleDateString('ar-EG', { day:'numeric', month:'short' });
   titleEl.innerHTML = `📅 الأسبوع <span class="week-num">${selected}</span>`;
   rangeEl.textContent = `من ${fmtShort(start)} إلى ${fmtShort(end)}`;
-  const daysToExams = Math.ceil((new Date(ACADEMIC_EXAMS_START) - new Date()) / 86400000);
+  const daysToExams = Math.ceil((getExamsStartDate() - new Date()) / 86400000);
   if(daysToExams > 30){ countEl.className = 'acad-countdown'; countEl.textContent = `⏳ ${daysToExams} يوم للاختبارات`; }
   else if(daysToExams > 7){ countEl.className = 'acad-countdown warn'; countEl.textContent = `⚠️ ${daysToExams} يوم للاختبارات`; }
   else if(daysToExams > 0){ countEl.className = 'acad-countdown danger'; countEl.textContent = `🚨 ${daysToExams} يوم للاختبارات`; }
@@ -2486,16 +2504,6 @@ function authObj(){
   const t = getMyToken();
   return t ? { token: t } : {};
 }
-document.addEventListener('visibilitychange', () => {
-  if(!document.hidden){
-    updateTgStatus();
-    if(getMyChatId()){ syncToTelegram(true); syncAttendanceFromServer(); }
-  }
-});
-window.addEventListener('focus', () => {
-  updateTgStatus();
-  if(getMyChatId()) syncToTelegram(true);
-});
 function syncToTelegram(silent = true){
   const chatId = getMyChatId();
   if(!chatId) return;
@@ -2669,18 +2677,43 @@ async function checkCloudUpdates(){
 }
 function startAutoSync(){
   if(autoSyncTimer) clearInterval(autoSyncTimer);
-  autoSyncTimer = null;
+  autoSyncTimer = setInterval(() => {
+    if(!document.hidden && getMyChatId()) checkCloudUpdates();
+  }, 45000);
 }
 function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
-setTimeout(() => {
-  if(getMyChatId()) loadFromCloud().then(() => { renderSyncStatus(); });
-}, 1500);
+
+// مستمعو الأحداث الموحّدون (بدل المتكررين في الكود القديم)
 document.addEventListener('visibilitychange', () => {
   if(document.hidden) return;
-  if(getMyChatId()) checkCloudUpdates();
+  pomoRender();
+  renderDashHealth();
+  renderTeeth();
+  renderAcademicStrip();
+  updateTgStatus();
+  if(getMyChatId()){
+    syncToTelegram(true);
+    syncAttendanceFromServer();
+    checkCloudUpdates();
+  }
 });
+window.addEventListener('focus', () => {
+  pomoRender();
+  updateTgStatus();
+  if(getMyChatId()) syncToTelegram(true);
+});
+
+setTimeout(() => {
+  if(getMyChatId()){
+    loadFromCloud().then(() => {
+      renderSyncStatus();
+      startAutoSync();
+    });
+  }
+}, 1500);
+
 async function testTelegram(){
   if(!getMyChatId()){ toast('⚠️ اربط أولاً'); return; }
   try{
@@ -3423,34 +3456,34 @@ function renewToken(){
   for(let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
   localStorage.setItem('tg_pending', code);
   localStorage.setItem('tg_pending_time', Date.now().toString());
-  if(pollTimer) clearInterval(pollTimer);
-  const start = Date.now();
-  pollTimer = setInterval(async () => {
-    if(Date.now() - start > 600000){
-      clearInterval(pollTimer);
-      localStorage.removeItem('tg_pending');
-      localStorage.removeItem('tg_pending_time');
-      toast('⏰ انتهت صلاحية الكود');
-      return;
-    }
-    try{
-      const r = await fetch(TG_WORKER + '/poll?code=' + code);
-      const d = await r.json();
-      if(d.chatId && d.token){
-        clearInterval(pollTimer);
-        setMyChatId(String(d.chatId));
-        setMyToken(String(d.token));
-        localStorage.removeItem('tg_pending');
-        localStorage.removeItem('tg_pending_time');
-        await loadFromCloud();
-        updateTgStatus();
-        toast('🎉 تم تجديد التوكن!');
-        return;
-      }
-    }catch(e){}
-  }, 1500);
-  window.location.href = 'https://t.me/' + TG_BOT + '?start=' + code;
-  toast('📱 أرسل الكود في تلقرام');
+  startPoll(code);
+  // 🆕 اعرض الكود أولاً (نفس حل مشكلة iOS في connectTelegram)
+  openModal('🔑 تجديد التوكن', `
+    <div style="text-align:center;padding:6px 0">
+      <div style="font-size:14px;color:var(--muted);font-weight:700;margin-bottom:14px">
+        انسخ الكود ثم أرسله للبوت لتجديد الجلسة
+      </div>
+      <div style="font-family:'Tajawal';font-size:42px;font-weight:900;letter-spacing:8px;color:var(--p);background:var(--p-light);padding:18px;border-radius:14px;margin-bottom:14px;user-select:all;-webkit-user-select:all">
+        ${code}
+      </div>
+      <button class="btn btn-primary btn-block" onclick="navigator.clipboard.writeText('${code}');this.textContent='✅ تم النسخ';setTimeout(()=>this.textContent='📋 نسخ الكود',1500)" style="margin-bottom:16px">
+        📋 نسخ الكود
+      </button>
+      <div style="background:var(--warn-bg);color:var(--warn);padding:12px;border-radius:11px;font-size:12.5px;font-weight:700;line-height:1.9;margin-bottom:14px;text-align:right">
+        <b>⚠️ على iOS:</b><br>
+        1. اضغط <b>📋 نسخ الكود</b> أعلاه<br>
+        2. اضغط <b>📱 فتح تلقرام</b> تحت<br>
+        3. اضغط <b>START</b> ثم الصق الكود وأرسله<br>
+        4. ارجع للموقع — سيتم التجديد تلقائياً
+      </div>
+      <div style="font-size:12px;color:var(--muted);font-weight:600">
+        ⏱️ صلاحية الكود: 10 دقائق
+      </div>
+    </div>
+  `, `
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="window.location.href='https://t.me/${TG_BOT}?start=${code}'">📱 فتح تلقرام</button>
+  `);
 }
 
 /* ============================================================
@@ -3491,15 +3524,3 @@ async function init(){
   renderAcademicStrip();
 }
 init();
-
-document.addEventListener('visibilitychange', () => {
-  if(!document.hidden){
-    pomoRender();
-    renderDashHealth();
-    renderTeeth();
-    renderAcademicStrip();
-  }
-});
-window.addEventListener('focus', () => {
-  pomoRender();
-});

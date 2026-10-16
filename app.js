@@ -141,7 +141,8 @@ let currentCourseId = null;
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
 function assertSafeImport(s){
   const MAX_ITEMS = 5000;
-  const idRe = /^[A-Za-z0-9_-]*$/;
+  // ✅ FIX 3: was /^[A-Za-z0-9_-]*$/ — the '*' allowed empty IDs
+  const idRe = /^[A-Za-z0-9_-]{1,64}$/;
   const colorRe = /^[#A-Za-z0-9(),.%\s-]*$/;
   const m = s.money || {};
   const w = s.wellness || {};
@@ -450,7 +451,11 @@ function openModal(title, bodyHTML, footHTML){
   document.getElementById('modalFoot').innerHTML = footHTML || '';
   modalBg.classList.add('open');
 }
-function closeModal(){ modalBg.classList.remove('open'); }
+// ✅ FIX 6: reset AI upload state on close
+function closeModal(){
+  modalBg.classList.remove('open');
+  if (typeof aiFileData !== 'undefined') aiFileData = null;
+}
 modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); });
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && modalBg.classList.contains('open')) closeModal(); });
 
@@ -944,11 +949,12 @@ function openAttPopup(classId, date, draftNote){
   const cur = existing ? existing.status : 'present';
   const noteVal = draftNote !== undefined ? draftNote : (existing?.note || '');
   const presentActive = cur === 'present';
-  const presentBtn = `<button onclick="setAtt('${classId}','${date}','present')" style="grid-column:1/-1;padding:11px;border-radius:12px;font-weight:700;font-size:13.5px;background:${presentActive ? 'var(--ok)' : 'var(--hover)'};color:${presentActive ? '#fff' : 'var(--text)'};border:2px solid ${presentActive ? 'var(--ok)' : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">✅ حاضر (الافتراضي)</button>`;
+  // ✅ FIX 5a: add att-status-btn class + data-status for in-place toggling
+  const presentBtn = `<button class="att-status-btn" data-status="present" onclick="setAtt('${classId}','${date}','present')" style="grid-column:1/-1;padding:11px;border-radius:12px;font-weight:700;font-size:13.5px;background:${presentActive ? 'var(--ok)' : 'var(--hover)'};color:${presentActive ? '#fff' : 'var(--text)'};border:2px solid ${presentActive ? 'var(--ok)' : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">✅ حاضر (الافتراضي)</button>`;
   const btns = presentBtn + Object.entries(ATT).map(([k,v]) => {
     const active = cur === k;
     const bg = v.color || courseColor(s.courseId);
-    return `<button onclick="setAtt('${classId}','${date}','${k}')" style="padding:13px;border-radius:12px;font-weight:700;font-size:13.5px;background:${active ? bg : 'var(--hover)'};color:${active ? '#fff' : 'var(--text)'};border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">${v.ico} ${v.label}</button>`;
+    return `<button class="att-status-btn" data-status="${k}" onclick="setAtt('${classId}','${date}','${k}')" style="padding:13px;border-radius:12px;font-weight:700;font-size:13.5px;background:${active ? bg : 'var(--hover)'};color:${active ? '#fff' : 'var(--text)'};border:2px solid ${active ? bg : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">${v.ico} ${v.label}</button>`;
   }).join('');
   const dateStr = new Date(date + 'T00:00:00').toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long'});
   const isToday = date === todayISO();
@@ -963,6 +969,7 @@ function openAttPopup(classId, date, draftNote){
       <textarea id="attNote" placeholder="سبب الغياب أو ملاحظة..." style="min-height:70px">${esc(noteVal)}</textarea></div>
   `, `${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>`);
 }
+// ✅ FIX 5a: no longer reopens the modal — updates buttons in-place
 function setAtt(classId, date, status){
   const n = document.getElementById('attNote');
   const note = n ? n.value.trim() : '';
@@ -973,8 +980,29 @@ function setAtt(classId, date, status){
     if(att){ att.status = status; att.note = note; }
     else{ state.attendance.push({ id:uid(), classId, date, status, note }); }
   }
-  save(); renderSchedule(); renderAttendancePage(); openAttPopup(classId, date, status === 'present' ? '' : note); toast('✅ تم');
+  save(); renderSchedule(); renderAttendancePage();
+
+  const sch = state.schedule.find(x => x.id === classId);
+  const schColor = sch ? courseColor(sch.courseId) : '#0d9488';
+  document.querySelectorAll('#modalBody .att-status-btn').forEach(btn => {
+    const k = btn.dataset.status;
+    const isActive = k === status;
+    if(k === 'present'){
+      btn.style.background = isActive ? 'var(--ok)' : 'var(--hover)';
+      btn.style.color = isActive ? '#fff' : 'var(--text)';
+      btn.style.borderColor = isActive ? 'var(--ok)' : 'transparent';
+    } else {
+      const v = ATT[k];
+      const bg = (v && v.color) || schColor;
+      btn.style.background = isActive ? bg : 'var(--hover)';
+      btn.style.color = isActive ? '#fff' : 'var(--text)';
+      btn.style.borderColor = isActive ? bg : 'transparent';
+    }
+  });
+
+  toast('✅ تم');
 }
+// ✅ FIX 5b: create a 'present' record if a note is provided with no existing record
 function saveAttNote(classId, date){
   const n = document.getElementById('attNote');
   if(!n) return;
@@ -983,9 +1011,11 @@ function saveAttNote(classId, date){
   if(att){
     att.note = note;
     save(); renderSchedule(); renderAttendancePage(); closeModal(); toast('💾 تم الحفظ');
+  } else if(note){
+    state.attendance.push({ id: uid(), classId, date, status: 'present', note });
+    save(); renderSchedule(); renderAttendancePage(); closeModal(); toast('💾 تم الحفظ');
   } else {
     closeModal();
-    toast('✅ الحالة: حاضر');
   }
 }
 async function clearAtt(classId, date){
@@ -1992,7 +2022,8 @@ function pomoStartTimer(){
   const selCourse = document.getElementById('pomoCourse')?.value;
   if(selCourse !== undefined) pomo.courseId = selCourse;
   clearInterval(pomo.intervalId);
-  pomo.intervalId = setInterval(pomoTick, 250);
+  // ✅ FIX 4a: 250 → 1000 (timer is computed from endTimestamp so 1s granularity is enough)
+  pomo.intervalId = setInterval(pomoTick, 1000);
   pomoSaveState();
   syncPomoStartToServer(pomo.mode, pomo.total, pomo.endTimestamp);
   pomoRender();
@@ -2141,7 +2172,8 @@ async function pomoResumeIfNeeded(){
     pomo.running = true;
     pomo.endTimestamp = serverTimer.endTimestamp;
     clearInterval(pomo.intervalId);
-    pomo.intervalId = setInterval(pomoTick, 250);
+    // ✅ FIX 4a: 250 → 1000
+    pomo.intervalId = setInterval(pomoTick, 1000);
     pomoSaveState();
     document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === pomo.mode));
     pomoRender();
@@ -2154,7 +2186,8 @@ async function pomoResumeIfNeeded(){
     pomo.running = true;
     pomo.endTimestamp = saved.endTimestamp;
     clearInterval(pomo.intervalId);
-    pomo.intervalId = setInterval(pomoTick, 250);
+    // ✅ FIX 4a: 250 → 1000
+    pomo.intervalId = setInterval(pomoTick, 1000);
   } else if(saved.endTimestamp && saved.endTimestamp <= Date.now()){
     pomo.mode = saved.mode || 'work';
     pomo.total = saved.total || pomoDuration(pomo.mode);
@@ -2870,17 +2903,19 @@ async function checkCloudUpdates(){
 }
 function startAutoSync(){
   if(autoSyncTimer) clearInterval(autoSyncTimer);
+  // ✅ FIX 4b: 45000 → 180000 (3 minutes)
   autoSyncTimer = setInterval(() => {
     if(!document.hidden && getMyChatId()) checkCloudUpdates();
-  }, 45000);
+  }, 180000);
 }
 function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
 
-// مستمعو الأحداث الموحّدون
+// ✅ FIX 4c: single visibilitychange listener — also pauses/resumes auto sync
 document.addEventListener('visibilitychange', () => {
-  if(document.hidden) return;
+  if(document.hidden){ stopAutoSync(); return; }
+  startAutoSync();
   pomoRender();
   renderDashHealth();
   renderTeeth();
@@ -3732,3 +3767,12 @@ async function init(){
   renderAcademicStrip();
 }
 init();
+
+/* ============================================================
+   ✅ FIX 1: تسجيل Service Worker (PWA)
+============================================================ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}

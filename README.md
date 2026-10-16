@@ -5,7 +5,7 @@
 ![Version](https://img.shields.io/badge/version-1.0-0d9488)
 ![PWA](https://img.shields.io/badge/PWA-ready-0891b2)
 ![License](https://img.shields.io/badge/license-MIT-4f46e5)
-![Lang](https://img.shields.io/badge/lang-العربية-db2777)
+![Lang](https://img.shields.io/badge/lang-Arabic%20RTL-db2777)
 
 ---
 

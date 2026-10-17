@@ -3923,19 +3923,29 @@ function reconcileGoalTxs(g){
    36) التهيئة النهائية
 ============================================================ */
 async function init(){
-  // 1) اعرض الواجهة فوراً (تنبيه 2)
+  // 1) تجهيز الإعدادات الأساسية
   migrateGoalsTx();
   acadSelectedWeek = currentAcademicWeek();
   applySettings();
+
+  // 2) إذا كان المستخدم مربوطاً بتلقرام، نجلب أحدث البيانات من السحابة أولاً
+  if(typeof getMyChatId === 'function' && getMyChatId()){
+    try{
+      await loadFromCloud(); // ننتظر حتى تصل البيانات من السيرفر
+    }catch(e){ 
+      console.error('Cloud sync failed on init', e); 
+    }
+  }
+
+  // 3) الآن نرسم الواجهة بعد أن تأكدنا أن البيانات محدثة (أو فشل التحديث)
   renderAll();
   renderAcademicStrip();
-
-  // 2) بعدها نتحقق من البومودورو في الخلفية
   pomoResumeIfNeeded().catch(() => {});
 
-  // 3) الصفحات الأخرى
+  // 4) تجهيز باقي الصفحات
   const h = location.hash.slice(1);
-  if(h && document.getElementById('view-' + h) && h !== 'course-detail') go(h);
+  if(h && document.getElementById('view-' + h)) go(h);
+  
   try{ renderAttendancePage(); }catch(e){}
   try{ renderWellness(); }catch(e){}
   try{ renderTeeth(); }catch(e){}
@@ -3944,14 +3954,4 @@ async function init(){
   try{ renderBalance(); }catch(e){}
   try{ renderExpenses(); }catch(e){}
   try{ renderGoals(); }catch(e){}
-}
-init().catch(e => console.error('init failed:', e));
-
-/* ============================================================
-   ✅ FIX 1: تسجيل Service Worker (PWA)
-============================================================ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
 }

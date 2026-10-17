@@ -3053,7 +3053,6 @@ document.addEventListener('visibilitychange', () => {
   renderAcademicStrip();
   updateTgStatus();
   if(getMyChatId()){
-    syncToTelegram(true);
     syncAttendanceFromServer();
     checkCloudUpdates();
   }
@@ -3061,7 +3060,6 @@ document.addEventListener('visibilitychange', () => {
 window.addEventListener('focus', () => {
   pomoRender();
   updateTgStatus();
-  if(getMyChatId()) syncToTelegram(true);
 });
 
 setTimeout(() => {

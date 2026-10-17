@@ -3064,10 +3064,8 @@ window.addEventListener('focus', () => {
 
 setTimeout(() => {
   if(getMyChatId()){
-    loadFromCloud().then(() => {
-      renderSyncStatus();
-      startAutoSync();
-    });
+    renderSyncStatus();
+    startAutoSync();
   }
 }, 1500);
 

@@ -2747,6 +2747,8 @@ function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
   renderGrades(); renderStudy(); pomoRender();
   renderBalance(); renderExpenses(); renderGoals();
+  renderWellness();  // ✅ أضف هذا السطر
+  renderTeeth();     // ✅ أضف هذا السطر
   if(currentCourseId) renderCourseDetail();
 }
 

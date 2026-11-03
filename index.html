@@ -3,33 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>مُساعد الجامعة | نظّم دراستك</title>
+<title>مُساعد الجامعة | نظّم دراستك وحياتك الجامعية بذكاء</title>
+<meta name="description" content="مُساعد الجامعة — تطبيق ويب متكامل لطلاب الجامعات لتنظيم الجدول الدراسي، المهام، الاختبارات، حساب المعدل التراكمي، تتبع الغياب وحد الحرمان، البومودورو، والميزانية مع إشعارات تلقرام والذكاء الاصطناعي الشامل.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d9488'/><text y='72' x='50' text-anchor='middle' font-size='58'>🎓</text></svg>">
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d9488">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="المُساعد">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
-<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script>
-  // منع وميض الثيم الفاتح قبل تحميل app.js
-  try{
+  try {
     var t = (JSON.parse(localStorage.getItem('uni_helper_v1') || '{}').settings || {}).theme || 'light';
     document.documentElement.dataset.theme = t;
-  }catch(e){}
+  } catch (e) {}
 </script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="app">
-  <aside class="sidebar" id="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="القائمة الرئيسية">
     <div class="brand">
-      <div class="brand-logo">🎓</div>
+      <div class="brand-logo" aria-hidden="true">🎓</div>
       <div class="brand-txt"><b>مُساعد الجامعة</b><span>نظّم دراستك بذكاء</span></div>
     </div>
     <nav class="nav" id="mainNav">
@@ -37,43 +37,83 @@
         <span class="ico">🏠</span>
         <span>لوحة اليوم<span class="sub">نظرة عامة على دراستك</span></span>
       </button>
+
+      <div class="nav-group" id="navGroupStudy">
+        <div class="nav-group-title">📚 الدراسة</div>
+        <button class="nav-btn" data-view="schedule"><span class="ico">📅</span> الجدول الدراسي</button>
+        <button class="nav-btn" data-view="courses"><span class="ico">📚</span> المقررات</button>
+        <button class="nav-btn" data-view="tasks"><span class="ico">📋</span> المهام والاختبارات</button>
+      </div>
+
+      <div class="nav-group" id="navGroupAcad">
+        <div class="nav-group-title">📊 الأداء الأكاديمي</div>
+        <button class="nav-btn" data-view="grades"><span class="ico">🎓</span> المعدل والدرجات</button>
+        <button class="nav-btn" data-view="attendance"><span class="ico">📋</span> الحضور والغياب</button>
+        <button class="nav-btn" data-view="archive"><span class="ico">🗂️</span> أرشيف الفصول</button>
+      </div>
+
+      <div class="nav-group" id="navGroupProd">
+        <div class="nav-group-title">🚀 الإنتاجية والصحة</div>
+        <button class="nav-btn" data-view="study"><span class="ico">🍅</span> مؤقّت المذاكرة</button>
+        <button class="nav-btn" data-view="wellness"><span class="ico">😴</span> النوم والماء</button>
+        <button class="nav-btn" data-view="teeth"><span class="ico">🦷</span> نظافة الأسنان</button>
+      </div>
+
+      <div class="nav-group" id="navGroupMoney">
+        <div class="nav-group-title">💰 المصروف والميزانية</div>
+        <button class="nav-btn" data-view="balance"><span class="ico">💵</span> الرصيد</button>
+        <button class="nav-btn" data-view="expenses"><span class="ico">📋</span> المصاريف والعمليات</button>
+        <button class="nav-btn" data-view="goals"><span class="ico">🎯</span> الأهداف المالية</button>
+      </div>
     </nav>
     <div class="sidebar-foot">
-      <button class="icon-btn" id="themeBtn" title="تبديل المظهر">🌙</button>
-      <button class="icon-btn" id="settingsBtn" title="الإعدادات" data-view="settings">⚙️</button>
+      <button class="icon-btn" id="themeBtn" title="تبديل المظهر" aria-label="تبديل المظهر">🌙</button>
+      <button class="icon-btn" id="lockNowBtn" title="قفل الشاشة" aria-label="قفل الشاشة" onclick="lockAppNow()" style="display:none">🔒</button>
+      <button class="icon-btn" id="settingsBtn" title="الإعدادات" aria-label="الإعدادات" data-view="settings">⚙️</button>
     </div>
   </aside>
   <div class="overlay" id="overlay"></div>
 
   <main class="main">
     <header class="topbar">
-      <button class="hamburger" id="hamburger">☰</button>
+      <button class="hamburger" id="hamburger" aria-label="فتح القائمة">☰</button>
       <div>
-        <div class="page-title" id="pageTitle">لوحة اليوم</div>
+        <h1 class="page-title" id="pageTitle">لوحة اليوم</h1>
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
-      <div class="sync-badge hidden" id="syncBadge" title="حالة المزامنة">
+      <button class="ai-top-btn" onclick="openAiModal()" title="المساعد الذكي الشامل (Ctrl+K)">
+        <span>✨</span>
+        <span class="ai-lbl">مساعد AI الشامل</span>
+      </button>
+      <div class="sync-badge hidden" id="syncBadge" title="حالة المزامنة السحابية" onclick="doSync(false)">
         <span id="syncIcon">☁️</span>
         <span id="syncText">مزامن</span>
       </div>
       <div class="week-badge-group">
-        <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط للتعديل">📅 —</div>
+        <div class="week-badge" id="weekBadge" onclick="go('settings')" title="اضغط لتعديل إعدادات الفصل">📅 —</div>
         <div class="date-badge" id="wbDateBadge">—</div>
       </div>
     </header>
 
     <div class="content">
 
+      <!-- 1. لوحة اليوم -->
       <section class="view active" id="view-dashboard">
         <div class="stats" id="dashStats"></div>
         <div class="grid g2" style="margin-bottom:20px">
           <div class="card">
-            <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">🔔 القادم عليك</h2></div>
+            <div class="sec-head" style="margin-bottom:14px">
+              <h2 style="font-size:18px">🔔 القادم عليك</h2>
+              <button class="btn btn-ghost btn-sm" onclick="openAddForm()">➕ إضافة</button>
+            </div>
             <div id="dashUpcoming"></div>
           </div>
           <div class="card">
-            <div class="sec-head" style="margin-bottom:14px"><h2 style="font-size:18px">📅 محاضرات اليوم</h2></div>
+            <div class="sec-head" style="margin-bottom:14px">
+              <h2 style="font-size:18px">📅 محاضرات اليوم</h2>
+              <button class="btn btn-ghost btn-sm" onclick="go('schedule')">الجدول الكامل</button>
+            </div>
             <div id="dashToday"></div>
           </div>
         </div>
@@ -95,6 +135,7 @@
         </div>
       </section>
 
+      <!-- 2. الجدول الدراسي الأسبوعي -->
       <section class="view" id="view-schedule">
         <div class="acad-strip" id="acadStrip">
           <div class="acad-strip-head">
@@ -102,24 +143,35 @@
               <div class="acad-strip-title" id="acadTitle">📅 الأسبوع <span class="week-num">—</span></div>
               <div class="acad-strip-range" id="acadRange">—</div>
             </div>
-            <div class="acad-countdown" id="acadCountdown">—</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn btn-ghost btn-sm" onclick="openAcadEventsModal()">📌 أحداث التقويم</button>
+              <div class="acad-countdown" id="acadCountdown">—</div>
+            </div>
           </div>
           <div class="acad-scroll-wrap">
-            <button class="acad-nav-btn" id="acadPrev" title="السابق">‹</button>
+            <button class="acad-nav-btn" id="acadPrev" title="الأسبوع السابق" aria-label="الأسبوع السابق">‹</button>
             <div class="acad-scroll" id="acadScroll"></div>
-            <button class="acad-nav-btn" id="acadNext" title="التالي">›</button>
+            <button class="acad-nav-btn" id="acadNext" title="الأسبوع التالي" aria-label="الأسبوع التالي">›</button>
           </div>
           <div class="acad-events-bar" id="acadEventsBar">
             <span style="color:var(--muted);font-weight:600">لا توجد أحداث في هذا الأسبوع</span>
           </div>
         </div>
         <div class="sec-head">
-          <div><h2>📅 الجدول الدراسي الأسبوعي</h2><p>اضغط على أي محاضرة للتعديل · اضغط على فراغ للإضافة</p></div>
-          <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
+          <div>
+            <h2>📅 الجدول الدراسي الأسبوعي</h2>
+            <p>اضغط على أي محاضرة لتسجيل الحضور أو التعديل · اضغط على أي يوم فارغ للإضافة</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="openClassForm()">➕ إضافة محاضرة</button>
+            <button class="btn btn-ghost btn-sm" id="qaBtn" onclick="openQuickAdd()">⚡ إضافة سريعة</button>
+          </div>
         </div>
+        <div id="attLegend" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:12.5px;font-weight:700"></div>
         <div class="sched-wrap"><div class="sched-inner" id="schedInner"></div></div>
       </section>
 
+      <!-- 3. المقررات الدراسية -->
       <section class="view" id="view-courses">
         <div class="sec-head">
           <div><h2>📚 المقررات الدراسية</h2><p id="coursesCount"></p></div>
@@ -128,45 +180,73 @@
         <div class="grid g3" id="coursesGrid"></div>
       </section>
 
+      <!-- 4. تفاصيل المقرر -->
       <section class="view" id="view-course-detail">
         <div id="courseDetailContent"></div>
       </section>
 
+      <!-- 5. المهام والاختبارات -->
       <section class="view" id="view-tasks">
         <div class="sec-head">
           <div><h2>📋 المهام والاختبارات</h2><p id="tasksCount"></p></div>
-          <button class="btn btn-primary btn-sm" onclick="openAddForm()">➕ إضافة جديدة</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="openAiModal()">✨ إضافة بالـ AI</button>
+            <button class="btn btn-primary btn-sm" onclick="openAddForm()">➕ إضافة جديدة</button>
+          </div>
         </div>
-        <div class="filters" id="taskFilters">
-          <button class="chip active" data-f="all">الكل</button>
-          <button class="chip" data-f="tasks">📝 مهام</button>
-          <button class="chip" data-f="exams">⏰ اختبارات</button>
-          <button class="chip" data-f="today">اليوم</button>
-          <button class="chip" data-f="week">هذا الأسبوع</button>
-          <button class="chip" data-f="late">متأخرة</button>
-          <button class="chip" data-f="done">منجزة</button>
+        <div class="filters-bar">
+          <div class="filters" id="taskFilters">
+            <button class="chip active" data-f="all">الكل</button>
+            <button class="chip" data-f="tasks">📝 مهام</button>
+            <button class="chip" data-f="exams">⏰ اختبارات</button>
+            <button class="chip" data-f="today">اليوم</button>
+            <button class="chip" data-f="week">هذا الأسبوع</button>
+            <button class="chip" data-f="late">متأخرة</button>
+            <button class="chip" data-f="done">منجزة</button>
+          </div>
+          <div class="search-box">
+            <input type="search" id="taskSearchInput" placeholder="🔍 ابحث في المهام والاختبارات..." oninput="renderTasks()">
+          </div>
         </div>
         <div id="tasksList"></div>
       </section>
 
+      <!-- 6. المعدل والدرجات -->
       <section class="view" id="view-grades">
         <div class="sec-head">
           <div><h2>🎓 المعدل والدرجات</h2><p>كل مقرراتك في جدول واحد — تفصيلي أو تقدير مباشر</p></div>
           <button class="btn btn-primary btn-sm" onclick="openAddGradeForm()">➕ مقرر خارجي</button>
         </div>
         <div class="stats" id="gpaStats"></div>
-        <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:1.9;font-weight:600">
-          💡 <b>كيف يعمل؟</b><br>
-          • <b>مقرراتك المسجّلة</b> تظهر تلقائياً في الجدول — اضغط "تفصيلي" لإضافة المكونات (واجبات 20% · كويز 10% · ميدتيرم 30% · نهائي 40%)<br>
-          • <b>المقررات الخارجية</b> (فصول سابقة) أضفها من زر "مقرر خارجي"<br>
-          • <b>المعدل</b> يُحسب تلقائياً من كل المقررات
+        <div style="background:var(--p-light);color:var(--text);padding:13px 16px;border-radius:12px;margin-bottom:18px;font-size:13px;line-height:1.9;font-weight:600;border:1px solid color-mix(in srgb,var(--p) 30%,transparent)">
+          💡 <b>كيف يعمل حساب المعدل؟</b><br>
+          • <b>مقرراتك المسجّلة</b> تظهر تلقائياً في الجدول — اضغط "تفصيلي" لإضافة المكونات (واجبات 20% · كويز 10% · ميدتيرم 30% · نهائي 40%) أو اختر التقدير مباشرة.<br>
+          • <b>المقررات الخارجية</b> (فصول سابقة) أضفها من زر "مقرر خارجي" لحساب المعدل التراكمي بدقة.
         </div>
         <div id="gradesList"></div>
       </section>
 
+      <!-- 7. الحضور والغياب -->
+      <section class="view" id="view-attendance">
+        <div class="sec-head">
+          <div><h2>📋 الحضور والغياب</h2><p>تتبع غياباتك وحد الحرمان (25%) لكل مقرر</p></div>
+          <button class="btn btn-ghost btn-sm" onclick="go('schedule')">📅 تسجيل من الجدول</button>
+        </div>
+        <div id="attendanceContent"></div>
+      </section>
+
+      <!-- 8. أرشيف الفصول -->
+      <section class="view" id="view-archive">
+        <div class="sec-head">
+          <div><h2>🗂️ أرشيف الفصول</h2><p>احفظ واستعد بيانات أي فصل دراسي سابق</p></div>
+        </div>
+        <div id="archiveContent"></div>
+      </section>
+
+      <!-- 9. مؤقّت المذاكرة (بومودورو) -->
       <section class="view" id="view-study">
         <div class="sec-head">
-          <div><h2>🍅 مؤقّت المذاكرة</h2><p>تقنية بومودورو: ركّز 25 دقيقة ثم ارتح 5 دقائق</p></div>
+          <div><h2>🍅 مؤقّت المذاكرة</h2><p>تقنية بومودورو: ركّز 25 دقيقة ثم خذ راحة 5 دقائق</p></div>
         </div>
         <div class="pomo-wrap">
           <div class="pomo-card">
@@ -186,13 +266,13 @@
               <button class="btn btn-primary" id="pomoStart">▶ ابدأ</button>
               <button class="btn btn-ghost" id="pomoReset">↺ تصفير</button>
             </div>
-            <div class="field" style="margin-top:22px;text-align:right">
-              <label>المقرر الذي تذاكره الآن</label>
+            <div class="field" style="margin-top:22px;text-align:start">
+              <label for="pomoCourse">المقرر الذي تذاكره الآن</label>
               <select id="pomoCourse"></select>
             </div>
             <div style="margin-top:14px;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.7">
-              💡 المؤقّت يعمل تلقائياً: تركيز ← راحة قصيرة ← تركيز ← راحة طويلة — بدون تدخل منك<br>
-              + يجيك إشعار على تلقرام بعد كل مرحلة (حتى لو سكّرت الموقع) ✅
+              💡 المؤقّت يعمل تلقائياً: تركيز ← راحة قصيرة ← تركيز ← راحة طويلة<br>
+              + يصلك إشعار على تلقرام بعد كل جلسة حتى لو أغلقت المتصفح ✅
             </div>
           </div>
           <div class="card">
@@ -203,6 +283,7 @@
               <div><b style="font-family:'Tajawal';font-size:24px;color:var(--p)" id="studyTotal">0</b><div style="font-size:12px;color:var(--muted);font-weight:700">دقيقة إجمالاً</div></div>
             </div>
             <div class="week-bars" id="weekBars"></div>
+            <div id="studyRecentList" style="margin-top:14px"></div>
             <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
               <button class="btn btn-ghost btn-sm btn-block" onclick="openManualLog()">➕ إضافة وقت مذاكرة يدوياً</button>
             </div>
@@ -213,14 +294,23 @@
             <h2 style="font-size:18px">⏱️ مدد البومودورو (بالدقائق)</h2>
           </div>
           <div class="form-grid">
-            <div class="field"><label>التركيز</label><input type="number" id="setWork" min="1" max="120"></div>
-            <div class="field"><label>راحة قصيرة</label><input type="number" id="setShort" min="1" max="60"></div>
-            <div class="field"><label>راحة طويلة</label><input type="number" id="setLong" min="1" max="90"></div>
+            <div class="field"><label for="setWork">التركيز</label><input type="number" id="setWork" min="1" max="120"></div>
+            <div class="field"><label for="setShort">راحة قصيرة</label><input type="number" id="setShort" min="1" max="60"></div>
+            <div class="field"><label for="setLong">راحة طويلة</label><input type="number" id="setLong" min="1" max="90"></div>
           </div>
           <button class="btn btn-primary btn-sm" style="margin-top:16px" onclick="savePomoSettings()">💾 حفظ</button>
         </div>
       </section>
 
+      <!-- 10. النوم والماء -->
+      <section class="view" id="view-wellness">
+        <div class="sec-head">
+          <div><h2>😴 النوم والماء</h2><p>تابع عاداتك الصحية اليومية لتحافظ على تركيزك</p></div>
+        </div>
+        <div id="wellnessContent"></div>
+      </section>
+
+      <!-- 11. نظافة الأسنان -->
       <section class="view" id="view-teeth">
         <div class="sec-head">
           <div><h2>🦷 نظافة الأسنان</h2><p>توصية: مرتين يومياً — صباحاً وقبل النوم</p></div>
@@ -238,32 +328,45 @@
           </div>
         </div>
         <div class="card">
-          <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام</h3>
+          <h3 style="font-size:16px;margin-bottom:14px">📊 التزام آخر 7 أيام</h3>
           <div id="teethStats"></div>
         </div>
       </section>
 
+      <!-- 12. الرصيد -->
       <section class="view" id="view-balance">
         <div class="sec-head">
-          <div><h2>💵 الرصيد</h2><p>نظرة شاملة على مصروفك</p></div>
-          <button class="btn btn-ghost btn-sm" onclick="openSalaryForm()">⚙️ تعديل الراتب</button>
+          <div><h2>💵 الرصيد والميزانية</h2><p>نظرة شاملة على مكافأتك، الفلوس المضافة، ومصروفك الشهري</p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" style="background:var(--ok)" onclick="openIncomeForm()">➕ زيادة فلوس / دخل</button>
+            <button class="btn btn-ghost btn-sm" onclick="openSalaryForm()">⚙️ تعديل الراتب</button>
+          </div>
         </div>
         <div id="balanceContent"></div>
       </section>
 
+      <!-- 13. المصاريف والعمليات المالية -->
       <section class="view" id="view-expenses">
         <div class="sec-head">
-          <div><h2>📋 المصاريف</h2><p id="expensesCount"></p></div>
-          <button class="btn btn-primary btn-sm" onclick="openExpenseForm()">➕ إضافة مصروف</button>
+          <div><h2>📋 المصاريف والعمليات المالية</h2><p id="expensesCount"></p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="openAiModal()">✨ بالـ AI</button>
+            <button class="btn btn-primary btn-sm" style="background:var(--ok)" onclick="openIncomeForm()">➕ زيادة فلوس</button>
+            <button class="btn btn-primary btn-sm" onclick="openExpenseForm()">💸 إضافة مصروف</button>
+          </div>
         </div>
-        <div class="filters" id="expenseFilters">
+        <div class="filters" id="expenseFilters" style="margin-bottom:16px">
           <button class="chip active" data-f="all">الكل</button>
+          <button class="chip" data-f="expenses">💸 المصاريف فقط</button>
+          <button class="chip" data-f="incomes">💰 الفلوس المضافة (الدخل)</button>
+          <button class="chip" data-f="cycle">دورة الراتب الحالية</button>
           <button class="chip" data-f="today">اليوم</button>
           <button class="chip" data-f="week">هذا الأسبوع</button>
         </div>
         <div id="expensesList"></div>
       </section>
 
+      <!-- 14. الأهداف المالية -->
       <section class="view" id="view-goals">
         <div class="sec-head">
           <div><h2>🎯 الأهداف المالية</h2><p id="goalsCount"></p></div>
@@ -272,90 +375,110 @@
         <div id="goalsList"></div>
       </section>
 
+      <!-- 15. الإعدادات -->
       <section class="view" id="view-settings">
-        <div class="sec-head"><h2>⚙️ الإعدادات</h2></div>
+        <div class="sec-head"><h2>⚙️ الإعدادات والتحكم</h2></div>
         <div class="grid g2">
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">📅 الفصل الدراسي</h3>
             <div class="form-grid" style="margin-bottom:20px">
               <div class="field full">
-                <label>تاريخ بداية الفصل</label>
+                <label for="setSemesterStart">تاريخ بداية الفصل</label>
                 <input type="date" id="setSemesterStart">
               </div>
               <div class="field full">
-                <label>عدد أسابيع الفصل</label>
+                <label for="setSemesterWeeks">عدد أسابيع الفصل</label>
                 <input type="number" id="setSemesterWeeks" min="8" max="30" value="16">
               </div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="saveSemesterSettings()">💾 حفظ إعدادات الفصل</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="saveSemesterSettings()">💾 حفظ إعدادات الفصل</button>
+              <button class="btn btn-ghost btn-sm" onclick="openAcadEventsModal()">📌 تخصيص الأحداث</button>
+            </div>
           </div>
           <div class="card">
             <h3 style="font-size:17px;margin-bottom:16px">🔄 حالة المزامنة</h3>
             <div id="syncStatusContent"></div>
           </div>
         </div>
+
         <div class="card" style="margin-top:16px">
-          <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات تلقرام</h3>
+          <h3 style="font-size:17px;margin-bottom:8px">📱 إشعارات ومزامنة تلقرام</h3>
           <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.7">
-            اضغط الزر → بيفتح تلقرام → اضغط <b>START</b> → ارجع للموقع، بيحدّث تلقائياً ✅
+            اضغط زر الربط ← افتح البوت في تلقرام ← أرسل الكود أو اضغط <b>START</b> ← وسيتم الربط والمزامنة السحابية تلقائياً ✅
           </p>
           <div id="tgStatus" style="font-size:13.5px;margin-bottom:14px;font-weight:700;padding:14px;border-radius:11px;text-align:center"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-primary" style="flex:1" onclick="connectTelegram()" id="tgConnectBtn">🔗 ربط تلقرام</button>
-            <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك</button>
+            <button class="btn btn-danger btn-sm" onclick="unlinkTelegram()" id="tgUnlinkBtn" style="display:none">🔓 فك الربط</button>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 اختبار</button>
-            <button class="btn btn-ghost btn-sm" onclick="renewToken()" id="tgRenewBtn" style="display:none">🔑 تجديد التوكن</button>
+            <button class="btn btn-ghost btn-sm" onclick="testTelegram()" id="tgTestBtn" style="display:none">🧪 إرسال إشعار تجريبي</button>
+            <button class="btn btn-ghost btn-sm" onclick="renewToken()" id="tgRenewBtn" style="display:none">🔑 تجديد جلسة الأمان</button>
+          </div>
+        </div>
+
+        <div class="grid g2" style="margin-top:16px">
+          <div class="card">
+            <h3 style="font-size:17px;margin-bottom:16px">🎯 أهداف الصحة اليومية</h3>
+            <div class="form-grid">
+              <div class="field"><label for="setSleepGoal">ساعات النوم</label><input type="number" id="setSleepGoal" min="1" max="24" value="8"></div>
+              <div class="field"><label for="setWaterGoal">أكواب الماء</label><input type="number" id="setWaterGoal" min="1" max="30" value="8"></div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveHealthGoals()">💾 حفظ الأهداف</button>
+          </div>
+
+          <div class="card">
+            <h3 style="font-size:17px;margin-bottom:10px">🔐 قفل الشاشة برمز سري (PIN)</h3>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+              احمِ خصوصية درجاتك ومصروفك على جهازك برمز سري من 4 أرقام يُطلب عند فتح الموقع.
+            </p>
+            <div id="pinStatusBox" style="margin-bottom:12px;font-size:13px;font-weight:700"></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="openPinSetupModal()" id="setPinBtn">🔒 تعيين رمز قفل</button>
+              <button class="btn btn-danger btn-sm" onclick="removePinLock()" id="removePinBtn" style="display:none">🔓 إلغاء القفل</button>
+            </div>
           </div>
         </div>
 
         <div class="card" style="margin-top:16px">
-          <h3 style="font-size:17px;margin-bottom:16px">🎯 أهداف الصحة</h3>
-          <div class="form-grid">
-            <div class="field"><label>ساعات النوم</label><input type="number" id="setSleepGoal" min="1" max="24" value="8"></div>
-            <div class="field"><label>أكواب الماء</label><input type="number" id="setWaterGoal" min="1" max="30" value="8"></div>
-          </div>
-          <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveHealthGoals()">💾 حفظ الأهداف</button>
-        </div>
-
-        <div class="card" style="margin-top:16px">
-          <h3 style="font-size:17px;margin-bottom:16px">🩺 فحص الاتصال</h3>
-          <button class="btn btn-primary btn-block" onclick="runHealthCheck()">🔍 فحص شامل</button>
+          <h3 style="font-size:17px;margin-bottom:16px">🩺 فحص الاتصال والنظام</h3>
+          <button class="btn btn-primary btn-block" onclick="runHealthCheck()">🔍 فحص شامل للنظام والسحابة</button>
           <div id="healthCheckResult" style="margin-top:14px"></div>
         </div>
 
         <div class="card" style="margin-top:16px">
-          <h3 style="font-size:17px;margin-bottom:16px">📤 تصدير واستيراد</h3>
-          <p style="font-size:12.5px;color:var(--muted);margin-bottom:12px;line-height:1.7">
-            💡 نسخة احتياطية كاملة في ملف JSON
+          <h3 style="font-size:17px;margin-bottom:10px">📤 تصدير واستيراد البيانات</h3>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+            💡 احتفظ بنسخة احتياطية كاملة من جميع بياناتك في ملف JSON على جهازك.
           </p>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary" style="flex:1" onclick="exportData()">📤 تصدير</button>
-            <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('importFile').click()">📥 استيراد</button>
+            <button class="btn btn-primary" style="flex:1" onclick="exportData()">📤 تصدير نسخة JSON</button>
+            <button class="btn btn-ghost" style="flex:1" onclick="document.getElementById('importFile').click()">📥 استيراد نسخة JSON</button>
             <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)">
           </div>
         </div>
 
         <div class="card" style="margin-top:16px">
-          <h3 style="font-size:17px;margin-bottom:6px">🗑️ حذف جزئي</h3>
-          <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">احذف قسم محدد بدون المساس بالباقي</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <h3 style="font-size:17px;margin-bottom:6px">🗑️ حذف جزئي مخصّص</h3>
+          <p style="font-size:12.5px;color:var(--muted);margin-bottom:14px">احذف قسماً محدداً فقط دون المساس بباقي بياناتك ومقرراتك</p>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
             <button class="btn btn-ghost btn-sm" onclick="partialDelete('studyLog')">📊 سجل المذاكرة</button>
             <button class="btn btn-ghost btn-sm" onclick="partialDelete('wellness')">😴 النوم والماء</button>
             <button class="btn btn-ghost btn-sm" onclick="partialDelete('teeth')">🦷 الأسنان</button>
             <button class="btn btn-ghost btn-sm" onclick="partialDelete('attendance')">📋 الحضور</button>
             <button class="btn btn-ghost btn-sm" onclick="partialDelete('expenses')">💸 المصاريف</button>
+            <button class="btn btn-ghost btn-sm" onclick="partialDelete('incomes')">💰 الفلوس المضافة</button>
             <button class="btn btn-ghost btn-sm" onclick="partialDelete('archive')">🗂️ الأرشيف</button>
           </div>
         </div>
 
         <div class="card" style="margin-top:16px">
-          <h3 style="font-size:17px;margin-bottom:16px">💾 البيانات</h3>
-          <p style="font-size:13.5px;color:var(--muted);margin-bottom:18px">
-            بياناتك محفوظة في متصفحك + السحابة تلقائياً.
+          <h3 style="font-size:17px;margin-bottom:10px">💾 إدارة كافة البيانات</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">
+            بياناتك محفوظة محلياً في متصفحك وتُزامن تلقائياً مع سحابة تلقرام عند الربط.
           </p>
-          <button class="btn btn-danger btn-block" onclick="clearAll()">🗑️ حذف كل البيانات</button>
+          <button class="btn btn-danger btn-block" onclick="clearAll()">🗑️ حذف كل البيانات نهائياً</button>
         </div>
       </section>
 
@@ -363,15 +486,17 @@
   </main>
 </div>
 
-<div class="modal-bg" id="modalBg">
+<!-- نافذة المودال العامة -->
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true">
   <div class="modal">
-    <div class="modal-head"><h3 id="modalTitle">عنوان</h3><button onclick="closeModal()">✕</button></div>
+    <div class="modal-head"><h3 id="modalTitle">عنوان</h3><button onclick="closeModal()" aria-label="إغلاق">✕</button></div>
     <div class="modal-body" id="modalBody"></div>
     <div class="modal-foot" id="modalFoot"></div>
   </div>
 </div>
 
-<div class="modal-bg" id="confirmBg">
+<!-- نافذة التأكيد المخصصة -->
+<div class="modal-bg" id="confirmBg" role="alertdialog" aria-modal="true">
   <div class="modal" style="max-width:400px">
     <div style="padding:28px 24px 20px">
       <div class="confirm-ico-wrap danger" id="confirmIcoWrap"><span id="confirmIco">⚠️</span></div>
@@ -385,8 +510,37 @@
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-<button class="fab" id="fab" title="إضافة سريعة">＋</button>
+<!-- 🔐 شاشة قفل التطبيق بالرمز السري -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <div style="font-size:42px;margin-bottom:6px">🔒</div>
+    <h3 style="font-size:20px;margin-bottom:4px">التطبيق مقفل</h3>
+    <p id="pinPromptMsg" style="font-size:13px;color:var(--muted);font-weight:600">أدخل الرمز السري المكون من 4 أرقام</p>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+      <div class="pin-dot"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pressPinKey('1')">1</button>
+      <button class="pin-key" onclick="pressPinKey('2')">2</button>
+      <button class="pin-key" onclick="pressPinKey('3')">3</button>
+      <button class="pin-key" onclick="pressPinKey('4')">4</button>
+      <button class="pin-key" onclick="pressPinKey('5')">5</button>
+      <button class="pin-key" onclick="pressPinKey('6')">6</button>
+      <button class="pin-key" onclick="pressPinKey('7')">7</button>
+      <button class="pin-key" onclick="pressPinKey('8')">8</button>
+      <button class="pin-key" onclick="pressPinKey('9')">9</button>
+      <button class="pin-key" style="font-size:15px;color:var(--muted)" onclick="clearPinEntry()">مسح</button>
+      <button class="pin-key" onclick="pressPinKey('0')">0</button>
+      <button class="pin-key" style="font-size:18px" onclick="backspacePinKey()">⌫</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<button class="fab" id="fab" title="إضافة سريعة (Ctrl+K)" aria-label="إضافة سريعة">＋</button>
 
 <script src="app.js"></script>
 </body>

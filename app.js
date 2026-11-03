@@ -1,3 +1,10 @@
+/* ============================================================================
+   🎓 مُساعد الجامعة — المحرك الرئيسي الشامل (Elite Omni-AI Edition v2.5)
+   - ذكاء اصطناعي شامل (Omni-Agent) ينفذ 14 نوعاً من الأوامر ويدعم الأوامر المركبة والصور
+   - نظام متكامل لزيادة الفلوس / الدخل الإضافي (money.incomes) في الميزانية والمصروف
+   - إصلاح شامل لجميع المشاكل والأخطاء البرمجية + قفل الشاشة + العمل أوفلاين (PWA)
+   ============================================================================ */
+
 /* ============================================================
    1) الثوابت
 ============================================================ */
@@ -8,6 +15,7 @@ const TASK_TYPES = ['واجب','كويز','مشروع','تقرير','عرض تق
 const EXAM_TYPES = ['كويز','ميدتيرم','فاينل','اختبار عملي','مناقشة مشروع'];
 const HOUR_START = 7, HOUR_END = 21, HOUR_H = 58;
 const STORE_KEY = 'uni_helper_v1';
+const PIN_STORE_KEY = 'uni_pin_code_v1';
 const ATT = {
   excused:  { label:'غايب بعذر',     ico:'🟡', color:'#d97706' },
   absent:   { label:'غايب بدون عذر', ico:'🔴', color:'#dc2626' },
@@ -32,9 +40,17 @@ const EXPENSE_CATS = [
   { id:'gifts', name:'هدايا', ico:'🎁', color:'#ea580c' },
   { id:'other', name:'أخرى', ico:'🚨', color:'#64748b' }
 ];
+const INCOME_SOURCES = [
+  { id:'allowance', name:'مكافأة / مصروف', ico:'💵', color:'#059669' },
+  { id:'transfer', name:'تحويل أهلي', ico:'🏦', color:'#0d9488' },
+  { id:'freelance', name:'عمل حر / مشروع', ico:'💻', color:'#4f46e5' },
+  { id:'reward', name:'مكافأة تفوق / حافز', ico:'🏆', color:'#f59e0b' },
+  { id:'gift', name:'هدية / عيدية', ico:'🎁', color:'#db2777' },
+  { id:'other', name:'إضافة أخرى', ico:'➕', color:'#0891b2' }
+];
 
 /* ============================================================
-   1.5) Custom Confirm Dialog
+   1.5) نافذة التأكيد المخصصة (Custom Confirm Dialog)
 ============================================================ */
 function appConfirm(message, options = {}){
   return new Promise(resolve => {
@@ -45,6 +61,8 @@ function appConfirm(message, options = {}){
     const msgEl = document.getElementById('confirmMsg');
     const okBtn = document.getElementById('confirmOkBtn');
     const cancelBtn = document.getElementById('confirmCancelBtn');
+
+    if(!bg){ resolve(true); return; }
 
     const variant = options.variant || 'danger';
     icoWrap.className = 'confirm-ico-wrap ' + variant;
@@ -83,7 +101,7 @@ function appConfirm(message, options = {}){
 }
 
 /* ============================================================
-   2) الحالة
+   2) إدارة الحالة (State Management)
 ============================================================ */
 function defaultState(){
   return {
@@ -95,13 +113,15 @@ function defaultState(){
       salary: 0,
       salaryExactDate: null,
       expenses: [],
+      incomes: [],
       goals: []
     },
     settings: {
       theme:'light',
       pomo:{ work:25, short:5, long:15 },
       semesterStart: '2026-08-23',
-      semesterWeeks: 16
+      semesterWeeks: 16,
+      customAcademicEvents: []
     }
   };
 }
@@ -114,12 +134,14 @@ function loadState(){
     const merged = { ...def, ...s };
     merged.settings = { ...def.settings, ...(s.settings || {}) };
     merged.settings.pomo = { ...def.settings.pomo, ...((s.settings && s.settings.pomo) || {}) };
+    if(!Array.isArray(merged.settings.customAcademicEvents)) merged.settings.customAcademicEvents = [];
     merged.wellness = { ...def.wellness, ...(s.wellness || {}) };
     if(!Array.isArray(merged.wellness.log)) merged.wellness.log = [];
     merged.health = { ...def.health, ...(s.health || {}) };
     if(!Array.isArray(merged.health.teethLog)) merged.health.teethLog = [];
     merged.money = { ...def.money, ...(s.money || {}) };
     if(!Array.isArray(merged.money.expenses)) merged.money.expenses = [];
+    if(!Array.isArray(merged.money.incomes)) merged.money.incomes = [];
     if(!Array.isArray(merged.money.goals)) merged.money.goals = [];
     if(!Array.isArray(merged.courses)) merged.courses = [];
     if(!Array.isArray(merged.schedule)) merged.schedule = [];
@@ -138,13 +160,49 @@ let expenseFilter = 'all';
 let currentCourseId = null;
 
 /* ============================================================
-   3) دوال مساعدة
+   3) دوال مساعدة وأدوات آمنة
 ============================================================ */
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+function copyTextSafe(text, btnEl){
+  const doneUI = () => {
+    if(btnEl){
+      const orig = btnEl.dataset.origText || btnEl.textContent;
+      btnEl.dataset.origText = orig;
+      btnEl.textContent = '✅ تم النسخ';
+      setTimeout(() => { btnEl.textContent = orig; }, 1600);
+    } else {
+      toast('📋 تم النسخ');
+    }
+  };
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(doneUI).catch(() => fallbackCopy(text, doneUI));
+      return;
+    }
+  }catch(e){}
+  fallbackCopy(text, doneUI);
+}
+function fallbackCopy(text, cb){
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    if(cb) cb();
+  }catch(e){
+    toast('⚠️ انسخ الكود يدوياً');
+  }
+}
+
 function assertSafeImport(s){
   const MAX_ITEMS = 5000;
-  // ✅ FIX 3: was /^[A-Za-z0-9_-]*$/ — the '*' allowed empty IDs
   const idRe = /^[A-Za-z0-9_-]{1,64}$/;
+  const optIdRe = /^[A-Za-z0-9_-]{0,64}$/;
   const colorRe = /^[#A-Za-z0-9(),.%\s-]*$/;
   const m = s.money || {};
   const w = s.wellness || {};
@@ -154,16 +212,17 @@ function assertSafeImport(s){
     ['schedule', s.schedule], ['attendance', s.attendance],
     ['gpaCourses', s.gpaCourses], ['archive', s.archive],
     ['studyLog', s.studyLog], ['money.expenses', m.expenses],
-    ['money.goals', m.goals], ['wellness.log', w.log],
-    ['health.teethLog', h.teethLog]
+    ['money.incomes', m.incomes], ['money.goals', m.goals],
+    ['wellness.log', w.log], ['health.teethLog', h.teethLog]
   ];
   for(const [name, arr] of namedLists){
     if(!Array.isArray(arr)) continue;
     if(arr.length > MAX_ITEMS) throw new Error(`الملف يحتوي ${arr.length} عنصر في "${name}" — الحد ${MAX_ITEMS}`);
     for(const it of arr){
       if(!it || typeof it !== 'object') continue;
-      for(const k of ['id','courseId','classId']){
-        if(it[k] != null && !idRe.test(String(it[k]))) throw new Error('الملف يحتوي معرّفات غير آمنة');
+      if(it.id != null && !idRe.test(String(it.id))) throw new Error('الملف يحتوي معرّفات غير آمنة');
+      for(const k of ['courseId','classId']){
+        if(it[k] != null && !optIdRe.test(String(it[k]))) throw new Error('الملف يحتوي معرّفات فرعية غير آمنة');
       }
       if(it.color != null && !colorRe.test(String(it.color))) throw new Error('الملف يحتوي ألوان غير آمنة');
     }
@@ -172,7 +231,7 @@ function assertSafeImport(s){
 function fixUnsafeIds(){
   const idRe = /^[A-Za-z0-9_-]{0,64}$/;
   let changed = false;
-  for(const arr of [state.tasks, state.exams, state.schedule]){
+  for(const arr of [state.tasks, state.exams, state.schedule, state.studyLog]){
     if(!Array.isArray(arr)) continue;
     for(const it of arr){
       if(it && it.courseId != null && !idRe.test(String(it.courseId))){ it.courseId = ''; changed = true; }
@@ -189,8 +248,16 @@ function getCourse(id){ return state.courses.find(c => c.id === id); }
 function courseName(id){ const c = getCourse(id); return c ? c.name : 'عام'; }
 function courseColor(id){ const c = getCourse(id); return c ? c.color : '#64748b'; }
 function getCatById(id){ return EXPENSE_CATS.find(c => c.id === id) || EXPENSE_CATS[EXPENSE_CATS.length-1]; }
-function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._tm); t._tm = setTimeout(() => t.classList.remove('show'), 2400); }
-function toMin(t){ const [h,m] = t.split(':').map(Number); return h*60 + m; }
+function getIncomeSrcById(id){ return INCOME_SOURCES.find(s => s.id === id) || INCOME_SOURCES[INCOME_SOURCES.length-1]; }
+function toast(msg){
+  const t = document.getElementById('toast');
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._tm);
+  t._tm = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function toMin(t){ const [h,m] = String(t||'00:00').split(':').map(Number); return (h||0)*60 + (m||0); }
 function minToTime(m){ return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; }
 function to12(time24){
   if(!time24 || typeof time24 !== 'string') return time24 || '';
@@ -225,13 +292,11 @@ function save(sync = true){
       try{ toast('⚠️ تعذّر الحفظ على الجهاز (التخزين ممتلئ أو التصفح خاص). صدّر نسخة احتياطية!'); }catch(_){}
     }
   }
+  updateNavBadges();
   if(sync && typeof syncToTelegram === 'function' && getMyChatId()) syncToTelegram(true);
 }
 window.addEventListener('storage', (e) => {
-  if(e.key !== STORE_KEY) return;
-  if(e.newValue === null) return;  // حُذف من تبويب آخر، لا تلمس
-  // تجاهل تعديلاتنا نحن
-  if(e.storageArea !== localStorage) return;
+  if(e.key !== STORE_KEY || e.newValue === null || e.storageArea !== localStorage) return;
   try{
     const fresh = JSON.parse(e.newValue);
     const def = defaultState();
@@ -241,7 +306,7 @@ window.addEventListener('storage', (e) => {
     state.wellness = { ...def.wellness, ...(fresh.wellness || {}) };
     state.health = { ...def.health, ...(fresh.health || {}) };
     state.money = { ...def.money, ...(fresh.money || {}) };
-    // أعِد الرسم فقط (لا save، وإلا حلقة)
+    if(!Array.isArray(state.money.incomes)) state.money.incomes = [];
     applySettings();
     renderAll();
     renderAcademicStrip();
@@ -249,7 +314,9 @@ window.addEventListener('storage', (e) => {
   }catch(_){}
 });
 
-/* ============ التقويم الأكاديمي (ديناميكي) ============ */
+/* ============================================================
+   3.8) التقويم الأكاديمي (ديناميكي + مخصص)
+============================================================ */
 const ACADEMIC_START = '2026-08-23';
 const ACADEMIC_EVENTS_TEMPLATE = [
   { offset: -6,  title:'عودة هيئة التدريس',        ico:'👥', type:'info'    },
@@ -270,6 +337,15 @@ const ACADEMIC_EVENTS_TEMPLATE = [
 let acadSelectedWeek = null;
 
 function getAcademicEvents(){
+  const custom = state.settings.customAcademicEvents;
+  if(Array.isArray(custom) && custom.length > 0){
+    return custom.map(ev => ({
+      date: ev.date,
+      title: ev.title,
+      type: ev.type || 'info',
+      ico: ev.ico || (ev.type === 'holiday' ? '🎉' : ev.type === 'exam' ? '📝' : '📌')
+    }));
+  }
   const base = state.settings.semesterStart || ACADEMIC_START;
   const start = new Date(base + 'T00:00:00');
   return ACADEMIC_EVENTS_TEMPLATE.map(ev => {
@@ -279,12 +355,14 @@ function getAcademicEvents(){
   });
 }
 function getExamsStartDate(){
+  const evs = getAcademicEvents();
+  const examEv = evs.find(e => e.type === 'exam');
+  if(examEv && examEv.date) return new Date(examEv.date + 'T00:00:00');
   const base = state.settings.semesterStart || ACADEMIC_START;
   const start = new Date(base + 'T00:00:00');
   start.setDate(start.getDate() + 119);
   return start;
 }
-
 function getWeekMonday(weekNum){
   const base = state.settings.semesterStart || ACADEMIC_START;
   const start = new Date(base + 'T00:00:00');
@@ -342,11 +420,8 @@ function renderAcademicStrip(){
     const hasExam = events.some(e => e.type === 'exam');
     let cls = 'acad-week';
     if(isPast) cls += ' past';
-    if(isSelected){
-      cls += ' current';
-    } else if(isCurrent){
-      cls += ' today';
-    }
+    if(isSelected) cls += ' current';
+    else if(isCurrent) cls += ' today';
     if(hasHoliday) cls += ' holiday';
     if(hasExam) cls += ' exam';
     const evIcos = events.slice(0, 3).map(e => e.ico).join('');
@@ -359,11 +434,11 @@ function renderAcademicStrip(){
   scrollEl.innerHTML = html;
   const events = getEventsForWeek(selected);
   if(!events.length){
-    eventsEl.innerHTML = `<span style="color:var(--muted);font-weight:600">لا توجد أحداث في هذا الأسبوع</span>`;
+    eventsEl.innerHTML = `<span style="color:var(--muted);font-weight:600">لا توجد أحداث مسجلة في هذا الأسبوع</span>`;
   } else {
     eventsEl.innerHTML = events.map(e => {
       const cls = e.type === 'holiday' ? 'holiday' : e.type === 'exam' ? 'exam' : 'info';
-      return `<span class="acad-event-chip ${cls}">${e.ico} ${e.title}</span>`;
+      return `<span class="acad-event-chip ${cls}">${e.ico} ${esc(e.title)} (${fmtDate(e.date)})</span>`;
     }).join('');
   }
   const curEl = scrollEl.querySelector('.acad-week.current');
@@ -379,15 +454,66 @@ function selectAcadWeek(w){
   renderSchedule();
 }
 document.getElementById('acadPrev')?.addEventListener('click', () => {
+  if(!acadSelectedWeek) acadSelectedWeek = currentAcademicWeek();
   if(acadSelectedWeek > 1){ acadSelectedWeek--; renderAcademicStrip(); renderSchedule(); }
 });
 document.getElementById('acadNext')?.addEventListener('click', () => {
   const weeks = state.settings.semesterWeeks || 16;
+  if(!acadSelectedWeek) acadSelectedWeek = currentAcademicWeek();
   if(acadSelectedWeek < weeks + 1){ acadSelectedWeek++; renderAcademicStrip(); renderSchedule(); }
 });
 
+function openAcadEventsModal(){
+  const evs = getAcademicEvents();
+  const rows = evs.map((e, i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--hover);border-radius:10px;margin-bottom:6px;font-size:13px;font-weight:700">
+      <span>${e.ico} ${esc(e.title)} <span style="color:var(--muted);font-size:11.5px">(${e.date})</span></span>
+      <button class="mini-btn del" style="width:28px;height:28px" onclick="deleteAcadEvent(${i})">✕</button>
+    </div>
+  `).join('');
+  openModal('📌 أحداث التقويم الأكاديمي', `
+    <div class="form-grid" style="margin-bottom:14px;background:var(--hover);padding:14px;border-radius:12px">
+      <div class="field full"><label>عنوان الحدث</label><input id="aeTitle" placeholder="مثال: إجازة مطولة"></div>
+      <div class="field"><label>التاريخ</label><input type="date" id="aeDate" value="${todayISO()}"></div>
+      <div class="field"><label>النوع</label>
+        <select id="aeType">
+          <option value="info">📌 حدث أكاديمي</option>
+          <option value="holiday">🎉 إجازة</option>
+          <option value="exam">📝 اختبارات</option>
+        </select>
+      </div>
+      <div class="field full"><button class="btn btn-primary btn-sm btn-block" onclick="addAcadEvent()">➕ إضافة حدث للتقويم</button></div>
+    </div>
+    <div style="max-height:260px;overflow-y:auto">${rows}</div>
+  `, `
+    <button class="btn btn-ghost btn-sm" onclick="resetAcadEventsDefault()">↺ استعادة الافتراضي</button>
+    <button class="btn btn-primary" onclick="closeModal()">تم</button>
+  `);
+}
+function addAcadEvent(){
+  const title = document.getElementById('aeTitle')?.value.trim();
+  const date = document.getElementById('aeDate')?.value;
+  const type = document.getElementById('aeType')?.value || 'info';
+  if(!title || !date){ toast('⚠️ أدخل العنوان والتاريخ'); return; }
+  const current = getAcademicEvents();
+  current.push({ date, title, type, ico: type === 'holiday' ? '🎉' : type === 'exam' ? '📝' : '📌' });
+  current.sort((a,b) => a.date.localeCompare(b.date));
+  state.settings.customAcademicEvents = current;
+  save(); renderAcademicStrip(); openAcadEventsModal(); toast('✅ أُضيف الحدث');
+}
+function deleteAcadEvent(idx){
+  const current = getAcademicEvents();
+  current.splice(idx, 1);
+  state.settings.customAcademicEvents = current;
+  save(); renderAcademicStrip(); openAcadEventsModal();
+}
+function resetAcadEventsDefault(){
+  state.settings.customAcademicEvents = [];
+  save(); renderAcademicStrip(); openAcadEventsModal(); toast('↺ تمت استعادة التقويم الافتراضي');
+}
+
 /* ============================================================
-   4) التنقل
+   4) التنقل (Navigation & Routing)
 ============================================================ */
 const VIEW_META = {
   dashboard: ['لوحة اليوم','نظرة عامة على يومك الدراسي'],
@@ -399,20 +525,41 @@ const VIEW_META = {
   study:     ['مؤقّت المذاكرة','تقنية بومودورو للتركيز'],
   teeth:     ['نظافة الأسنان','تفريش الصباح والمساء'],
   wellness:  ['النوم والماء','صحتك أولاً'],
-  balance:   ['الرصيد','نظرة على مصروفك'],
-  expenses:  ['المصاريف','سجل كل مصروف'],
+  balance:   ['الرصيد والميزانية','نظرة على مكافأتك، الفلوس المضافة، ومصروفك'],
+  expenses:  ['المصاريف والعمليات','سجل كل مصروف أو فلوس مضافة بسهولة'],
   goals:     ['الأهداف المالية','أهدافك وحصالتك'],
   attendance:['الحضور والغياب','تتبع غياباتك وحد الحرمان'],
   archive:   ['أرشيف الفصول','سجل كل فصولك السابقة'],
   settings:  ['الإعدادات','تخصيص التطبيق والبيانات']
 };
+
+function updateNavBadges(){
+  const openTasks = state.tasks.filter(t => !t.done).length;
+  const upcomingExams = state.exams.filter(e => !e.done && daysUntil(e.date) >= 0).length;
+  const totalOpen = openTasks + upcomingExams;
+  const tasksBtn = document.querySelector('.nav-btn[data-view="tasks"]');
+  if(tasksBtn){
+    let badge = tasksBtn.querySelector('.badge');
+    if(totalOpen > 0){
+      if(!badge){
+        badge = document.createElement('span');
+        badge.className = 'badge';
+        tasksBtn.appendChild(badge);
+      }
+      badge.textContent = totalOpen;
+    } else if(badge){
+      badge.remove();
+    }
+  }
+}
+
 function go(view){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const targetView = document.getElementById('view-' + view);
   if(!targetView){ console.warn('view not found:', view); return; }
   targetView.classList.add('active');
   const hl = (view === 'course-detail') ? 'courses' : view;
-  document.querySelectorAll('.nav-btn, .home-btn').forEach(b => {
+  document.querySelectorAll('.nav-btn, .home-btn, #settingsBtn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === hl);
   });
   const [t,s] = VIEW_META[view] || ['',''];
@@ -420,11 +567,11 @@ function go(view){
   document.getElementById('pageSub').textContent = s;
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
-  document.body.style.overflow = '';
+  syncBodyScrollLock();
   window.scrollTo({ top:0, behavior:'smooth' });
   if(view !== 'course-detail'){ try{ location.hash = view; }catch(e){} }
   document.querySelectorAll('.nav-group').forEach(g => {
-    if(g.querySelector(`[data-view="${view}"]`)) g.classList.remove('collapsed');
+    if(g.querySelector(`[data-view="${hl}"]`)) g.classList.remove('collapsed');
   });
   setTimeout(() => {
     try{
@@ -433,22 +580,24 @@ function go(view){
       if(view === 'teeth') renderTeeth();
       if(view === 'archive') renderArchive();
       if(view === 'grades') renderGrades();
-      if(view === 'settings') renderSyncStatus();
+      if(view === 'settings'){ renderSyncStatus(); renderPinSettingsUI(); }
       if(view === 'course-detail') renderCourseDetail();
       if(view === 'courses') renderCourses();
-      if(view === 'schedule') renderAcademicStrip();
+      if(view === 'schedule'){ renderAcademicStrip(); renderSchedule(); }
       if(view === 'balance') renderBalance();
       if(view === 'expenses') renderExpenses();
       if(view === 'goals') renderGoals();
     }catch(e){ console.error(e); }
-  }, 60);
+  }, 30);
 }
+
 window.addEventListener('hashchange', () => {
   const h = location.hash.slice(1);
   if(h && document.getElementById('view-' + h) && h !== 'course-detail'){
     go(h);
   }
 });
+
 document.body.addEventListener('click', function(e){
   const target = e.target.closest('[data-view]');
   if(!target || !target.dataset.view) return;
@@ -456,8 +605,14 @@ document.body.addEventListener('click', function(e){
   go(target.dataset.view);
 });
 
+document.querySelectorAll('.nav-group-title').forEach(title => {
+  title.addEventListener('click', () => {
+    title.parentElement.classList.toggle('collapsed');
+  });
+});
+
 /* ============================================================
-   5) الثيم
+   5) المظهر (Dark / Light Theme)
 ============================================================ */
 function setTheme(t){
   state.settings.theme = t;
@@ -471,14 +626,15 @@ document.getElementById('themeBtn').addEventListener('click', () => {
 });
 
 /* ============================================================
-   6) المودال
+   6) النوافذ المنبثقة (Modals)
 ============================================================ */
 const modalBg = document.getElementById('modalBg');
 function syncBodyScrollLock(){
   const modalOpen = document.getElementById('modalBg')?.classList.contains('open');
   const confirmOpen = document.getElementById('confirmBg')?.classList.contains('open');
   const sideOpen = document.getElementById('sidebar')?.classList.contains('open');
-  document.body.style.overflow = (modalOpen || confirmOpen || sideOpen) ? 'hidden' : '';
+  const pinOpen = document.getElementById('pinOverlay')?.classList.contains('open');
+  document.body.style.overflow = (modalOpen || confirmOpen || sideOpen || pinOpen) ? 'hidden' : '';
 }
 function openModal(title, bodyHTML, footHTML){
   document.getElementById('modalTitle').textContent = title;
@@ -487,7 +643,6 @@ function openModal(title, bodyHTML, footHTML){
   modalBg.classList.add('open');
   syncBodyScrollLock();
 }
-// ✅ FIX 6: reset AI upload state on close
 function closeModal(){
   modalBg.classList.remove('open');
   syncBodyScrollLock();
@@ -498,13 +653,13 @@ modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); 
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && modalBg.classList.contains('open')) closeModal(); });
 
 /* ============================================================
-   7) المقررات
+   7) المقررات الدراسية
 ============================================================ */
 let pickedColor = COLORS[0];
 function openCourseForm(id){
   const c = id ? getCourse(id) : null;
   pickedColor = c ? c.color : COLORS[state.courses.length % COLORS.length];
-  const colorBtns = COLORS.map(col => `<button type="button" data-c="${col}" style="background:${col}" class="${col===pickedColor?'sel':''}"></button>`).join('');
+  const colorBtns = COLORS.map(col => `<button type="button" data-c="${col}" style="background:${col}" class="${col===pickedColor?'sel':''}" aria-label="لون ${col}"></button>`).join('');
   openModal(c ? 'تعديل مقرر' : 'إضافة مقرر جديد', `
     <div class="form-grid">
       <div class="field full"><label>اسم المقرر <span class="req">*</span></label>
@@ -512,7 +667,7 @@ function openCourseForm(id){
       <div class="field"><label>الرمز</label><input id="cCode" placeholder="MATH101" value="${esc(c?.code||'')}"></div>
       <div class="field"><label>عدد الساعات</label><input id="cCredits" type="number" min="0" max="10" value="${c?.credits ?? 3}"></div>
       <div class="field full"><label>اسم الدكتور</label><input id="cTeacher" placeholder="د. محمد أحمد" value="${esc(c?.teacher||'')}"></div>
-      <div class="field full"><label>اللون</label><div class="color-pick" id="colorPick">${colorBtns}</div></div>
+      <div class="field full"><label>اللون المميز</label><div class="color-pick" id="colorPick">${colorBtns}</div></div>
     </div>
   `, `<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" onclick="saveCourse('${id||''}')">💾 حفظ</button>`);
   document.getElementById('colorPick').addEventListener('click', e => {
@@ -533,7 +688,7 @@ function saveCourse(id){
   };
   if(id){ const it = getCourse(id); if(it) Object.assign(it, data); }
   else{ state.courses.push({ id: uid(), ...data, grades: [] }); }
-  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+  save(); closeModal(); renderAll(); toast('✅ تم حفظ المقرر');
 }
 async function deleteCourse(id){
   const ok = await appConfirm('سيتم حذف المقرر وكل ما يتعلق به (المحاضرات، المهام، الاختبارات). متابعة؟', {
@@ -555,7 +710,7 @@ async function deleteCourse(id){
 }
 
 /* ============================================================
-   8) تفاصيل المقرر
+   8) صفحة تفاصيل المقرر
 ============================================================ */
 function openCourseDetail(id){
   if(!getCourse(id)){ toast('⚠️ المقرر غير موجود'); return; }
@@ -576,7 +731,7 @@ function renderCourseDetail(){
   const statsHTML = `
     <div class="cd-stat"><b style="color:${c.color}">${lectures.length}</b><span>📅 محاضرة أسبوعياً</span></div>
     <div class="cd-stat"><b style="color:var(--warn)">${openTasks}</b><span>✅ مهمة متبقية</span></div>
-    <div class="cd-stat"><b style="color:var(--danger)">${exams.filter(e => daysUntil(e.date) >= 0).length}</b><span>⏰ اختبار قادم</span></div>
+    <div class="cd-stat"><b style="color:var(--danger)">${exams.filter(e => !e.done && daysUntil(e.date) >= 0).length}</b><span>⏰ اختبار قادم</span></div>
     <div class="cd-stat"><b style="color:var(--ok)">${total !== null ? total.toFixed(1) + '%' : '—'}</b><span>📊 معدل الدرجات</span></div>`;
   let lecturesHTML = '';
   if(!lectures.length){
@@ -616,7 +771,8 @@ function renderCourseDetail(){
     examsHTML = exams.map(e => {
       const d = daysUntil(e.date);
       let txt, bg, col;
-      if(d < 0){ txt = 'انتهى'; bg = 'var(--hover)'; col = 'var(--muted)'; }
+      if(e.done){ txt = 'منجز'; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
+      else if(d < 0){ txt = 'انتهى'; bg = 'var(--hover)'; col = 'var(--muted)'; }
       else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
       else if(d === 1){ txt = 'غداً'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
       else if(d <= 7){ txt = `بعد ${d}ي`; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
@@ -630,13 +786,14 @@ function renderCourseDetail(){
   let gradesHTML = '';
   const g = c.grades || [];
   if(!g.length){
-    gradesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📊</div><b style="font-size:15px">لا توجد درجات</b></div>`;
+    gradesHTML = `<div class="empty" style="padding:22px"><div class="e-ico" style="font-size:34px">📊</div><b style="font-size:15px">لا توجد درجات تفصيلية</b></div>`;
   } else {
     gradesHTML = g.map(x => {
-      const scoreColor = (+x.score >= 80) ? 'var(--ok)' : (+x.score >= 60) ? 'var(--warn)' : 'var(--danger)';
+      const hasScore = x.score !== '' && x.score !== null && x.score !== undefined;
+      const scoreColor = !hasScore ? 'var(--muted)' : (+x.score >= 80) ? 'var(--ok)' : (+x.score >= 60) ? 'var(--warn)' : 'var(--danger)';
       return `<div class="cd-item"><div class="ci-ico">📝</div>
         <div class="ci-main"><b>${esc(x.name || 'مكوّن')}</b><span>الوزن: ${x.weight}%</span></div>
-        <div class="ci-side" style="background:${scoreColor}22;color:${scoreColor}">${x.score}%</div></div>`;
+        <div class="ci-side" style="background:${scoreColor}22;color:${scoreColor}">${hasScore ? x.score + '%' : '—'}</div></div>`;
     }).join('');
   }
   el.innerHTML = `
@@ -690,7 +847,7 @@ function openExamFormForCourse(cid){ openExamForm(); setTimeout(() => { const se
 function openClassFormForCourse(cid){ openClassForm(); setTimeout(() => { const sel = document.getElementById('clCourse'); if(sel){ sel.value = cid; } }, 30); }
 
 /* ============================================================
-   9) المحاضرات
+   9) المحاضرات والجدول
 ============================================================ */
 function courseOptions(sel){
   if(!state.courses.length) return `<option value="">— أضف مقرراً أولاً —</option>`;
@@ -757,6 +914,14 @@ function openAddForm(){
         <div class="at-ico" style="background:var(--danger-bg);color:var(--danger)">⏰</div>
         <div class="at-main"><b>اختبار / كويز</b><span>ميدتيرم، فاينل، كويز، اختبار عملي</span></div>
       </button>
+      <button class="add-type-btn" onclick="closeModal();openIncomeForm()">
+        <div class="at-ico" style="background:var(--ok-bg);color:var(--ok)">💰</div>
+        <div class="at-main"><b>زيادة فلوس / دخل إضافي</b><span>إضافة مبلغ على ميزانيتك ورصيدك</span></div>
+      </button>
+      <button class="add-type-btn" onclick="closeModal();openAiModal()">
+        <div class="at-ico" style="background:var(--p-light);color:var(--p)">✨</div>
+        <div class="at-main"><b>المساعد الذكي الشامل (AI)</b><span>اكتب أي شيء أو ارفع صورة وسينفذه فوراً</span></div>
+      </button>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إلغاء</button>`);
 }
@@ -775,7 +940,7 @@ function openTaskForm(id){
       <div class="field"><label>تاريخ التسليم <span class="req">*</span></label><input type="date" id="tDue" value="${t?.due || todayISO()}"></div>
       <div class="field"><label>الأولوية</label><select id="tPriority">
         <option value="high" ${t?.priority==='high'?'selected':''}>🔴 عالية</option>
-        <option value="med" ${t?.priority==='med'?'selected':''}>🟡 متوسطة</option>
+        <option value="med" ${(!t?.priority || t?.priority==='med')?'selected':''}>🟡 متوسطة</option>
         <option value="low" ${t?.priority==='low'?'selected':''}>🟢 منخفضة</option>
       </select></div>
       <div class="field full"><label>ملاحظات</label><textarea id="tNotes" placeholder="تفاصيل إضافية...">${esc(t?.notes||'')}</textarea></div>
@@ -796,7 +961,7 @@ function saveTask(id){
   };
   if(id){ const it = state.tasks.find(x => x.id === id); if(it) Object.assign(it, data); }
   else{ state.tasks.push({ id: uid(), ...data, done:false, created: todayISO() }); }
-  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+  save(); closeModal(); renderAll(); toast('✅ تم حفظ المهمة');
 }
 async function deleteTask(id){
   const t = state.tasks.find(x => x.id === id);
@@ -808,10 +973,7 @@ async function deleteTask(id){
   save(); closeModal(); renderAll(); toast('🗑️ تم الحذف');
 }
 function toggleTask(id){ const t = state.tasks.find(x => x.id === id); if(t){ t.done = !t.done; save(); renderAll(); } }
-function toggleExam(id){
-  const e = state.exams.find(x => x.id === id);
-  if(e){ e.done = !e.done; save(); renderAll(); }
-}
+function toggleExam(id){ const e = state.exams.find(x => x.id === id); if(e){ e.done = !e.done; save(); renderAll(); } }
 
 /* ============================================================
    12) الاختبارات
@@ -853,7 +1015,7 @@ function saveExam(id){
   };
   if(id){ const it = state.exams.find(x => x.id === id); if(it) Object.assign(it, data); }
   else{ state.exams.push({ id: uid(), ...data }); }
-  save(); closeModal(); renderAll(); toast('✅ تم الحفظ');
+  save(); closeModal(); renderAll(); toast('✅ تم حفظ الاختبار');
 }
 async function deleteExam(id){
   const e = state.exams.find(x => x.id === id);
@@ -866,51 +1028,55 @@ async function deleteExam(id){
 }
 
 /* ============================================================
-   13) رندرة اللوحة
+   13) رندرة لوحة اليوم
 ============================================================ */
 function renderDashboard(){
   const openTasks = state.tasks.filter(t => !t.done);
   const late = openTasks.filter(t => daysUntil(t.due) < 0);
-  const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0);
-  const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
+  const upcomingExams = state.exams.filter(e => !e.done && daysUntil(e.date) >= 0);
+  const totalMin = state.studyLog.reduce((a,b) => a + (+b.minutes||0), 0);
   const statsHTML = [
-    { ico:'📚', bg:'var(--p-light)', val:state.courses.length, lbl:'مقرر مسجّل' },
-    { ico:'📋', bg:'var(--warn-bg)', val:openTasks.length + upcomingExams.length, lbl:'متبقي' },
-    { ico:'⏰', bg:'var(--danger-bg)', val:upcomingExams.length, lbl:'اختبار قادم' },
-    { ico:'🍅', bg:'var(--ok-bg)', val:Math.round(totalMin/60) + 'h', lbl:'ساعات المذاكرة' }
-  ].map(s => `<div class="stat"><div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><b>${s.val}</b><span>${s.lbl}</span></div></div>`).join('');
+    { ico:'📚', bg:'var(--p-light)', val:state.courses.length, lbl:'مقرر مسجّل', act:"go('courses')" },
+    { ico:'📋', bg:'var(--warn-bg)', val:openTasks.length + upcomingExams.length, lbl:'متبقي للإنجاز', act:"go('tasks')" },
+    { ico:'⏰', bg:'var(--danger-bg)', val:upcomingExams.length, lbl:'اختبار قادم', act:"go('tasks')" },
+    { ico:'🍅', bg:'var(--ok-bg)', val:(totalMin/60).toFixed(1) + 'h', lbl:'ساعات المذاكرة', act:"go('study')" }
+  ].map(s => `<div class="stat" style="cursor:pointer" onclick="${s.act}"><div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><b>${s.val}</b><span>${s.lbl}</span></div></div>`).join('');
   document.getElementById('dashStats').innerHTML = statsHTML;
+
   const total = state.tasks.length;
   const done = state.tasks.filter(t => t.done).length;
   const pct = total ? Math.round(done/total*100) : 0;
   document.getElementById('dashProgBar').style.width = pct + '%';
-  document.getElementById('dashProgTxt').textContent = total ? pct + '%' : '';
+  document.getElementById('dashProgTxt').textContent = total ? pct + '%' : '0%';
   document.getElementById('dashDone').textContent = done;
   document.getElementById('dashLeft').textContent = total - done;
   document.getElementById('dashLate').textContent = late.length;
+
   const items = [
     ...openTasks.map(t => ({ kind:'task', id:t.id, ico:'📝', title:t.title, date:t.due, courseId:t.courseId })),
     ...upcomingExams.map(e => ({ kind:'exam', id:e.id, ico:'⏰', title:e.title, date:e.date, courseId:e.courseId }))
   ].sort((a,b) => a.date.localeCompare(b.date)).slice(0,6);
+
   const upEl = document.getElementById('dashUpcoming');
   if(!items.length){
     upEl.innerHTML = `<div class="empty" style="padding:28px 10px"><div class="e-ico">🎉</div><b>ما عندك شي قريب</b><p>استمتع بوقتك أو أضف مهاماً جديدة</p></div>`;
   }else{
     upEl.innerHTML = items.map(it => {
       const d = daysUntil(it.date);
-      let txt, bg;
-      if(d < 0){ txt = `متأخر ${Math.abs(d)} يوم`; bg = 'var(--danger-bg)'; }
-      else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; }
-      else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; }
-      else { txt = `بعد ${d} يوم`; bg = 'var(--ok-bg)'; }
+      let txt, bg, col;
+      if(d < 0){ txt = `متأخر ${Math.abs(d)} يوم`; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+      else if(d === 0){ txt = 'اليوم'; bg = 'var(--danger-bg)'; col = 'var(--danger)'; }
+      else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
+      else { txt = `بعد ${d} يوم`; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
       const clickHandler = it.kind === 'task' ? `openTaskForm('${it.id}')` : `openExamForm('${it.id}')`;
       return `<div class="up-item" onclick="${clickHandler}"><div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
         <div class="up-info"><b>${it.ico} ${esc(it.title)}</b><span>${it.kind === 'task' ? 'مهمة' : 'اختبار'} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span></div>
-        <div class="up-time" style="background:${bg}">${txt}</div></div>`;
+        <div class="up-time" style="background:${bg};color:${col}">${txt}</div></div>`;
     }).join('');
   }
+
   const nowDay = new Date().getDay();
-  const todays = state.schedule.filter(s => s.day === nowDay).sort((a,b) => toMin(a.start) - toMin(b.start));
+  const todays = state.schedule.filter(s => +s.day === nowDay).sort((a,b) => toMin(a.start) - toMin(b.start));
   const tdEl = document.getElementById('dashToday');
   if(!todays.length){
     tdEl.innerHTML = `<div class="empty" style="padding:28px 10px"><div class="e-ico">🛌</div><b>ما فيه محاضرات اليوم</b><p>${DAYS[nowDay]} — يوم مريح!</p></div>`;
@@ -925,9 +1091,6 @@ function renderDashboard(){
   renderDashHealth();
 }
 
-/* ============================================================
-   13.5) بطاقة الصحة في اللوحة
-============================================================ */
 function renderDashHealth(){
   const el = document.getElementById('dashHealth');
   if(!el) return;
@@ -937,28 +1100,28 @@ function renderDashHealth(){
   const w = state.wellness;
   const wLog = w.log.find(l => l.date === today) || { sleep: 0, water: 0 };
   el.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-      <div style="background:var(--hover);padding:14px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('teeth')">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div style="background:var(--hover);padding:14px;border-radius:13px;text-align:center;cursor:pointer;border:1px solid var(--border)" onclick="go('teeth')">
         <div style="font-size:22px">🦷</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">تفريش الأسنان</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${teethCount}/2</div>
+        <div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-top:4px">تفريش الأسنان</div>
+        <div style="font-family:'Tajawal';font-size:18px;font-weight:800;color:var(--p);margin-top:2px">${teethCount}/2</div>
       </div>
-      <div style="background:var(--hover);padding:14px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
+      <div style="background:var(--hover);padding:14px;border-radius:13px;text-align:center;cursor:pointer;border:1px solid var(--border)" onclick="go('wellness')">
         <div style="font-size:22px">😴</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">ساعات النوم</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.sleep}/${w.sleepGoal}</div>
+        <div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-top:4px">ساعات النوم</div>
+        <div style="font-family:'Tajawal';font-size:18px;font-weight:800;color:var(--p);margin-top:2px">${wLog.sleep}/${w.sleepGoal}</div>
       </div>
-      <div style="background:var(--hover);padding:14px;border-radius:12px;text-align:center;cursor:pointer" onclick="go('wellness')">
+      <div style="background:var(--hover);padding:14px;border-radius:13px;text-align:center;cursor:pointer;border:1px solid var(--border)" onclick="go('wellness')">
         <div style="font-size:22px">💧</div>
-        <div style="font-size:11px;color:var(--muted);font-weight:700;margin-top:4px">أكواب الماء</div>
-        <div style="font-family:'Tajawal';font-size:17px;font-weight:800;color:var(--p);margin-top:2px">${wLog.water}/${w.waterGoal}</div>
+        <div style="font-size:11.5px;color:var(--muted);font-weight:700;margin-top:4px">أكواب الماء</div>
+        <div style="font-family:'Tajawal';font-size:18px;font-weight:800;color:var(--p);margin-top:2px">${wLog.water}/${w.waterGoal}</div>
       </div>
     </div>
-    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('wellness')">فتح صفحة الصحة →</button>`;
+    <button class="btn btn-ghost btn-block" style="margin-top:12px" onclick="go('wellness')">فتح متابع الصحة اليومية →</button>`;
 }
 
 /* ============================================================
-   14) رندرة الجدول
+   14) رندرة الجدول الدراسي والحضور
 ============================================================ */
 function classDateThisWeek(dayIdx){
   const w = acadSelectedWeek || currentAcademicWeek();
@@ -969,6 +1132,13 @@ function classDateThisWeek(dayIdx){
 }
 function getAttFor(cid, date){ return state.attendance.find(a => a.classId === cid && a.date === date); }
 function renderSchedule(){
+  const legEl = document.getElementById('attLegend');
+  if(legEl && !legEl.innerHTML){
+    legEl.innerHTML = Object.entries(ATT).map(([k,v]) => {
+      const col = v.color || '#0d9488';
+      return `<span style="display:inline-flex;align-items:center;gap:5px;color:${col}"><span style="width:11px;height:11px;border-radius:3px;background:${col}"></span>${v.label}</span>`;
+    }).join('') + '<span style="color:var(--muted);font-weight:600;margin-inline-start:auto">اضغط على أي محاضرة لتسجيل الحضور</span>';
+  }
   const nowDay = new Date().getDay();
   let minHour = HOUR_START, maxHour = HOUR_END;
   state.schedule.forEach(s => {
@@ -986,7 +1156,7 @@ function renderSchedule(){
     ${DAYS.map((_,di) => {
       const lines = hours.map((_,i) => `<div class="hour-line" style="top:${i*HOUR_H}px"></div>`).join('');
       const dayDate = classDateThisWeek(di);
-      const dayItems = state.schedule.filter(s => s.day === di).sort((a,b) => toMin(a.start) - toMin(b.start));
+      const dayItems = state.schedule.filter(s => +s.day === di).sort((a,b) => toMin(a.start) - toMin(b.start));
       const blocks = dayItems.map(s => {
         const startMin = toMin(s.start), endMin = toMin(s.end);
         const top = (startMin - minHour*60) / 60 * HOUR_H;
@@ -997,7 +1167,7 @@ function renderSchedule(){
         const ovCount = overlaps.length;
         const widthPct = 100 / ovCount;
         const rightPct = ovIdx * widthPct;
-        const posStyle = ovCount > 1 ? `right:calc(${rightPct}% + 2px);left:auto;width:calc(${widthPct}% - 4px);` : '';
+        const posStyle = ovCount > 1 ? `inset-inline-start:calc(${rightPct}% + 2px);inset-inline-end:auto;width:calc(${widthPct}% - 4px);` : '';
         const att = getAttFor(s.id, dayDate);
         const status = att ? att.status : 'present';
         const st = ATT[status];
@@ -1007,14 +1177,15 @@ function renderSchedule(){
           color = st.color;
           if(status === 'cancelled') extra = 'opacity:.55;text-decoration:line-through;';
         }
-        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,26)}px;background:${color};${posStyle}${extra}" onclick="event.stopPropagation();openAttPopup('${s.id}','${dayDate}')">
+        return `<div class="cls" style="top:${top}px;height:${Math.max(hgt,28)}px;background:${color};${posStyle}${extra}" onclick="event.stopPropagation();openAttPopup('${s.id}','${dayDate}')">
           <b>${esc(courseName(s.courseId))}</b><span>${to12(s.start)} - ${to12(s.end)}${s.room ? ' · ' + esc(s.room) : ''}</span>
-          ${status !== 'present' && st ? `<span style="position:absolute;top:3px;left:5px;font-size:12px">${st.ico}</span>` : ''}</div>`;
+          ${status !== 'present' && st ? `<span style="position:absolute;top:3px;inset-inline-end:5px;font-size:12px">${st.ico}</span>` : ''}</div>`;
       }).join('');
       return `<div class="sched-col" data-day="${di}" style="min-height:${colHeight}px" onclick="openClassForm(null,${di})">${lines}${blocks}</div>`;
     }).join('')}
   </div>`;
-  document.getElementById('schedInner').innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
+  const inner = document.getElementById('schedInner');
+  if(inner) inner.innerHTML = head + `<div class="sched-body">${times}${cols}</div>`;
 }
 function openAttPopup(classId, date, draftNote){
   const s = state.schedule.find(x => x.id === classId);
@@ -1023,7 +1194,6 @@ function openAttPopup(classId, date, draftNote){
   const cur = existing ? existing.status : 'present';
   const noteVal = draftNote !== undefined ? draftNote : (existing?.note || '');
   const presentActive = cur === 'present';
-  // ✅ FIX 5a: add att-status-btn class + data-status for in-place toggling
   const presentBtn = `<button class="att-status-btn" data-status="present" onclick="setAtt('${classId}','${date}','present')" style="grid-column:1/-1;padding:11px;border-radius:12px;font-weight:700;font-size:13.5px;background:${presentActive ? 'var(--ok)' : 'var(--hover)'};color:${presentActive ? '#fff' : 'var(--text)'};border:2px solid ${presentActive ? 'var(--ok)' : 'transparent'};transition:all .2s;font-family:inherit;cursor:pointer">✅ حاضر (الافتراضي)</button>`;
   const btns = presentBtn + Object.entries(ATT).map(([k,v]) => {
     const active = cur === k;
@@ -1043,11 +1213,10 @@ function openAttPopup(classId, date, draftNote){
       <textarea id="attNote" placeholder="سبب الغياب أو ملاحظة..." style="min-height:70px">${esc(noteVal)}</textarea></div>
   `, `${existing ? `<button class="btn btn-danger btn-sm" onclick="clearAtt('${classId}','${date}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="saveAttNote('${classId}','${date}')">💾 حفظ</button>`);
 }
-// ✅ FIX 5a: no longer reopens the modal — updates buttons in-place
 function setAtt(classId, date, status){
   const n = document.getElementById('attNote');
   const note = n ? n.value.trim() : '';
-  if(status === 'present'){
+  if(status === 'present' && !note){
     state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
   } else {
     const att = getAttFor(classId, date);
@@ -1073,10 +1242,8 @@ function setAtt(classId, date, status){
       btn.style.borderColor = isActive ? bg : 'transparent';
     }
   });
-
-  toast('✅ تم');
+  toast('✅ تم تحديث الحضور');
 }
-// ✅ FIX 5b: create a 'present' record if a note is provided with no existing record
 function saveAttNote(classId, date){
   const n = document.getElementById('attNote');
   if(!n) return;
@@ -1098,26 +1265,15 @@ async function clearAtt(classId, date){
   });
   if(!ok) return;
   state.attendance = state.attendance.filter(a => !(a.classId === classId && a.date === date));
-  save(); renderSchedule(); closeModal(); toast('🗑️ تم');
+  save(); renderSchedule(); renderAttendancePage(); closeModal(); toast('🗑️ تم');
 }
-(function legend(){
-  const head = document.querySelector('#view-schedule .sec-head');
-  if(!head || document.getElementById('attLegend')) return;
-  const div = document.createElement('div');
-  div.id = 'attLegend';
-  div.style.cssText = 'display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:12px;font-size:12.5px;font-weight:700';
-  div.innerHTML = Object.entries(ATT).map(([k,v]) => {
-    const col = v.color || '#0d9488';
-    return `<span style="display:inline-flex;align-items:center;gap:5px;color:${col}"><span style="width:11px;height:11px;border-radius:3px;background:${col}"></span>${v.label}</span>`;
-  }).join('') + '<span style="color:var(--muted);font-weight:600;margin-inline-start:auto">اضغط أي محاضرة</span>';
-  head.parentNode.insertBefore(div, head.nextSibling);
-})();
 
 /* ============================================================
    15) رندرة المقررات
 ============================================================ */
 function renderCourses(){
   const grid = document.getElementById('coursesGrid');
+  if(!grid) return;
   document.getElementById('coursesCount').textContent = state.courses.length
     ? `${state.courses.length} مقرر · ${state.courses.reduce((a,c) => a + (+c.credits||0), 0)} ساعة معتمدة · اضغط أي بطاقة للتفاصيل`
     : 'لم تضف أي مقرر بعد';
@@ -1137,8 +1293,8 @@ function renderCourses(){
         <div class="course-meta">
           <span class="pill">${c.credits || 0} ساعات</span>
           <span class="pill">${classes} محاضرة</span>
-          ${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn)">${tasks} مهمة</span>` : ''}
-          ${total !== null ? `<span class="pill" style="background:var(--ok-bg);color:var(--ok)">${total.toFixed(1)}%</span>` : ''}
+          ${tasks ? `<span class="pill" style="background:var(--warn-bg);color:var(--warn);border-color:transparent">${tasks} مهمة</span>` : ''}
+          ${total !== null ? `<span class="pill" style="background:var(--ok-bg);color:var(--ok);border-color:transparent">${total.toFixed(1)}%</span>` : ''}
         </div>
         <div class="course-actions">
           <button onclick="event.stopPropagation();openCourseForm('${c.id}')">✏️ تعديل</button>
@@ -1154,27 +1310,38 @@ function renderCourses(){
 ============================================================ */
 function renderTasks(){
   const list = document.getElementById('tasksList');
+  if(!list) return;
   const openTasksCount = state.tasks.filter(t => !t.done).length;
-  const upcomingExamsCount = state.exams.filter(e => daysUntil(e.date) >= 0).length;
+  const upcomingExamsCount = state.exams.filter(e => !e.done && daysUntil(e.date) >= 0).length;
   document.getElementById('tasksCount').textContent = `${state.tasks.length} مهمة · ${state.exams.length} اختبار · ${openTasksCount + upcomingExamsCount} متبقي`;
   let items = [];
   state.tasks.forEach(t => { items.push({ kind:'task', date:t.due, done:!!t.done, data:t }); });
-  state.exams.forEach(e => {
-    items.push({ kind:'exam', date:e.date, done: !!e.done, data:e });
-  });
+  state.exams.forEach(e => { items.push({ kind:'exam', date:e.date, done:!!e.done, data:e }); });
+
+  const q = (document.getElementById('taskSearchInput')?.value || '').trim().toLowerCase();
+  if(q){
+    items = items.filter(it => {
+      const title = (it.data.title || '').toLowerCase();
+      const cName = courseName(it.data.courseId).toLowerCase();
+      const notes = (it.data.notes || '').toLowerCase();
+      return title.includes(q) || cName.includes(q) || notes.includes(q);
+    });
+  }
+
   const td = todayISO();
   if(taskFilter === 'tasks') items = items.filter(x => x.kind === 'task');
   else if(taskFilter === 'exams') items = items.filter(x => x.kind === 'exam');
   else if(taskFilter === 'today') items = items.filter(x => x.date === td);
   else if(taskFilter === 'week') items = items.filter(x => { const d = daysUntil(x.date); return d >= 0 && d <= 7; });
-  else if(taskFilter === 'late') items = items.filter(x => x.kind === 'task' && !x.data.done && daysUntil(x.date) < 0);
+  else if(taskFilter === 'late') items = items.filter(x => !x.done && daysUntil(x.date) < 0);
   else if(taskFilter === 'done') items = items.filter(x => x.done);
+
   items.sort((a,b) => {
     if(a.done !== b.done) return a.done ? 1 : -1;
-    return a.date.localeCompare(b.date);
+    return (a.date || '').localeCompare(b.date || '');
   });
   if(!items.length){
-    list.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا يوجد شيء هنا</b><p>أضف مهمة أو اختبار جديد، أو غيّر الفلتر</p><button class="btn btn-primary" onclick="openAddForm()">➕ إضافة جديدة</button></div>`;
+    list.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد نتائج مطابقة</b><p>أضف مهمة أو اختبار جديد، أو غيّر الفلتر</p><button class="btn btn-primary" onclick="openAddForm()">➕ إضافة جديدة</button></div>`;
     return;
   }
   const prioMap = {
@@ -1189,12 +1356,12 @@ function renderTasks(){
 }
 function renderTaskItem(t, prioMap){
   const d = daysUntil(t.due);
-  let dueTxt, dueBg;
-  if(t.done){ dueTxt = 'منجزة'; dueBg = 'var(--ok-bg)'; }
-  else if(d < 0){ dueTxt = `متأخر ${Math.abs(d)} يوم`; dueBg = 'var(--danger-bg)'; }
-  else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; }
-  else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; }
-  else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; }
+  let dueTxt, dueBg, dueCol = 'var(--text)';
+  if(t.done){ dueTxt = 'منجزة'; dueBg = 'var(--ok-bg)'; dueCol = 'var(--ok)'; }
+  else if(d < 0){ dueTxt = `متأخر ${Math.abs(d)} يوم`; dueBg = 'var(--danger-bg)'; dueCol = 'var(--danger)'; }
+  else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; dueCol = 'var(--danger)'; }
+  else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--warn-bg)'; dueCol = 'var(--warn)'; }
+  else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; dueCol = 'var(--muted)'; }
   const p = prioMap[t.priority] || prioMap.med;
   return `<div class="task ${t.done?'done':''}">
     <div class="chk" onclick="toggleTask('${t.id}')">✓</div>
@@ -1204,49 +1371,48 @@ function renderTaskItem(t, prioMap){
         <span class="tag" style="background:${courseColor(t.courseId)}22;color:${courseColor(t.courseId)}">${esc(courseName(t.courseId))}</span>
         <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(t.type)}</span>
         <span class="tag" style="background:${p.bg};color:${p.c}">${p.t}</span>
-        <span class="tag" style="background:${dueBg}">📅 ${fmtDate(t.due)}</span>
+        <span class="tag" style="background:${dueBg};color:${dueCol}">📅 ${fmtDate(t.due)} (${dueTxt})</span>
       </div>
       ${t.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(t.notes)}</div>` : ''}
     </div>
     <div class="task-actions">
-      <button class="mini-btn" onclick="openTaskForm('${t.id}')">✏️</button>
-      <button class="mini-btn del" onclick="deleteTask('${t.id}')">🗑️</button>
+      <button class="mini-btn" onclick="openTaskForm('${t.id}')" title="تعديل">✏️</button>
+      <button class="mini-btn del" onclick="deleteTask('${t.id}')" title="حذف">🗑️</button>
     </div>
   </div>`;
 }
 function renderExamItem(e){
   const d = daysUntil(e.date);
-  let dueTxt, dueBg;
-  if(e.done){ dueTxt = 'منجز'; dueBg = 'var(--ok-bg)'; }
-  else if(d < 0){ dueTxt = 'انتهى'; dueBg = 'var(--hover)'; }
-  else if(d === 0){ dueTxt = 'اليوم'; dueBg = 'var(--danger-bg)'; }
-  else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--danger-bg)'; }
-  else if(d <= 7){ dueTxt = `بعد ${d} يوم`; dueBg = 'var(--warn-bg)'; }
-  else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--ok-bg)'; }
+  let dueTxt, dueBg, dueCol = 'var(--text)';
+  if(e.done){ dueTxt = 'منجز'; dueBg = 'var(--ok-bg)'; dueCol = 'var(--ok)'; }
+  else if(d < 0){ dueTxt = 'انتهى'; dueBg = 'var(--hover)'; dueCol = 'var(--muted)'; }
+  else if(d === 0){ dueTxt = 'اليوم!'; dueBg = 'var(--danger-bg)'; dueCol = 'var(--danger)'; }
+  else if(d === 1){ dueTxt = 'غداً'; dueBg = 'var(--danger-bg)'; dueCol = 'var(--danger)'; }
+  else if(d <= 7){ dueTxt = `بعد ${d} يوم`; dueBg = 'var(--warn-bg)'; dueCol = 'var(--warn)'; }
+  else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--ok-bg)'; dueCol = 'var(--ok)'; }
   return `<div class="exam-item ${e.done ? 'past' : ''}" style="${e.done ? 'opacity:.55' : ''}">
-    <div class="chk ${e.done ? 'checked' : ''}" onclick="toggleExam('${e.id}')"
-         style="width:24px;height:24px;border-radius:8px;border:2px solid ${e.done ? 'var(--ok)' : 'var(--border)'};background:${e.done ? 'var(--ok)' : 'transparent'};display:grid;place-items:center;color:#fff;flex-shrink:0;cursor:pointer">✓</div>
+    <div class="chk ${e.done ? 'checked' : ''}" onclick="toggleExam('${e.id}')">✓</div>
     <div class="ex-ico">⏰</div>
     <div class="ex-main">
       <div class="ex-title" style="${e.done ? 'text-decoration:line-through' : ''}">${esc(e.title)}</div>
       <div class="ex-sub">
         <span class="tag" style="background:${courseColor(e.courseId)}22;color:${courseColor(e.courseId)}">${esc(courseName(e.courseId))}</span>
         <span class="tag" style="background:var(--hover);color:var(--muted)">${esc(e.type)}</span>
-        <span class="tag" style="background:${dueBg}">📅 ${fmtDate(e.date)}</span>
+        <span class="tag" style="background:${dueBg};color:${dueCol}">📅 ${fmtDate(e.date)} (${dueTxt})</span>
         ${e.time ? `<span class="tag" style="background:var(--hover);color:var(--muted)">🕐 ${to12(e.time)}</span>` : ''}
         ${e.place ? `<span class="tag" style="background:var(--hover);color:var(--muted)">📍 ${esc(e.place)}</span>` : ''}
       </div>
       ${e.notes ? `<div style="font-size:12.5px;color:var(--muted);margin-top:8px">${esc(e.notes)}</div>` : ''}
     </div>
     <div class="task-actions">
-      <button class="mini-btn" onclick="openExamForm('${e.id}')">✏️</button>
-      <button class="mini-btn del" onclick="deleteExam('${e.id}')">🗑️</button>
+      <button class="mini-btn" onclick="openExamForm('${e.id}')" title="تعديل">✏️</button>
+      <button class="mini-btn del" onclick="deleteExam('${e.id}')" title="حذف">🗑️</button>
     </div>
   </div>`;
 }
 
 /* ============================================================
-   17) الدرجات والمعدل
+   17) الدرجات والمعدل التراكمي
 ============================================================ */
 function scoreToPoints(p){
   if(p >= 95) return 5.00; if(p >= 90) return 4.75; if(p >= 85) return 4.50;
@@ -1267,7 +1433,7 @@ function courseTotal(c){
   if(!totalW) return null;
   return g.reduce((a,x) => a + (+x.score||0) * (+x.weight||0), 0) / totalW;
 }
-function letterToPoints(letter){ return GRADE_POINTS[letter] || 0; }
+function letterToPoints(letter){ return GRADE_POINTS[letter] ?? 0; }
 function getCourseGrade(c){
   if(c.grades && c.grades.length){
     const detailed = courseTotal(c);
@@ -1367,7 +1533,7 @@ function buildGradeRow(r, i){
       </div>`;
   }
   return `
-    <div class="card" style="padding:0;margin-bottom:12px;border-right:4px solid ${r.color};overflow:hidden">
+    <div class="card" style="padding:0;margin-bottom:12px;border-inline-start:4px solid ${r.color};overflow:hidden">
       <div style="padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
         <div style="flex:1;min-width:180px">
           <h3 style="font-size:16px;color:${r.color};margin-bottom:2px">${esc(r.name)}${isExternal ? ' <span style="font-size:10.5px;background:var(--muted);color:#fff;padding:2px 8px;border-radius:20px;font-weight:700">خارجي</span>' : ''}</h3>
@@ -1529,7 +1695,7 @@ function saveExternalGrade(){
 }
 
 /* ============================================================
-   17.5) المصروف
+   17.5) المصروف + الفلوس المضافة (الدخل) + الميزانية والأهداف
 ============================================================ */
 function addMonthsClamped(baseDate, monthsToAdd){
   const y = baseDate.getFullYear();
@@ -1544,7 +1710,7 @@ function getLastSalaryDate(){
   if(!m.salaryExactDate) return null;
   const base = new Date(m.salaryExactDate + 'T00:00:00');
   const today = new Date(); today.setHours(0,0,0,0);
-  if(base > today) return null;  // ← كان: return base
+  if(base > today) return null;
   let months = 0;
   while(addMonthsClamped(base, months + 1) <= today){
     months++;
@@ -1579,9 +1745,17 @@ function getCurrentMonthExpenses(){
   const nextISO = next ? todayISO(next) : '9999-12-31';
   return (state.money.expenses || []).filter(e => e.date >= lastISO && e.date < nextISO);
 }
+function getCurrentMonthIncomes(){
+  const last = getLastSalaryDate();
+  if(!last) return state.money.incomes || [];
+  const lastISO = todayISO(last);
+  const next = getNextSalaryDate();
+  const nextISO = next ? todayISO(next) : '9999-12-31';
+  return (state.money.incomes || []).filter(inc => inc.date >= lastISO && inc.date < nextISO);
+}
 function getCycleLabel(){
   const last = getLastSalaryDate();
-  if(!last) return '';
+  if(!last) return 'كل العمليات المسجلة';
   const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
   return `من ${last.getDate()} ${months[last.getMonth()]} إلى الآن`;
 }
@@ -1597,33 +1771,40 @@ function getTotalGoalSaved(){
   }, 0);
 }
 function getTotalSpent(){ return getCurrentMonthExpenses().reduce((a,b) => a + (+b.amount||0), 0); }
-function getRemaining(){ return (state.money.salary || 0) - getTotalSpent() - getTotalGoalSaved(); }
+function getTotalAddedIncome(){ return getCurrentMonthIncomes().reduce((a,b) => a + (+b.amount||0), 0); }
+function getTotalBudget(){ return (state.money.salary || 0) + getTotalAddedIncome(); }
+function getRemaining(){ return getTotalBudget() - getTotalSpent() - getTotalGoalSaved(); }
 
 function renderBalance(){
   const el = document.getElementById('balanceContent');
   if(!el) return;
   const salary = state.money.salary || 0;
+  const addedIncome = getTotalAddedIncome();
+  const totalBudget = salary + addedIncome;
   const rawSpent = getTotalSpent() + getTotalGoalSaved();
   const spent = Math.max(0, rawSpent);
-  const remaining = salary - rawSpent;
-  const pct = salary > 0 ? Math.min(100, Math.max(0, Math.round((spent / salary) * 100))) : 0;
+  const remaining = totalBudget - rawSpent;
+  const pct = totalBudget > 0 ? Math.min(100, Math.max(0, Math.round((spent / totalBudget) * 100))) : 0;
   const daysToSalary = getDaysToSalary();
   const cycleLabel = getCycleLabel();
 
-  if(salary === 0 || !state.money.salaryExactDate){
+  if(totalBudget === 0 && (!state.money.expenses || !state.money.expenses.length)){
     el.innerHTML = `
       <div class="card" style="padding:40px;text-align:center">
         <div style="font-size:56px;margin-bottom:12px">💰</div>
-        <h3 style="font-size:19px;margin-bottom:8px">ابدأ بإعداد راتبك</h3>
-        <p style="color:var(--muted);margin-bottom:20px">حدد المبلغ وتاريخ نزول الراتب لتبدأ التتبع</p>
-        <button class="btn btn-primary" onclick="openSalaryForm()">➕ إعداد الراتب</button>
+        <h3 style="font-size:19px;margin-bottom:8px">ابدأ بإعداد راتبك أو أضف مبلغاً لميزانيتك</h3>
+        <p style="color:var(--muted);margin-bottom:20px">حدد المكافأة الشهرية أو أضف أي مبلغ (حوالة، هدية، دخل إضافي) لتبدأ التتبع</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="openSalaryForm()">⚙️ إعداد الراتب الشهري</button>
+          <button class="btn btn-primary" style="background:var(--ok)" onclick="openIncomeForm()">➕ زيادة فلوس / دخل</button>
+        </div>
       </div>`;
     return;
   }
 
   if(salary > 0 && state.money.salaryExactDate && !getLastSalaryDate()){
     el.innerHTML = `
-      <div class="card" style="border-right:4px solid var(--warn);padding:40px;text-align:center">
+      <div class="card" style="border-inline-start:4px solid var(--warn);padding:40px;text-align:center">
         <div style="font-size:56px;margin-bottom:12px">⚠️</div>
         <h3 style="font-size:19px;margin-bottom:8px">تاريخ الراتب في المستقبل</h3>
         <p style="color:var(--muted);margin-bottom:20px">
@@ -1653,6 +1834,16 @@ function renderBalance(){
     </div>`;
   }).join('');
 
+  const monthIncomes = getCurrentMonthIncomes().slice(-4).reverse();
+  const incRows = monthIncomes.map(inc => {
+    const src = getIncomeSrcById(inc.source);
+    return `<div class="cd-item" onclick="openIncomeForm('${inc.id}')" style="cursor:pointer">
+      <div class="ci-ico">${src.ico}</div>
+      <div class="ci-main"><b>${esc(inc.note || src.name)}</b><span>${src.name} · ${fmtDate(inc.date)}</span></div>
+      <div class="ci-side" style="background:var(--ok-bg);color:var(--ok)">+${fmtMoney(inc.amount)} ر.س</div>
+    </div>`;
+  }).join('');
+
   const activeGoals = (state.money.goals || []).filter(g => (g.saved||0) < g.target).slice(0, 3);
   const goalsHTML = activeGoals.length ? activeGoals.map(g => {
     const p = Math.min(100, Math.round(((g.saved||0)/g.target)*100));
@@ -1665,30 +1856,49 @@ function renderBalance(){
 
   el.innerHTML = `
     <div class="money-card">
-      <div class="money-label">💰 الراتب / المكافأة</div>
-      <div class="money-amount">${fmtMoney(salary)} ر.س</div>
-      ${daysToSalary > 0 ? `<div class="money-label" style="margin-top:8px">📅 باقي ${daysToSalary} يوم على الراتب الجاي</div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">
+        <div>
+          <div class="money-label">💰 الرصيد المتبقي حالياً</div>
+          <div class="money-amount">${fmtMoney(remaining)} ر.س</div>
+        </div>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.22);color:#fff;backdrop-filter:blur(6px)" onclick="openIncomeForm()">➕ زيادة فلوس</button>
+      </div>
+      <div class="money-label" style="margin-top:4px;font-size:12px;opacity:.9">
+        الراتب الأساسي: <b>${fmtMoney(salary)} ر.س</b>
+        ${addedIncome > 0 ? ` · ➕ مضاف بالدورة: <b>+${fmtMoney(addedIncome)} ر.س</b>` : ''}
+      </div>
+      ${daysToSalary > 0 ? `<div class="money-label" style="margin-top:6px">📅 باقي ${daysToSalary} يوم على الراتب الجاي</div>` : ''}
       <div class="money-label" style="margin-top:4px;font-size:11px;opacity:.75">🔄 ${cycleLabel}</div>
-      <div class="money-row">
-        <div class="money-item"><b>${fmtMoney(spent)}</b><span>💸 المصروف</span></div>
-        <div class="money-item"><b>${fmtMoney(remaining)}</b><span>✅ المتبقي</span></div>
+      <div class="money-row" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">
+        <div class="money-item"><b>${fmtMoney(totalBudget)}</b><span>🏦 إجمالي الميزانية</span></div>
+        <div class="money-item"><b>${fmtMoney(spent)}</b><span>💸 المصروف والمُدّخر</span></div>
+        <div class="money-item"><b>+${fmtMoney(addedIncome)}</b><span>💰 فلوس مضافة</span></div>
       </div>
     </div>
 
     <div class="card" style="margin-bottom:16px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-        <h3 style="font-size:17px">📊 تقدم الصرف</h3>
+        <h3 style="font-size:17px">📊 تقدم الصرف من إجمالي الميزانية</h3>
         <span style="background:${statusBg};color:${barColor};padding:5px 12px;border-radius:20px;font-size:12.5px;font-weight:800">${statusText} · ${pct}%</span>
       </div>
       <div class="prog" style="height:14px"><i style="width:${pct}%;background:${barColor}"></i></div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:700;margin-top:8px">
-        <span>0</span><span>${fmtMoney(salary)}</span>
+        <span>0 ر.س</span><span>${fmtMoney(totalBudget)} ر.س</span>
       </div>
     </div>
 
+    ${incRows ? `
+      <div class="card" style="margin-bottom:16px">
+        <div class="sec-head" style="margin-bottom:12px">
+          <h3 style="font-size:17px">💰 آخر الإضافات المالية (الدخل الإضافي)</h3>
+          <button class="btn btn-ghost btn-sm" onclick="expenseFilter='incomes';go('expenses')">عرض الكل</button>
+        </div>
+        ${incRows}
+      </div>` : ''}
+
     ${catRows ? `
       <div class="card" style="margin-bottom:16px">
-        <h3 style="font-size:17px;margin-bottom:14px">📈 توزيع المصروفات</h3>
+        <h3 style="font-size:17px;margin-bottom:14px">📈 توزيع المصروفات (الدورة الحالية)</h3>
         ${catRows}
       </div>` : ''}
 
@@ -1702,25 +1912,25 @@ function renderBalance(){
       </div>` : ''}
 
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-primary" style="flex:1" onclick="openExpenseForm()">➕ إضافة مصروف</button>
-      <button class="btn btn-ghost" onclick="go('expenses')">📋 كل المصاريف</button>
+      <button class="btn btn-primary" style="flex:1" onclick="openExpenseForm()">💸 إضافة مصروف</button>
+      <button class="btn btn-primary" style="flex:1;background:var(--ok)" onclick="openIncomeForm()">➕ زيادة فلوس</button>
+      <button class="btn btn-ghost" onclick="go('expenses')">📋 كل العمليات</button>
     </div>
   `;
 }
 
 function openSalaryForm(){
   const m = state.money;
-  openModal('💰 الراتب / المكافأة', `
+  openModal('💰 الراتب / المكافأة الأساسية', `
     <div class="form-grid">
-      <div class="field full"><label>المبلغ (ر.س) <span class="req">*</span></label>
-        <input id="salaryAmount" type="number" min="0" step="0.01" value="${m.salary || ''}" placeholder="2000"></div>
-      
+      <div class="field full"><label>المبلغ الشهري الثابت (ر.س) <span class="req">*</span></label>
+        <input id="salaryAmount" type="number" min="0" step="0.01" value="${m.salary || ''}" placeholder="990"></div>
       <div class="field full">
         <label>تاريخ نزول الراتب الحالي <span class="req">*</span></label>
         <input id="salaryExactDate" type="date" value="${m.salaryExactDate || todayISO()}">
         <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.7">
-          💡 <b>أنا أحدد</b> متى نزل الراتب — كل المصاريف من هذا التاريخ تُحسب<br>
-          📅 لما ييجي الراتب الجديد، ارجع هنا وحدّث التاريخ
+          💡 كل المصاريف والفلوس المضافة من هذا التاريخ تُحسب ضمن الدورة الحالية، وتتجدد الدورة تلقائياً كل شهر.<br>
+          ➕ لإضافة مبلغ طارئ أو هدية أو تحويل بدون تغيير الراتب الثابت، استخدم زر <b>"زيادة فلوس"</b>.
         </div>
       </div>
     </div>
@@ -1733,7 +1943,74 @@ function saveSalary(){
   state.money.salary = amount;
   state.money.salaryExactDate = exactDate;
   save(); closeModal(); renderBalance(); renderExpenses();
-  toast('✅ تم الحفظ');
+  toast('✅ تم حفظ إعدادات الراتب');
+}
+
+/* ============ 💰 زيادة فلوس / إضافة دخل إضافي ============ */
+function openIncomeForm(id){
+  const inc = id ? (state.money.incomes || []).find(x => x.id === id) : null;
+  let selectedSrc = inc?.source || 'transfer';
+  const srcBtns = INCOME_SOURCES.map(s => `
+    <button type="button" data-src="${s.id}" class="src-btn ${selectedSrc === s.id ? 'sel' : ''}" style="background:${s.color}15;color:${s.color};border:2px solid ${selectedSrc === s.id ? s.color : 'transparent'};padding:10px 6px;border-radius:12px;font-weight:700;font-size:12.5px;transition:all .2s;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px">
+      <span style="font-size:22px">${s.ico}</span>
+      <span>${s.name}</span>
+    </button>
+  `).join('');
+
+  openModal(inc ? 'تعديل المبلغ المضاف' : '💰 زيادة فلوس / دخل إضافي', `
+    <div style="background:var(--ok-bg);color:var(--ok);padding:11px 14px;border-radius:12px;font-size:12.5px;font-weight:700;margin-bottom:14px">
+      ✨ هذا المبلغ يُضاف مباشرة إلى رصيدك المتاح وميزانيتك الحالية دون المساس براتبك الأساسي.
+    </div>
+    <div class="form-grid">
+      <div class="field full"><label>المبلغ المضاف (ر.س) <span class="req">*</span></label>
+        <input id="incAmount" type="number" min="0" step="0.01" value="${inc?.amount || ''}" placeholder="200"></div>
+      <div class="field full"><label>الوصف / المصدر (اختياري)</label>
+        <input id="incNote" placeholder="مثال: تحويل من الوالد / مكافأة" value="${esc(inc?.note||'')}"></div>
+      <div class="field full"><label>التاريخ</label>
+        <input id="incDate" type="date" value="${inc?.date || todayISO()}"></div>
+      <div class="field full"><label>نوع الإضافة <span class="req">*</span></label>
+        <div id="srcGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${srcBtns}</div>
+      </div>
+    </div>
+  `, `${inc ? `<button class="btn btn-danger" onclick="deleteIncome('${id}')">🗑️</button>` : ''}<button class="btn btn-ghost" onclick="closeModal()">إلغاء</button><button class="btn btn-primary" style="background:var(--ok)" onclick="saveIncome('${id||''}')">💾 إضافة للرصيد</button>`);
+
+  const grid = document.getElementById('srcGrid');
+  grid.querySelectorAll('.src-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedSrc = btn.dataset.src;
+      grid.querySelectorAll('.src-btn').forEach(b => {
+        const s = getIncomeSrcById(b.dataset.src);
+        const isSel = b.dataset.src === selectedSrc;
+        b.style.borderColor = isSel ? s.color : 'transparent';
+      });
+    });
+  });
+  window._selectedIncSrc = () => selectedSrc;
+}
+function saveIncome(id){
+  const amount = +document.getElementById('incAmount').value || 0;
+  const note = document.getElementById('incNote').value.trim();
+  const date = document.getElementById('incDate').value || todayISO();
+  const source = window._selectedIncSrc ? window._selectedIncSrc() : 'transfer';
+  if(amount <= 0){ toast('⚠️ أدخل مبلغاً صحيحاً'); return; }
+  if(!Array.isArray(state.money.incomes)) state.money.incomes = [];
+  if(id){
+    const it = state.money.incomes.find(x => x.id === id);
+    if(it) Object.assign(it, { amount, note, date, source });
+  } else {
+    state.money.incomes.push({ id: uid(), amount, note, date, source, created: Date.now() });
+  }
+  save(); closeModal();
+  renderBalance(); renderExpenses();
+  toast(`💰 تمت إضافة +${fmtMoney(amount)} ر.س إلى رصيدك!`);
+}
+async function deleteIncome(id){
+  const ok = await appConfirm('حذف هذا المبلغ المضاف من رصيدك؟', {
+    title: 'حذف مبلغ مضاف', emoji: '🗑️', okText: 'حذف'
+  });
+  if(!ok) return;
+  state.money.incomes = (state.money.incomes || []).filter(inc => inc.id !== id);
+  save(); closeModal(); renderBalance(); renderExpenses(); toast('🗑️ تم الحذف');
 }
 
 function openExpenseForm(id){
@@ -1748,7 +2025,7 @@ function openExpenseForm(id){
   openModal(e ? 'تعديل مصروف' : '💸 إضافة مصروف', `
     <div class="form-grid">
       <div class="field full"><label>المبلغ (ر.س) <span class="req">*</span></label>
-        <input id="expAmount" type="number" min="0" step="0.01" value="${e?.amount || ''}" placeholder="50"></div>
+        <input id="expAmount" type="number" min="0" step="0.01" value="${e?.amount || ''}" placeholder="45"></div>
       <div class="field full"><label>الوصف (اختياري)</label>
         <input id="expNote" placeholder="مثال: غداء مع الشباب" value="${esc(e?.note||'')}"></div>
       <div class="field full"><label>التاريخ</label>
@@ -1777,7 +2054,7 @@ function saveExpense(id){
   const note = document.getElementById('expNote').value.trim();
   const date = document.getElementById('expDate').value || todayISO();
   const category = window._selectedExpCat ? window._selectedExpCat() : 'food';
-  if(amount <= 0){ toast('⚠️ أدخل مبلغ صحيح'); return; }
+  if(amount <= 0){ toast('⚠️ أدخل مبلغاً صحيحاً'); return; }
   if(id){
     const it = state.money.expenses.find(x => x.id === id);
     if(it) Object.assign(it, { amount, note, date, category });
@@ -1800,37 +2077,67 @@ async function deleteExpense(id){
 function renderExpenses(){
   const list = document.getElementById('expensesList');
   if(!list) return;
-  const all = [...state.money.expenses].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  document.querySelectorAll('#expenseFilters .chip').forEach(c => {
+    c.classList.toggle('active', c.dataset.f === expenseFilter);
+  });
+
+  const expList = (state.money.expenses || []).map(e => ({ ...e, txType: 'expense' }));
+  const incList = (state.money.incomes || []).map(i => ({ ...i, txType: 'income' }));
+  let all = [...expList, ...incList].sort((a,b) => (b.date||'').localeCompare(a.date||'') || (b.created||0) - (a.created||0));
+
   const today = todayISO();
   const now = new Date();
   const weekAgo = new Date(now.getTime() - 6*86400000);
   const weekStart = todayISO(weekAgo);
 
   let items = all;
-  if(expenseFilter === 'today') items = all.filter(e => e.date === today);
-  else if(expenseFilter === 'week') items = all.filter(e => e.date >= weekStart);
+  if(expenseFilter === 'expenses') items = all.filter(x => x.txType === 'expense');
+  else if(expenseFilter === 'incomes') items = all.filter(x => x.txType === 'income');
+  else if(expenseFilter === 'today') items = all.filter(x => x.date === today);
+  else if(expenseFilter === 'week') items = all.filter(x => x.date >= weekStart);
+  else if(expenseFilter === 'cycle'){
+    const cycExp = getCurrentMonthExpenses().map(e => ({ ...e, txType: 'expense' }));
+    const cycInc = getCurrentMonthIncomes().map(i => ({ ...i, txType: 'income' }));
+    items = [...cycExp, ...cycInc].sort((a,b) => (b.date||'').localeCompare(a.date||'') || (b.created||0) - (a.created||0));
+  }
 
-  const totalShown = items.reduce((a,b) => a + (+b.amount||0), 0);
+  const totalSpentShown = items.filter(x => x.txType === 'expense').reduce((a,b) => a + (+b.amount||0), 0);
+  const totalIncShown = items.filter(x => x.txType === 'income').reduce((a,b) => a + (+b.amount||0), 0);
+
   document.getElementById('expensesCount').textContent = items.length
-    ? `${items.length} مصروف · الإجمالي: ${fmtMoney(totalShown)} ر.س`
-    : 'لا توجد مصاريف';
+    ? `${items.length} عملية · المصاريف: ${fmtMoney(totalSpentShown)} ر.س${totalIncShown > 0 ? ` · المضاف: +${fmtMoney(totalIncShown)} ر.س` : ''}`
+    : 'لا توجد عمليات مسجلة';
 
   if(!items.length){
-    list.innerHTML = `<div class="empty"><div class="e-ico">💸</div><b>لا توجد مصاريف</b><p>ابدأ بتسجيل مصاريفك</p><button class="btn btn-primary" onclick="openExpenseForm()">➕ إضافة مصروف</button></div>`;
+    list.innerHTML = `<div class="empty"><div class="e-ico">💸</div><b>لا توجد عمليات هنا</b><p>سجّل مصروفاً جديداً أو أضف مبلغاً إلى رصيدك</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn btn-primary" onclick="openExpenseForm()">💸 إضافة مصروف</button><button class="btn btn-primary" style="background:var(--ok)" onclick="openIncomeForm()">➕ زيادة فلوس</button></div></div>`;
     return;
   }
 
-  list.innerHTML = items.map(e => {
-    const cat = getCatById(e.category);
+  list.innerHTML = items.map(item => {
+    if(item.txType === 'income'){
+      const src = getIncomeSrcById(item.source);
+      return `<div class="exp-item" style="border-inline-start:4px solid var(--ok)">
+        <div class="exp-ico" style="background:var(--ok-bg);color:var(--ok)">${src.ico}</div>
+        <div class="exp-main">
+          <b>${esc(item.note || src.name)}</b>
+          <span>${src.name} · ${fmtDate(item.date)}</span>
+        </div>
+        <div class="exp-amount" style="color:var(--ok)">+${fmtMoney(item.amount)}</div>
+        <button class="mini-btn" onclick="openIncomeForm('${item.id}')" title="تعديل">✏️</button>
+        <button class="mini-btn del" onclick="deleteIncome('${item.id}')" title="حذف">🗑️</button>
+      </div>`;
+    }
+    const cat = getCatById(item.category);
     return `<div class="exp-item">
       <div class="exp-ico" style="background:${cat.color}22;color:${cat.color}">${cat.ico}</div>
       <div class="exp-main">
-        <b>${esc(e.note || cat.name)}</b>
-        <span>${cat.name} · ${fmtDate(e.date)}</span>
+        <b>${esc(item.note || cat.name)}</b>
+        <span>${cat.name} · ${fmtDate(item.date)}</span>
       </div>
-      <div class="exp-amount" style="color:var(--danger)">-${fmtMoney(e.amount)}</div>
-      <button class="mini-btn" onclick="openExpenseForm('${e.id}')">✏️</button>
-      <button class="mini-btn del" onclick="deleteExpense('${e.id}')">🗑️</button>
+      <div class="exp-amount" style="color:var(--danger)">-${fmtMoney(item.amount)}</div>
+      <button class="mini-btn" onclick="openExpenseForm('${item.id}')" title="تعديل">✏️</button>
+      <button class="mini-btn del" onclick="deleteExpense('${item.id}')" title="حذف">🗑️</button>
     </div>`;
   }).join('');
 }
@@ -1846,7 +2153,7 @@ function renderGoals(){
     : 'لا توجد أهداف';
 
   if(!goals.length){
-    list.innerHTML = `<div class="empty"><div class="e-ico">🎯</div><b>لا توجد أهداف</b><p>حدد أهدافك المالية وابدأ بالتحويش</p><button class="btn btn-primary" onclick="openGoalForm()">➕ هدف جديد</button></div>`;
+    list.innerHTML = `<div class="empty"><div class="e-ico">🎯</div><b>لا توجد أهداف</b><p>حدد أهدافك المالية وابدأ بالادخار</p><button class="btn btn-primary" onclick="openGoalForm()">➕ هدف جديد</button></div>`;
     return;
   }
 
@@ -1929,7 +2236,7 @@ function saveGoal(id){
   const name = document.getElementById('gName').value.trim();
   const target = +document.getElementById('gTarget').value || 0;
   const savedRaw = document.getElementById('gSaved').value;
-  const saved = Math.max(0, +savedRaw || 0);  // ← منع السالب (#51)
+  const saved = Math.max(0, +savedRaw || 0);
   const emoji = window._selectedGoalEmoji ? window._selectedGoalEmoji() : '🎯';
   if(!name){ toast('⚠️ اكتب اسم الهدف'); return; }
   if(target <= 0){ toast('⚠️ أدخل المبلغ المطلوب'); return; }
@@ -1942,8 +2249,7 @@ function saveGoal(id){
     g = { id: uid(), name, target, saved, emoji, created: Date.now(), txs: [] };
     state.money.goals.push(g);
   }
-  reconcileGoalTxs(g);  // ← جديد: يزامن txs مع saved
-
+  reconcileGoalTxs(g);
   save(); closeModal(); renderGoals(); renderBalance(); toast('✅ تم الحفظ');
 }
 async function deleteGoal(id){
@@ -1967,7 +2273,7 @@ function addToGoal(id){
 }
 function doDeposit(id){
   const amt = +document.getElementById('depAmt').value || 0;
-  if(amt <= 0){ toast('⚠️ أدخل مبلغ صحيح'); return; }
+  if(amt <= 0){ toast('⚠️ أدخل مبلغاً صحيحاً'); return; }
   const g = state.money.goals.find(x => x.id === id);
   if(!g) return;
   g.saved = (g.saved||0) + amt;
@@ -1991,7 +2297,7 @@ function withdrawFromGoal(id){
 }
 function doWithdraw(id){
   const amt = +document.getElementById('wdrAmt').value || 0;
-  if(amt <= 0){ toast('⚠️ أدخل مبلغ صحيح'); return; }
+  if(amt <= 0){ toast('⚠️ أدخل مبلغاً صحيحاً'); return; }
   const g = state.money.goals.find(x => x.id === id);
   if(!g) return;
   const actualWithdrawn = Math.min(g.saved || 0, amt);
@@ -2004,7 +2310,7 @@ function doWithdraw(id){
   save(); closeModal(); renderGoals(); renderBalance(); toast('↩️ تم السحب');
 }
 
-document.getElementById('expenseFilters').addEventListener('click', e => {
+document.getElementById('expenseFilters')?.addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if(!chip) return;
   document.querySelectorAll('#expenseFilters .chip').forEach(c => c.classList.remove('active'));
@@ -2072,10 +2378,9 @@ function pomoRender(){
     const prog = pomo.total ? (pomo.total - remaining) / pomo.total : 0;
     ringFg.style.strokeDashoffset = (RING_C * prog).toFixed(2);
   }
-  if(startBtn) startBtn.textContent = pomo.running ? '⏸ إيقاف' : '▶ ابدأ';
+  if(startBtn) startBtn.textContent = pomo.running ? '⏸ إيقاف مؤقت' : '▶ ابدأ';
 }
 
-// 🔧 MOD 5: sendBeacon + keepalive لضمان وصول الإلغاء
 function syncPomoCancelToServer(){
   if(!getMyChatId()) return;
   const payload = JSON.stringify({ ...authObj() });
@@ -2124,13 +2429,11 @@ function pomoStartTimer(){
   const selCourse = document.getElementById('pomoCourse')?.value;
   if(selCourse !== undefined) pomo.courseId = selCourse;
   clearInterval(pomo.intervalId);
-  // ✅ FIX 4a: 250 → 1000 (timer is computed from endTimestamp so 1s granularity is enough)
   pomo.intervalId = setInterval(pomoTick, 1000);
   pomoSaveState();
   syncPomoStartToServer(pomo.mode, pomo.total, pomo.endTimestamp);
   pomoRender();
 }
-// 🔧 MOD 2: أضف syncToTelegram بعد إلغاء السيرفر
 function pomoPauseTimer(){
   if(!pomo.running) return;
   pomo.pausedRemaining = pomoGetRemaining();
@@ -2146,7 +2449,6 @@ function pomoToggle(){
   if(pomo.running) pomoPauseTimer();
   else pomoStartTimer();
 }
-// 🔧 MOD 3: تتبّع wasRunning وأبلغ السيرفر بعد التبديل
 function pomoSetMode(mode, silent){
   clearInterval(pomo.intervalId);
   const wasRunning = pomo.running;
@@ -2163,7 +2465,6 @@ function pomoSetMode(mode, silent){
   }
   pomoRender();
 }
-// 🔧 MOD 4: أضف syncToTelegram بعد التصفير
 async function pomoResetCurrent(){
   const ok = await appConfirm('تصفير المؤقّت وإيقاف الدورة التلقائية؟', {
     title: 'تصفير المؤقّت', emoji: '🔄', okText: 'تصفير', variant: 'warn'
@@ -2274,7 +2575,6 @@ async function pomoResumeIfNeeded(){
     pomo.running = true;
     pomo.endTimestamp = serverTimer.endTimestamp;
     clearInterval(pomo.intervalId);
-    // ✅ FIX 4a: 250 → 1000
     pomo.intervalId = setInterval(pomoTick, 1000);
     pomoSaveState();
     document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.classList.toggle('active', c.dataset.mode === pomo.mode));
@@ -2288,7 +2588,6 @@ async function pomoResumeIfNeeded(){
     pomo.running = true;
     pomo.endTimestamp = saved.endTimestamp;
     clearInterval(pomo.intervalId);
-    // ✅ FIX 4a: 250 → 1000
     pomo.intervalId = setInterval(pomoTick, 1000);
   } else if(saved.endTimestamp && saved.endTimestamp <= Date.now()){
     pomo.mode = saved.mode || 'work';
@@ -2304,21 +2603,24 @@ async function pomoResumeIfNeeded(){
   pomoRender();
 }
 
-document.getElementById('pomoStart').addEventListener('click', () => {
+document.getElementById('pomoStart')?.addEventListener('click', () => {
   if('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
   pomoToggle();
 });
-document.getElementById('pomoReset').addEventListener('click', pomoResetCurrent);
+document.getElementById('pomoReset')?.addEventListener('click', pomoResetCurrent);
 document.querySelectorAll('#view-study .pomo-modes .chip').forEach(c => c.addEventListener('click', async () => {
   if(c.dataset.mode === pomo.mode) return;
-  const ok = await appConfirm(`تغيير الوضع إلى "${pomoLabel(c.dataset.mode)}"؟ (سيفقد الوقت الحالي)`, {
-    title: 'تغيير الوضع', emoji: '🔄', okText: 'تغيير', variant: 'warn'
-  });
-  if(ok) pomoSetMode(c.dataset.mode);
+  if(pomo.running || (pomo.pausedRemaining !== null && pomo.pausedRemaining < pomo.total)){
+    const ok = await appConfirm(`تغيير الوضع إلى "${pomoLabel(c.dataset.mode)}"؟ (سيفقد الوقت الحالي)`, {
+      title: 'تغيير الوضع', emoji: '🔄', okText: 'تغيير', variant: 'warn'
+    });
+    if(!ok) return;
+  }
+  pomoSetMode(c.dataset.mode);
 }));
 
 /* ============================================================
-   19) المذاكرة
+   19) سجل المذاكرة
 ============================================================ */
 document.getElementById('pomoCourse')?.addEventListener('change', e => {
   pomo.courseId = e.target.value || '';
@@ -2334,9 +2636,9 @@ function renderStudy(){
   const today = todayISO();
   const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 6);
   const weekStart = todayISO(weekAgo);
-  const todayMin = state.studyLog.filter(l => l.date === today).reduce((a,b) => a + b.minutes, 0);
-  const weekMin = state.studyLog.filter(l => l.date >= weekStart).reduce((a,b) => a + b.minutes, 0);
-  const totalMin = state.studyLog.reduce((a,b) => a + b.minutes, 0);
+  const todayMin = state.studyLog.filter(l => l.date === today).reduce((a,b) => a + (+b.minutes||0), 0);
+  const weekMin = state.studyLog.filter(l => l.date >= weekStart).reduce((a,b) => a + (+b.minutes||0), 0);
+  const totalMin = state.studyLog.reduce((a,b) => a + (+b.minutes||0), 0);
   const st = document.getElementById('studyToday');
   const sw = document.getElementById('studyWeek');
   const stt = document.getElementById('studyTotal');
@@ -2347,20 +2649,16 @@ function renderStudy(){
   for(let i = 6; i >= 0; i--){
     const d = new Date(); d.setDate(d.getDate() - i);
     const iso = todayISO(d);
-    const mins = state.studyLog.filter(l => l.date === iso).reduce((a,b) => a + b.minutes, 0);
+    const mins = state.studyLog.filter(l => l.date === iso).reduce((a,b) => a + (+b.minutes||0), 0);
     bars.push({ iso, mins, day: DAYS_SHORT[d.getDay()] });
   }
   const max = Math.max(...bars.map(b => b.mins), 60);
   const wb = document.getElementById('weekBars');
   if(wb){
     wb.innerHTML = bars.map(b => `<div class="wbar"><span class="wbar-val">${b.mins || ''}</span><div class="wbar-fill" style="height:${Math.max((b.mins/max)*100, 3)}%"></div><span class="wbar-lbl">${b.day}</span></div>`).join('');
-    let recentEl = document.getElementById('studyRecentList');
-    if(!recentEl){
-      recentEl = document.createElement('div');
-      recentEl.id = 'studyRecentList';
-      recentEl.style.marginTop = '14px';
-      wb.parentNode.insertBefore(recentEl, wb.nextSibling);
-    }
+  }
+  const recentEl = document.getElementById('studyRecentList');
+  if(recentEl){
     const recent = [...state.studyLog].slice(-5).reverse();
     recentEl.innerHTML = recent.length ? `
       <div style="font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:8px">🕒 آخر جلسات المذاكرة</div>
@@ -2383,7 +2681,7 @@ async function deleteStudyLog(id){
   save(); renderStudy(); renderDashboard(); toast('🗑️ تم الحذف');
 }
 function openManualLog(){
-  openModal('إضافة وقت مذاكرة', `
+  openModal('إضافة وقت مذاكرة يدوياً', `
     <div class="form-grid">
       <div class="field full"><label>المقرر</label><select id="mlCourse"><option value="">— بدون تحديد —</option>${courseOptions()}</select></div>
       <div class="field"><label>التاريخ</label><input type="date" id="mlDate" value="${todayISO()}"></div>
@@ -2418,7 +2716,6 @@ async function clearAll(){
   });
   if(!ok) return;
 
-  // ⚠️ تنبيه 3: أوقف البومودورو في الذاكرة أولاً
   if(pomo.intervalId) clearInterval(pomo.intervalId);
   pomo.running = false;
   pomo.endTimestamp = null;
@@ -2429,7 +2726,6 @@ async function clearAll(){
   pomo.courseId = '';
   pomo.startedDate = null;
 
-  // أبلغ السيرفر قبل حذف chatId
   if(getMyChatId()) syncPomoCancelToServer();
 
   state = defaultState();
@@ -2466,6 +2762,7 @@ function applySettings(){
   if(!pomo.running && (pomo.pausedRemaining === null)) pomo.pausedRemaining = pomo.total;
   pomoRender();
   if(typeof renderWeekBadge === 'function') renderWeekBadge();
+  renderPinSettingsUI();
 }
 
 /* ============================================================
@@ -2486,13 +2783,13 @@ function renderSyncStatus(){
     else timeStr = `قبل ${Math.round(diff/86400)} يوم`;
   }
   const openTasks = state.tasks.filter(t => !t.done).length;
-  const upcomingExams = state.exams.filter(e => daysUntil(e.date) >= 0).length;
+  const upcomingExams = state.exams.filter(e => !e.done && daysUntil(e.date) >= 0).length;
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;padding:14px;background:${chatId ? 'var(--ok-bg)' : 'var(--warn-bg)'};border-radius:12px;margin-bottom:14px">
       <span style="font-size:24px">${chatId ? '✅' : '⚠️'}</span>
       <div>
-        <b style="display:block;font-size:14.5px;color:${chatId ? 'var(--ok)' : 'var(--warn)'}">${chatId ? 'مربوط بـ تلقرام' : 'غير مربوط'}</b>
-        <span style="font-size:12px;color:var(--muted);font-weight:600">${chatId ? 'آخر مزامنة: ' + timeStr : 'اربط من قسم تلقرام أدناه'}</span>
+        <b style="display:block;font-size:14.5px;color:${chatId ? 'var(--ok)' : 'var(--warn)'}">${chatId ? 'مربوط بسحابة تلقرام' : 'غير مربوط بالسحابة'}</b>
+        <span style="font-size:12px;color:var(--muted);font-weight:600">${chatId ? 'آخر مزامنة: ' + timeStr : 'اربط من قسم تلقرام أدناه لتفعيل الإشعارات والمزامنة'}</span>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
@@ -2500,79 +2797,83 @@ function renderSyncStatus(){
       <div style="background:var(--hover);padding:12px 8px;border-radius:10px"><div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--warn)">${openTasks}</div><div style="font-size:11px;color:var(--muted);font-weight:700">مهمة متبقية</div></div>
       <div style="background:var(--hover);padding:12px 8px;border-radius:10px"><div style="font-size:22px;font-weight:900;font-family:'Tajawal';color:var(--danger)">${upcomingExams}</div><div style="font-size:11px;color:var(--muted);font-weight:700">اختبار قادم</div></div>
     </div>
-    ${chatId ? `<button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="doSync(false)">🔄 مزامنة الآن</button>` : ''}
+    ${chatId ? `<button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="doSync(false)">🔄 مزامنة فورية الآن</button>` : ''}
   `;
 }
 
 /* ============================================================
-   22) الإضافة السريعة
+   22) الإضافة السريعة والمحرك الذكي الشامل (Omni-Agent AI)
 ============================================================ */
 function quickAdd(){
-  openModal('إضافة سريعة', `
+  openModal('⚡ إضافة سريعة', `
     <div style="display:grid;gap:10px">
       <button class="btn btn-primary btn-block" style="justify-content:center;padding:16px;font-size:15px;background:linear-gradient(135deg,#0d9488,#0891b2);box-shadow:0 8px 24px rgba(13,148,136,.35)" onclick="closeModal();openAiModal()">
-        🤖 <span style="margin-inline-start:6px">إضافة بالذكاء الاصطناعي</span>
+        🤖 <span style="margin-inline-start:6px">المساعد الذكي الشامل (يسوي كل شيء!)</span>
       </button>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
         <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openTaskForm()">📝 مهمة</button>
         <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openExamForm()">⏰ اختبار</button>
         <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openClassForm()">📅 محاضرة</button>
         <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px" onclick="closeModal();openCourseForm()">📚 مقرر</button>
-        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px;grid-column:1/-1" onclick="closeModal();openExpenseForm()">💸 مصروف جديد</button>
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px;color:var(--danger)" onclick="closeModal();openExpenseForm()">💸 مصروف</button>
+        <button class="btn btn-ghost btn-block" style="justify-content:center;padding:14px;font-size:13.5px;color:var(--ok)" onclick="closeModal();openIncomeForm()">➕ زيادة فلوس</button>
       </div>
     </div>
   `, `<button class="btn btn-ghost btn-block" onclick="closeModal()">إغلاق</button>`);
 }
 
-/* ============================================================
-   🤖 الذكاء الاصطناعي
-============================================================ */
 let aiFileData = null;
 let aiAbortController = null;
 
+function setAiChipPrompt(txt){
+  const el = document.getElementById('aiText');
+  if(el){ el.value = txt; el.focus(); }
+}
+
 function openAiModal(){
   aiFileData = null;
-  openModal('🤖 إضافة بالذكاء الاصطناعي', `
-    <div style="background:linear-gradient(135deg,#0d948820,#0891b220);padding:14px 16px;border-radius:14px;margin-bottom:16px;border:1px solid #0d948840">
-      <div style="font-size:13.5px;line-height:1.8;font-weight:600;color:var(--text)">
-        💡 <b>اكتب</b> أو <b>ارفع صورة</b> — AI يفهم ويسجّل تلقائياً
+  openModal('🤖 المساعد الذكي الشامل (Omni-AI)', `
+    <div style="background:linear-gradient(135deg,#0d948820,#0891b220);padding:14px 16px;border-radius:14px;margin-bottom:14px;border:1px solid #0d948840">
+      <div style="font-size:13.5px;line-height:1.8;font-weight:700;color:var(--text)">
+        ✨ <b>اكتب أي شيء (حتى لو عدة طلبات معاً!)</b> أو <b>ارفع صورة</b> — والذكاء الاصطناعي ينفذها فوراً:
       </div>
-      <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:6px;line-height:1.7">
-        • "تغديت مع الشباب بـ 45 ريال"<br>
-        • "اختبار تمريض البالغين نظري يوم الأحد 8 ص"<br>
-        • "صورة التقويم الأكاديمي" 📸
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+        <button type="button" class="chip" style="font-size:11.5px;padding:5px 10px" onclick="setAiChipPrompt('تغديت بـ 40 ريال، وأبوي حول لي 300 ريال، وعندي واجب تفاضل بكرة')">💸 مصروف + زيادة فلوس + واجب</button>
+        <button type="button" class="chip" style="font-size:11.5px;padding:5px 10px" onclick="setAiChipPrompt('أضف مقرر فيزياء عامة 3 ساعات، ومحاضرته كل أحد وثلاثاء من 9 إلى 10:30 قاعة 204')">📚 مقرر + محاضراته</button>
+        <button type="button" class="chip" style="font-size:11.5px;padding:5px 10px" onclick="setAiChipPrompt('نمت 7 ساعات وشربت 6 أكواب موية وفرشت أسناني الصباح وذاكرت ساعتين')">💪 نوم + ماء + مذاكرة</button>
+        <button type="button" class="chip" style="font-size:11.5px;padding:5px 10px" onclick="setAiChipPrompt('جبت 28 من 30 في ميدتيرم التفاضل (وزنه 30%)')">🎓 رصد درجة</button>
       </div>
     </div>
 
     <div class="field" style="margin-bottom:14px">
-      <label>📝 النص (اختياري إذا رفعت صورة)</label>
-      <textarea id="aiText" placeholder="اكتب هنا بأي لهجة..." style="min-height:100px;resize:vertical"></textarea>
+      <label for="aiText">📝 اكتب طلبك أو أوامرك المركبة (اختياري إذا رفعت صورة)</label>
+      <textarea id="aiText" placeholder="مثال: جاتني 500 ريال هدية، وصرفت 25 قهوة، وسجل غياب اليوم في الفيزياء..." style="min-height:100px;resize:vertical"></textarea>
     </div>
 
     <div class="field" style="margin-bottom:14px">
-      <label>📸 أو ارفع صورة (اختياري)</label>
+      <label for="aiImage">📸 أو ارفع صورة (جدول دراسي كامل، تقويم أكاديمي، إيصال، درجات)</label>
       <input type="file" id="aiImage" accept="image/*" style="padding:10px;font-size:13px" onchange="aiImageSelected(this)">
       <div id="aiImagePreview" style="display:none;margin-top:10px;position:relative">
-        <img id="aiImageThumb" style="width:100%;border-radius:12px;max-height:200px;object-fit:cover;border:2px solid var(--p)">
-        <button onclick="aiRemoveImage()" style="position:absolute;top:6px;left:6px;background:var(--danger);color:#fff;width:30px;height:30px;border-radius:50%;font-size:16px;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(220,38,38,.4)">✕</button>
+        <img id="aiImageThumb" alt="معاينة الصورة" style="width:100%;border-radius:12px;max-height:200px;object-fit:cover;border:2px solid var(--p)">
+        <button type="button" onclick="aiRemoveImage()" style="position:absolute;top:8px;inset-inline-end:8px;background:var(--danger);color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(220,38,38,.4)">✕</button>
       </div>
     </div>
 
     <div id="aiLoading" style="display:none;text-align:center;padding:16px">
       <div style="display:inline-block;width:30px;height:30px;border:3px solid var(--p-light);border-top-color:var(--p);border-radius:50%;animation:spin 1s linear infinite"></div>
-      <div style="font-size:13px;color:var(--muted);font-weight:700;margin-top:8px">جاري التحليل...</div>
+      <div style="font-size:13px;color:var(--muted);font-weight:700;margin-top:8px">جاري التحليل والتنفيذ عبر Gemini AI...</div>
     </div>
   `, `
     <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" id="aiSubmitBtn" onclick="submitAiInput()" style="background:linear-gradient(135deg,#0d9488,#0891b2)">✨ تحليل</button>
+    <button class="btn btn-primary" id="aiSubmitBtn" onclick="submitAiInput()" style="background:linear-gradient(135deg,#0d9488,#0891b2)">✨ تحليل وتنفيذ فوري</button>
   `);
 }
 
 function aiImageSelected(input){
-  const file = input.files[0];
+  const file = input.files && input.files[0];
   if(!file) return;
   if(file.size > 5 * 1024 * 1024){
-    toast('⚠️ الصورة كبيرة — الحد 5MB');
+    toast('⚠️ الصورة كبيرة — الحد الأقصى 5MB');
     input.value = '';
     return;
   }
@@ -2581,8 +2882,10 @@ function aiImageSelected(input){
     const base64Full = e.target.result;
     const base64 = base64Full.split(',')[1];
     aiFileData = { data: base64, mimeType: file.type };
-    document.getElementById('aiImageThumb').src = base64Full;
-    document.getElementById('aiImagePreview').style.display = 'block';
+    const thumb = document.getElementById('aiImageThumb');
+    const prev = document.getElementById('aiImagePreview');
+    if(thumb) thumb.src = base64Full;
+    if(prev) prev.style.display = 'block';
   };
   reader.readAsDataURL(file);
 }
@@ -2598,14 +2901,14 @@ function aiRemoveImage(){
 async function submitAiInput(){
   const textEl = document.getElementById('aiText');
   const text = textEl ? textEl.value.trim() : '';
-  if(!text && !aiFileData){ toast('⚠️ اكتب نص أو ارفع صورة'); return; }
+  if(!text && !aiFileData){ toast('⚠️ اكتب نصاً أو ارفع صورة أولاً'); return; }
 
   const btn = document.getElementById('aiSubmitBtn');
   const loader = document.getElementById('aiLoading');
   if(btn) btn.style.display = 'none';
   if(loader) loader.style.display = 'block';
 
-  aiAbortController = new AbortController();  // ← جديد
+  aiAbortController = new AbortController();
   try{
     const res = await fetch(TG_WORKER + '/ai-parse', {
       method: 'POST',
@@ -2615,123 +2918,348 @@ async function submitAiInput(){
         text,
         image: aiFileData,
         courses: state.courses.map(c => ({ id: c.id, name: c.name, code: c.code })),
+        goals: (state.money.goals || []).map(g => ({ id: g.id, name: g.name })),
         today: todayISO()
       }),
-      signal: aiAbortController.signal  // ← جديد
+      signal: aiAbortController.signal
     });
     const data = await res.json();
+    if(res.status === 401){
+      throw new Error('يرجى ربط تلقرام من الإعدادات أولاً أو تحديث كود الـ Worker في Cloudflare');
+    }
     if(!data.ok) throw new Error(data.error || 'فشل التحليل');
-
-    // ← جديد: تحقق أن المودال ما زال مفتوحاً
     if(!modalBg.classList.contains('open')) return;
-
     handleAiResult(data);
   }catch(e){
-    if(e.name === 'AbortError') return;  // ← جديد: أُلغي
+    if(e.name === 'AbortError') return;
     console.error(e);
-    if(btn) btn.style.display = 'block';
+    if(btn) btn.style.display = 'inline-flex';
     if(loader) loader.style.display = 'none';
-    toast('❌ فشل — ' + (e.message || 'حاول مرة ثانية'));
+    toast('❌ ' + (e.message || 'تعذّر التحليل — حاول مرة ثانية'));
   }finally{
     aiAbortController = null;
   }
 }
 
 function isValidISO(s){
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(s||''))) return false;
   const d = new Date(s + 'T00:00:00');
   return !isNaN(d.getTime());
+}
+
+function resolveAiCourseId(d, autoCreate = false){
+  if(d.courseId && getCourse(d.courseId)) return d.courseId;
+  if(d.courseName){
+    const target = String(d.courseName).trim().toLowerCase();
+    const found = state.courses.find(c =>
+      c.name.toLowerCase().includes(target) ||
+      target.includes(c.name.toLowerCase()) ||
+      (c.code && c.code.toLowerCase() === target)
+    );
+    if(found) return found.id;
+    if(autoCreate){
+      const newC = {
+        id: uid(),
+        name: String(d.courseName).trim(),
+        code: d.code ? String(d.code).trim() : '',
+        credits: 3,
+        teacher: '',
+        color: COLORS[state.courses.length % COLORS.length],
+        grades: []
+      };
+      state.courses.push(newC);
+      return newC.id;
+    }
+  }
+  return '';
+}
+
+function executeSingleAiAction(item){
+  if(!item || typeof item !== 'object') return null;
+  const action = item.action;
+  const d = item.data || item;
+
+  if(action === 'add_expense'){
+    const amt = +d.amount || 0;
+    if(amt <= 0) return null;
+    state.money.expenses.push({
+      id: uid(),
+      amount: amt,
+      category: EXPENSE_CATS.some(c => c.id === d.category) ? d.category : 'other',
+      note: d.note || '',
+      date: isValidISO(d.date) ? d.date : todayISO(),
+      created: Date.now()
+    });
+    return { view: 'expenses', msg: `💸 مصروف: ${amt} ر.س` };
+  }
+
+  if(action === 'add_income'){
+    const amt = +d.amount || 0;
+    if(amt <= 0) return null;
+    if(!Array.isArray(state.money.incomes)) state.money.incomes = [];
+    state.money.incomes.push({
+      id: uid(),
+      amount: amt,
+      source: INCOME_SOURCES.some(s => s.id === d.source) ? d.source : 'other',
+      note: d.note || 'إضافة رصيد بالـ AI',
+      date: isValidISO(d.date) ? d.date : todayISO(),
+      created: Date.now()
+    });
+    return { view: 'balance', msg: `💰 زيادة رصيد: +${amt} ر.س` };
+  }
+
+  if(action === 'set_salary'){
+    const sal = +d.salary || +d.amount || 0;
+    if(sal <= 0) return null;
+    state.money.salary = sal;
+    state.money.salaryExactDate = isValidISO(d.date) ? d.date : (state.money.salaryExactDate || todayISO());
+    return { view: 'balance', msg: `🏦 ضبط الراتب: ${sal} ر.س` };
+  }
+
+  if(action === 'add_goal'){
+    const target = +d.target || +d.amount || 0;
+    if(!d.name || target <= 0) return null;
+    const saved = Math.max(0, +d.saved || 0);
+    const g = { id: uid(), name: String(d.name).trim(), target, saved, emoji: d.emoji || '🎯', created: Date.now(), txs: [] };
+    reconcileGoalTxs(g);
+    state.money.goals.push(g);
+    return { view: 'goals', msg: `🎯 هدف جديد: ${g.name}` };
+  }
+
+  if(action === 'goal_transaction'){
+    const amt = +d.amount || 0;
+    if(amt <= 0) return null;
+    let g = (state.money.goals || []).find(x => x.id === d.goalId);
+    if(!g && d.goalName){
+      const gn = String(d.goalName).toLowerCase();
+      g = (state.money.goals || []).find(x => x.name.toLowerCase().includes(gn) || gn.includes(x.name.toLowerCase()));
+    }
+    if(!g && state.money.goals.length === 1) g = state.money.goals[0];
+    if(!g) return null;
+    g.txs = Array.isArray(g.txs) ? g.txs : [];
+    if(d.type === 'withdraw'){
+      const w = Math.min(g.saved || 0, amt);
+      g.saved = Math.max(0, (g.saved || 0) - amt);
+      if(w > 0) g.txs.push({ ts: Date.now(), amount: -w });
+      reconcileGoalTxs(g);
+      return { view: 'goals', msg: `➖ سحب ${w} ر.س من ${g.name}` };
+    } else {
+      g.saved = (g.saved || 0) + amt;
+      g.txs.push({ ts: Date.now(), amount: amt });
+      reconcileGoalTxs(g);
+      return { view: 'goals', msg: `➕ إيداع ${amt} ر.س في ${g.name}` };
+    }
+  }
+
+  if(action === 'add_course'){
+    const name = String(d.name || d.courseName || '').trim();
+    if(!name) return null;
+    const existing = state.courses.find(c => c.name.toLowerCase() === name.toLowerCase());
+    if(existing){
+      if(d.code) existing.code = d.code;
+      if(d.credits != null) existing.credits = +d.credits || 3;
+      if(d.teacher) existing.teacher = d.teacher;
+      return { view: 'courses', msg: `📚 تحديث مقرر: ${name}` };
+    }
+    state.courses.push({
+      id: uid(),
+      name,
+      code: d.code ? String(d.code).trim() : '',
+      credits: d.credits != null ? (+d.credits || 0) : 3,
+      teacher: d.teacher ? String(d.teacher).trim() : '',
+      color: COLORS[state.courses.length % COLORS.length],
+      grades: []
+    });
+    return { view: 'courses', msg: `📚 مقرر جديد: ${name}` };
+  }
+
+  if(action === 'add_class'){
+    let cid = resolveAiCourseId(d, true);
+    if(!cid && state.courses.length) cid = state.courses[0].id;
+    if(!cid) return null;
+    const day = clamp(parseInt(d.day, 10) || 0, 0, 6);
+    const start = d.start || '08:00';
+    const end = d.end || '09:00';
+    state.schedule.push({ id: uid(), courseId: cid, day, start, end, room: d.room || '' });
+    return { view: 'schedule', msg: `📅 محاضرة: ${courseName(cid)} (${DAYS[day]})` };
+  }
+
+  if(action === 'add_exam'){
+    const cid = resolveAiCourseId(d, true);
+    state.exams.push({
+      id: uid(),
+      title: d.title || 'اختبار',
+      courseId: cid,
+      type: EXAM_TYPES.includes(d.type) ? d.type : 'ميدتيرم',
+      date: isValidISO(d.date) ? d.date : todayISO(),
+      time: d.time || '',
+      place: d.place || '',
+      notes: d.notes || 'أُضيف بواسطة المساعد الذكي 🤖',
+      done: false
+    });
+    return { view: 'tasks', msg: `⏰ اختبار: ${d.title || ''}` };
+  }
+
+  if(action === 'add_task'){
+    const cid = resolveAiCourseId(d, true);
+    state.tasks.push({
+      id: uid(),
+      title: d.title || 'مهمة',
+      courseId: cid,
+      type: TASK_TYPES.includes(d.type) ? d.type : 'واجب',
+      due: isValidISO(d.due) ? d.due : todayISO(),
+      priority: ['high','med','low'].includes(d.priority) ? d.priority : 'med',
+      notes: d.notes || 'أُضيف بواسطة المساعد الذكي 🤖',
+      done: false,
+      created: todayISO()
+    });
+    return { view: 'tasks', msg: `📝 مهمة: ${d.title || ''}` };
+  }
+
+  if(action === 'log_attendance'){
+    const cid = resolveAiCourseId(d, false);
+    const date = isValidISO(d.date) ? d.date : todayISO();
+    const dayOfWeek = new Date(date + 'T00:00:00').getDay();
+    let cls = state.schedule.find(s => (!cid || s.courseId === cid) && +s.day === dayOfWeek);
+    if(!cls && cid) cls = state.schedule.find(s => s.courseId === cid);
+    if(!cls) return null;
+    const status = ['present','absent','excused','late','cancelled'].includes(d.status) ? d.status : 'absent';
+    state.attendance = state.attendance.filter(a => !(a.classId === cls.id && a.date === date));
+    if(status !== 'present' || d.note){
+      state.attendance.push({ id: uid(), classId: cls.id, date, status, note: d.note || '' });
+    }
+    return { view: 'attendance', msg: `📋 تسجيل حضور/غياب: ${courseName(cls.courseId)}` };
+  }
+
+  if(action === 'log_study'){
+    const mins = +d.minutes || 0;
+    if(mins <= 0) return null;
+    const cid = resolveAiCourseId(d, false);
+    const date = isValidISO(d.date) ? d.date : todayISO();
+    state.studyLog.push({ id: uid(), date, courseId: cid, minutes: mins });
+    return { view: 'study', msg: `🍅 مذاكرة: ${mins} دقيقة` };
+  }
+
+  if(action === 'log_wellness'){
+    const date = isValidISO(d.date) ? d.date : todayISO();
+    let wLog = state.wellness.log.find(l => l.date === date);
+    if(!wLog){ wLog = { date, sleep: 0, water: 0 }; state.wellness.log.push(wLog); }
+    if(d.sleep != null && +d.sleep >= 0) wLog.sleep = +d.sleep;
+    if(d.water != null && +d.water >= 0) wLog.water = +d.water;
+
+    if(d.teethMorning != null || d.teethNight != null){
+      let tLog = state.health.teethLog.find(l => l.date === date);
+      if(!tLog){ tLog = { date, morning: false, night: false }; state.health.teethLog.push(tLog); }
+      if(d.teethMorning != null) tLog.morning = !!d.teethMorning;
+      if(d.teethNight != null) tLog.night = !!d.teethNight;
+    }
+    return { view: 'wellness', msg: `💪 تحديث متابع الصحة` };
+  }
+
+  if(action === 'add_grade'){
+    const cid = resolveAiCourseId(d, true);
+    const c = getCourse(cid);
+    if(!c) return null;
+    if(d.componentName && d.score != null){
+      c.grades = Array.isArray(c.grades) ? c.grades : [];
+      c.grades.push({
+        name: String(d.componentName),
+        weight: +d.weight || 20,
+        score: +d.score
+      });
+      delete c.manualLetter;
+      return { view: 'grades', msg: `🎓 رصد درجة ${d.componentName} في ${c.name}` };
+    }
+    if(d.letter && GRADE_OPTIONS.includes(d.letter)){
+      c.manualLetter = d.letter;
+      return { view: 'grades', msg: `🎓 رصد تقدير ${d.letter} في ${c.name}` };
+    }
+    return null;
+  }
+
+  if(action === 'setup_semester'){
+    if(d.startDate && isValidISO(d.startDate)) state.settings.semesterStart = d.startDate;
+    if(d.weeks) state.settings.semesterWeeks = clamp(+d.weeks || 16, 8, 30);
+    if(Array.isArray(d.events) && d.events.length){
+      const cleanEvents = d.events
+        .filter(ev => ev && isValidISO(ev.date) && ev.title)
+        .map(ev => ({
+          date: ev.date,
+          title: String(ev.title).slice(0, 80),
+          type: ['info','holiday','exam'].includes(ev.type) ? ev.type : 'info',
+          ico: ev.type === 'holiday' ? '🎉' : ev.type === 'exam' ? '📝' : '📌'
+        }));
+      if(cleanEvents.length) state.settings.customAcademicEvents = cleanEvents;
+    }
+    return { view: 'schedule', msg: `📅 تحديث التقويم الأكاديمي` };
+  }
+
+  return null;
 }
 
 function handleAiResult(result){
   closeModal();
 
-  const action = result.action;
-  const d = result.data || {};
+  // دعم مصفوفة actions المتعددة أو action المفرد
+  const actionsList = Array.isArray(result.actions) && result.actions.length
+    ? result.actions
+    : (result.action && result.action !== 'unknown' ? [{ action: result.action, data: result.data || {} }] : []);
 
-  if(action === 'add_expense'){
-    const amt = +d.amount || 0;
-    if(amt <= 0){ toast('⚠️ AI رجّع مبلغ غير صالح'); return; }
-    state.money.expenses.push({
-      id: uid(),
-      amount: amt,
-      category: d.category || 'other',
-      note: d.note || '',
-      date: isValidISO(d.date) ? d.date : todayISO(),
-      created: Date.now()
-    });
-    save();
-    renderBalance(); renderExpenses(); renderDashboard();
-    toast('💰 تم إضافة مصروف: ' + amt + ' ر.س');
-    go('expenses');
+  if(!actionsList.length){
+    toast('🤖 ' + (result.reply || result.message || 'لم أفهم الطلب — جرّب صياغته بشكل أوضح'));
     return;
   }
 
-  if(action === 'add_exam'){
-    state.exams.push({
-      id: uid(),
-      title: d.title || 'اختبار',
-      courseId: getCourse(d.courseId) ? d.courseId : '',
-      type: d.type || 'ميدتيرم',
-      date: isValidISO(d.date) ? d.date : todayISO(),
-      time: d.time || '',
-      place: d.place || '',
-      notes: 'أُضيف بواسطة AI 🤖',
-      done: false
-    });
-    save();
-    renderAll(); renderDashboard();
-    toast('⏰ تم إضافة اختبار: ' + (d.title || ''));
-    go('tasks');
+  const executed = [];
+  let targetView = null;
+  for(const item of actionsList){
+    const outcome = executeSingleAiAction(item);
+    if(outcome){
+      executed.push(outcome.msg);
+      targetView = outcome.view;
+    }
+  }
+
+  if(!executed.length){
+    toast('🤖 ' + (result.reply || result.message || 'لم أتمكن من تنفيذ الأمر — تأكد من البيانات'));
     return;
   }
 
-  if(action === 'add_task'){
-    state.tasks.push({
-      id: uid(),
-      title: d.title || 'مهمة',
-      courseId: getCourse(d.courseId) ? d.courseId : '',
-      type: d.type || 'واجب',
-      due: isValidISO(d.due) ? d.due : todayISO(),
-      priority: d.priority || 'med',
-      notes: 'أُضيف بواسطة AI 🤖',
-      done: false,
-      created: todayISO()
-    });
-    save();
-    renderAll(); renderDashboard();
-    toast('📝 تم إضافة مهمة: ' + (d.title || ''));
-    go('tasks');
-    return;
-  }
+  save();
+  applySettings();
+  renderAll();
+  renderWeekBadge();
+  renderAcademicStrip();
 
-  if(action === 'setup_semester'){
-    if(d.startDate && isValidISO(d.startDate)) state.settings.semesterStart = d.startDate;
-    if(d.weeks) state.settings.semesterWeeks = d.weeks;
-    save();
-    applySettings(); renderWeekBadge(); renderAcademicStrip();
-    toast('📅 تم إعداد الفصل: ' + (d.weeks || 16) + ' أسبوع');
-    go('schedule');
-    return;
-  }
+  if(targetView) go(targetView);
 
-  toast('🤖 ' + (result.message || 'ما فهمت — حاول بصيغة أوضح'));
+  if(result.reply){
+    toast('✨ ' + result.reply);
+  } else if(executed.length === 1){
+    toast('✅ تم: ' + executed[0]);
+  } else {
+    toast(`✅ تم تنفيذ ${executed.length} أوامر بنجاح!`);
+  }
 }
 
-document.getElementById('fab').addEventListener('click', quickAdd);
+function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+document.getElementById('fab')?.addEventListener('click', quickAdd);
 
 /* ============================================================
-   23) الهامبرغر + الفلاتر
+   23) القائمة الجانبية والفلاتر
 ============================================================ */
-document.getElementById('hamburger').addEventListener('click', () => {
+document.getElementById('hamburger')?.addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
+  syncBodyScrollLock();
 });
-document.getElementById('overlay').addEventListener('click', () => {
+document.getElementById('overlay')?.addEventListener('click', () => {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
+  syncBodyScrollLock();
 });
-document.getElementById('taskFilters').addEventListener('click', e => {
+document.getElementById('taskFilters')?.addEventListener('click', e => {
   const chip = e.target.closest('.chip');
   if(!chip) return;
   document.querySelectorAll('#taskFilters .chip').forEach(c => c.classList.remove('active'));
@@ -2741,19 +3269,19 @@ document.getElementById('taskFilters').addEventListener('click', e => {
 });
 
 /* ============================================================
-   24) رندرة كل شيء
+   24) رندرة شاملة لكل الواجهات
 ============================================================ */
 function renderAll(){
   renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
   renderGrades(); renderStudy(); pomoRender();
   renderBalance(); renderExpenses(); renderGoals();
-  renderWellness();  // ✅ أضف هذا السطر
-  renderTeeth();     // ✅ أضف هذا السطر
+  renderWellness(); renderTeeth(); renderAttendancePage(); renderArchive();
+  updateNavBadges();
   if(currentCourseId) renderCourseDetail();
 }
 
 /* ============================================================
-   25) الإضافة السريعة للجدول
+   25) الإضافة السريعة للجدول الأسبوعي
 ============================================================ */
 let qaItems = [];
 function openQuickAdd(){
@@ -2761,7 +3289,7 @@ function openQuickAdd(){
   qaItems = [];
   openModal('⚡ إضافة سريعة للجدول', `
     <div style="background:var(--p-light);padding:12px 14px;border-radius:12px;font-size:13px;margin-bottom:16px;line-height:1.7">
-      💡 اختر المقرر مرة واحدة، ثم أضف كل محاضراته بسرعة.
+      💡 اختر المقرر مرة واحدة، ثم أضف كل محاضراته المتتالية بسرعة.
     </div>
     <div class="form-grid">
       <div class="field full"><label>المقرر <span class="req">*</span></label><select id="qaCourse">${courseOptions()}</select></div>
@@ -2770,7 +3298,7 @@ function openQuickAdd(){
       <div class="field"><label>من <span class="req">*</span></label><input type="time" id="qaStart" value="08:00"></div>
       <div class="field"><label>إلى <span class="req">*</span></label><input type="time" id="qaEnd" value="09:30"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="qaAdd()" style="margin-top:14px">➕ أضف واستمر</button>
+    <button class="btn btn-primary btn-block" onclick="qaAdd()" style="margin-top:14px">➕ أضف للقائمة واستمر</button>
     <div id="qaList" style="margin-top:16px"></div>
   `, `<button class="btn btn-ghost" onclick="qaClose()">إلغاء</button><button class="btn btn-primary" onclick="qaSave()">💾 حفظ الكل</button>`);
   qaRender();
@@ -2783,14 +3311,14 @@ function qaAdd(){
   const room = document.getElementById('qaRoom').value.trim();
   if(!courseId){ toast('⚠️ اختر المقرر'); return; }
   if(!start || !end){ toast('⚠️ حدد الوقت'); return; }
-  if(toMin(end) <= toMin(start)){ toast('⚠️ وقت النهاية بعد البداية'); return; }
+  if(toMin(end) <= toMin(start)){ toast('⚠️ وقت النهاية يجب أن يكون بعد البداية'); return; }
   if(hasScheduleConflict(day, start, end, '', qaItems)){ toast('⚠️ يوجد تعارض في الوقت مع محاضرة أخرى في نفس اليوم'); return; }
   qaItems.push({ courseId, day, start, end, room });
   const dur = toMin(end) - toMin(start);
   const next = toMin(end);
   document.getElementById('qaStart').value = minToTime(next);
   document.getElementById('qaEnd').value = minToTime(next + dur);
-  qaRender(); toast('✅ تمت الإضافة');
+  qaRender(); toast('✅ تمت الإضافة للقائمة');
 }
 function qaRender(){
   const list = document.getElementById('qaList');
@@ -2808,7 +3336,7 @@ function qaRender(){
 }
 function qaRemove(i){ qaItems.splice(i,1); qaRender(); }
 function qaSave(){
-  if(!qaItems.length){ toast('⚠️ لم تُضف شي'); return; }
+  if(!qaItems.length){ toast('⚠️ لم تُضف أي محاضرة'); return; }
   qaItems.forEach(it => state.schedule.push({ id: uid(), ...it }));
   save();
   const n = qaItems.length;
@@ -2818,39 +3346,24 @@ function qaSave(){
 }
 async function qaClose(){
   if(qaItems.length){
-    const ok = await appConfirm(`عندك ${qaItems.length} محاضرة لم تُحفظ. تبي تغلق؟`, {
+    const ok = await appConfirm(`عندك ${qaItems.length} محاضرة لم تُحفظ. تريد الإغلاق؟`, {
       title: 'محاضرات غير محفوظة', emoji: '⚠️', okText: 'إغلاق', variant: 'warn'
     });
     if(!ok) return;
   }
   qaItems = []; closeModal();
 }
-(function injectQA(){
-  const head = document.querySelector('#view-schedule .sec-head');
-  if(!head || document.getElementById('qaBtn')) return;
-  const existing = head.querySelector(':scope > button');
-  const btn = document.createElement('button');
-  btn.id = 'qaBtn'; btn.className = 'btn btn-ghost btn-sm';
-  btn.innerHTML = '⚡ إضافة سريعة';
-  btn.addEventListener('click', openQuickAdd);
-  if(existing){
-    const wrap = document.createElement('div');
-    wrap.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap';
-    existing.parentNode.insertBefore(wrap, existing);
-    wrap.appendChild(existing); wrap.appendChild(btn);
-  }else{ head.appendChild(btn); }
-})();
 
 /* ============================================================
-   26) تلقرام + المزامنة
+   26) تلقرام والمزامنة السحابية
 ============================================================ */
 let pollTimer = null;
 let syncTimeout = null;
 let syncBadgeHideTimer = null;
-function getMyChatId(){ return localStorage.getItem('tg_chat_id') || ''; }
-function setMyChatId(id){ localStorage.setItem('tg_chat_id', id); }
-function getMyToken(){ return localStorage.getItem('tg_token') || ''; }
-function setMyToken(t){ if(t) localStorage.setItem('tg_token', t); }
+function getMyChatId(){ try{ return localStorage.getItem('tg_chat_id') || ''; }catch(e){ return ''; } }
+function setMyChatId(id){ try{ localStorage.setItem('tg_chat_id', id); }catch(e){} }
+function getMyToken(){ try{ return localStorage.getItem('tg_token') || ''; }catch(e){ return ''; } }
+function setMyToken(t){ try{ if(t) localStorage.setItem('tg_token', t); }catch(e){} }
 function authHeaders(){
   const t = getMyToken();
   return t ? { 'Authorization': 'Bearer ' + t } : {};
@@ -2865,7 +3378,6 @@ function syncToTelegram(silent = true){
   if(syncTimeout) clearTimeout(syncTimeout);
   syncTimeout = setTimeout(() => doSync(silent), 800);
 }
-// 🔧 MOD 1: أضف pomoActive للـ payload
 async function doSync(silent = true){
   if(!getMyChatId()) return;
   const useForce = window.__forceSync === true;
@@ -2889,12 +3401,12 @@ async function doSync(silent = true){
     });
     if(saveRes.status === 401){
       showSyncBadge('error');
-      toast('⚠️ انتهى الربط — اربط تلقرام من جديد');
+      toast('⚠️ انتهت جلسة الربط — يرجى إعادة ربط تلقرام');
       return false;
     }
     if(saveRes.status === 409){
       showSyncBadge('error');
-      toast('⛔ تم منع المزامنة: بياناتك المحلية فاضية والسحابة فيها بيانات');
+      toast('⛔ تم منع المزامنة: بياناتك المحلية فارغة والسحابة تحتوي على بيانات');
       return false;
     }
     if(saveRes.status === 422 || saveRes.status === 413){
@@ -2907,11 +3419,11 @@ async function doSync(silent = true){
     if(!saveRes.ok) throw new Error('save failed');
     localStorage.setItem('localModified', Date.now().toString());
     showSyncBadge('success');
-    if(!silent) toast('✅ تمت المزامنة');
+    if(!silent) toast('✅ تمت المزامنة السحابية');
     renderSyncStatus();
   }catch(e){
     showSyncBadge('error');
-    if(!silent) toast('⚠️ فشلت المزامنة');
+    if(!silent) toast('⚠️ فشلت المزامنة — تحقق من الاتصال');
   }
 }
 async function syncAttendanceFromServer(){
@@ -2933,8 +3445,8 @@ async function syncAttendanceFromServer(){
     }
     if(changed){
       save();
-      if(typeof renderSchedule === 'function') renderSchedule();
-      if(typeof renderAttendancePage === 'function') renderAttendancePage();
+      renderSchedule();
+      renderAttendancePage();
     }
   }catch(e){}
 }
@@ -2961,16 +3473,19 @@ async function loadFromCloud(){
       state.gpaCourses = data.gpaCourses || [];
       if(data.wellness) state.wellness = { ...defaultState().wellness, ...data.wellness, log: Array.isArray(data.wellness.log) ? data.wellness.log : [] };
       if(data.health) state.health = { ...defaultState().health, ...data.health, teethLog: Array.isArray(data.health.teethLog) ? data.health.teethLog : [] };
-      if(data.money) state.money = { ...defaultState().money, ...data.money };
+      if(data.money){
+        state.money = { ...defaultState().money, ...data.money };
+        if(!Array.isArray(state.money.incomes)) state.money.incomes = [];
+      }
       if(data.archive) state.archive = data.archive;
       if(data.studyLog) state.studyLog = data.studyLog;
       if(data.settings) state.settings = { ...state.settings, ...data.settings, pomo: { ...state.settings.pomo, ...(data.settings.pomo || {}) } };
       localStorage.setItem('localModified', String(cloudModified));
       save(false); applySettings(); renderAll();
-      if(typeof renderWeekBadge === 'function') renderWeekBadge();
-      if(typeof renderSchedule === 'function') renderSchedule();
-      if(typeof renderAcademicStrip === 'function') renderAcademicStrip();
-      toast('✅ تم تحديث بياناتك من السحابة');
+      renderWeekBadge();
+      renderSchedule();
+      renderAcademicStrip();
+      toast('✅ تم جلب أحدث بياناتك من السحابة');
       showSyncBadge('success');
       renderSyncStatus();
     } else if(localModified > cloudModified){
@@ -2988,7 +3503,7 @@ function showSyncBadge(status){
   if(syncBadgeHideTimer) clearTimeout(syncBadgeHideTimer);
   badge.classList.remove('hidden', 'loading', 'error');
   if(status === 'loading'){ badge.classList.add('loading'); icon.textContent = '⏳'; text.textContent = 'جاري'; }
-  else if(status === 'success'){ icon.textContent = '✅'; text.textContent = 'الآن'; syncBadgeHideTimer = setTimeout(() => badge.classList.add('hidden'), 3000); }
+  else if(status === 'success'){ icon.textContent = '✅'; text.textContent = 'مزامن'; syncBadgeHideTimer = setTimeout(() => badge.classList.add('hidden'), 3000); }
   else if(status === 'error'){ badge.classList.add('error'); icon.textContent = '⚠️'; text.textContent = 'فشل'; syncBadgeHideTimer = setTimeout(() => badge.classList.add('hidden'), 5000); }
 }
 let autoSyncTimer = null;
@@ -3013,7 +3528,10 @@ async function checkCloudUpdates(){
         state.gpaCourses = data.gpaCourses || [];
         if(data.wellness) state.wellness = { ...defaultState().wellness, ...data.wellness, log: Array.isArray(data.wellness.log) ? data.wellness.log : [] };
         if(data.health) state.health = { ...defaultState().health, ...data.health, teethLog: Array.isArray(data.health.teethLog) ? data.health.teethLog : [] };
-        if(data.money) state.money = { ...defaultState().money, ...data.money };
+        if(data.money){
+          state.money = { ...defaultState().money, ...data.money };
+          if(!Array.isArray(state.money.incomes)) state.money.incomes = [];
+        }
         if(data.archive) state.archive = data.archive;
         if(data.studyLog) state.studyLog = data.studyLog;
         if(data.settings) state.settings = { ...state.settings, ...data.settings, pomo: { ...state.settings.pomo, ...(data.settings.pomo || {}) } };
@@ -3021,11 +3539,8 @@ async function checkCloudUpdates(){
         localStorage.setItem('lastCloudCheck', String(cloudModified));
         try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
         applySettings(); renderAll();
-        if(typeof renderWeekBadge === 'function') renderWeekBadge();
-        if(typeof renderSchedule === 'function') renderSchedule();
-        if(typeof renderAcademicStrip === 'function') renderAcademicStrip();
-        renderSyncStatus();
-        toast('🔄 تم تحديث البيانات من جهاز آخر');
+        renderWeekBadge(); renderSchedule(); renderAcademicStrip(); renderSyncStatus();
+        toast('🔄 تم تحديث البيانات من السحابة');
         showSyncBadge('success');
       }
       localStorage.setItem('lastCloudCheck', String(cloudModified));
@@ -3034,7 +3549,6 @@ async function checkCloudUpdates(){
 }
 function startAutoSync(){
   if(autoSyncTimer) clearInterval(autoSyncTimer);
-  // ✅ FIX 4b: 45000 → 180000 (3 minutes)
   autoSyncTimer = setInterval(() => {
     if(!document.hidden && getMyChatId()) checkCloudUpdates();
   }, 180000);
@@ -3043,7 +3557,6 @@ function stopAutoSync(){
   if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
 }
 
-// ✅ FIX 4c: single visibilitychange listener — also pauses/resumes auto sync
 document.addEventListener('visibilitychange', () => {
   if(document.hidden){ stopAutoSync(); return; }
   startAutoSync();
@@ -3062,19 +3575,13 @@ window.addEventListener('focus', () => {
   updateTgStatus();
 });
 
-setTimeout(() => {
-  if(getMyChatId()){
-    renderSyncStatus();
-    startAutoSync();
-  }
-}, 1500);
-
 async function testTelegram(){
-  if(!getMyChatId()){ toast('⚠️ اربط أولاً'); return; }
+  if(!getMyChatId()){ toast('⚠️ اربط حسابك أولاً'); return; }
   try{
-    await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ ...authObj() }) });
-    toast('✅ تحقق من تلقرام');
-  }catch(e){ toast('⚠️ فشل'); }
+    const r = await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ ...authObj() }) });
+    if(r.ok) toast('✅ تم إرسال إشعار تجريبي إلى تلقرام');
+    else toast('⚠️ تعذّر الإرسال — تأكد من صلاحية الجلسة');
+  }catch(e){ toast('⚠️ فشل الاتصال بالسيرفر'); }
 }
 function secureCode(len = 6){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -3092,21 +3599,20 @@ function connectTelegram(){
   openModal('📱 ربط تلقرام', `
     <div style="text-align:center;padding:6px 0">
       <div style="font-size:14px;color:var(--muted);font-weight:700;margin-bottom:14px">
-        انسخ الكود ثم أرسله للبوت
+        انسخ الكود ثم أرسله للبوت في تلقرام
       </div>
       <div style="font-family:'Tajawal';font-size:42px;font-weight:900;letter-spacing:8px;color:var(--p);background:var(--p-light);padding:18px;border-radius:14px;margin-bottom:14px;user-select:all;-webkit-user-select:all">
         ${code}
       </div>
-      <button class="btn btn-primary btn-block" onclick="navigator.clipboard.writeText('${code}');this.textContent='✅ تم النسخ';setTimeout(()=>this.textContent='📋 نسخ الكود',1500)" style="margin-bottom:16px">
+      <button class="btn btn-primary btn-block" onclick="copyTextSafe('${code}', this)" style="margin-bottom:16px">
         📋 نسخ الكود
       </button>
-      <div style="background:var(--warn-bg);color:var(--warn);padding:12px;border-radius:11px;font-size:12.5px;font-weight:700;line-height:1.9;margin-bottom:14px;text-align:right">
-        <b>⚠️ على iOS لا يعمل الربط التلقائي:</b><br>
+      <div style="background:var(--warn-bg);color:var(--warn);padding:12px;border-radius:11px;font-size:12.5px;font-weight:700;line-height:1.9;margin-bottom:14px;text-align:start">
+        <b>💡 خطوات الربط السريع:</b><br>
         1. اضغط <b>📋 نسخ الكود</b> أعلاه<br>
-        2. اضغط <b>📱 فتح تلقرام</b> تحت<br>
-        3. اضغط <b>START</b><br>
-        4. الصق الكود في حقل الكتابة وأرسله<br>
-        5. ارجع للموقع — سيتم الربط تلقائياً
+        2. اضغط <b>📱 فتح تلقرام</b> بالأسفل<br>
+        3. اضغط <b>START</b> أو الصق الكود وأرسله للبوت<br>
+        4. ارجع للموقع — سيتم الربط والمزامنة تلقائياً ✅
       </div>
       <div style="font-size:12px;color:var(--muted);font-weight:600">
         ⏱️ صلاحية الكود: 10 دقائق
@@ -3114,7 +3620,7 @@ function connectTelegram(){
     </div>
   `, `
     <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="window.location.href='https://t.me/${TG_BOT}?start=${code}'">📱 فتح تلقرام</button>
+    <button class="btn btn-primary" onclick="window.open('https://t.me/${TG_BOT}?start=${code}','_blank')">📱 فتح تلقرام</button>
   `);
 }
 function startPoll(code){
@@ -3136,22 +3642,22 @@ function startPoll(code){
         if(d.token) setMyToken(String(d.token));
         localStorage.removeItem('tg_pending');
         localStorage.removeItem('tg_pending_time');
+        closeModal();
+        updateTgStatus();
         await loadFromCloud();
-        toast('🎉 تم الربط! جاري تحديث الصفحة...');
-        setTimeout(() => location.reload(), 900);
+        renderSyncStatus();
+        toast('🎉 تم الربط بنجاح!');
       }
     }catch(e){}
-  }, 1500);
+  }, 2000);
 }
 async function unlinkTelegram(){
   const ok = await appConfirm('فك الربط بتلقرام؟ لن تصلك إشعارات حتى تربط مرة ثانية.', {
-    title: 'فك الربط', emoji: '🔓', okText: 'فك', variant: 'warn'
+    title: 'فك الربط', emoji: '🔓', okText: 'فك الربط', variant: 'warn'
   });
   if(!ok) return;
 
   const oldToken = getMyToken();
-
-  // ⚠️ تنبيه 3: أوقف البومودورو سحابياً أولاً، قبل حذف chatId
   if(pomo.running){
     pomo.running = false;
     pomo.endTimestamp = null;
@@ -3159,66 +3665,61 @@ async function unlinkTelegram(){
     clearInterval(pomo.intervalId);
     pomoSaveState();
   }
-  syncPomoCancelToServer();  // الآن يعمل، chatId لا يزال موجوداً
+  syncPomoCancelToServer();
 
-  // أرسل /unlink مع keepalive (تنبيه 3 + #49)
   if(oldToken){
     try{
       await fetch(TG_WORKER + '/unlink', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: oldToken }),
-        keepalive: true  // ← جديد: يضمن وصول الطلب حتى مع reload
+        keepalive: true
       });
-    }catch(e){ /* تجاهل */ }
+    }catch(e){}
   }
 
-  // الآن امسح كل شيء
   localStorage.removeItem('tg_chat_id');
   localStorage.removeItem('tg_token');
   localStorage.removeItem('tg_pending');
   localStorage.removeItem('tg_pending_time');
   if(pollTimer) clearInterval(pollTimer);
 
-  toast('🔓 تم الفك');
-  setTimeout(() => location.reload(), 400);
+  updateTgStatus();
+  renderSyncStatus();
+  toast('🔓 تم فك الربط');
 }
 function updateTgStatus(){
   const el = document.getElementById('tgStatus');
   if(!el) return;
   const id = getMyChatId();
   const pending = localStorage.getItem('tg_pending');
-  if(id){ el.innerHTML = '✅ <b>مربوط بنجاح</b>'; el.style.background = 'var(--ok-bg)'; el.style.color = 'var(--ok)'; }
-  else if(pending){ el.innerHTML = '⏳ <b>اضغط START في تلقرام</b>'; el.style.background = 'var(--warn-bg)'; el.style.color = 'var(--warn)'; }
-  else{ el.innerHTML = '⚠️ <b>غير مربوط</b>'; el.style.background = 'var(--hover)'; el.style.color = 'var(--muted)'; }
+  if(id){
+    el.innerHTML = '✅ <b>مربوط بنجاح مع بوت تلقرام</b>';
+    el.style.background = 'var(--ok-bg)';
+    el.style.color = 'var(--ok)';
+  } else if(pending){
+    el.innerHTML = '⏳ <b>بانتظار إرسال الكود في تلقرام...</b>';
+    el.style.background = 'var(--warn-bg)';
+    el.style.color = 'var(--warn)';
+  } else {
+    el.innerHTML = '⚠️ <b>غير مربوط حالياً</b>';
+    el.style.background = 'var(--hover)';
+    el.style.color = 'var(--muted)';
+  }
+  const c = document.getElementById('tgConnectBtn');
+  if(c){
+    c.textContent = id ? '🔄 إعادة ربط' : (pending ? '⏳ عرض الكود' : '🔗 ربط تلقرام');
+    const uBtn = document.getElementById('tgUnlinkBtn');
+    const tBtn = document.getElementById('tgTestBtn');
+    const rBtn = document.getElementById('tgRenewBtn');
+    if(uBtn) uBtn.style.display = id ? '' : 'none';
+    if(tBtn) tBtn.style.display = id ? '' : 'none';
+    if(rBtn) rBtn.style.display = id ? '' : 'none';
+  }
 }
-(function resumePending(){
-  const pending = localStorage.getItem('tg_pending');
-  const t = parseInt(localStorage.getItem('tg_pending_time') || '0');
-  if(pending && Date.now() - t < 600000) startPoll(pending);
-  else if(pending){ localStorage.removeItem('tg_pending'); localStorage.removeItem('tg_pending_time'); }
-})();
-(function initTGUI(){
-  updateTgStatus();
-  let ticks = 0;
-  const t = setInterval(() => {
-    const linked = !!getMyChatId();
-    const pending = localStorage.getItem('tg_pending');
-    const c = document.getElementById('tgConnectBtn');
-    if(c){
-      c.textContent = linked ? '🔄 إعادة ربط' : (pending ? '⏳ فتح تلقرام' : '🔗 ربط تلقرام');
-      document.getElementById('tgUnlinkBtn').style.display = linked ? '' : 'none';
-      document.getElementById('tgTestBtn').style.display = linked ? '' : 'none';
-      const renewBtn = document.getElementById('tgRenewBtn');
-      if(renewBtn) renewBtn.style.display = linked ? '' : 'none';
-    }
-    updateTgStatus();
-    if(linked || ++ticks > 40) clearInterval(t);
-  }, 1500);
-})();
 
 /* ============================================================
-   27) الحضور والغياب
+   27) الحضور والغياب (حد الحرمان 25%)
 ============================================================ */
 function calcAttendance(){
   const MAX_PERCENT = 0.25;
@@ -3227,15 +3728,11 @@ function calcAttendance(){
 
   (state.courses || []).forEach(c => {
     const courseClasses = (state.schedule || []).filter(s => s.courseId === c.id);
-
-    // أيام فريدة (يوم + وقت) بدل عدد الجلسات
     const uniqueSlots = new Set();
     courseClasses.forEach(s => uniqueSlots.add(`${s.day}_${s.start}`));
     const daysPerWeek = uniqueSlots.size;
-
     const totalDays = daysPerWeek * weeks;
 
-    // غياب فريد بـ (اليوم + الوقت + التاريخ)
     const absentKeys = new Set();
     const lateKeys = new Set();
     (state.attendance || []).forEach(a => {
@@ -3244,7 +3741,7 @@ function calcAttendance(){
       if(!sch) return;
       const key = `${sch.day}_${sch.start}_${a.date}`;
       if(a.status === 'late') lateKeys.add(key);
-      else absentKeys.add(key);  // absent + excused معاً للحرمان
+      else absentKeys.add(key);
     });
 
     const absences = absentKeys.size;
@@ -3265,7 +3762,7 @@ function renderAttendancePage(){
   if(!el) return;
   const data = calcAttendance();
   if(!state.courses.length){
-    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً</p></div>`;
+    el.innerHTML = `<div class="empty"><div class="e-ico">📋</div><b>لا توجد مقررات</b><p>أضف مقرراتك أولاً لتتبع الحضور والغياب</p><button class="btn btn-primary" onclick="go('courses');openCourseForm()">➕ إضافة مقرر</button></div>`;
     return;
   }
   const totalAbsences = Object.values(data).reduce((a, x) => a + x.absences, 0);
@@ -3276,7 +3773,7 @@ function renderAttendancePage(){
       <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">🎯</div><div><b>25%</b><span>حد الحرمان</span></div></div>
     </div>
     <div style="background:var(--p-light);padding:12px 16px;border-radius:12px;margin-bottom:20px;font-size:13px;line-height:1.9;font-weight:600">
-      💡 <b>طريقة الحساب:</b><br>• كل <b>يوم محاضرة</b> = غياب واحد<br>• النسبة = (الأيام اللي غبتها ÷ إجمالي أيام الفصل) × 100
+      💡 <b>طريقة الحساب:</b> كل محاضرة غائبة = غياب واحد · النسبة = (عدد الغيابات ÷ إجمالي محاضرات المقرر في الفصل) × 100
     </div>
     <div style="display:grid;gap:14px">
       ${Object.values(data).map(d => {
@@ -3285,23 +3782,23 @@ function renderAttendancePage(){
         const bg = used >= 18.75 ? 'var(--danger-bg)' : used >= 12.5 ? 'var(--warn-bg)' : 'var(--ok-bg)';
         const emoji = used >= 18.75 ? '🚨' : used >= 12.5 ? '⚠️' : '✅';
         const barPercent = Math.min((used / 25) * 100, 100);
-        return `<div class="card" style="padding:20px;border-right:4px solid ${color}">
+        return `<div class="card" style="padding:20px;border-inline-start:4px solid ${color}">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
             <div><h3 style="font-size:17px;color:${d.course.color};margin-bottom:4px;cursor:pointer" onclick="openCourseDetail('${d.course.id}')">${esc(d.course.name)} →</h3>
-              <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.daysPerWeek} يوم أسبوعياً · ${d.total} يوم في الفصل</span></div>
+              <span style="font-size:12.5px;color:var(--muted);font-weight:700">${d.daysPerWeek} محاضرة أسبوعياً · ${d.total} محاضرة في الفصل</span></div>
             <div style="background:${bg};color:${color};padding:10px 16px;border-radius:12px;text-align:center;min-width:90px">
               <b style="font-family:'Tajawal';font-size:22px;display:block;line-height:1">${d.percent.toFixed(2)}%</b>
               <span style="font-size:10.5px;font-weight:700">${emoji}</span>
             </div></div>
           <div class="prog" style="height:12px;margin-bottom:14px"><i style="width:${barPercent}%;background:${color}"></i></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;font-size:12.5px;font-weight:700;text-align:center">
-            <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">أيام غيابك</div><div style="color:${color};font-size:15px;font-family:'Tajawal'">${d.absences}</div></div>
+            <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">غياباتك</div><div style="color:${color};font-size:15px;font-family:'Tajawal'">${d.absences}</div></div>
             <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">الحد (25%)</div><div style="color:var(--danger);font-size:15px;font-family:'Tajawal'">${d.max}</div></div>
             <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">متبقي</div><div style="color:var(--ok);font-size:15px;font-family:'Tajawal'">${d.remaining}</div></div>
           </div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
             <span style="color:var(--warn)">⏰ تأخير: <b>${d.lates}</b></span>
-            ${d.percent >= 18.75 ? `<span style="color:var(--danger)">🚨 اقتربت من الحرمان!</span>` : ''}
+            ${d.percent >= 18.75 ? `<span style="color:var(--danger)">🚨 اقتربت من حد الحرمان!</span>` : ''}
           </div></div>`;
       }).join('')}
     </div>`;
@@ -3331,24 +3828,28 @@ function renderWellness(){
     el.innerHTML = `
       <div class="grid g2" style="margin-bottom:16px">
         <div class="card" style="padding:22px">
-          <div style="text-align:center;margin-bottom:16px"><div style="font-size:52px;line-height:1">😴</div><h3 style="font-size:19px;margin-top:8px">النوم</h3></div>
+          <div style="text-align:center;margin-bottom:16px"><div style="font-size:52px;line-height:1">😴</div><h3 style="font-size:19px;margin-top:8px">النوم اليوم</h3></div>
           <div style="text-align:center;margin-bottom:14px"><b style="font-family:'Tajawal';font-size:42px;color:var(--p)">${todayLog.sleep}</b><span style="font-size:15px;color:var(--muted)"> / ${w.sleepGoal} ساعات</span></div>
           <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${sleepPct}%"></i></div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">${[4,5,6,7,8,9,10].map(h => `<button class="btn btn-ghost btn-sm" style="flex:1;min-width:40px" onclick="addSleep(${h})">${h}h</button>`).join('')}</div>
         </div>
         <div class="card" style="padding:22px">
-          <div style="text-align:center;margin-bottom:16px"><div style="font-size:52px;line-height:1">💧</div><h3 style="font-size:19px;margin-top:8px">الماء</h3></div>
+          <div style="text-align:center;margin-bottom:16px"><div style="font-size:52px;line-height:1">💧</div><h3 style="font-size:19px;margin-top:8px">شرب الماء اليوم</h3></div>
           <div style="text-align:center;margin-bottom:14px"><b style="font-family:'Tajawal';font-size:42px;color:#0891b2">${todayLog.water}</b><span style="font-size:15px;color:var(--muted)"> / ${w.waterGoal} أكواب</span></div>
           <div class="prog" style="height:10px;margin-bottom:16px"><i style="width:${waterPct}%;background:#0891b2"></i></div>
-          <div style="text-align:center"><button class="btn btn-primary btn-block" onclick="addWater()">🥤 + كوب</button><button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="resetWater()">↺ تصفير</button></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" style="flex:2" onclick="addWater(1)">🥤 + كوب</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="addWater(-1)">➖</button>
+            <button class="btn btn-ghost btn-sm" style="flex:1" onclick="resetWater()">↺ تصفير</button>
+          </div>
         </div>
       </div>
       <div class="card" style="padding:20px;margin-bottom:16px">
-        <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - النوم</h3>
+        <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام — النوم</h3>
         <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val">${d.sleep || ''}</span><div class="wbar-fill" style="height:${Math.max((d.sleep/maxSleep)*100, 3)}%"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
       </div>
       <div class="card" style="padding:20px">
-        <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام - الماء</h3>
+        <h3 style="font-size:16px;margin-bottom:14px">📊 آخر 7 أيام — الماء</h3>
         <div class="week-bars">${last7.map(d => `<div class="wbar"><span class="wbar-val" style="color:#0891b2">${d.water || ''}</span><div class="wbar-fill" style="height:${Math.max((d.water/maxWater)*100, 3)}%;background:linear-gradient(180deg,#0891b2,#0e7490)"></div><span class="wbar-lbl">${d.day}</span></div>`).join('')}</div>
       </div>`;
   }catch(e){ el.innerHTML = '<div class="empty"><b>خطأ في العرض</b></div>'; }
@@ -3359,8 +3860,8 @@ function getOrCreateTodayWellness(){
   if(!log){ log = { date: today, sleep: 0, water: 0 }; state.wellness.log.push(log); }
   return log;
 }
-function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); renderDashHealth(); toast(`😴 سجّلت ${h} ساعات`); }
-function addWater(){ const log = getOrCreateTodayWellness(); log.water += 1; save(); renderWellness(); renderDashHealth(); }
+function addSleep(h){ const log = getOrCreateTodayWellness(); log.sleep = h; save(); renderWellness(); renderDashHealth(); toast(`😴 سجّلت ${h} ساعات نوم`); }
+function addWater(delta = 1){ const log = getOrCreateTodayWellness(); log.water = Math.max(0, (log.water || 0) + delta); save(); renderWellness(); renderDashHealth(); }
 function resetWater(){ const log = getOrCreateTodayWellness(); log.water = 0; save(); renderWellness(); renderDashHealth(); }
 
 /* ============================================================
@@ -3372,8 +3873,8 @@ function renderTeeth(){
   if(!log){ log = { date: today, morning: false, night: false }; }
   const mBtn = document.getElementById('teethMorningBtn');
   const nBtn = document.getElementById('teethNightBtn');
-  if(mBtn){ mBtn.classList.toggle('done', log.morning); mBtn.innerHTML = `<span class="t-ico">🌅</span>تفريش الصباح${log.morning ? '<div style="font-size:11px;margin-top:6px">✓ تم</div>' : ''}`; }
-  if(nBtn){ nBtn.classList.toggle('done', log.night); nBtn.innerHTML = `<span class="t-ico">🌙</span>تفريش الليل${log.night ? '<div style="font-size:11px;margin-top:6px">✓ تم</div>' : ''}`; }
+  if(mBtn){ mBtn.classList.toggle('done', log.morning); mBtn.innerHTML = `<span class="t-ico">🌅</span>تفريش الصباح${log.morning ? '<div style="font-size:11px;margin-top:6px">✓ تم اليوم</div>' : ''}`; }
+  if(nBtn){ nBtn.classList.toggle('done', log.night); nBtn.innerHTML = `<span class="t-ico">🌙</span>تفريش الليل${log.night ? '<div style="font-size:11px;margin-top:6px">✓ تم اليوم</div>' : ''}`; }
   const statsEl = document.getElementById('teethStats');
   if(statsEl){
     const last7 = [];
@@ -3398,7 +3899,7 @@ function toggleTeeth(period){
 }
 
 /* ============================================================
-   30) الأرشيف
+   30) أرشيف الفصول
 ============================================================ */
 function renderArchive(){
   const el = document.getElementById('archiveContent');
@@ -3406,32 +3907,33 @@ function renderArchive(){
   el.innerHTML = `
     <div class="card" style="padding:22px;margin-bottom:20px">
       <h3 style="font-size:17px;margin-bottom:8px">💾 أرشفة الفصل الحالي</h3>
-      <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">بيحفظ نسخة كاملة من بياناتك الحالية.</p>
+      <p style="font-size:13.5px;color:var(--muted);margin-bottom:14px;line-height:1.7">يحفظ نسخة كاملة من مقرراتك وجدولك ومهامك ودرجاتك الحالية للرجوع إليها لاحقاً.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input id="archiveName" placeholder="اسم الفصل" style="flex:2;min-width:180px;padding:11px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
-        <button class="btn btn-primary" onclick="createArchive()">💾 أرشفة</button>
+        <input id="archiveName" placeholder="مثال: الفصل الأول 1448هـ" style="flex:2;min-width:180px;padding:11px 14px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg)">
+        <button class="btn btn-primary" onclick="createArchive()">💾 أرشفة الآن</button>
       </div>
     </div>
     ${state.archive.length ? `
-      <h3 style="font-size:17px;margin-bottom:14px">📚 المؤرشفة (${state.archive.length})</h3>
+      <h3 style="font-size:17px;margin-bottom:14px">📚 الفصول المؤرشفة (${state.archive.length})</h3>
       <div style="display:grid;gap:12px">
-        ${state.archive.map((a, i) => `<div class="card" style="padding:18px;border-right:4px solid var(--p)">
+        ${state.archive.map((a, i) => `<div class="card" style="padding:18px;border-inline-start:4px solid var(--p)">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
             <div><h4 style="font-size:16.5px;margin-bottom:4px">${esc(a.name)}</h4>
               <span style="font-size:12.5px;color:var(--muted);font-weight:700">📅 ${new Date(a.created).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}</span></div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-primary btn-sm" onclick="viewArchive(${i})">👁️ عرض</button>
+              <button class="btn btn-primary btn-sm" onclick="viewArchive(${i})">👁️ عرض واستعادة</button>
               <button class="btn btn-danger btn-sm" onclick="deleteArchive(${i})">🗑️</button>
             </div></div>
           <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--muted);font-weight:700">
-            <span>📚 ${a.data.courses?.length || 0} مقرر</span>
-            <span>📋 ${(a.data.tasks?.length || 0) + (a.data.exams?.length || 0)} مهمة واختبار</span>
+            <span>📚 ${a.data?.courses?.length || 0} مقرر</span>
+            <span>📋 ${(a.data?.tasks?.length || 0) + (a.data?.exams?.length || 0)} مهمة واختبار</span>
           </div></div>`).join('')}
       </div>
-    ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف الفصل الحالي</p></div>`}`;
+    ` : `<div class="empty"><div class="e-ico">🗂️</div><b>لا يوجد أرشيف</b><p>أرشف فصلك الدراسي الحالي لحفظه في سجلك</p></div>`}`;
 }
 function createArchive(){
-  const name = document.getElementById('archiveName').value.trim();
+  const inp = document.getElementById('archiveName');
+  const name = inp ? inp.value.trim() : '';
   if(!name){ toast('⚠️ اكتب اسم الفصل'); return; }
   state.archive.push({
     id: uid(), name, created: new Date().toISOString(),
@@ -3442,22 +3944,22 @@ function createArchive(){
       gpaCourses: state.gpaCourses || []
     }))
   });
-  save(); renderArchive(); toast('✅ تمت الأرشفة');
+  save(); renderArchive(); toast('✅ تمت أرشفة الفصل');
 }
 function viewArchive(i){
   const a = state.archive[i]; if(!a) return;
-  const d = a.data;
+  const d = a.data || {};
   openModal(`📚 ${a.name}`, `
-    <div style="background:var(--hover);padding:14px;border-radius:12px;margin-bottom:14px">
+    <div style="background:var(--hover);padding:16px;border-radius:12px;margin-bottom:14px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13.5px;font-weight:700">
         <div>📚 <b>${d.courses?.length || 0}</b> مقرر</div><div>📅 <b>${d.schedule?.length || 0}</b> محاضرة</div>
         <div>📝 <b>${d.tasks?.length || 0}</b> مهمة</div><div>⏰ <b>${d.exams?.length || 0}</b> اختبار</div>
       </div>
-    </div>`, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة</button>`);
+    </div>`, `<button class="btn btn-ghost" onclick="closeModal()">إغلاق</button><button class="btn btn-primary" onclick="loadArchive(${i})">🔄 استعادة هذا الفصل</button>`);
 }
 async function loadArchive(i){
   const a = state.archive[i]; if(!a) return;
-  const ok = await appConfirm('سيتم استبدال البيانات الحالية ببيانات الأرشيف. متابعة؟', {
+  const ok = await appConfirm('سيتم استبدال البيانات الحالية ببيانات هذا الأرشيف. متابعة؟', {
     title: 'استعادة الأرشيف', emoji: '🔄', okText: 'استعادة', variant: 'warn'
   });
   if(!ok) return;
@@ -3467,8 +3969,8 @@ async function loadArchive(i){
   state.studyLog = d.studyLog || []; state.attendance = d.attendance || [];
   state.gpaCourses = d.gpaCourses || [];
   currentCourseId = null;
-  save(); closeModal(); renderAll(); renderAttendancePage(); renderArchive();
-  toast('✅ تمت الاستعادة');
+  save(); closeModal(); renderAll();
+  toast('✅ تمت استعادة الفصل');
 }
 async function deleteArchive(i){
   const ok = await appConfirm('حذف هذا الأرشيف؟', {
@@ -3479,106 +3981,7 @@ async function deleteArchive(i){
 }
 
 /* ============================================================
-   31) إضافة الصفحات الديناميكية
-============================================================ */
-(function addPages(){
-  const content = document.querySelector('.content');
-  if(!content) return;
-  const pages = [
-    { id:'attendance', ico:'📋', title:'الحضور والغياب', sub:'تتبع غياباتك وحد الحرمان' },
-    { id:'wellness', ico:'😴', title:'النوم والماء', sub:'صحتك أولاً' },
-    { id:'archive', ico:'🗂️', title:'أرشيف الفصول', sub:'سجل كل فصولك' }
-  ];
-  pages.forEach(p => {
-    if(document.getElementById('view-' + p.id)) return;
-    const sec = document.createElement('section');
-    sec.className = 'view'; sec.id = 'view-' + p.id;
-    sec.innerHTML = `<div class="sec-head"><div><h2>${p.ico} ${p.title}</h2><p>${p.sub}</p></div></div><div id="${p.id}Content"></div>`;
-    content.appendChild(sec);
-    VIEW_META[p.id] = [p.title, p.sub];
-  });
-})();
-
-/* ============================================================
-   32) بناء القائمة الجانبية
-============================================================ */
-(function rebuildNav(){
-  const nav = document.querySelector('.nav');
-  if(!nav) return;
-  const homeBtn = nav.querySelector('.home-btn');
-  const existing = {};
-  nav.querySelectorAll('.nav-btn').forEach(b => { existing[b.dataset.view] = b; b.remove(); });
-  const newBtn = (view, ico, label) => {
-    if(existing[view]) { existing[view].innerHTML = `<span class="ico">${ico}</span> ${label}`; return existing[view]; }
-    const b = document.createElement('button');
-    b.className = 'nav-btn'; b.dataset.view = view;
-    b.innerHTML = `<span class="ico">${ico}</span> ${label}`;
-    return b;
-  };
-  const groups = [
-    { title:'📚 الدراسة', items:[
-      ['schedule','📅','الجدول الدراسي'],
-      ['courses','📚','المقررات'],
-      ['tasks','📋','المهام والاختبارات']
-    ]},
-    { title:'📊 الأداء الأكاديمي', items:[
-      ['grades','🎓','المعدل والدرجات'],
-      ['attendance','📋','الحضور والغياب'],
-      ['archive','🗂️','أرشيف الفصول']
-    ]},
-    { title:'🚀 الإنتاجية', items:[
-      ['study','🍅','مؤقّت المذاكرة'],
-      ['wellness','😴','النوم والماء'],
-      ['teeth','🦷','نظافة الأسنان']
-    ]},
-    { title:'💰 المصروف', items:[
-      ['balance','💵','الرصيد'],
-      ['expenses','📋','المصاريف'],
-      ['goals','🎯','الأهداف']
-    ]}
-  ];
-  nav.innerHTML = '';
-  if(homeBtn) nav.appendChild(homeBtn);
-  groups.forEach(g => {
-    const group = document.createElement('div');
-    group.className = 'nav-group collapsed';
-    const title = document.createElement('div');
-    title.className = 'nav-group-title';
-    title.textContent = g.title;
-    title.addEventListener('click', () => group.classList.toggle('collapsed'));
-    group.appendChild(title);
-    g.items.forEach(([v, ico, label]) => {
-      const b = newBtn(v, ico, label);
-      b.dataset.view = v;
-      group.appendChild(b);
-    });
-    nav.appendChild(group);
-  });
-  const current = (location.hash.slice(1) || 'dashboard');
-  const target = current === 'course-detail' ? 'courses' : current;
-  nav.querySelectorAll('.nav-group').forEach(g => {
-    if(g.querySelector(`[data-view="${target}"]`)) g.classList.remove('collapsed');
-  });
-})();
-
-/* ============================================================
-   33) تحسينات الموبايل
-============================================================ */
-(function fixMobile(){
-  const sidebar = document.getElementById('sidebar');
-  if(!sidebar) return;
-  const mo = new MutationObserver(() => {
-    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
-  });
-  mo.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
-  const setVH = () => document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-  setVH();
-  window.addEventListener('resize', setVH);
-  window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
-})();
-
-/* ============================================================
-   34) شارة الأسبوع
+   31) شارة الأسبوع الدراسي
 ============================================================ */
 function getSemesterWeek(){
   const start = state.settings.semesterStart;
@@ -3609,17 +4012,10 @@ function renderWeekBadge(){
   else wb.className = 'week-badge';
   wb.title = `باقي ${w.remaining} أسبوع`;
 }
-function saveSemesterStart(){
-  const val = document.getElementById('setSemesterStart').value;
-  if(!val){ toast('⚠️ اختر التاريخ'); return; }
-  state.settings.semesterStart = val;
-  save(); applySettings(); renderWeekBadge();
-  toast('✅ تم حفظ بداية الفصل');
-}
 function saveSemesterSettings(){
   const start = document.getElementById('setSemesterStart').value;
   const weeks = +document.getElementById('setSemesterWeeks').value || 16;
-  if(!start){ toast('⚠️ اختر التاريخ'); return; }
+  if(!start){ toast('⚠️ اختر تاريخ بداية الفصل'); return; }
   state.settings.semesterStart = start;
   state.settings.semesterWeeks = Math.max(8, Math.min(30, weeks));
   save(); applySettings(); renderWeekBadge(); renderAcademicStrip();
@@ -3627,19 +4023,131 @@ function saveSemesterSettings(){
 }
 
 /* ============================================================
-   35) اختصارات الكيبورد
+   32) 🔐 نظام قفل الشاشة بالرمز السري (PIN Lock)
+============================================================ */
+let currentPinInput = '';
+function getSavedPin(){
+  try{ return localStorage.getItem(PIN_STORE_KEY) || ''; }catch(e){ return ''; }
+}
+function renderPinSettingsUI(){
+  const pin = getSavedPin();
+  const statusBox = document.getElementById('pinStatusBox');
+  const setBtn = document.getElementById('setPinBtn');
+  const remBtn = document.getElementById('removePinBtn');
+  const lockNow = document.getElementById('lockNowBtn');
+  if(statusBox){
+    statusBox.innerHTML = pin
+      ? '<span style="color:var(--ok)">✅ القفل بالرمز السري مفعّل</span>'
+      : '<span style="color:var(--muted)">🔓 القفل غير مفعّل</span>';
+  }
+  if(setBtn) setBtn.textContent = pin ? '🔑 تغيير رمز القفل' : '🔒 تعيين رمز قفل';
+  if(remBtn) remBtn.style.display = pin ? '' : 'none';
+  if(lockNow) lockNow.style.display = pin ? 'grid' : 'none';
+}
+function openPinSetupModal(){
+  openModal('🔐 إعداد رمز القفل السري', `
+    <div class="field">
+      <label for="newPinInput">أدخل رمزاً سرياً من 4 أرقام</label>
+      <input id="newPinInput" type="password" inputmode="numeric" maxlength="4" placeholder="••••" style="text-align:center;font-size:24px;letter-spacing:10px;font-weight:800">
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">سيُطلب هذا الرمز عند فتح التطبيق أو الضغط على زر القفل في الشريط الجانبي.</p>
+  `, `
+    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    <button class="btn btn-primary" onclick="saveNewPin()">💾 تفعيل القفل</button>
+  `);
+}
+function saveNewPin(){
+  const val = (document.getElementById('newPinInput')?.value || '').trim();
+  if(!/^\d{4}$/.test(val)){
+    toast('⚠️ يجب أن يتكون الرمز من 4 أرقام بالضبط');
+    return;
+  }
+  try{ localStorage.setItem(PIN_STORE_KEY, val); }catch(e){}
+  closeModal();
+  renderPinSettingsUI();
+  toast('🔒 تم تفعيل رمز القفل بنجاح');
+}
+async function removePinLock(){
+  const ok = await appConfirm('إلغاء قفل الشاشة بالرمز السري؟', {
+    title: 'إلغاء القفل', emoji: '🔓', okText: 'إلغاء القفل', variant: 'warn'
+  });
+  if(!ok) return;
+  try{ localStorage.removeItem(PIN_STORE_KEY); }catch(e){}
+  renderPinSettingsUI();
+  toast('🔓 تم إلغاء قفل الشاشة');
+}
+function lockAppNow(){
+  const pin = getSavedPin();
+  if(!pin) return;
+  currentPinInput = '';
+  updatePinDotsUI();
+  const ov = document.getElementById('pinOverlay');
+  if(ov){ ov.classList.add('open'); syncBodyScrollLock(); }
+}
+function pressPinKey(digit){
+  const pin = getSavedPin();
+  if(!pin || currentPinInput.length >= 4) return;
+  currentPinInput += String(digit);
+  updatePinDotsUI();
+  if(currentPinInput.length === 4){
+    if(currentPinInput === pin){
+      setTimeout(() => {
+        document.getElementById('pinOverlay')?.classList.remove('open');
+        currentPinInput = '';
+        updatePinDotsUI();
+        syncBodyScrollLock();
+      }, 150);
+    } else {
+      const dots = document.querySelectorAll('#pinDots .pin-dot');
+      dots.forEach(d => d.classList.add('error'));
+      const msg = document.getElementById('pinPromptMsg');
+      if(msg){ msg.textContent = '❌ الرمز غير صحيح، حاول مرة أخرى'; msg.style.color = 'var(--danger)'; }
+      setTimeout(() => {
+        currentPinInput = '';
+        updatePinDotsUI();
+      }, 650);
+    }
+  }
+}
+function backspacePinKey(){
+  currentPinInput = currentPinInput.slice(0, -1);
+  updatePinDotsUI();
+}
+function clearPinEntry(){
+  currentPinInput = '';
+  updatePinDotsUI();
+}
+function updatePinDotsUI(){
+  const dots = document.querySelectorAll('#pinDots .pin-dot');
+  dots.forEach((d, idx) => {
+    d.classList.remove('error');
+    d.classList.toggle('filled', idx < currentPinInput.length);
+  });
+}
+
+/* ============================================================
+   33) اختصارات الكيبورد
 ============================================================ */
 document.addEventListener('keydown', e => {
-  if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); quickAdd(); }
+  const pinOpen = document.getElementById('pinOverlay')?.classList.contains('open');
+  if(pinOpen){
+    if(e.key >= '0' && e.key <= '9') pressPinKey(e.key);
+    else if(e.key === 'Backspace') backspacePinKey();
+    return;
+  }
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+    e.preventDefault();
+    quickAdd();
+  }
 });
 
 /* ============================================================
-   37) تصدير/استيراد JSON
+   34) تصدير واستيراد JSON
 ============================================================ */
 function exportData(){
   try{
     const data = {
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       state: state
     };
@@ -3652,7 +4160,7 @@ function exportData(){
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast('✅ تم تصدير النسخة');
+    toast('✅ تم تصدير النسخة الاحتياطية');
   }catch(e){
     console.error(e);
     toast('❌ فشل التصدير');
@@ -3691,21 +4199,15 @@ async function importData(input){
     if(!Array.isArray(state.wellness.log)) state.wellness.log = [];
     if(!Array.isArray(state.health.teethLog)) state.health.teethLog = [];
     if(!Array.isArray(state.money.expenses)) state.money.expenses = [];
+    if(!Array.isArray(state.money.incomes)) state.money.incomes = [];
     if(!Array.isArray(state.money.goals)) state.money.goals = [];
     save();
     applySettings();
     renderAll();
-    renderAttendancePage();
-    renderWellness();
-    renderTeeth();
-    renderArchive();
     renderSyncStatus();
-    renderBalance();
-    renderExpenses();
-    renderGoals();
     renderWeekBadge();
     renderAcademicStrip();
-    toast('✅ تم الاستيراد بنجاح');
+    toast('✅ تم استيراد البيانات بنجاح');
     if(getMyChatId()) setTimeout(() => doSync(true), 300);
   }catch(e){
     console.error(e);
@@ -3715,7 +4217,7 @@ async function importData(input){
 }
 
 /* ============================================================
-   38) فحص الاتصال
+   35) فحص الاتصال الشامل
 ============================================================ */
 async function runHealthCheck(){
   const el = document.getElementById('healthCheckResult');
@@ -3739,24 +4241,22 @@ async function runHealthCheck(){
   results.push({
     ok: !!token,
     warn: chatId && !token,
-    label: 'التوكن',
-    detail: token ? `${token.slice(0,8)}...` : 'مفقود — يُنصح بإعادة الربط'
+    label: 'جلسة المصادقة (Token)',
+    detail: token ? `${token.slice(0,8)}...` : 'غير متوفرة — اربط تلقرام لتفعيلها'
   });
   let serverOk = false;
   let serverTime = 0;
-  if(chatId){
-    try{
-      const t0 = Date.now();
-      const r = await fetch(TG_WORKER + '/load', { headers: authHeaders() });
-      serverTime = Date.now() - t0;
-      serverOk = r.ok;
-    }catch(e){ serverOk = false; }
-  }
+  try{
+    const t0 = Date.now();
+    const r = await fetch(TG_WORKER + (chatId ? '/load' : '/'), { headers: authHeaders() });
+    serverTime = Date.now() - t0;
+    serverOk = r.ok;
+  }catch(e){ serverOk = false; }
   results.push({
     ok: serverOk,
-    warn: !chatId,
-    label: 'استجابة السيرفر',
-    detail: serverOk ? `${serverTime}ms ✅` : (chatId ? 'فشل الاتصال' : 'غير مربوط')
+    warn: !serverOk,
+    label: 'استجابة سيرفر Worker',
+    detail: serverOk ? `${serverTime}ms ✅` : 'تعذّر الاتصال بالسيرفر'
   });
   const lastSync = parseInt(localStorage.getItem('localModified') || '0');
   const diff = lastSync ? Math.round((Date.now() - lastSync) / 1000) : -1;
@@ -3770,7 +4270,7 @@ async function runHealthCheck(){
   results.push({
     ok: syncOk,
     warn: lastSync > 0 && !syncOk,
-    label: 'آخر مزامنة',
+    label: 'آخر تحديث للبيانات',
     detail: syncStr
   });
   let sizeKB = 0;
@@ -3781,14 +4281,14 @@ async function runHealthCheck(){
   results.push({
     ok: sizeKB < 500,
     warn: sizeKB >= 500,
-    label: 'حجم البيانات',
+    label: 'حجم التخزين المحلي',
     detail: `${sizeKB} KB`
   });
   results.push({
     ok: true,
     warn: false,
-    label: 'ملخص البيانات',
-    detail: `${state.courses.length} مقرر · ${state.tasks.length} مهمة · ${state.exams.length} اختبار · ${state.money.expenses.length} مصروف`
+    label: 'ملخص السجلات',
+    detail: `${state.courses.length} مقرر · ${state.tasks.length} مهمة · ${state.exams.length} اختبار · ${state.money.expenses.length} مصروف · ${(state.money.incomes||[]).length} إضافة رصيد`
   });
   const rowsHTML = results.map(r => {
     const ico = r.ok ? '✅' : (r.warn ? '⚠️' : '❌');
@@ -3806,7 +4306,7 @@ async function runHealthCheck(){
 }
 
 /* ============================================================
-   39) حذف جزئي
+   36) حذف جزئي وتجديد التوكن وأهداف الصحة
 ============================================================ */
 async function partialDelete(section){
   const labels = {
@@ -3815,6 +4315,7 @@ async function partialDelete(section){
     teeth: 'سجل تفريش الأسنان',
     attendance: 'سجل الحضور والغياب',
     expenses: 'المصاريف',
+    incomes: 'الفلوس المضافة (الدخل)',
     archive: 'الأرشيف'
   };
   const label = labels[section] || section;
@@ -3827,55 +4328,19 @@ async function partialDelete(section){
   else if(section === 'teeth') state.health.teethLog = [];
   else if(section === 'attendance') state.attendance = [];
   else if(section === 'expenses') state.money.expenses = [];
+  else if(section === 'incomes') state.money.incomes = [];
   else if(section === 'archive') state.archive = [];
   save();
-  renderStudy(); renderWellness(); renderTeeth();
-  renderSchedule(); renderAttendancePage(); renderBalance(); renderExpenses(); renderArchive();
-  renderDashboard(); renderDashHealth();
+  renderAll();
   renderSyncStatus();
   toast(`🗑️ تم حذف ${label}`);
 }
 
-/* ============================================================
-   40) تجديد التوكن
-============================================================ */
 function renewToken(){
   if(!getMyChatId()){ toast('⚠️ اربط أولاً'); return; }
-  const code = secureCode(6);
-  localStorage.setItem('tg_pending', code);
-  localStorage.setItem('tg_pending_time', Date.now().toString());
-  startPoll(code);
-  openModal('🔑 تجديد التوكن', `
-    <div style="text-align:center;padding:6px 0">
-      <div style="font-size:14px;color:var(--muted);font-weight:700;margin-bottom:14px">
-        انسخ الكود ثم أرسله للبوت لتجديد الجلسة
-      </div>
-      <div style="font-family:'Tajawal';font-size:42px;font-weight:900;letter-spacing:8px;color:var(--p);background:var(--p-light);padding:18px;border-radius:14px;margin-bottom:14px;user-select:all;-webkit-user-select:all">
-        ${code}
-      </div>
-      <button class="btn btn-primary btn-block" onclick="navigator.clipboard.writeText('${code}');this.textContent='✅ تم النسخ';setTimeout(()=>this.textContent='📋 نسخ الكود',1500)" style="margin-bottom:16px">
-        📋 نسخ الكود
-      </button>
-      <div style="background:var(--warn-bg);color:var(--warn);padding:12px;border-radius:11px;font-size:12.5px;font-weight:700;line-height:1.9;margin-bottom:14px;text-align:right">
-        <b>⚠️ على iOS:</b><br>
-        1. اضغط <b>📋 نسخ الكود</b> أعلاه<br>
-        2. اضغط <b>📱 فتح تلقرام</b> تحت<br>
-        3. اضغط <b>START</b> ثم الصق الكود وأرسله<br>
-        4. ارجع للموقع — سيتم التجديد تلقائياً
-      </div>
-      <div style="font-size:12px;color:var(--muted);font-weight:600">
-        ⏱️ صلاحية الكود: 10 دقائق
-      </div>
-    </div>
-  `, `
-    <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
-    <button class="btn btn-primary" onclick="window.location.href='https://t.me/${TG_BOT}?start=${code}'">📱 فتح تلقرام</button>
-  `);
+  connectTelegram();
 }
 
-/* ============================================================
-   41) أهداف الصحة
-============================================================ */
 function saveHealthGoals(){
   const sleepEl = document.getElementById('setSleepGoal');
   const waterEl = document.getElementById('setWaterGoal');
@@ -3886,16 +4351,15 @@ function saveHealthGoals(){
   save();
   renderWellness();
   renderDashHealth();
-  toast('✅ تم حفظ الأهداف');
+  toast('✅ تم حفظ أهداف الصحة');
 }
 
-// 🔄 Migration مرة واحدة: يحوّل الإيداعات القديمة لسجل بتاريخ قديم
 function migrateGoalsTx(){
   let changed = false;
   (state.money.goals || []).forEach(g => {
     if(!Array.isArray(g.txs)){
       if((g.saved || 0) > 0){
-        g.txs = [{ ts: 1, amount: +g.saved }]; // تاريخ 1970 → ما يُحسب بأي دورة
+        g.txs = [{ ts: 1, amount: +g.saved }];
       } else {
         g.txs = [];
       }
@@ -3918,38 +4382,48 @@ function reconcileGoalTxs(g){
 }
 
 /* ============================================================
-   36) التهيئة النهائية
+   37) التهيئة النهائية وتشغيل التطبيق
 ============================================================ */
 async function init(){
-  // 1) تجهيز الإعدادات الأساسية
+  if(getSavedPin()){
+    lockAppNow();
+  }
+
   migrateGoalsTx();
   acadSelectedWeek = currentAcademicWeek();
   applySettings();
-
-  // 2) إذا كان المستخدم مربوطاً بتلقرام، نجلب أحدث البيانات من السحابة أولاً
-  if(typeof getMyChatId === 'function' && getMyChatId()){
-    try{
-      await loadFromCloud(); // ننتظر حتى تصل البيانات من السيرفر
-    }catch(e){ 
-      console.error('Cloud sync failed on init', e); 
-    }
-  }
-
-  // 3) الآن نرسم الواجهة بعد أن تأكدنا أن البيانات محدثة (أو فشل التحديث)
+  updateTgStatus();
   renderAll();
   renderAcademicStrip();
+
+  const h = location.hash.slice(1);
+  if(h && document.getElementById('view-' + h) && h !== 'course-detail'){
+    go(h);
+  }
+
+  const pending = localStorage.getItem('tg_pending');
+  const pendingTime = parseInt(localStorage.getItem('tg_pending_time') || '0');
+  if(pending && Date.now() - pendingTime < 600000){
+    startPoll(pending);
+  } else if(pending){
+    localStorage.removeItem('tg_pending');
+    localStorage.removeItem('tg_pending_time');
+  }
+
+  if(getMyChatId()){
+    startAutoSync();
+    loadFromCloud().catch(e => console.error('Cloud sync failed on init', e));
+    syncAttendanceFromServer().catch(() => {});
+  }
   pomoResumeIfNeeded().catch(() => {});
 
-  // 4) تجهيز باقي الصفحات
-  const h = location.hash.slice(1);
-  if(h && document.getElementById('view-' + h)) go(h);
-  
-  try{ renderAttendancePage(); }catch(e){}
-  try{ renderWellness(); }catch(e){}
-  try{ renderTeeth(); }catch(e){}
-  try{ renderArchive(); }catch(e){}
-  try{ renderSyncStatus(); }catch(e){}
-  try{ renderBalance(); }catch(e){}
-  try{ renderExpenses(); }catch(e){}
-  try{ renderGoals(); }catch(e){}
+  if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
 }

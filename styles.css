@@ -5,6 +5,43 @@
    - تأثيرات حركية ناعمة مع احترام prefers-reduced-motion
    ========================================================================== */
 
+/* استضافة محلية لخط Cairo بأوزانه الأساسية مع font-display: swap وخطوط نظام احتياطية */
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Cairo'), local('Cairo Regular'), local('Cairo-Regular'), url('fonts/Cairo-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cairo SemiBold'), local('Cairo-SemiBold'), url('fonts/Cairo-SemiBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Cairo Bold'), local('Cairo-Bold'), url('fonts/Cairo-Bold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: local('Cairo ExtraBold'), local('Cairo-ExtraBold'), url('fonts/Cairo-ExtraBold.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cairo';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: local('Cairo Black'), local('Cairo-Black'), url('fonts/Cairo-ExtraBold.woff2') format('woff2');
+}
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -36,6 +73,17 @@
   --r-sm: 12px;
   --t: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
   --sidebar: 268px;
+  --sidebar-rail: 76px;
+  --bottom-nav-h: 64px;
+  --bp-sm: 600px;
+  --bp-md: 744px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --kb-offset: 0px;
 }
 
 html[data-theme="dark"] {
@@ -68,10 +116,12 @@ html[data-theme="dark"] {
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-  font-family: 'IBM Plex Sans Arabic', 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.7;
@@ -81,7 +131,7 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Tajawal', 'Cairo', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-weight: 800;
   line-height: 1.35;
 }
@@ -90,6 +140,10 @@ button, input, select, textarea {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
+}
+
+input, select, textarea {
+  font-size: 16px;
 }
 
 button {
@@ -157,6 +211,7 @@ ul {
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 
 .brand-logo {
@@ -174,7 +229,7 @@ ul {
 
 .brand-txt b {
   display: block;
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 18px;
   font-weight: 900;
   line-height: 1.2;
@@ -189,6 +244,7 @@ ul {
 .nav {
   padding: 14px 12px;
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -206,6 +262,8 @@ ul {
   color: #fff;
   transition: var(--t);
   width: 100%;
+  flex-shrink: 0;
+  min-height: 58px;
   text-align: start;
   background: linear-gradient(135deg, var(--p), var(--p-dark));
   box-shadow: 0 10px 24px var(--p-glow);
@@ -256,6 +314,7 @@ ul {
 
 .nav-group {
   margin-bottom: 6px;
+  flex-shrink: 0;
 }
 
 .nav-group-title {
@@ -307,6 +366,7 @@ ul {
   margin-inline-start: 6px;
   text-align: start;
   cursor: pointer;
+  flex-shrink: 0;
   animation: slideDown 0.22s ease;
 }
 
@@ -423,9 +483,9 @@ ul {
 }
 
 .page-title {
-  font-size: 19px;
+  font-size: clamp(15px, 2vw, 20px);
   font-weight: 900;
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .page-sub {
@@ -459,8 +519,8 @@ ul {
 }
 
 .content {
-  padding: 24px 22px 100px;
-  max-width: 1400px;
+  padding: 24px max(22px, var(--safe-left)) calc(100px + var(--safe-bottom)) max(22px, var(--safe-right));
+  max-width: 1340px;
   width: 100%;
   margin-inline: auto;
 }
@@ -489,7 +549,7 @@ ul {
 }
 
 .sec-head h2 {
-  font-size: 21px;
+  font-size: clamp(17.5px, 2.2vw, 22px);
 }
 
 .sec-head p {
@@ -616,8 +676,8 @@ ul {
 
 .stat b {
   display: block;
-  font-family: 'Tajawal', sans-serif;
-  font-size: 27px;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-size: clamp(20px, 2.6vw, 27px);
   font-weight: 900;
   line-height: 1.1;
 }
@@ -676,12 +736,14 @@ ul {
 }
 
 .up-info b {
-  display: block;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   font-size: 14.5px;
   font-weight: 700;
-  white-space: nowrap;
+  line-height: 1.4;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .up-info span {
@@ -715,7 +777,7 @@ ul {
   font-size: 17px;
   color: var(--text);
   margin-bottom: 6px;
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
 }
 
 .empty p {
@@ -848,7 +910,7 @@ html[data-theme="dark"] .course-card::after {
 }
 
 .acad-strip-title {
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 18px;
   font-weight: 800;
 }
@@ -889,8 +951,10 @@ html[data-theme="dark"] .course-card::after {
 }
 
 .acad-nav-btn {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 10px;
   background: var(--hover);
   border: 1px solid var(--border);
@@ -966,7 +1030,7 @@ html[data-theme="dark"] .acad-week.today {
 }
 
 .acad-week-num {
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 15.5px;
   font-weight: 800;
   line-height: 1.1;
@@ -1040,16 +1104,62 @@ html[data-theme="dark"] .acad-week.today {
   color: var(--p);
 }
 
+.sched-day-switcher {
+  display: none;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 2px 10px;
+  margin-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.sched-day-switcher::-webkit-scrollbar {
+  display: none;
+}
+.sched-day-btn {
+  flex: 1 0 auto;
+  min-width: 64px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: var(--t);
+  white-space: nowrap;
+}
+.sched-day-btn.today {
+  border-color: var(--p);
+  color: var(--p);
+}
+.sched-day-btn.active {
+  background: var(--p);
+  border-color: var(--p);
+  color: #fff;
+  box-shadow: 0 4px 12px var(--p-glow);
+}
+
 .sched-wrap {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-inline-start: 68px;
   box-shadow: var(--shadow);
+  max-width: 100%;
 }
 
 .sched-inner {
-  min-width: 860px;
+  min-width: 100%;
 }
 
 .sched-head {
@@ -1062,6 +1172,13 @@ html[data-theme="dark"] .acad-week.today {
   z-index: 5;
 }
 
+.sched-head > div:first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  background: var(--card);
+  z-index: 7;
+}
+
 .sched-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1072,7 +1189,7 @@ html[data-theme="dark"] .acad-week.today {
   text-align: center;
   font-weight: 800;
   font-size: 13.5px;
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   border-inline-start: 1px solid var(--border);
 }
 
@@ -1094,6 +1211,11 @@ html[data-theme="dark"] .sched-day.today {
 .sched-times {
   display: flex;
   flex-direction: column;
+  position: sticky;
+  inset-inline-start: 0;
+  background: var(--card);
+  z-index: 6;
+  border-inline-end: 1px solid var(--border);
 }
 
 .sched-time {
@@ -1193,11 +1315,12 @@ html[data-theme="dark"] .sched-day.today {
 
 .search-box input {
   width: 100%;
+  min-height: 44px;
   padding: 9px 14px 9px 34px;
   border-radius: 20px;
   border: 1.5px solid var(--border);
   background: var(--card);
-  font-size: 13.5px;
+  font-size: 16px;
   transition: var(--t);
 }
 
@@ -1317,8 +1440,10 @@ html[data-theme="dark"] .sched-day.today {
 }
 
 .mini-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 10px;
   display: grid;
   place-items: center;
@@ -1455,7 +1580,7 @@ html[data-theme="dark"] .sched-day.today {
 }
 
 .ring-txt b {
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 46px;
   font-weight: 900;
   line-height: 1;
@@ -1541,10 +1666,11 @@ html[data-theme="dark"] .sched-day.today {
 
 .comp-row input {
   padding: 9px 11px;
+  min-height: 44px;
   border-radius: 10px;
   border: 1.5px solid var(--border);
   background: var(--bg);
-  font-size: 13.5px;
+  font-size: 16px;
   width: 100%;
   transition: var(--t);
 }
@@ -1587,11 +1713,12 @@ html[data-theme="dark"] .sched-day.today {
 }
 
 .field input, .field select, .field textarea {
-  padding: 12px 14px;
+  padding: 11px 14px;
+  min-height: 44px;
   border-radius: 12px;
   border: 1.5px solid var(--border);
   background: var(--bg);
-  font-size: 14.5px;
+  font-size: 16px;
   transition: var(--t);
   width: 100%;
 }
@@ -1658,6 +1785,7 @@ html[data-theme="dark"] .sched-day.today {
   width: 100%;
   max-width: 560px;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
   animation: pop 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
@@ -1686,8 +1814,10 @@ html[data-theme="dark"] .sched-day.today {
 }
 
 .modal-head button {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
   border-radius: 10px;
   background: var(--hover);
   display: grid;
@@ -1735,7 +1865,7 @@ html[data-theme="dark"] .sched-day.today {
   text-align: center;
   font-size: 20px;
   font-weight: 800;
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   margin-bottom: 8px;
   color: var(--text);
 }
@@ -1946,7 +2076,7 @@ html[data-theme="dark"] .week-badge {
 
 .cd-stat b {
   display: block;
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 22px;
   font-weight: 800;
   line-height: 1;
@@ -2034,7 +2164,7 @@ html[data-theme="dark"] .week-badge {
   box-shadow: 0 10px 25px color-mix(in srgb, var(--cd-color, var(--p)) 30%, transparent);
 }
 
-.grade-summary-box b { font-family: 'Tajawal', sans-serif; font-size: 32px; font-weight: 800; line-height: 1; }
+.grade-summary-box b { font-family: 'Cairo', system-ui, -apple-system, sans-serif; font-size: 32px; font-weight: 800; line-height: 1; }
 .grade-summary-box span { font-size: 13px; font-weight: 700; opacity: 0.9; }
 
 .add-type-grid { display: grid; gap: 12px; }
@@ -2080,11 +2210,11 @@ html[data-theme="dark"] .week-badge {
   box-shadow: 0 15px 35px var(--p-glow);
   margin-bottom: 16px;
 }
-.money-amount { font-family: 'Tajawal', sans-serif; font-size: 46px; font-weight: 900; line-height: 1; margin: 8px 0; }
+.money-amount { font-family: 'Cairo', system-ui, -apple-system, sans-serif; font-size: 46px; font-weight: 900; line-height: 1; margin: 8px 0; }
 .money-label { font-size: 13px; font-weight: 700; opacity: 0.92; }
 .money-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
 .money-item { background: rgba(255, 255, 255, 0.16); border-radius: 12px; padding: 12px; }
-.money-item b { display: block; font-family: 'Tajawal', sans-serif; font-size: 20px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.money-item b { display: block; font-family: 'Cairo', system-ui, -apple-system, sans-serif; font-size: 20px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
 .money-item span { font-size: 11.5px; opacity: 0.92; font-weight: 700; }
 
 .exp-item {
@@ -2104,7 +2234,7 @@ html[data-theme="dark"] .week-badge {
 .exp-main { flex: 1; min-width: 0; }
 .exp-main b { display: block; font-size: 14.5px; font-weight: 700; margin-bottom: 3px; word-break: break-word; }
 .exp-main span { font-size: 12px; color: var(--muted); font-weight: 600; }
-.exp-amount { font-family: 'Tajawal', sans-serif; font-size: 17px; font-weight: 800; white-space: nowrap; }
+.exp-amount { font-family: 'Cairo', system-ui, -apple-system, sans-serif; font-size: 17px; font-weight: 800; white-space: nowrap; }
 
 .goal-card {
   background: var(--card);
@@ -2119,7 +2249,7 @@ html[data-theme="dark"] .week-badge {
 .goal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .goal-title { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
 .goal-nums { display: flex; gap: 16px; font-size: 13px; font-weight: 700; margin-bottom: 10px; flex-wrap: wrap; }
-.goal-nums b { font-family: 'Tajawal', sans-serif; font-size: 16px; font-weight: 800; }
+.goal-nums b { font-family: 'Cairo', system-ui, -apple-system, sans-serif; font-size: 16px; font-weight: 800; }
 
 /* ==========================================================================
    🔐 شاشة القفل الآمن بالرمز السري (PIN Lock Screen)
@@ -2193,7 +2323,7 @@ html[data-theme="dark"] .week-badge {
   border-radius: 14px;
   background: var(--hover);
   border: 1px solid var(--border);
-  font-family: 'Tajawal', sans-serif;
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
   font-size: 22px;
   font-weight: 800;
   display: grid;
@@ -2208,26 +2338,243 @@ html[data-theme="dark"] .week-badge {
 }
 
 /* ==========================================================================
-   تجاوب الشاشات (Responsive Design — Mobile First)
+   تجاوب الشاشات الشامل (Phase C — Mobile, Phone Landscape, iPad Portrait Rail, iPad Landscape & Desktop)
    ========================================================================== */
-@media (max-width: 980px) {
+
+/* زر طي/توسيع الشريط الجانبي (يظهر فقط في وضع الآيباد العمودي) */
+.rail-toggle-btn {
+  display: none;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  background: var(--hover);
+  border: 1px solid var(--border);
+  place-items: center;
+  font-size: 16px;
+  color: var(--text);
+  margin-inline-start: auto;
+  cursor: pointer;
+  transition: var(--t);
+}
+
+/* شريط التنقل السفلي للجوال (يظهر على الشاشات أقل من 744px) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  height: calc(var(--bottom-nav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  padding-inline: max(6px, var(--safe-left)) max(6px, var(--safe-right));
+  background: color-mix(in srgb, var(--card) 94%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid var(--border);
+  z-index: 75;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: center;
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
+}
+
+.mob-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 48px;
+  height: 100%;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 11px;
+  border-radius: 12px;
+  transition: var(--t);
+  cursor: pointer;
+  user-select: none;
+}
+
+.mob-tab .mob-ico {
+  font-size: 19px;
+  line-height: 1.1;
+}
+
+.mob-tab .mob-lbl {
+  font-size: 10.5px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.mob-tab.active {
+  color: var(--p);
+  font-weight: 900;
+}
+
+.mob-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 28px;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: var(--p);
+}
+
+.mob-tab .mob-badge {
+  position: absolute;
+  top: 4px;
+  inset-inline-start: calc(50% - 20px);
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 15, 30, 0.52);
+  z-index: 85;
+  display: none;
+}
+.overlay.show {
+  display: block;
+}
+
+/* وضع عرض يوم واحد في الجدول على الجوال */
+.sched-wrap.single-day-mode .sched-inner {
+  min-width: 100%;
+}
+.sched-wrap.single-day-mode .sched-days {
+  grid-template-columns: 1fr;
+}
+.sched-wrap.single-day-mode .sched-cols {
+  grid-template-columns: 1fr;
+}
+.sched-wrap.single-day-mode .sched-day:not(.selected-day),
+.sched-wrap.single-day-mode .sched-col:not(.selected-day) {
+  display: none;
+}
+
+/* وضع عرض 4 أيام في الجدول على الآيباد العمودي بدون أي تداخل مع عمود الوقت */
+.sched-wrap.four-day-mode .sched-inner {
+  min-width: 100%;
+}
+.sched-wrap.four-day-mode .sched-days {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.sched-wrap.four-day-mode .sched-cols {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.sched-wrap.four-day-mode .sched-day:not(.in-window),
+.sched-wrap.four-day-mode .sched-col:not(.in-window) {
+  display: none;
+}
+
+/* ضمان حجم خط >= 16px لجميع حقول الإدخال والاختيار على الشاشات اللمسية لمنع تقريب iOS تلقائياً */
+@media (pointer: coarse), (max-width: 1024px) {
+  input,
+  select,
+  textarea,
+  .field input,
+  .field select,
+  .field textarea,
+  .comp-row input,
+  .search-box input {
+    font-size: 16px !important;
+  }
+}
+
+/* تأثيرات التحويم والارتفاع مفعّلة حصراً للأجهزة ذات المؤشر الدقيق (الماوس/التراكباد) */
+@media (hover: hover) and (pointer: fine) {
+  .stat:hover,
+  .course-card:hover {
+    transform: translateY(-3px);
+  }
+  .acad-week:hover,
+  .btn-primary:hover,
+  .home-btn:hover,
+  .icon-btn:hover,
+  .week-badge:hover {
+    transform: translateY(-2px);
+  }
+  .fab:hover {
+    transform: translateY(-4px) scale(1.06);
+  }
+  .up-item:hover,
+  .task:hover,
+  .exam-item:hover,
+  .exp-item:hover,
+  .cd-item:hover {
+    transform: translateX(-4px);
+  }
+}
+
+/* تعطيل التحويم وتكبير أهداف اللمس للأجهزة اللمسية */
+@media (hover: none), (pointer: coarse) {
+  .stat:hover,
+  .course-card:hover,
+  .up-item:hover,
+  .task:hover,
+  .exam-item:hover,
+  .exp-item:hover,
+  .goal-card:hover,
+  .cd-item:hover,
+  .acad-week:hover,
+  .fab:hover,
+  .btn-primary:hover,
+  .home-btn:hover,
+  .icon-btn:hover {
+    transform: none !important;
+  }
+  .btn-sm,
+  .chip,
+  .course-actions button,
+  .color-pick button {
+    min-height: 44px;
+  }
+  .chk {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ==========================================================================
+   1) شاشات الجوال (أقل من 744px — عمودي وأفقي)
+   ========================================================================== */
+@media (max-width: 743px), (max-width: 960px) and (max-height: 500px) {
   .sidebar {
     position: fixed;
     inset-inline-start: 0;
     top: 0;
     bottom: 0;
-    height: auto;
-    max-height: 100dvh;
-    width: min(85vw, 310px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: 100vh;
+    height: 100dvh;
+    width: min(84vw, 300px);
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
     overflow: hidden;
-    transform: translateX(100%);
-    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.25);
-    transition: var(--t);
-    z-index: 60;
+    transform: translateX(105%);
+    visibility: hidden;
+    pointer-events: none;
+    box-shadow: none;
+    transition: transform var(--t), visibility var(--t);
+    z-index: 95;
   }
   .sidebar.open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.28);
   }
   .sidebar .nav {
     flex: 1;
@@ -2235,54 +2582,37 @@ html[data-theme="dark"] .week-badge {
     -webkit-overflow-scrolling: touch;
     padding-bottom: 20px;
   }
-  .sidebar-foot {
-    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-    background: var(--card);
-    border-top: 1px solid var(--border);
-  }
   .hamburger {
     display: grid;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
-  .pomo-wrap {
-    grid-template-columns: 1fr;
-  }
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.48);
-    z-index: 55;
-    display: none;
-  }
-  .overlay.show {
-    display: block;
-  }
-}
-
-@media (max-width: 640px) {
-  .content {
-    padding: 16px 12px 94px;
+  .mobile-bottom-nav {
+    display: grid;
   }
   .topbar {
-    padding: 0 10px;
-    height: 62px;
-    gap: 6px;
+    padding-inline: max(12px, var(--safe-left)) max(12px, var(--safe-right));
+    padding-top: var(--safe-top);
+    height: calc(62px + var(--safe-top));
+    gap: 8px;
   }
   .topbar > div:nth-of-type(1) {
     min-width: 0;
     flex: 1;
     overflow: hidden;
   }
+  .topbar-spacer {
+    display: none;
+  }
   .page-title {
-    font-size: 14.5px;
-    font-weight: 800;
-    line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .page-sub {
-    font-size: 10.5px;
-    line-height: 1.15;
+    font-size: 11px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2291,93 +2621,81 @@ html[data-theme="dark"] .week-badge {
     display: none;
   }
   .ai-top-btn {
-    padding: 8px 10px;
+    padding: 8px 12px;
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
   }
-  .hamburger {
-    width: 38px;
-    height: 38px;
-    font-size: 18px;
+  .week-badge, .date-badge {
+    font-size: 11px;
+    padding: 6px 9px;
+    min-height: 36px;
+  }
+  .sync-badge span:not(#syncIcon) {
+    display: none;
+  }
+  .content {
+    padding: 16px max(12px, var(--safe-left)) calc(var(--bottom-nav-h) + var(--safe-bottom) + 92px) max(12px, var(--safe-right));
+  }
+  .fab {
+    bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 14px);
+    inset-inline-end: max(16px, var(--safe-left));
+    width: 54px;
+    height: 54px;
+    z-index: 78;
+  }
+  .toast {
+    bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);
+  }
+  .pomo-wrap {
+    grid-template-columns: 1fr;
+  }
+  .sched-day-switcher {
+    display: flex;
+  }
+  /* عند اختيار "كل الأسبوع" على الجوال يبقى عمود الوقت ثابتاً مع تمرير أفقي */
+  .sched-wrap:not(.single-day-mode) .sched-inner {
+    min-width: 720px;
+  }
+}
+
+/* ==========================================================================
+   1ب) الجوال العمودي والشاشات الضيقة (< 600px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  .date-badge {
+    display: none;
+  }
+  .page-sub {
+    display: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .grid.g2,
+  .grid.g3,
+  #coursesGrid {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .stat {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+  .stat-ico {
+    width: 42px;
+    height: 42px;
+    font-size: 19px;
   }
   .form-grid {
     grid-template-columns: 1fr;
   }
   .comp-row {
-    grid-template-columns: 1fr 66px 66px 34px;
+    grid-template-columns: minmax(0, 1fr) 64px 64px 44px;
     gap: 6px;
-  }
-  .stats {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .stat {
-    padding: 14px;
-    gap: 10px;
-  }
-  .stat-ico {
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
-    border-radius: 12px;
-  }
-  .stat b {
-    font-size: 21px;
-  }
-  .stat span {
-    font-size: 11.5px;
-  }
-  .ring-wrap {
-    width: 200px;
-    height: 200px;
-  }
-  .ring-txt b {
-    font-size: 38px;
-  }
-  .fab {
-    bottom: 20px;
-    inset-inline-end: 20px;
-    width: 52px;
-    height: 52px;
-  }
-  .week-badge-group {
-    gap: 4px;
-  }
-  .week-badge, .date-badge {
-    font-size: 10.5px;
-    padding: 5px 8px;
-  }
-  .sync-badge {
-    font-size: 11px;
-    padding: 6px 9px;
-  }
-  .sync-badge span:not(#syncIcon) {
-    display: none;
-  }
-  .acad-strip-title {
-    font-size: 15px;
-  }
-  .acad-week {
-    min-width: 62px;
-    padding: 8px 6px;
-  }
-  .acad-week-num {
-    font-size: 14px;
-  }
-  .acad-week-dates {
-    font-size: 9px;
-  }
-  .acad-countdown {
-    font-size: 11px;
-    padding: 7px 11px;
-  }
-  .teeth-btn {
-    font-size: 13px;
-    padding: 18px 10px;
-  }
-  .teeth-btn .t-ico {
-    font-size: 26px;
-  }
-  .money-amount {
-    font-size: 36px;
   }
   .money-row {
     grid-template-columns: 1fr;
@@ -2385,5 +2703,268 @@ html[data-theme="dark"] .week-badge {
   .goal-nums {
     flex-direction: column;
     gap: 6px;
+  }
+  .ring-wrap {
+    width: 200px;
+    height: 200px;
+  }
+  /* النوافذ المنبثقة كـ Bottom Sheet على الجوال */
+  .modal-bg {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: calc(92dvh - var(--kb-offset, 0px));
+    border-radius: 24px 24px 0 0;
+    padding-bottom: var(--safe-bottom);
+  }
+  #confirmBg {
+    align-items: center;
+    padding: 16px;
+  }
+  #confirmBg .modal {
+    border-radius: 22px;
+    max-width: min(400px, 94vw);
+  }
+}
+
+/* الجوال بالوضع الأفقي (600px - 743px): عمودان للبطاقات */
+@media (min-width: 600px) and (max-width: 743px), (min-width: 600px) and (max-width: 960px) and (max-height: 500px) {
+  .grid.g2,
+  .grid.g3,
+  #coursesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ==========================================================================
+   1ج) الشاشات ذات الارتفاع المنخفض — الهواتف بالوضع الأفقي (مثل 844x390)
+   ========================================================================== */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --bottom-nav-h: 50px;
+  }
+  .topbar {
+    height: 52px;
+  }
+  .page-sub {
+    display: none;
+  }
+  .ring-wrap {
+    width: 165px;
+    height: 165px;
+    margin-bottom: 12px;
+  }
+  .pomo-card {
+    padding: 16px;
+  }
+  .pin-overlay {
+    padding: 8px;
+    overflow-y: auto;
+  }
+  .pin-box {
+    padding: 14px 18px;
+    max-width: 460px;
+    border-radius: 18px;
+  }
+  .pin-box > div:first-child {
+    font-size: 26px !important;
+    margin-bottom: 2px !important;
+  }
+  .pin-box h3 {
+    font-size: 16px !important;
+    margin-bottom: 2px !important;
+  }
+  .pin-dots {
+    margin: 8px 0 10px;
+  }
+  .pin-pad {
+    gap: 6px;
+  }
+  .pin-key {
+    height: 38px;
+    min-height: 38px;
+    font-size: 17px;
+    border-radius: 10px;
+  }
+  .modal-bg {
+    align-items: center;
+    padding: 8px;
+  }
+  .modal {
+    max-height: 94dvh;
+    max-width: min(640px, 95vw);
+    border-radius: 18px;
+  }
+  .modal-head {
+    padding: 10px 16px;
+  }
+  .modal-body {
+    padding: 14px 16px;
+  }
+  .modal-foot {
+    padding: 10px 16px 14px;
+  }
+}
+
+/* ==========================================================================
+   2) الآيباد بالوضع العمودي (744px–1023px + iPad Pro 12.9" عمودي 1024x1366)
+   — شريط جانبي مدمج بالأيقونات (76px Rail) يتوسع عند الضغط + عمودان للبطاقات + 3-4 أيام بالجدول
+   ========================================================================== */
+@media (min-width: 744px) and (min-height: 501px) and (max-width: 1023px),
+       (min-width: 744px) and (min-height: 501px) and (max-width: 1024px) and (orientation: portrait) {
+  .mobile-bottom-nav {
+    display: none !important;
+  }
+  .hamburger {
+    display: none;
+  }
+  .rail-toggle-btn {
+    display: grid;
+  }
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    width: var(--sidebar-rail);
+    transition: width 0.24s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.24s ease;
+    z-index: 65;
+    overflow-x: hidden;
+  }
+  .sidebar:not(.rail-expanded) .brand {
+    padding: 14px 8px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+  .sidebar:not(.rail-expanded) .brand-logo {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .sidebar:not(.rail-expanded) .brand-txt,
+  .sidebar:not(.rail-expanded) .home-btn .nav-lbl,
+  .sidebar:not(.rail-expanded) .nav-group-title,
+  .sidebar:not(.rail-expanded) .nav-btn .nav-lbl {
+    display: none;
+  }
+  .sidebar:not(.rail-expanded) .rail-toggle-btn {
+    margin-inline: auto;
+  }
+  .sidebar:not(.rail-expanded) .nav {
+    padding: 10px 8px;
+    align-items: center;
+  }
+  .sidebar:not(.rail-expanded) .nav-group {
+    width: 100%;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  /* إظهار أزرار الأقسام دائماً في وضع الشريط المدمج حتى لو كانت المجموعة مطوية */
+  .sidebar:not(.rail-expanded) .nav-group.collapsed .nav-btn {
+    display: flex;
+  }
+  .sidebar:not(.rail-expanded) .home-btn,
+  .sidebar:not(.rail-expanded) .nav-btn {
+    justify-content: center;
+    padding: 12px 0;
+    width: 52px;
+    min-height: 48px;
+    margin-inline: auto;
+    position: relative;
+  }
+  .sidebar:not(.rail-expanded) .nav-btn .badge {
+    position: absolute;
+    top: 4px;
+    inset-inline-start: 4px;
+    margin: 0;
+    padding: 1px 5px;
+    font-size: 10px;
+    min-width: 18px;
+  }
+  .sidebar:not(.rail-expanded) .sidebar-foot {
+    flex-direction: column;
+    padding: 10px 8px calc(10px + var(--safe-bottom));
+    gap: 8px;
+  }
+  .sidebar:not(.rail-expanded) .sidebar-foot .icon-btn {
+    width: 48px;
+    min-height: 44px;
+    margin-inline: auto;
+  }
+  .sidebar.rail-expanded {
+    width: var(--sidebar);
+    box-shadow: -12px 0 36px rgba(15, 23, 42, 0.16);
+  }
+
+  /* شبكات المحتوى على الآيباد العمودي: عمودان */
+  .grid.g2,
+  .grid.g3,
+  #coursesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .pomo-wrap {
+    grid-template-columns: 1fr;
+  }
+
+  /* الجدول الأسبوعي على الآيباد العمودي: عرض 4 أيام مع عمود وقت ثابت ومبدل أيام دون تداخل */
+  .sched-day-switcher {
+    display: flex;
+  }
+  .sched-wrap .sched-inner {
+    min-width: 100%;
+  }
+
+  .modal {
+    max-width: min(620px, 90vw);
+  }
+}
+
+/* ==========================================================================
+   3) الآيباد بالوضع الأفقي وسطح المكتب (1024px+ أفقي و 1025px+)
+   — قائمة جانبية كاملة دائمة (268px) + 3 أعمدة للبطاقات + الجدول الأسبوعي الكامل (7 أيام)
+   ========================================================================== */
+@media (min-width: 1024px) and (orientation: landscape),
+       (min-width: 1025px) {
+  .mobile-bottom-nav,
+  .hamburger,
+  .rail-toggle-btn,
+  .sched-day-switcher {
+    display: none !important;
+  }
+  .sidebar {
+    width: var(--sidebar);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    transform: none !important;
+  }
+  .grid.g2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid.g3,
+  #coursesGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .sched-wrap .sched-inner {
+    min-width: 100%;
+  }
+  .modal {
+    max-width: clamp(560px, 52vw, 680px);
   }
 }

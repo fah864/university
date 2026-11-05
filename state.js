@@ -12,6 +12,7 @@ const COLORS = ['#0d9488','#4f46e5','#db2777','#ea580c','#0891b2','#7c3aed','#05
 const TASK_TYPES = ['واجب','كويز','مشروع','تقرير','عرض تقديمي','بحث','أخرى'];
 const EXAM_TYPES = ['كويز','ميدتيرم','فاينل','اختبار عملي','مناقشة مشروع'];
 const HOUR_START = 7, HOUR_END = 21, HOUR_H = 58;
+const NUM_LOCALE = 'ar-EG-u-nu-latn';
 const STORE_KEY = 'uni_helper_v1';
 const PIN_STORE_KEY = 'uni_pin_code_v1';
 const PIN_LOCKOUT_KEY = 'uni_pin_lockout_v1';
@@ -76,7 +77,6 @@ function defaultState(){
       gpaScale: 5,
       absenceLimit: 25,
       defaultWeights: { hw: 20, quiz: 10, midterm: 30, final: 40 },
-      showHijri: false,
       lastExportAt: 0,
       onboardingDismissed: false,
       backupReminderDismissedAt: 0
@@ -163,7 +163,6 @@ function normalizeAndMigrateState(s){
   merged.settings.defaultWeights = { ...def.settings.defaultWeights, ...((s && s.settings && s.settings.defaultWeights) || {}) };
   merged.settings.gpaScale = (+merged.settings.gpaScale === 4) ? 4 : 5;
   merged.settings.absenceLimit = Math.max(5, Math.min(50, +merged.settings.absenceLimit || 25));
-  merged.settings.showHijri = Boolean(merged.settings.showHijri);
   merged.settings.lastExportAt = Math.max(0, Math.floor(+merged.settings.lastExportAt || 0));
   merged.settings.onboardingDismissed = Boolean(merged.settings.onboardingDismissed);
   merged.settings.backupReminderDismissedAt = Math.max(0, Math.floor(+merged.settings.backupReminderDismissedAt || 0));
@@ -315,7 +314,7 @@ function mergeFullState(localState, cloudState){
   merged.settings = mergeObjectFieldWise(
     l.settings,
     c.settings,
-    ['theme', 'semesterStart', 'semesterWeeks', 'customAcademicEvents', 'gpaScale', 'absenceLimit', 'defaultWeights', 'showHijri', 'lastExportAt', 'onboardingDismissed', 'backupReminderDismissedAt'],
+    ['theme', 'semesterStart', 'semesterWeeks', 'customAcademicEvents', 'gpaScale', 'absenceLimit', 'defaultWeights', 'lastExportAt', 'onboardingDismissed', 'backupReminderDismissedAt'],
     def.settings
   );
   merged.settings.pomo = mergeObjectFieldWise(
@@ -406,6 +405,19 @@ function cleanBoundedString(val, maxLen, fieldLabel){
   return str.slice(0, maxLen);
 }
 
+function normalizeDigits(val){
+  return String(val ?? '')
+    .replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 0x06F0))
+    .replace(/[\u066B\u060C]/g, '.');
+}
+function parseNum(val, fallback = 0){
+  const s = normalizeDigits(val).trim();
+  if(!s) return fallback;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 function cleanFiniteNumber(val, defVal, fieldLabel, allowEmpty = false){
   if(val === undefined || val === null || (allowEmpty && val === '')){
     return allowEmpty ? '' : defVal;
@@ -413,7 +425,9 @@ function cleanFiniteNumber(val, defVal, fieldLabel, allowEmpty = false){
   if(typeof val === 'boolean' || Array.isArray(val) || typeof val === 'object'){
     throw new Error(`قيمة رقمية غير صالحة في الحقل "${fieldLabel}"`);
   }
-  const n = Number(val);
+  const norm = typeof val === 'string' ? normalizeDigits(val).trim() : val;
+  if(allowEmpty && norm === '') return '';
+  const n = Number(norm);
   if(!Number.isFinite(n)){
     throw new Error(`قيمة رقمية غير محدودة (NaN/Infinity) في الحقل "${fieldLabel}"`);
   }
@@ -704,12 +718,24 @@ function sanitizeAndValidateSchema(rawInput, opts = {}){
     },
     semesterStart: cleanBoundedString(st.semesterStart || def.settings.semesterStart, 30, 'settings.semesterStart'),
     semesterWeeks: cleanFiniteNumber(st.semesterWeeks, def.settings.semesterWeeks, 'settings.semesterWeeks'),
-    customAcademicEvents: Array.isArray(st.customAcademicEvents) ? st.customAcademicEvents.map(ev => ({
-      date: cleanBoundedString(ev.date, 30, 'customAcademicEvents.date'),
-      title: cleanBoundedString(ev.title, 200, 'customAcademicEvents.title'),
-      type: ['info','holiday','exam'].includes(ev.type) ? ev.type : 'info',
-      ico: cleanBoundedString(ev.ico || '📌', 16, 'customAcademicEvents.ico')
-    })) : [],
+    customAcademicEvents: Array.isArray(st.customAcademicEvents) ? st.customAcademicEvents.map(ev => {
+      const date = cleanBoundedString(ev.date, 30, 'customAcademicEvents.date');
+      const rawEnd = (ev.endDate !== undefined && ev.endDate !== null) ? String(ev.endDate).trim() : '';
+      let endDate = '';
+      if(rawEnd){
+        endDate = cleanBoundedString(rawEnd, 30, 'customAcademicEvents.endDate');
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(endDate) || (date && endDate < date)){
+          endDate = '';
+        }
+      }
+      return {
+        date,
+        endDate: endDate || undefined,
+        title: cleanBoundedString(ev.title, 200, 'customAcademicEvents.title'),
+        type: ['info','holiday','exam'].includes(ev.type) ? ev.type : 'info',
+        ico: cleanBoundedString(ev.ico || '📌', 16, 'customAcademicEvents.ico')
+      };
+    }) : [],
     gpaScale: (+st.gpaScale === 4) ? 4 : 5,
     absenceLimit: Math.max(5, Math.min(50, cleanFiniteNumber(st.absenceLimit, def.settings.absenceLimit, 'settings.absenceLimit'))),
     defaultWeights: {
@@ -718,7 +744,6 @@ function sanitizeAndValidateSchema(rawInput, opts = {}){
       midterm: Math.max(0, Math.min(100, cleanFiniteNumber(dw.midterm, def.settings.defaultWeights.midterm, 'settings.defaultWeights.midterm'))),
       final: Math.max(0, Math.min(100, cleanFiniteNumber(dw.final, def.settings.defaultWeights.final, 'settings.defaultWeights.final')))
     },
-    showHijri: Boolean(st.showHijri),
     lastExportAt: st.lastExportAt !== undefined ? Math.max(0, cleanFiniteNumber(st.lastExportAt, 0, 'settings.lastExportAt')) : 0,
     onboardingDismissed: Boolean(st.onboardingDismissed),
     backupReminderDismissedAt: st.backupReminderDismissedAt !== undefined ? Math.max(0, cleanFiniteNumber(st.backupReminderDismissedAt, 0, 'settings.backupReminderDismissedAt')) : 0,
@@ -746,17 +771,6 @@ function fixUnsafeIds(){
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function todayISO(d = new Date()){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function daysUntil(iso){ const t = new Date(); t.setHours(0,0,0,0); const d = new Date(iso + 'T00:00:00'); return Math.round((d - t) / 86400000); }
-function formatHijriDate(dateInput = new Date(), opts = { day: 'numeric', month: 'short' }){
-  try{
-    const d = (dateInput instanceof Date)
-      ? dateInput
-      : new Date(String(dateInput).includes('T') ? dateInput : (String(dateInput) + 'T00:00:00'));
-    if(isNaN(d.getTime())) return '';
-    return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', opts).format(d);
-  }catch(e){
-    return '';
-  }
-}
 function getGpaScale(){
   return (+state?.settings?.gpaScale === 4) ? 4 : 5;
 }
@@ -776,14 +790,26 @@ function getDefaultGradeWeights(){
 function fmtDate(iso){
   if(!iso) return '—';
   const d = new Date(iso + 'T00:00:00');
-  const greg = d.toLocaleDateString('ar-EG', { day:'numeric', month:'long' });
-  if(state?.settings?.showHijri){
-    const hijri = formatHijriDate(d, { day:'numeric', month:'short' });
-    return hijri ? `${greg} (${hijri})` : greg;
-  }
-  return greg;
+  return d.toLocaleDateString(NUM_LOCALE, { day:'numeric', month:'long' });
 }
-function fmtMoney(n){ return Number(n||0).toLocaleString('ar-EG', { maximumFractionDigits: 2 }); }
+function fmtDateRange(startIso, endIso){
+  if(!startIso) return '—';
+  if(!endIso || endIso === startIso) return fmtDate(startIso);
+  const d1 = new Date(startIso + 'T00:00:00');
+  const d2 = new Date(endIso + 'T00:00:00');
+  if(isNaN(d1.getTime()) || isNaN(d2.getTime())) return fmtDate(startIso);
+  const sameYear = d1.getFullYear() === d2.getFullYear();
+  const sameMonth = sameYear && d1.getMonth() === d2.getMonth();
+  if(sameMonth){
+    const d1Num = d1.toLocaleDateString(NUM_LOCALE, { day: 'numeric' });
+    const d2Str = d2.toLocaleDateString(NUM_LOCALE, { day: 'numeric', month: 'long' });
+    return `${d1Num} - ${d2Str}`;
+  }
+  const d1Str = d1.toLocaleDateString(NUM_LOCALE, { day: 'numeric', month: 'long' });
+  const d2Str = d2.toLocaleDateString(NUM_LOCALE, { day: 'numeric', month: 'long' });
+  return `${d1Str} - ${d2Str}`;
+}
+function fmtMoney(n){ return parseNum(n, 0).toLocaleString(NUM_LOCALE, { maximumFractionDigits: 2 }); }
 function getCourse(id){ return state.courses.find(c => !c.deleted && c.id === id); }
 function courseName(id){ const c = getCourse(id); return c ? c.name : 'عام'; }
 function courseColor(id){ const c = getCourse(id); return c ? c.color : '#64748b'; }
@@ -863,39 +889,50 @@ window.addEventListener('storage', (e) => {
 ============================================================ */
 const ACADEMIC_START = '2026-08-23';
 const ACADEMIC_EVENTS_TEMPLATE = [
-  { offset: -6,  title:'عودة هيئة التدريس',        ico:'👥', type:'info'    },
-  { offset: 0,   title:'بداية الدراسة',             ico:'📚', type:'info'    },
-  { offset: 3,   title:'نهاية الحذف والإضافة',      ico:'✏️', type:'info'    },
-  { offset: 9,   title:'نهاية التأجيل',             ico:'📋', type:'info'    },
-  { offset: 31,  title:'اليوم الوطني',              ico:'🇸🇦', type:'holiday' },
-  { offset: 32,  title:'اليوم الوطني',              ico:'🇸🇦', type:'holiday' },
-  { offset: 88,  title:'إجازة منتصف الفصل',         ico:'🎉', type:'holiday' },
-  { offset: 98,  title:'استئناف الدراسة',           ico:'📖', type:'info'    },
-  { offset: 109, title:'نهاية الاعتذار',            ico:'🚫', type:'info'    },
-  { offset: 119, title:'بداية الاختبارات النهائية', ico:'📝', type:'exam'    },
-  { offset: 135, title:'نهاية الاختبارات',          ico:'🏁', type:'exam'    },
-  { offset: 137, title:'إجازة منتصف العام',         ico:'🎉', type:'holiday' },
-  { offset: 140, title:'رصد الدرجات',               ico:'📊', type:'info'    },
-  { offset: 147, title:'بداية الفصل الثاني',        ico:'🚀', type:'info'    }
+  { offset: -6,                  title:'عودة هيئة التدريس',        ico:'👥', type:'info'    },
+  { offset: 0,                   title:'بداية الدراسة',             ico:'📚', type:'info'    },
+  { offset: 3,                   title:'نهاية الحذف والإضافة',      ico:'✏️', type:'info'    },
+  { offset: 9,                   title:'نهاية التأجيل',             ico:'📋', type:'info'    },
+  { offset: 31,                  title:'اليوم الوطني',              ico:'🇸🇦', type:'holiday' },
+  { offset: 32,                  title:'اليوم الوطني',              ico:'🇸🇦', type:'holiday' },
+  { offset: 88,  endOffset: 97,  title:'إجازة منتصف الفصل',         ico:'🎉', type:'holiday' },
+  { offset: 98,                  title:'استئناف الدراسة',           ico:'📖', type:'info'    },
+  { offset: 109,                 title:'نهاية الاعتذار',            ico:'🚫', type:'info'    },
+  { offset: 119, endOffset: 135, title:'بداية الاختبارات النهائية', ico:'📝', type:'exam'    },
+  { offset: 135,                 title:'نهاية الاختبارات',          ico:'🏁', type:'exam'    },
+  { offset: 137, endOffset: 146, title:'إجازة منتصف العام',         ico:'🎉', type:'holiday' },
+  { offset: 140,                 title:'رصد الدرجات',               ico:'📊', type:'info'    },
+  { offset: 147,                 title:'بداية الفصل الثاني',        ico:'🚀', type:'info'    }
 ];
 let acadSelectedWeek = null;
 
 function getAcademicEvents(){
   const custom = state.settings.customAcademicEvents;
   if(Array.isArray(custom) && custom.length > 0){
-    return custom.map(ev => ({
-      date: ev.date,
-      title: ev.title,
-      type: ev.type || 'info',
-      ico: ev.ico || (ev.type === 'holiday' ? '🎉' : ev.type === 'exam' ? '📝' : '📌')
-    }));
+    return custom.map(ev => {
+      const date = ev.date;
+      const rawEnd = (ev.endDate !== undefined && ev.endDate !== null) ? String(ev.endDate).trim() : '';
+      const endDate = (rawEnd && rawEnd >= date) ? rawEnd : date;
+      return {
+        date,
+        endDate,
+        title: ev.title,
+        type: ev.type || 'info',
+        ico: ev.ico || (ev.type === 'holiday' ? '🎉' : ev.type === 'exam' ? '📝' : '📌')
+      };
+    });
   }
   const base = state.settings.semesterStart || ACADEMIC_START;
   const start = new Date(base + 'T00:00:00');
   return ACADEMIC_EVENTS_TEMPLATE.map(ev => {
-    const d = new Date(start);
-    d.setDate(d.getDate() + ev.offset);
-    return { date: todayISO(d), title: ev.title, ico: ev.ico, type: ev.type };
+    const d1 = new Date(start);
+    d1.setDate(d1.getDate() + ev.offset);
+    const endOff = (ev.endOffset !== undefined && ev.endOffset !== null) ? ev.endOffset : ev.offset;
+    const d2 = new Date(start);
+    d2.setDate(d2.getDate() + endOff);
+    const date = todayISO(d1);
+    const endDate = todayISO(d2);
+    return { date, endDate, title: ev.title, ico: ev.ico, type: ev.type };
   });
 }
 function getExamsStartDate(){
@@ -906,6 +943,28 @@ function getExamsStartDate(){
   const start = new Date(base + 'T00:00:00');
   start.setDate(start.getDate() + 119);
   return start;
+}
+function getExamsEndWeek(){
+  const base = state.settings.semesterStart || ACADEMIC_START;
+  const start = new Date(base + 'T00:00:00');
+  const evs = getAcademicEvents();
+  let latestExamEnd = null;
+  for(const e of evs){
+    if(e.type === 'exam'){
+      const ed = e.endDate || e.date;
+      if(!latestExamEnd || ed > latestExamEnd) latestExamEnd = ed;
+    }
+  }
+  if(!latestExamEnd){
+    const d = new Date(start);
+    d.setDate(d.getDate() + 135);
+    latestExamEnd = todayISO(d);
+  }
+  const examEndDate = new Date(latestExamEnd + 'T00:00:00');
+  const diffDays = Math.floor((examEndDate - start) / 86400000);
+  const examEndWeek = Math.floor(diffDays / 7) + 1;
+  const semWeeks = state.settings.semesterWeeks || 16;
+  return Math.max(semWeeks + 1, examEndWeek);
 }
 function getWeekMonday(weekNum){
   const base = state.settings.semesterStart || ACADEMIC_START;
@@ -930,13 +989,39 @@ function currentAcademicWeek(){
 }
 function getEventsForWeek(weekNum){
   const { start, end } = getWeekRange(weekNum);
-  const s = todayISO(start), e = todayISO(end);
-  return getAcademicEvents().filter(ev => ev.date >= s && ev.date <= e);
+  const wStartIso = todayISO(start);
+  const wEndIso = todayISO(end);
+  const allEvents = getAcademicEvents();
+  const overlapping = [];
+
+  for(const ev of allEvents){
+    const evStart = ev.date;
+    const evEnd = ev.endDate || ev.date;
+    if(evStart <= wEndIso && evEnd >= wStartIso){
+      let studyDays = 0;
+      for(let dayIdx = 0; dayIdx < 5; dayIdx++){
+        const d = new Date(start);
+        d.setDate(d.getDate() + dayIdx);
+        const dayIso = todayISO(d);
+        if(dayIso >= evStart && dayIso <= evEnd){
+          studyDays++;
+        }
+      }
+      overlapping.push({
+        ...ev,
+        studyDays,
+        startsThisWeek: evStart >= wStartIso && evStart <= wEndIso,
+        endsThisWeek: evEnd >= wStartIso && evEnd <= wEndIso
+      });
+    }
+  }
+  return overlapping;
 }
 function renderAcademicStrip(){
   const weeks = state.settings.semesterWeeks || 16;
+  const maxWeek = getExamsEndWeek();
   const curWeek = currentAcademicWeek();
-  const selected = acadSelectedWeek || Math.min(Math.max(curWeek, 1), weeks);
+  const selected = acadSelectedWeek || Math.min(Math.max(curWeek, 1), maxWeek);
   const { start, end } = getWeekRange(selected);
   const titleEl = document.getElementById('acadTitle');
   const rangeEl = document.getElementById('acadRange');
@@ -944,7 +1029,7 @@ function renderAcademicStrip(){
   const scrollEl = document.getElementById('acadScroll');
   const eventsEl = document.getElementById('acadEventsBar');
   if(!scrollEl) return;
-  const fmtShort = d => d.toLocaleDateString('ar-EG', { day:'numeric', month:'short' });
+  const fmtShort = d => d.toLocaleDateString(NUM_LOCALE, { day:'numeric', month:'short' });
   titleEl.innerHTML = `📅 الأسبوع <span class="week-num">${selected}</span>`;
   rangeEl.textContent = `من ${fmtShort(start)} إلى ${fmtShort(end)}`;
   const daysToExams = Math.ceil((getExamsStartDate() - new Date()) / 86400000);
@@ -953,22 +1038,34 @@ function renderAcademicStrip(){
   else if(daysToExams > 0){ countEl.className = 'acad-countdown danger'; countEl.textContent = `🚨 ${daysToExams} يوم للاختبارات`; }
   else if(daysToExams > -20){ countEl.className = 'acad-countdown danger'; countEl.textContent = `📝 فترة الاختبارات`; }
   else { countEl.className = 'acad-countdown'; countEl.textContent = `✅ انتهى الفصل`; }
+
   let html = '';
-  for(let w = 1; w <= weeks + 1; w++){
+  for(let w = 1; w <= maxWeek; w++){
     const wr = getWeekRange(w);
     const isPast = w < curWeek;
     const isCurrent = w === curWeek;
     const isSelected = w === selected;
     const events = getEventsForWeek(w);
-    const hasHoliday = events.some(e => e.type === 'holiday');
-    const hasExam = events.some(e => e.type === 'exam');
+
+    const hasFullExam = events.some(e => e.type === 'exam' && (e.studyDays >= 3 || (e.studyDays > 0 && events.filter(x => x.type === 'exam').reduce((acc, cur) => acc + cur.studyDays, 0) >= 3)));
+    const hasFullHoliday = !hasFullExam && events.some(e => e.type === 'holiday' && (e.studyDays >= 3 || (e.studyDays > 0 && events.filter(x => x.type === 'holiday').reduce((acc, cur) => acc + cur.studyDays, 0) >= 3)));
+
+    const hasPartialExam = !hasFullExam && events.some(e => e.type === 'exam' && e.studyDays >= 1 && e.studyDays < 3);
+    const hasPartialHoliday = !hasFullHoliday && !hasFullExam && events.some(e => e.type === 'holiday' && e.studyDays >= 1 && e.studyDays < 3);
+
     let cls = 'acad-week';
     if(isPast) cls += ' past';
     if(isSelected) cls += ' current';
     else if(isCurrent) cls += ' today';
-    if(hasHoliday) cls += ' holiday';
-    if(hasExam) cls += ' exam';
-    const evIcos = events.slice(0, 3).map(e => e.ico).join('');
+    if(hasFullExam) cls += ' exam';
+    else if(hasFullHoliday) cls += ' holiday';
+    else if(hasPartialExam || hasPartialHoliday) cls += ' partial';
+
+    const evIcos = events.slice(0, 3).map(e => {
+      const isPartial = !hasFullExam && !hasFullHoliday && (hasPartialExam || hasPartialHoliday) && (e.type === 'holiday' || e.type === 'exam');
+      return isPartial ? `<span class="partial-ico" title="${esc(e.title)}">${e.ico}</span>` : e.ico;
+    }).join('');
+
     html += `<div class="${cls}" data-week="${w}" onclick="selectAcadWeek(${w})">
       <div class="acad-week-num">${w}${w === weeks + 1 ? ' (مراجعة)' : ''}</div>
       <div class="acad-week-dates">${fmtShort(wr.start)}</div>
@@ -976,13 +1073,15 @@ function renderAcademicStrip(){
     </div>`;
   }
   scrollEl.innerHTML = html;
+
   const events = getEventsForWeek(selected);
   if(!events.length){
     eventsEl.innerHTML = `<span style="color:var(--muted);font-weight:600">لا توجد أحداث مسجلة في هذا الأسبوع</span>`;
   } else {
     eventsEl.innerHTML = events.map(e => {
       const cls = e.type === 'holiday' ? 'holiday' : e.type === 'exam' ? 'exam' : 'info';
-      return `<span class="acad-event-chip ${cls}">${e.ico} ${esc(e.title)} (${fmtDate(e.date)})</span>`;
+      const rangeText = fmtDateRange(e.date, e.endDate);
+      return `<span class="acad-event-chip ${cls}">${e.ico} ${esc(e.title)} (${rangeText})</span>`;
     }).join('');
   }
   const curEl = scrollEl.querySelector('.acad-week.current');
@@ -990,7 +1089,7 @@ function renderAcademicStrip(){
   const prevBtn = document.getElementById('acadPrev');
   const nextBtn = document.getElementById('acadNext');
   if(prevBtn) prevBtn.disabled = selected <= 1;
-  if(nextBtn) nextBtn.disabled = selected >= weeks + 1;
+  if(nextBtn) nextBtn.disabled = selected >= maxWeek;
 }
 function selectAcadWeek(w){
   acadSelectedWeek = w;
@@ -1002,24 +1101,30 @@ document.getElementById('acadPrev')?.addEventListener('click', () => {
   if(acadSelectedWeek > 1){ acadSelectedWeek--; renderAcademicStrip(); renderSchedule(); }
 });
 document.getElementById('acadNext')?.addEventListener('click', () => {
-  const weeks = state.settings.semesterWeeks || 16;
+  const maxWeek = getExamsEndWeek();
   if(!acadSelectedWeek) acadSelectedWeek = currentAcademicWeek();
-  if(acadSelectedWeek < weeks + 1){ acadSelectedWeek++; renderAcademicStrip(); renderSchedule(); }
+  if(acadSelectedWeek < maxWeek){ acadSelectedWeek++; renderAcademicStrip(); renderSchedule(); }
 });
 
 function openAcadEventsModal(){
   const evs = getAcademicEvents();
-  const rows = evs.map((e, i) => `
+  const rows = evs.map((e, i) => {
+    const rangeText = (e.endDate && e.endDate !== e.date)
+      ? `${esc(e.date)} ← ${esc(e.endDate)}`
+      : `${esc(e.date)}`;
+    return `
     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:var(--hover);border-radius:10px;margin-bottom:6px;font-size:13px;font-weight:700">
-      <span>${esc(e.ico)} ${esc(e.title)} <span style="color:var(--muted);font-size:11.5px">(${esc(e.date)})</span></span>
+      <span>${esc(e.ico)} ${esc(e.title)} <span style="color:var(--muted);font-size:11.5px">(${rangeText})</span></span>
       <button class="mini-btn del" style="width:28px;height:28px" onclick="deleteAcadEvent(${i})">✕</button>
     </div>
-  `).join('');
+  `;
+  }).join('');
   openModal('📌 أحداث التقويم الأكاديمي', `
     <div class="form-grid" style="margin-bottom:14px;background:var(--hover);padding:14px;border-radius:12px">
       <div class="field full"><label>عنوان الحدث</label><input id="aeTitle" placeholder="مثال: إجازة مطولة"></div>
-      <div class="field"><label>التاريخ</label><input type="date" id="aeDate" value="${todayISO()}"></div>
-      <div class="field"><label>النوع</label>
+      <div class="field"><label>تاريخ البداية</label><input type="date" id="aeDate" value="${todayISO()}"></div>
+      <div class="field"><label>تاريخ النهاية (اختياري)</label><input type="date" id="aeEndDate" placeholder="نفس تاريخ البداية إذا ترك فارغاً"></div>
+      <div class="field full"><label>النوع</label>
         <select id="aeType">
           <option value="info">📌 حدث أكاديمي</option>
           <option value="holiday">🎉 إجازة</option>
@@ -1037,10 +1142,22 @@ function openAcadEventsModal(){
 function addAcadEvent(){
   const title = document.getElementById('aeTitle')?.value.trim();
   const date = document.getElementById('aeDate')?.value;
+  const rawEndDate = document.getElementById('aeEndDate')?.value;
+  const endDate = rawEndDate && rawEndDate.trim() ? rawEndDate.trim() : '';
   const type = document.getElementById('aeType')?.value || 'info';
-  if(!title || !date){ toast('⚠️ أدخل العنوان والتاريخ'); return; }
+  if(!title || !date){ toast('⚠️ أدخل العنوان وتاريخ البداية'); return; }
+  if(endDate && endDate < date){ toast('⚠️ تاريخ النهاية يجب أن يكون بعد أو نفس تاريخ البداية'); return; }
   const current = getAcademicEvents();
-  current.push({ date, title, type, ico: type === 'holiday' ? '🎉' : type === 'exam' ? '📝' : '📌' });
+  const newEv = {
+    date,
+    title,
+    type,
+    ico: type === 'holiday' ? '🎉' : type === 'exam' ? '📝' : '📌'
+  };
+  if(endDate && endDate !== date){
+    newEv.endDate = endDate;
+  }
+  current.push(newEv);
   current.sort((a,b) => a.date.localeCompare(b.date));
   state.settings.customAcademicEvents = current;
   touchField(state.settings, 'customAcademicEvents');

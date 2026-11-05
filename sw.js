@@ -7,7 +7,7 @@
    - آلية أمان ضد تعطل التطبيق (Safe Fallback + استثناء الأصول المفقودة عند التثبيت)
    ============================================================================ */
 
-const CACHE_VERSION = 'v2.7.0';
+const CACHE_VERSION = 'v2.9.0';
 const CACHE_NAME = 'uni-helper-cache-' + CACHE_VERSION;
 
 const CORE_ASSETS = [

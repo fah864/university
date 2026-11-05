@@ -83,10 +83,6 @@
         <div class="page-sub" id="pageSub">نظرة عامة على يومك الدراسي</div>
       </div>
       <div class="topbar-spacer"></div>
-      <button class="ai-top-btn" data-action="openAiModal" title="المساعد الذكي الشامل (Ctrl+K)">
-        <span>✨</span>
-        <span class="ai-lbl">مساعد AI الشامل</span>
-      </button>
       <div class="sync-badge hidden" id="syncBadge" title="حالة المزامنة السحابية" data-action="doSyncNow">
         <span id="syncIcon">☁️</span>
         <span id="syncText">مزامن</span>
@@ -430,10 +426,6 @@
               <div class="field"><label for="setWeightFinal">نهائي (%)</label><input type="number" id="setWeightFinal" min="0" max="100" value="40"></div>
             </div>
           </div>
-          <label style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--hover);border-radius:12px;cursor:pointer;font-size:13.5px;font-weight:700;margin-bottom:14px">
-            <input type="checkbox" id="setShowHijri" style="width:18px;height:18px;cursor:pointer">
-            <span>🌙 إظهار التاريخ الهجري (أم القرى) بجانب التاريخ الميلادي</span>
-          </label>
           <button type="button" class="btn btn-primary btn-sm" data-action="saveAcademicPreferences">💾 حفظ الإعدادات الأكاديمية</button>
         </div>
 
@@ -585,32 +577,6 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <button class="fab" id="fab" title="إضافة سريعة (Ctrl+K)" aria-label="إضافة سريعة">＋</button>
 
-<nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="التنقل السريع للجوال">
-  <button type="button" class="mob-tab active" data-view="dashboard" aria-label="لوحة اليوم">
-    <span class="mob-ico">🏠</span>
-    <span class="mob-lbl">اليوم</span>
-  </button>
-  <button type="button" class="mob-tab" data-view="schedule" aria-label="الجدول الدراسي">
-    <span class="mob-ico">📅</span>
-    <span class="mob-lbl">الجدول</span>
-  </button>
-  <button type="button" class="mob-tab" data-view="tasks" id="mobTasksTab" aria-label="المهام والاختبارات">
-    <span class="mob-ico">📋</span>
-    <span class="mob-lbl">المهام</span>
-  </button>
-  <button type="button" class="mob-tab" data-view="grades" aria-label="المعدل والدرجات">
-    <span class="mob-ico">🎓</span>
-    <span class="mob-lbl">المعدل</span>
-  </button>
-  <button type="button" class="mob-tab" data-view="balance" aria-label="الرصيد والميزانية">
-    <span class="mob-ico">💰</span>
-    <span class="mob-lbl">المصروف</span>
-  </button>
-  <button type="button" class="mob-tab" id="mobMoreBtn" data-action="toggleMobileSidebarDrawer" aria-label="المزيد من الأقسام">
-    <span class="mob-ico">☰</span>
-    <span class="mob-lbl">المزيد</span>
-  </button>
-</nav>
 
 <script defer src="state.js"></script>
 <script defer src="schedule.js"></script>

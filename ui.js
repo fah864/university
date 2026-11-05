@@ -131,20 +131,6 @@ function updateNavBadges(){
       badge.remove();
     }
   }
-  const mobTasksBtn = document.getElementById('mobTasksTab');
-  if(mobTasksBtn){
-    let mBadge = mobTasksBtn.querySelector('.mob-badge');
-    if(totalOpen > 0){
-      if(!mBadge){
-        mBadge = document.createElement('span');
-        mBadge.className = 'mob-badge';
-        mobTasksBtn.appendChild(mBadge);
-      }
-      mBadge.textContent = totalOpen;
-    } else if(mBadge){
-      mBadge.remove();
-    }
-  }
 }
 
 function go(view){
@@ -155,15 +141,6 @@ function go(view){
   const hl = (view === 'course-detail') ? 'courses' : view;
   document.querySelectorAll('.nav-btn, .home-btn, #settingsBtn').forEach(b => {
     b.classList.toggle('active', b.dataset.view === hl);
-  });
-  const primaryMobViews = new Set(['dashboard', 'schedule', 'tasks', 'grades', 'balance']);
-  const mobHl = (hl === 'expenses' || hl === 'goals') ? 'balance' : hl;
-  document.querySelectorAll('#mobileBottomNav .mob-tab').forEach(b => {
-    if(b.id === 'mobMoreBtn'){
-      b.classList.toggle('active', !primaryMobViews.has(mobHl));
-    } else {
-      b.classList.toggle('active', b.dataset.view === mobHl);
-    }
   });
   const [t,s] = VIEW_META[view] || ['',''];
   document.getElementById('pageTitle').textContent = t;
@@ -302,12 +279,21 @@ function syncBodyScrollLock(){
 function openModal(title, bodyHTML, footHTML){
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = bodyHTML;
-  document.getElementById('modalFoot').innerHTML = footHTML || '';
+  const footEl = document.getElementById('modalFoot');
+  const hasFoot = Boolean(footHTML && String(footHTML).trim());
+  if(footEl){
+    footEl.innerHTML = hasFoot ? footHTML : '';
+    footEl.style.display = hasFoot ? '' : 'none';
+  }
+  const modalEl = modalBg?.querySelector('.modal');
+  if(modalEl) modalEl.classList.remove('qa-sheet-modal');
   modalBg.classList.add('open');
   syncBodyScrollLock();
 }
 function closeModal(){
   modalBg.classList.remove('open');
+  const modalEl = modalBg?.querySelector('.modal');
+  if(modalEl) modalEl.classList.remove('qa-sheet-modal');
   syncBodyScrollLock();
   if(typeof aiFileData !== 'undefined') aiFileData = null;
   if(aiAbortController){ aiAbortController.abort(); aiAbortController = null; }
@@ -345,7 +331,7 @@ function saveCourse(id){
   if(!name){ toast('⚠️ اكتب اسم المقرر'); return; }
   const data = {
     name, code: document.getElementById('cCode').value.trim(),
-    credits: +document.getElementById('cCredits').value || 0,
+    credits: parseNum(document.getElementById('cCredits').value, 0),
     teacher: document.getElementById('cTeacher').value.trim(),
     color: pickedColor
   };
@@ -980,9 +966,9 @@ function renderExamItem(e){
 function savePomoSettings(){
   const nowTs = Date.now();
   state.settings.pomo = {
-    work: Math.max(1, +document.getElementById('setWork').value || 25),
-    short: Math.max(1, +document.getElementById('setShort').value || 5),
-    long: Math.max(1, +document.getElementById('setLong').value || 15),
+    work: Math.max(1, parseNum(document.getElementById('setWork').value, 25)),
+    short: Math.max(1, parseNum(document.getElementById('setShort').value, 5)),
+    long: Math.max(1, parseNum(document.getElementById('setLong').value, 15)),
     updatedAt: nowTs,
     _fieldTs: { work: nowTs, short: nowTs, long: nowTs }
   };
@@ -1068,8 +1054,6 @@ function applySettings(){
   if(qzEl) qzEl.value = dw.quiz;
   if(midEl) midEl.value = dw.midterm;
   if(finEl) finEl.value = dw.final;
-  const hijriEl = document.getElementById('setShowHijri');
-  if(hijriEl) hijriEl.checked = Boolean(state.settings.showHijri);
   if(typeof renderWeekBadge === 'function') renderWeekBadge();
   renderPinSettingsUI();
 }
@@ -1296,7 +1280,7 @@ function renderArchive(){
         ${activeArchive.map((a, i) => `<div class="card" style="padding:18px;border-inline-start:4px solid var(--p)">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
             <div><h4 style="font-size:16.5px;margin-bottom:4px">${esc(a.name)}</h4>
-              <span style="font-size:12.5px;color:var(--muted);font-weight:700">📅 ${new Date(a.created).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'})}</span></div>
+              <span style="font-size:12.5px;color:var(--muted);font-weight:700">📅 ${new Date(a.created).toLocaleDateString(NUM_LOCALE,{year:'numeric',month:'long',day:'numeric'})}</span></div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <button class="btn btn-primary btn-sm" onclick="viewArchive(${i})">👁️ عرض واستعادة</button>
               <button class="btn btn-danger btn-sm" onclick="deleteArchive(${i})">🗑️</button>
@@ -1386,12 +1370,7 @@ function renderWeekBadge(){
   if(wbDateBadge){
     const today = new Date();
     const gregStr = today.toLocaleDateString('en-GB', { day:'numeric', month:'short' });
-    if(state.settings.showHijri){
-      const hijriStr = formatHijriDate(today, { day:'numeric', month:'short' });
-      wbDateBadge.textContent = hijriStr ? `${gregStr} · ${hijriStr}` : gregStr;
-    } else {
-      wbDateBadge.textContent = gregStr;
-    }
+    wbDateBadge.textContent = gregStr;
   }
   const w = getSemesterWeek();
   if(!w){ wb.textContent = '📅 حدد بداية'; wb.className = 'week-badge'; return; }
@@ -1405,7 +1384,7 @@ function renderWeekBadge(){
 }
 function saveSemesterSettings(){
   const start = document.getElementById('setSemesterStart').value;
-  const weeks = +document.getElementById('setSemesterWeeks').value || 16;
+  const weeks = parseNum(document.getElementById('setSemesterWeeks').value, 16);
   if(!start){ toast('⚠️ اختر تاريخ بداية الفصل'); return; }
   state.settings.semesterStart = start;
   state.settings.semesterWeeks = Math.max(8, Math.min(30, weeks));
@@ -1421,14 +1400,13 @@ function saveAcademicPreferences(){
   const qzEl = document.getElementById('setWeightQuiz');
   const midEl = document.getElementById('setWeightMid');
   const finEl = document.getElementById('setWeightFinal');
-  const hijriEl = document.getElementById('setShowHijri');
 
-  const scale = (+scaleEl?.value === 4) ? 4 : 5;
-  const absLimit = Math.max(5, Math.min(50, +absEl?.value || 25));
-  const hw = Math.max(0, Math.min(100, +hwEl?.value || 0));
-  const quiz = Math.max(0, Math.min(100, +qzEl?.value || 0));
-  const midterm = Math.max(0, Math.min(100, +midEl?.value || 0));
-  const finalW = Math.max(0, Math.min(100, +finEl?.value || 0));
+  const scale = (parseNum(scaleEl?.value, 5) === 4) ? 4 : 5;
+  const absLimit = Math.max(5, Math.min(50, parseNum(absEl?.value, 25)));
+  const hw = Math.max(0, Math.min(100, parseNum(hwEl?.value, 0)));
+  const quiz = Math.max(0, Math.min(100, parseNum(qzEl?.value, 0)));
+  const midterm = Math.max(0, Math.min(100, parseNum(midEl?.value, 0)));
+  const finalW = Math.max(0, Math.min(100, parseNum(finEl?.value, 0)));
   if(hw + quiz + midterm + finalW !== 100){
     toast(`⚠️ مجموع أوزان المكونات يجب أن يساوي 100% (الحالي: ${hw + quiz + midterm + finalW}%)`);
     return;
@@ -1437,11 +1415,9 @@ function saveAcademicPreferences(){
   state.settings.gpaScale = scale;
   state.settings.absenceLimit = absLimit;
   state.settings.defaultWeights = { hw, quiz, midterm, final: finalW };
-  state.settings.showHijri = Boolean(hijriEl?.checked);
   touchField(state.settings, 'gpaScale', nowTs);
   touchField(state.settings, 'absenceLimit', nowTs);
   touchField(state.settings, 'defaultWeights', nowTs);
-  touchField(state.settings, 'showHijri', nowTs);
   save();
   applySettings();
   renderAll();
@@ -1454,7 +1430,8 @@ function saveAcademicPreferences(){
 document.addEventListener('keydown', e => {
   const pinOpen = document.getElementById('pinOverlay')?.classList.contains('open');
   if(pinOpen){
-    if(e.key >= '0' && e.key <= '9') pressPinKey(e.key);
+    const nk = normalizeDigits(e.key);
+    if(nk.length === 1 && nk >= '0' && nk <= '9') pressPinKey(nk);
     else if(e.key === 'Backspace') backspacePinKey();
     return;
   }
@@ -1658,8 +1635,8 @@ async function partialDelete(section){
 function saveHealthGoals(){
   const sleepEl = document.getElementById('setSleepGoal');
   const waterEl = document.getElementById('setWaterGoal');
-  const sleep = Math.max(1, Math.min(24, +sleepEl.value || 8));
-  const water = Math.max(1, Math.min(30, +waterEl.value || 8));
+  const sleep = Math.max(1, Math.min(24, parseNum(sleepEl.value, 8)));
+  const water = Math.max(1, Math.min(30, parseNum(waterEl.value, 8)));
   state.wellness.sleepGoal = sleep;
   state.wellness.waterGoal = water;
   touchField(state.wellness, 'sleepGoal');

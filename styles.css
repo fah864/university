@@ -74,7 +74,6 @@
   --t: 0.24s cubic-bezier(0.4, 0, 0.2, 1);
   --sidebar: 268px;
   --sidebar-rail: 76px;
-  --bottom-nav-h: 64px;
   --bp-sm: 600px;
   --bp-md: 744px;
   --bp-lg: 1024px;
@@ -496,26 +495,6 @@ ul {
 
 .topbar-spacer {
   flex: 1;
-}
-
-.ai-top-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--p), #0891b2);
-  color: #fff;
-  box-shadow: 0 4px 14px var(--p-glow);
-  transition: var(--t);
-  white-space: nowrap;
-}
-
-.ai-top-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px var(--p-glow);
 }
 
 .content {
@@ -1061,6 +1040,24 @@ html[data-theme="dark"] .acad-week.today {
 .acad-week.exam {
   background: linear-gradient(135deg, var(--danger), #991b1b);
   color: #fff;
+}
+
+.acad-week.partial {
+  border-color: var(--border);
+}
+
+.acad-week.partial .acad-week-events .partial-ico {
+  opacity: 0.65;
+  filter: grayscale(20%);
+}
+
+.acad-week.partial .acad-week-events .partial-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin: auto 1px;
 }
 
 .acad-events-bar {
@@ -1841,8 +1838,150 @@ html[data-theme="dark"] .sched-day.today {
   gap: 10px;
 }
 
+.modal-foot:empty {
+  display: none;
+  padding: 0;
+}
+
 .modal-foot .btn {
   flex: 1;
+}
+
+/* ==========================================================================
+   ⚡ نافذة الإضافة السريعة (Quick Add Sheet — .qa-*)
+   ========================================================================== */
+.modal.qa-sheet-modal {
+  max-width: 520px;
+  animation: qaDialogIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes qaDialogIn {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes qaSheetUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.qa-wrap {
+  display: grid;
+  gap: 16px;
+}
+
+.qa-ai {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0d9488, #0891b2);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: start;
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.32);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  cursor: pointer;
+}
+
+.qa-ai .qa-ico {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.qa-hero-txt {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.qa-group {
+  display: grid;
+  gap: 8px;
+}
+
+.qa-group-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+  padding-inline: 4px;
+}
+
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.qa-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--hover);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: start;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+  cursor: pointer;
+}
+
+.qa-tile .qa-ico {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.qa-tile.qa-study .qa-ico {
+  background: var(--p-light);
+  color: var(--p);
+}
+
+.qa-tile.qa-expense .qa-ico {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.qa-tile.qa-income .qa-ico {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.qa-tile .qa-lbl {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.qa-ai:active,
+.qa-tile:active {
+  transform: scale(0.97);
+}
+
+.qa-ai:focus-visible,
+.qa-tile:focus-visible {
+  outline: 2px solid var(--p);
+  outline-offset: 2px;
 }
 
 .confirm-ico-wrap {
@@ -1882,7 +2021,7 @@ html[data-theme="dark"] .sched-day.today {
 
 .toast {
   position: fixed;
-  bottom: 26px;
+  bottom: calc(20px + var(--safe-bottom));
   right: 50%;
   transform: translate(50%, 130px);
   background: var(--text);
@@ -1904,7 +2043,7 @@ html[data-theme="dark"] .sched-day.today {
 
 .fab {
   position: fixed;
-  bottom: 24px;
+  bottom: calc(20px + var(--safe-bottom));
   inset-inline-end: 24px;
   width: 58px;
   height: 58px;
@@ -2359,86 +2498,6 @@ html[data-theme="dark"] .week-badge {
   transition: var(--t);
 }
 
-/* شريط التنقل السفلي للجوال (يظهر على الشاشات أقل من 744px) */
-.mobile-bottom-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  inset-inline: 0;
-  height: calc(var(--bottom-nav-h) + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
-  padding-inline: max(6px, var(--safe-left)) max(6px, var(--safe-right));
-  background: color-mix(in srgb, var(--card) 94%, transparent);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-top: 1px solid var(--border);
-  z-index: 75;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  align-items: center;
-  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
-}
-
-.mob-tab {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  min-height: 48px;
-  height: 100%;
-  color: var(--muted);
-  font-weight: 700;
-  font-size: 11px;
-  border-radius: 12px;
-  transition: var(--t);
-  cursor: pointer;
-  user-select: none;
-}
-
-.mob-tab .mob-ico {
-  font-size: 19px;
-  line-height: 1.1;
-}
-
-.mob-tab .mob-lbl {
-  font-size: 10.5px;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-.mob-tab.active {
-  color: var(--p);
-  font-weight: 900;
-}
-
-.mob-tab.active::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 28px;
-  height: 3px;
-  border-radius: 0 0 4px 4px;
-  background: var(--p);
-}
-
-.mob-tab .mob-badge {
-  position: absolute;
-  top: 4px;
-  inset-inline-start: calc(50% - 20px);
-  background: var(--danger);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 800;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  line-height: 1;
-}
-
 .overlay {
   position: fixed;
   inset: 0;
@@ -2509,6 +2568,22 @@ html[data-theme="dark"] .week-badge {
   }
   .fab:hover {
     transform: translateY(-4px) scale(1.06);
+  }
+  .qa-ai:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(13, 148, 136, 0.42);
+  }
+  .qa-tile:hover {
+    transform: translateY(-2px);
+    border-color: var(--p);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+  .qa-tile.qa-expense:hover {
+    border-color: var(--danger);
+  }
+  .qa-tile.qa-income:hover {
+    border-color: var(--ok);
   }
   .up-item:hover,
   .task:hover,
@@ -2584,19 +2659,16 @@ html[data-theme="dark"] .week-badge {
   }
   .hamburger {
     display: grid;
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-  }
-  .mobile-bottom-nav {
-    display: grid;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
   }
   .topbar {
-    padding-inline: max(12px, var(--safe-left)) max(12px, var(--safe-right));
+    padding-inline: max(10px, var(--safe-left)) max(10px, var(--safe-right));
     padding-top: var(--safe-top);
-    height: calc(62px + var(--safe-top));
-    gap: 8px;
+    height: calc(60px + var(--safe-top));
+    gap: 6px;
   }
   .topbar > div:nth-of-type(1) {
     min-width: 0;
@@ -2607,6 +2679,7 @@ html[data-theme="dark"] .week-badge {
     display: none;
   }
   .page-title {
+    font-size: clamp(13.5px, 3.8vw, 17px);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2617,35 +2690,68 @@ html[data-theme="dark"] .week-badge {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .ai-top-btn span.ai-lbl {
-    display: none;
+  .week-badge-group {
+    gap: 4px;
   }
-  .ai-top-btn {
-    padding: 8px 12px;
-    min-height: 44px;
-    min-width: 44px;
-    justify-content: center;
-  }
-  .week-badge, .date-badge {
+  .week-badge {
     font-size: 11px;
-    padding: 6px 9px;
+    padding: 6px 8px;
+    min-height: 36px;
+  }
+  .date-badge {
+    font-size: 11px;
+    padding: 6px 8px;
+    min-height: 36px;
+  }
+  .sync-badge {
+    padding: 6px 7px;
     min-height: 36px;
   }
   .sync-badge span:not(#syncIcon) {
     display: none;
   }
   .content {
-    padding: 16px max(12px, var(--safe-left)) calc(var(--bottom-nav-h) + var(--safe-bottom) + 92px) max(12px, var(--safe-right));
+    padding: 16px max(12px, var(--safe-left)) calc(88px + var(--safe-bottom)) max(12px, var(--safe-right));
   }
   .fab {
-    bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 14px);
+    bottom: calc(16px + var(--safe-bottom));
     inset-inline-end: max(16px, var(--safe-left));
     width: 54px;
     height: 54px;
     z-index: 78;
   }
   .toast {
-    bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);
+    bottom: calc(16px + var(--safe-bottom));
+  }
+  .modal-bg:has(.modal.qa-sheet-modal) {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal.qa-sheet-modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 85vh;
+    max-height: 85dvh;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: var(--safe-bottom);
+    animation: qaSheetUp 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .modal.qa-sheet-modal .modal-head {
+    position: sticky;
+    top: 0;
+    padding-top: 20px;
+    border-radius: 24px 24px 0 0;
+  }
+  .modal.qa-sheet-modal .modal-head::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 38px;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--border);
   }
   .pomo-wrap {
     grid-template-columns: 1fr;
@@ -2663,11 +2769,37 @@ html[data-theme="dark"] .week-badge {
    1ب) الجوال العمودي والشاشات الضيقة (< 600px)
    ========================================================================== */
 @media (max-width: 480px) {
-  .date-badge {
-    display: none;
-  }
   .page-sub {
     display: none;
+  }
+}
+
+@media (max-width: 389px) {
+  .topbar {
+    padding-inline: max(8px, var(--safe-left)) max(8px, var(--safe-right));
+    gap: 4px;
+  }
+  .hamburger {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    font-size: 18px;
+  }
+  .week-badge {
+    font-size: 10.5px;
+    padding: 4px 6px;
+    gap: 4px;
+    min-height: 36px;
+  }
+  .date-badge {
+    font-size: 10px;
+    padding: 4px 6px;
+    min-height: 36px;
+  }
+  .sync-badge {
+    padding: 4px 6px;
+    min-height: 36px;
   }
 }
 
@@ -2746,9 +2878,6 @@ html[data-theme="dark"] .week-badge {
    1ج) الشاشات ذات الارتفاع المنخفض — الهواتف بالوضع الأفقي (مثل 844x390)
    ========================================================================== */
 @media (max-height: 500px) and (orientation: landscape) {
-  :root {
-    --bottom-nav-h: 50px;
-  }
   .topbar {
     height: 52px;
   }
@@ -2801,6 +2930,18 @@ html[data-theme="dark"] .week-badge {
     max-width: min(640px, 95vw);
     border-radius: 18px;
   }
+  .modal-bg:has(.modal.qa-sheet-modal) {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .modal.qa-sheet-modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 85vh;
+    max-height: 85dvh;
+    border-radius: 24px 24px 0 0;
+    padding-bottom: var(--safe-bottom);
+  }
   .modal-head {
     padding: 10px 16px;
   }
@@ -2818,9 +2959,6 @@ html[data-theme="dark"] .week-badge {
    ========================================================================== */
 @media (min-width: 744px) and (min-height: 501px) and (max-width: 1023px),
        (min-width: 744px) and (min-height: 501px) and (max-width: 1024px) and (orientation: portrait) {
-  .mobile-bottom-nav {
-    display: none !important;
-  }
   .hamburger {
     display: none;
   }
@@ -2937,7 +3075,6 @@ html[data-theme="dark"] .week-badge {
    ========================================================================== */
 @media (min-width: 1024px) and (orientation: landscape),
        (min-width: 1025px) {
-  .mobile-bottom-nav,
   .hamburger,
   .rail-toggle-btn,
   .sched-day-switcher {

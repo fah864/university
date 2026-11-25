@@ -28,6 +28,8 @@ const MAX_ITEMS = 5000;
 // ============================================================================
 const memRateMap = new Map();
 let memLastCleanup = 0;
+let _migV2Done = false;
+const _cronHourlyRan = new Map();
 
 function checkMemRate(key, limit, windowMs) {
   const now = Date.now();
@@ -605,9 +607,12 @@ export default {
     ctx.waitUntil(
       (async () => {
         const MIG_KEY = 'migration_users_v2_done';
-        if (!(await env.UNI_KV.get(MIG_KEY))) {
-          await migrateUsers(env);
-          await env.UNI_KV.put(MIG_KEY, '1');
+        if (!_migV2Done) {
+          if (!(await env.UNI_KV.get(MIG_KEY))) {
+            await migrateUsers(env);
+            await env.UNI_KV.put(MIG_KEY, '1');
+          }
+          _migV2Done = true;
         }
 
         const run = async (name, fn) => {
@@ -622,18 +627,33 @@ export default {
         await run('classes', () => checkClasses(env, TOKEN));
 
         const now = riyadhNow();
+        const today = riyadhToday();
         const hour = now.getUTCHours();
         const minute = now.getUTCMinutes();
         const dayOfWeek = now.getUTCDay();
 
-        if (minute < 5) {
-          if (hour === 6) await run('morning', () => morningSummary(env, TOKEN));
-          if (hour === 7 && dayOfWeek === 0) await run('weeklyPlan', () => weeklyPlan(env, TOKEN));
-          if (hour === 9) await run('examsTasks', () => checkExamsAndTasks(env, TOKEN));
-          if (hour === 12) await run('sleep', () => checkSleep(env, TOKEN));
-          if (hour === 20 && dayOfWeek === 4) await run('weeklySummary', () => weeklySummary(env, TOKEN));
-          if (hour === 21) await run('absence', () => absenceWarning(env, TOKEN));
-          if (hour === 22) await run('water', () => checkWater(env, TOKEN));
+        // Run hourly jobs once per (today, hour) within the minute 0-1 window to avoid 5x redundant KV scans
+        if (minute < 2) {
+          const runOncePerHour = async (name, fn) => {
+            const key = `${today}_${hour}_${name}`;
+            if (_cronHourlyRan.has(key)) return;
+            _cronHourlyRan.set(key, Date.now());
+            if (_cronHourlyRan.size > 64) {
+              const cutoff = Date.now() - 48 * 3600_000;
+              for (const [k, ts] of _cronHourlyRan.entries()) {
+                if (ts < cutoff) _cronHourlyRan.delete(k);
+              }
+            }
+            await run(name, fn);
+          };
+
+          if (hour === 6) await runOncePerHour('morning', () => morningSummary(env, TOKEN));
+          if (hour === 7 && dayOfWeek === 0) await runOncePerHour('weeklyPlan', () => weeklyPlan(env, TOKEN));
+          if (hour === 9) await runOncePerHour('examsTasks', () => checkExamsAndTasks(env, TOKEN));
+          if (hour === 12) await runOncePerHour('sleep', () => checkSleep(env, TOKEN));
+          if (hour === 20 && dayOfWeek === 4) await runOncePerHour('weeklySummary', () => weeklySummary(env, TOKEN));
+          if (hour === 21) await runOncePerHour('absence', () => absenceWarning(env, TOKEN));
+          if (hour === 22) await runOncePerHour('water', () => checkWater(env, TOKEN));
         }
       })()
     );

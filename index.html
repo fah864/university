@@ -6,7 +6,6 @@
 <title>مُساعد الجامعة | نظّم دراستك وحياتك الجامعية بذكاء</title>
 <meta name="description" content="مُساعد الجامعة — تطبيق ويب متكامل لطلاب الجامعات لتنظيم الجدول الدراسي، المهام، الاختبارات، حساب المعدل التراكمي، تتبع الغياب وحد الحرمان، البومودورو، والميزانية مع إشعارات تلقرام والذكاء الاصطناعي الشامل.">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230d9488'/><text y='72' x='50' text-anchor='middle' font-size='58'>🎓</text></svg>">
 <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0d9488" media="(prefers-color-scheme: light)" id="metaThemeLight">
@@ -18,8 +17,9 @@
 <meta name="format-detection" content="telephone=no">
 <script>
   try {
-    var t = (JSON.parse(localStorage.getItem('uni_helper_v1') || '{}').settings || {}).theme || 'light';
-    document.documentElement.dataset.theme = t;
+    var savedTheme = (JSON.parse(localStorage.getItem('uni_helper_v1') || '{}').settings || {}).theme;
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
   } catch (e) {}
 </script>
 <link rel="stylesheet" href="styles.css">
@@ -205,7 +205,7 @@
             <button class="chip" data-f="done">منجزة</button>
           </div>
           <div class="search-box">
-            <input type="search" id="taskSearchInput" placeholder="🔍 ابحث في المهام والاختبارات..." oninput="renderTasks()">
+            <input type="search" id="taskSearchInput" placeholder="🔍 ابحث في المهام والاختبارات...">
           </div>
         </div>
         <div id="tasksList"></div>
@@ -483,7 +483,7 @@
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-primary" style="flex:1" data-action="exportData">📤 تصدير نسخة JSON</button>
             <button class="btn btn-ghost" style="flex:1" data-action="triggerImportFile">📥 استيراد نسخة JSON</button>
-            <input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)">
+            <input type="file" id="importFile" accept=".json,application/json" style="display:none">
           </div>
         </div>
 

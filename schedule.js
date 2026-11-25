@@ -380,25 +380,33 @@ function calcAttendance(){
     const daysPerWeek = uniqueSlots.size;
     const totalDays = daysPerWeek * weeks;
 
-    const absentKeys = new Set();
+    const unexcusedKeys = new Set();
+    const excusedKeys = new Set();
     const lateKeys = new Set();
+    const cancelledKeys = new Set();
     live(state.attendance).forEach(a => {
-      if(a.status !== 'absent' && a.status !== 'excused' && a.status !== 'late') return;
+      if(a.status !== 'absent' && a.status !== 'excused' && a.status !== 'late' && a.status !== 'cancelled') return;
       const sch = courseClasses.find(s => s.id === a.classId);
       if(!sch) return;
       const key = `${sch.day}_${sch.start}_${a.date}`;
       if(a.status === 'late') lateKeys.add(key);
-      else absentKeys.add(key);
+      else if(a.status === 'excused') excusedKeys.add(key);
+      else if(a.status === 'cancelled') cancelledKeys.add(key);
+      else unexcusedKeys.add(key);
     });
 
-    const absences = absentKeys.size;
+    const unexcused = unexcusedKeys.size;
+    const excused = excusedKeys.size;
+    const cancelled = cancelledKeys.size;
+    const absences = unexcused + excused;
     const lates = lateKeys.size;
-    const percent = totalDays > 0 ? (absences / totalDays) * 100 : 0;
-    const maxAbsences = Math.floor(totalDays * MAX_PERCENT);
+    const effectiveTotal = Math.max(0, totalDays - cancelled);
+    const percent = effectiveTotal > 0 ? (absences / effectiveTotal) * 100 : 0;
+    const maxAbsences = Math.floor(effectiveTotal * MAX_PERCENT);
 
     res[c.id] = {
-      course: c, total: totalDays, daysPerWeek,
-      absences, lates, max: maxAbsences,
+      course: c, total: effectiveTotal, daysPerWeek,
+      absences, unexcused, excused, cancelled, lates, max: maxAbsences,
       percent, remaining: Math.max(0, maxAbsences - absences)
     };
   });
@@ -446,8 +454,11 @@ function renderAttendancePage(){
             <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">الحد (${limitPct}%)</div><div style="color:var(--danger);font-size:15px;font-family:'Cairo',system-ui,sans-serif">${d.max}</div></div>
             <div style="background:var(--hover);padding:8px;border-radius:9px"><div style="color:var(--muted);font-size:10.5px;margin-bottom:3px">متبقي</div><div style="color:var(--ok);font-size:15px;font-family:'Cairo',system-ui,sans-serif">${d.remaining}</div></div>
           </div>
-          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
-            <span style="color:var(--warn)">⏰ تأخير: <b>${d.lates}</b></span>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;font-weight:700;margin-top:12px">
+            <span style="color:var(--danger)">🔴 بدون عذر: <b>${d.unexcused}</b></span>
+            <span style="color:var(--warn)">🟡 بعذر: <b>${d.excused}</b></span>
+            <span style="color:#7c3aed">⏰ تأخير: <b>${d.lates}</b></span>
+            ${d.cancelled ? `<span style="color:var(--muted)">🚫 ملغاة: <b>${d.cancelled}</b></span>` : ''}
             ${d.percent >= limitPct ? `<span style="color:var(--danger)">🚨 وصلت أو تجاوزت حد الحرمان (${limitPct}%)!</span>` : (d.percent >= 20 || d.percent >= warnPct ? `<span style="color:var(--danger)">🚨 تحذير: وصلت نسبة الغياب إلى ${d.percent.toFixed(1)}% (تجاوزت 20% واقتربت من حد الحرمان)!</span>` : '')}
           </div></div>`;
       }).join('')}

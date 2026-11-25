@@ -7,7 +7,7 @@
    - آلية أمان ضد تعطل التطبيق (Safe Fallback + استثناء الأصول المفقودة عند التثبيت)
    ============================================================================ */
 
-const CACHE_VERSION = 'v2.9.0';
+const CACHE_VERSION = 'v2.9.1';
 const CACHE_NAME = 'uni-helper-cache-' + CACHE_VERSION;
 
 const CORE_ASSETS = [
@@ -23,7 +23,6 @@ const CORE_ASSETS = [
   './pin.js',
   './ui.js',
   './ai.js',
-  './app.js',
   './manifest.json'
 ];
 
@@ -78,7 +77,6 @@ function isCoreAppShell(url, request) {
     p.endsWith('/pin.js') ||
     p.endsWith('/ui.js') ||
     p.endsWith('/ai.js') ||
-    p.endsWith('/app.js') ||
     p.endsWith('/styles.css') ||
     p.endsWith('/manifest.json')
   );

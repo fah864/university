@@ -113,9 +113,8 @@ async function submitAiInput(){
   try{
     const res = await fetch(TG_WORKER + '/ai-parse', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({
-        ...authObj(),
         text,
         image: aiFileData,
         courses: live(state.courses).map(c => ({ id: c.id, name: c.name, code: c.code })),
@@ -292,8 +291,17 @@ function executeSingleAiAction(item){
     if(!cid && activeCourses.length) cid = activeCourses[0].id;
     if(!cid) return null;
     const day = clamp(parseInt(d.day, 10) || 0, 0, 6);
-    const start = d.start || '08:00';
-    const end = d.end || '09:00';
+    const timeRe = /^([01]?\d|2[0-3]):[0-5]\d$/;
+    const start = timeRe.test(String(d.start || '')) ? String(d.start).padStart(5, '0') : '08:00';
+    const end = timeRe.test(String(d.end || '')) ? String(d.end).padStart(5, '0') : '09:00';
+    if(toMin(end) <= toMin(start)){
+      toast(`⚠️ تم تجاهل محاضرة بوقت غير صالح (${courseName(cid)})`);
+      return null;
+    }
+    if(typeof hasScheduleConflict === 'function' && hasScheduleConflict(day, start, end)){
+      toast(`⚠️ تم تجاهل محاضرة متعارضة في ${DAYS[day]} (${courseName(cid)} ${to12(start)})`);
+      return null;
+    }
     state.schedule.push({ id: uid(), courseId: cid, day, start, end, room: d.room || '', updatedAt: Date.now() });
     return { view: 'schedule', msg: `📅 محاضرة: ${courseName(cid)} (${DAYS[day]})` };
   }
@@ -494,12 +502,13 @@ async function init(){
   acadSelectedWeek = currentAcademicWeek();
   applySettings();
   updateTgStatus();
-  renderAll();
-  renderAcademicStrip();
+  updateNavBadges();
 
   const h = location.hash.slice(1);
   if(h && document.getElementById('view-' + h) && h !== 'course-detail'){
     go(h);
+  } else {
+    renderDashboard();
   }
 
   const pending = localStorage.getItem('tg_pending');

@@ -51,18 +51,31 @@ function renderGpaStats(rows){
   const statsEl = document.getElementById('gpaStats');
   if(!statsEl) return;
   const allRows = rows || collectGradeRows();
-  let pts = 0, cr = 0;
+  let totalPts = 0, totalCr = 0;
+  let semPts = 0, semCr = 0;
+  let hasExternal = false;
   allRows.forEach(r => {
+    if(r.source === 'external') hasExternal = true;
     if(!r.letter) return;
     const points = letterToPoints(r.letter);
     const credit = r.credits || 0;
-    if(credit > 0){ pts += points * credit; cr += credit; }
+    if(credit > 0){
+      totalPts += points * credit;
+      totalCr += credit;
+      if(r.source === 'course'){
+        semPts += points * credit;
+        semCr += credit;
+      }
+    }
   });
-  const gpa = cr ? (pts / cr) : 0;
+  const cumGpa = totalCr ? (totalPts / totalCr) : 0;
+  const semGpa = semCr ? (semPts / semCr) : 0;
   const gradedCount = allRows.filter(r => r.letter).length;
+  const scale = getGpaScale();
   statsEl.innerHTML = `
-    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${gpa.toFixed(2)}</b><span>المعدل التقديري (من ${getGpaScale()})</span></div></div>
-    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${cr}</b><span>ساعة محسوبة</span></div></div>
+    <div class="stat"><div class="stat-ico" style="background:var(--p-light)">🎯</div><div><b>${cumGpa.toFixed(2)}</b><span>${hasExternal ? `المعدل التراكمي (من ${scale})` : `المعدل الفصلي (من ${scale})`}</span></div></div>
+    ${hasExternal ? `<div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📅</div><div><b>${semGpa.toFixed(2)}</b><span>المعدل الفصلي (${semCr} س)</span></div></div>` : ''}
+    <div class="stat"><div class="stat-ico" style="background:var(--ok-bg)">📖</div><div><b>${totalCr}</b><span>ساعة محسوبة</span></div></div>
     <div class="stat"><div class="stat-ico" style="background:var(--warn-bg)">📝</div><div><b>${gradedCount}/${allRows.length}</b><span>مقررات مُقيّمة</span></div></div>`;
 }
 function renderGrades(){
@@ -120,8 +133,7 @@ function buildGradeRow(r, i){
         </div>`).join('')}
         <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
           <button class="btn btn-ghost btn-sm" onclick="addComp('${esc(r.id)}')">➕ إضافة مكوّن</button>
-          <span id="totalW-${rowId}" style="font-size:12.5px;color:var(--muted);font-weight:700">مجموع الأوزان: ${totalW}%</span>
-          <span style="font-size:12px;color:var(--ok);font-weight:700">✓</span>
+          <span id="totalW-${rowId}" style="font-size:12.5px;color:${Math.abs(totalW - 100) < 0.01 ? 'var(--ok)' : 'var(--danger)'};font-weight:800">مجموع الأوزان: ${totalW}% ${Math.abs(totalW - 100) < 0.01 ? '✓' : '⚠️ (يجب أن يساوي 100%)'}</span>
         </div>
       </div>`;
   }
@@ -265,7 +277,11 @@ function updateComp(cid, i, field, val){
   live(state.courses).forEach((cc, idx) => {
     if(cc.id === cid){
       const el = document.getElementById(`totalW-grade-row-course-${idx}`);
-      if(el) el.textContent = `مجموع الأوزان: ${totalW}%`;
+      if(el){
+        const exact = Math.abs(totalW - 100) < 0.01;
+        el.textContent = `مجموع الأوزان: ${totalW}% ${exact ? '✓' : '⚠️ (يجب أن يساوي 100%)'}`;
+        el.style.color = exact ? 'var(--ok)' : 'var(--danger)';
+      }
     }
   });
   renderGpaStats();

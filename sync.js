@@ -70,9 +70,8 @@ async function doSync(silent = true){
     showSyncBadge('loading');
     fixUnsafeIds();
     const saveRes = await fetch(TG_WORKER + '/save', {
-      method:'POST', headers:{ 'Content-Type':'application/json' },
+      method:'POST', headers:{ 'Content-Type':'application/json', ...authHeaders() },
       body: JSON.stringify({
-        ...authObj(),
         tasks: state.tasks, exams: state.exams, courses: state.courses,
         schedule: state.schedule, attendance: state.attendance,
         gpaCourses: state.gpaCourses, wellness: state.wellness,
@@ -256,7 +255,7 @@ window.addEventListener('focus', () => {
 async function testTelegram(){
   if(!getMyChatId()){ toast('⚠️ اربط حسابك أولاً'); return; }
   try{
-    const r = await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ ...authObj() }) });
+    const r = await fetch(TG_WORKER + '/test', { method:'POST', headers:{ 'Content-Type':'application/json', ...authHeaders() }, body: '{}' });
     if(r.ok) toast('✅ تم إرسال إشعار تجريبي إلى تلقرام');
     else toast('⚠️ تعذّر الإرسال — تأكد من صلاحية الجلسة');
   }catch(e){ toast('⚠️ فشل الاتصال بالسيرفر'); }
@@ -349,8 +348,8 @@ async function unlinkTelegram(){
     try{
       await fetch(TG_WORKER + '/unlink', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: oldToken }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + oldToken },
+        body: '{}',
         keepalive: true
       });
     }catch(e){}

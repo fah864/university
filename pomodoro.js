@@ -76,8 +76,8 @@ function syncPomoCancelToServer(){
   try{
     fetch(TG_WORKER + '/pomo-cancel', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: payload,
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: '{}',
       keepalive: true
     }).catch(() => {});
   }catch(e){}
@@ -86,8 +86,8 @@ function syncPomoStartToServer(mode, total, endTimestamp){
   if(!getMyChatId()) return;
   try{
     fetch(TG_WORKER + '/pomo-start', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...authObj(), mode, total, endTimestamp })
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ mode, total, endTimestamp })
     }).catch(() => {});
   }catch(e){}
 }
@@ -165,8 +165,8 @@ async function sendPomoNotification(mode, minutes){
   if(!getMyChatId()) return;
   try{
     await fetch(TG_WORKER + '/pomo-done', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...authObj(), mode, minutes })
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ mode, minutes })
     });
   }catch(e){ console.log('pomo notify error:', e); }
 }

@@ -118,7 +118,7 @@ function renderBalance(){
         <div style="font-size:56px;margin-bottom:12px">⚠️</div>
         <h3 style="font-size:19px;margin-bottom:8px">تاريخ الراتب في المستقبل</h3>
         <p style="color:var(--muted);margin-bottom:20px">
-          التاريخ المُسجَّل (${state.money.salaryExactDate}) لم يأتِ بعد.
+          التاريخ المُسجَّل (${esc(state.money.salaryExactDate)}) لم يأتِ بعد.
           حدّثه إلى آخر راتب استلمته فعلاً.
         </p>
         <button class="btn btn-primary" onclick="openSalaryForm()">⚙️ تعديل التاريخ</button>

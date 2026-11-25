@@ -69,7 +69,7 @@ function defaultState(){
       goals: []
     },
     settings: {
-      theme:'light',
+      theme: (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light',
       pomo:{ work:25, short:5, long:15 },
       semesterStart: '2026-08-23',
       semesterWeeks: 16,
@@ -1063,7 +1063,7 @@ function renderAcademicStrip(){
 
     const evIcos = events.slice(0, 3).map(e => {
       const isPartial = !hasFullExam && !hasFullHoliday && (hasPartialExam || hasPartialHoliday) && (e.type === 'holiday' || e.type === 'exam');
-      return isPartial ? `<span class="partial-ico" title="${esc(e.title)}">${e.ico}</span>` : e.ico;
+      return isPartial ? `<span class="partial-ico" title="${esc(e.title)}">${esc(e.ico)}</span>` : esc(e.ico);
     }).join('');
 
     html += `<div class="${cls}" data-week="${w}" onclick="selectAcadWeek(${w})">
@@ -1081,7 +1081,7 @@ function renderAcademicStrip(){
     eventsEl.innerHTML = events.map(e => {
       const cls = e.type === 'holiday' ? 'holiday' : e.type === 'exam' ? 'exam' : 'info';
       const rangeText = fmtDateRange(e.date, e.endDate);
-      return `<span class="acad-event-chip ${cls}">${e.ico} ${esc(e.title)} (${rangeText})</span>`;
+      return `<span class="acad-event-chip ${cls}">${esc(e.ico)} ${esc(e.title)} (${rangeText})</span>`;
     }).join('');
   }
   const curEl = scrollEl.querySelector('.acad-week.current');

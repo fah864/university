@@ -5,8 +5,25 @@
 /* ============================================================
    1.5) نافذة التأكيد المخصصة (Custom Confirm Dialog)
 ============================================================ */
+function trapFocusInContainer(container, e){
+  if(e.key !== 'Tab' || !container) return;
+  const focusables = Array.from(container.querySelectorAll('a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+    .filter(el => el.offsetParent !== null);
+  if(!focusables.length) return;
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  if(e.shiftKey && (document.activeElement === first || !container.contains(document.activeElement))){
+    e.preventDefault();
+    last.focus();
+  } else if(!e.shiftKey && (document.activeElement === last || !container.contains(document.activeElement))){
+    e.preventDefault();
+    first.focus();
+  }
+}
+
 function appConfirm(message, options = {}){
   return new Promise(resolve => {
+    const prevFocus = document.activeElement;
     const bg = document.getElementById('confirmBg');
     const icoWrap = document.getElementById('confirmIcoWrap');
     const ico = document.getElementById('confirmIco');
@@ -64,10 +81,14 @@ function appConfirm(message, options = {}){
       okBtn.disabled = false;
       bg.classList.remove('open');
       if(typeof syncBodyScrollLock === 'function') syncBodyScrollLock();
+      try{ if(prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus(); }catch(_){}
       resolve(val);
     };
 
-    const escHandler = (e) => { if(e.key === 'Escape') doResolve(false); };
+    const escHandler = (e) => {
+      if(e.key === 'Escape') doResolve(false);
+      else if(e.key === 'Tab') trapFocusInContainer(bg, e);
+    };
 
     okBtn.onclick = () => {
       if(reqText && typeInput){
@@ -153,22 +174,7 @@ function go(view){
   document.querySelectorAll('.nav-group').forEach(g => {
     if(g.querySelector(`[data-view="${hl}"]`)) g.classList.remove('collapsed');
   });
-  setTimeout(() => {
-    try{
-      if(view === 'attendance') renderAttendancePage();
-      if(view === 'wellness') renderWellness();
-      if(view === 'teeth') renderTeeth();
-      if(view === 'archive') renderArchive();
-      if(view === 'grades') renderGrades();
-      if(view === 'settings'){ renderSyncStatus(); renderPinSettingsUI(); }
-      if(view === 'course-detail') renderCourseDetail();
-      if(view === 'courses') renderCourses();
-      if(view === 'schedule'){ renderAcademicStrip(); renderSchedule(); }
-      if(view === 'balance') renderBalance();
-      if(view === 'expenses') renderExpenses();
-      if(view === 'goals') renderGoals();
-    }catch(e){ console.error(e); }
-  }, 30);
+  renderView(view);
 }
 
 window.addEventListener('hashchange', () => {
@@ -269,6 +275,7 @@ document.getElementById('themeBtn').addEventListener('click', () => {
    6) النوافذ المنبثقة (Modals)
 ============================================================ */
 const modalBg = document.getElementById('modalBg');
+let _lastModalTrigger = null;
 function syncBodyScrollLock(){
   const modalOpen = document.getElementById('modalBg')?.classList.contains('open');
   const confirmOpen = document.getElementById('confirmBg')?.classList.contains('open');
@@ -277,6 +284,7 @@ function syncBodyScrollLock(){
   document.body.style.overflow = (modalOpen || confirmOpen || sideOpen || pinOpen) ? 'hidden' : '';
 }
 function openModal(title, bodyHTML, footHTML){
+  if(!modalBg.classList.contains('open')) _lastModalTrigger = document.activeElement;
   document.getElementById('modalTitle').textContent = title;
   document.getElementById('modalBody').innerHTML = bodyHTML;
   const footEl = document.getElementById('modalFoot');
@@ -289,6 +297,10 @@ function openModal(title, bodyHTML, footHTML){
   if(modalEl) modalEl.classList.remove('qa-sheet-modal');
   modalBg.classList.add('open');
   syncBodyScrollLock();
+  setTimeout(() => {
+    const first = modalBg.querySelector('input:not([type="hidden"]):not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled])');
+    if(first) try{ first.focus(); }catch(_){}
+  }, 30);
 }
 function closeModal(){
   modalBg.classList.remove('open');
@@ -297,9 +309,16 @@ function closeModal(){
   syncBodyScrollLock();
   if(typeof aiFileData !== 'undefined') aiFileData = null;
   if(aiAbortController){ aiAbortController.abort(); aiAbortController = null; }
+  const prev = _lastModalTrigger;
+  _lastModalTrigger = null;
+  try{ if(prev && typeof prev.focus === 'function') prev.focus(); }catch(_){}
 }
 modalBg.addEventListener('click', e => { if(e.target === modalBg) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key === 'Escape' && modalBg.classList.contains('open')) closeModal(); });
+document.addEventListener('keydown', e => {
+  if(!modalBg.classList.contains('open')) return;
+  if(e.key === 'Escape') closeModal();
+  else if(e.key === 'Tab') trapFocusInContainer(modalBg, e);
+});
 
 /* ============================================================
    7) المقررات الدراسية
@@ -735,7 +754,7 @@ function renderDashboard(){
     { ico:'📋', bg:'var(--warn-bg)', val:openTasks.length + upcomingExams.length, lbl:'متبقي للإنجاز', act:"go('tasks')" },
     { ico:'⏰', bg:'var(--danger-bg)', val:upcomingExams.length, lbl:'اختبار قادم', act:"go('tasks')" },
     { ico:'🍅', bg:'var(--ok-bg)', val:(totalMin/60).toFixed(1) + 'h', lbl:'ساعات المذاكرة', act:"go('study')" }
-  ].map(s => `<div class="stat" style="cursor:pointer" onclick="${s.act}"><div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><b>${s.val}</b><span>${s.lbl}</span></div></div>`).join('');
+  ].map(s => `<div class="stat" role="button" tabindex="0" style="cursor:pointer" onclick="${s.act}"><div class="stat-ico" style="background:${s.bg}">${s.ico}</div><div><b>${s.val}</b><span>${s.lbl}</span></div></div>`).join('');
   document.getElementById('dashStats').innerHTML = statsHTML;
 
   const total = activeTasks.length;
@@ -764,7 +783,7 @@ function renderDashboard(){
       else if(d === 1){ txt = 'غداً'; bg = 'var(--warn-bg)'; col = 'var(--warn)'; }
       else { txt = `بعد ${d} يوم`; bg = 'var(--ok-bg)'; col = 'var(--ok)'; }
       const clickHandler = it.kind === 'task' ? `openTaskForm('${esc(it.id)}')` : `openExamForm('${esc(it.id)}')`;
-      return `<div class="up-item" onclick="${clickHandler}"><div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
+      return `<div class="up-item" role="button" tabindex="0" onclick="${clickHandler}"><div class="up-dot" style="background:${courseColor(it.courseId)}"></div>
         <div class="up-info"><b>${it.ico} ${esc(it.title)}</b><span>${it.kind === 'task' ? 'مهمة' : 'اختبار'} · ${esc(courseName(it.courseId))} · ${fmtDate(it.date)}</span></div>
         <div class="up-time" style="background:${bg};color:${col}">${txt}</div></div>`;
     }).join('');
@@ -835,7 +854,7 @@ function renderCourses(){
     const classes = activeSchedule.filter(s => s.courseId === c.id).length;
     const tasks = activeTasks.filter(t => t.courseId === c.id && !t.done).length;
     const total = courseTotal(c);
-    return `<div class="course-card" onclick="openCourseDetail('${esc(c.id)}')">
+    return `<div class="course-card" role="button" tabindex="0" onclick="openCourseDetail('${esc(c.id)}')">
       <div class="course-bar" style="background:${c.color}"></div>
       <div class="course-body">
         <h3>${esc(c.name)}</h3>
@@ -916,7 +935,7 @@ function renderTaskItem(t, prioMap){
   else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--hover)'; dueCol = 'var(--muted)'; }
   const p = prioMap[t.priority] || prioMap.med;
   return `<div class="task ${t.done?'done':''}">
-    <div class="chk" onclick="toggleTask('${esc(t.id)}')">✓</div>
+    <div class="chk" role="checkbox" aria-checked="${t.done ? 'true' : 'false'}" tabindex="0" onclick="toggleTask('${esc(t.id)}')">✓</div>
     <div class="task-main">
       <div class="task-title">📝 ${esc(t.title)}</div>
       <div class="task-sub">
@@ -943,7 +962,7 @@ function renderExamItem(e){
   else if(d <= 7){ dueTxt = `بعد ${d} يوم`; dueBg = 'var(--warn-bg)'; dueCol = 'var(--warn)'; }
   else { dueTxt = `بعد ${d} يوم`; dueBg = 'var(--ok-bg)'; dueCol = 'var(--ok)'; }
   return `<div class="exam-item ${e.done ? 'past' : ''}" style="${e.done ? 'opacity:.55' : ''}">
-    <div class="chk ${e.done ? 'checked' : ''}" onclick="toggleExam('${esc(e.id)}')">✓</div>
+    <div class="chk ${e.done ? 'checked' : ''}" role="checkbox" aria-checked="${e.done ? 'true' : 'false'}" tabindex="0" onclick="toggleExam('${esc(e.id)}')">✓</div>
     <div class="ex-ico">⏰</div>
     <div class="ex-main">
       <div class="ex-title" style="${e.done ? 'text-decoration:line-through' : ''}">${esc(e.title)}</div>
@@ -1150,14 +1169,52 @@ document.getElementById('taskFilters')?.addEventListener('click', e => {
 /* ============================================================
    24) رندرة شاملة لكل الواجهات
 ============================================================ */
-function renderAll(){
-  renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
-  renderGrades(); renderStudy(); pomoRender();
-  renderBalance(); renderExpenses(); renderGoals();
-  renderWellness(); renderTeeth(); renderAttendancePage(); renderArchive();
-  updateNavBadges();
-  if(currentCourseId) renderCourseDetail();
+function getActiveView(){
+  const active = document.querySelector('.view.active');
+  return active ? active.id.replace(/^view-/, '') : 'dashboard';
 }
+function renderView(view){
+  try{
+    if(view === 'dashboard') renderDashboard();
+    else if(view === 'schedule'){ renderAcademicStrip(); renderSchedule(); }
+    else if(view === 'courses') renderCourses();
+    else if(view === 'course-detail') renderCourseDetail();
+    else if(view === 'tasks') renderTasks();
+    else if(view === 'grades') renderGrades();
+    else if(view === 'attendance') renderAttendancePage();
+    else if(view === 'archive') renderArchive();
+    else if(view === 'study'){ renderStudy(); pomoRender(); }
+    else if(view === 'wellness') renderWellness();
+    else if(view === 'teeth') renderTeeth();
+    else if(view === 'balance') renderBalance();
+    else if(view === 'expenses') renderExpenses();
+    else if(view === 'goals') renderGoals();
+    else if(view === 'settings'){ renderSyncStatus(); renderPinSettingsUI(); }
+  }catch(e){ console.error('renderView error:', view, e); }
+}
+function renderAll(forceAll = false){
+  if(forceAll){
+    renderDashboard(); renderSchedule(); renderCourses(); renderTasks();
+    renderGrades(); renderStudy(); pomoRender();
+    renderBalance(); renderExpenses(); renderGoals();
+    renderWellness(); renderTeeth(); renderAttendancePage(); renderArchive();
+    if(currentCourseId) renderCourseDetail();
+  } else {
+    renderView(getActiveView());
+  }
+  updateNavBadges();
+}
+
+document.getElementById('taskSearchInput')?.addEventListener('input', () => renderTasks());
+document.getElementById('importFile')?.addEventListener('change', (e) => importData(e.target));
+document.body.addEventListener('keydown', (e) => {
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target;
+  if(!el || !el.matches('[role="button"], [role="checkbox"]')) return;
+  if(/^(BUTTON|A|INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) return;
+  e.preventDefault();
+  el.click();
+});
 
 /* ============================================================
    28) النوم والماء

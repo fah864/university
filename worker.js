@@ -500,14 +500,11 @@ export default {
 
     // ============ 10) فحوصات يدوية وأدوات الأدمن ============
     const checks = {
-      '/check-morning': () => morningSummary(env, TOKEN),
       '/check-weekly': () => weeklySummary(env, TOKEN),
       '/check-weekly-plan': () => weeklyPlan(env, TOKEN),
       '/check-absence': () => absenceWarning(env, TOKEN),
       '/check': () => checkExamsAndTasks(env, TOKEN),
       '/check-classes': () => checkClasses(env, TOKEN),
-      '/check-sleep': () => checkSleep(env, TOKEN),
-      '/check-water': () => checkWater(env, TOKEN),
       '/check-pomo': () => checkPomoTimers(env, TOKEN)
     };
     if (checks[url.pathname]) {
@@ -647,13 +644,10 @@ export default {
             await run(name, fn);
           };
 
-          if (hour === 6) await runOncePerHour('morning', () => morningSummary(env, TOKEN));
           if (hour === 7 && dayOfWeek === 0) await runOncePerHour('weeklyPlan', () => weeklyPlan(env, TOKEN));
           if (hour === 9) await runOncePerHour('examsTasks', () => checkExamsAndTasks(env, TOKEN));
-          if (hour === 12) await runOncePerHour('sleep', () => checkSleep(env, TOKEN));
           if (hour === 20 && dayOfWeek === 4) await runOncePerHour('weeklySummary', () => weeklySummary(env, TOKEN));
           if (hour === 21) await runOncePerHour('absence', () => absenceWarning(env, TOKEN));
-          if (hour === 22) await runOncePerHour('water', () => checkWater(env, TOKEN));
         }
       })()
     );
@@ -1560,113 +1554,6 @@ async function updateAttendance(env, chatId, classId, date, status) {
   return arr;
 }
 
-async function morningSummary(env, TOKEN) {
-  const today = riyadhToday();
-  const yesterday = addDaysISO(today, -1);
-  let totalSent = 0;
-
-  await eachUser(env, async chatId => {
-    const key = `notif_morning_${chatId}_${today}`;
-    if (await env.UNI_KV.get(key)) return;
-    const u = await getUser(env, chatId);
-    if (!hasData(u)) return;
-
-    const w = u.wellness || { sleepGoal: 8, waterGoal: 8, log: [] };
-    const yW = (w.log || []).find(l => l.date === yesterday) || { sleep: 0, water: 0 };
-    const yTeeth = ((u.health && u.health.teethLog) || []).find(l => l.date === yesterday) || {
-      morning: false,
-      night: false
-    };
-    const yDoneTasks = (u.tasks || []).filter(t => t.done && t.due === yesterday).length;
-    const yTotalTasks = (u.tasks || []).filter(t => t.due === yesterday).length;
-    const openTasks = (u.tasks || []).filter(t => !t.done).length;
-    const dayOfWeek = new Date(today + 'T00:00:00Z').getUTCDay();
-    const todayClasses = (u.schedule || [])
-      .filter(s => +s.day === dayOfWeek)
-      .sort((a, b) => (a.start || '').localeCompare(b.start || ''));
-    const todayTasks = (u.tasks || []).filter(t => !t.done && t.due === today);
-    const todayExams = (u.exams || []).filter(e => !e.done && e.date === today);
-
-    let msg = '☀️ *صباح الخير والهمّة!*\n';
-    msg += `📅 ${arDate(today)}\n\n`;
-    msg += '━━━━━━━━━━━━━━━━━\n';
-    msg += '📊 *ملخص أمس:*\n';
-    const healthParts = [];
-    if (yW.water > 0) healthParts.push(`💧 ${yW.water}/${w.waterGoal || 8}`);
-    if (yW.sleep > 0) healthParts.push(`😴 ${yW.sleep}/${w.sleepGoal || 8} س`);
-    const teethCount = (yTeeth.morning ? 1 : 0) + (yTeeth.night ? 1 : 0);
-    if (teethCount > 0) healthParts.push(`🦷 ${teethCount}/2`);
-    if (healthParts.length) msg += healthParts.join(' · ') + '\n';
-
-    if (yTotalTasks > 0) {
-      const pct = Math.round((yDoneTasks / yTotalTasks) * 100);
-      const emoji = pct === 100 ? '🎉' : pct >= 50 ? '✅' : '⚠️';
-      msg += `${emoji} أنجزت: ${yDoneTasks}/${yTotalTasks} مهمة (${pct}%)\n`;
-    } else {
-      msg += '📋 ما كان عندك تسليمات أمس\n';
-    }
-
-    const money = calcMoneyStats(u.money, today);
-    if (money) {
-      const yesterdaySpent = ((u.money && u.money.expenses) || [])
-        .filter(e => e.date === yesterday)
-        .reduce((a, b) => a + (+b.amount || 0), 0);
-      if (yesterdaySpent > 0) msg += `💸 صرفت أمس: ${yesterdaySpent.toLocaleString('ar-EG')} ر.س\n`;
-      msg += `💰 المتبقي: ${money.remaining.toLocaleString('ar-EG')} من ${money.totalBudget.toLocaleString('ar-EG')} ر.س (صرفت ${money.percent}%)\n`;
-      if (money.percent >= 80) msg += `🚨 *انتبه! استهلكت ${money.percent}% من ميزانيتك*\n`;
-      else if (money.percent >= 60) msg += `⚠️ استهلكت أكثر من نصف الميزانية\n`;
-      if (money.daysToSalary > 0) msg += `📅 باقي ${money.daysToSalary} يوم على الراتب الجاي\n`;
-    }
-
-    msg += '\n━━━━━━━━━━━━━━━━━\n';
-    msg += '📅 *جدولك اليوم:*\n';
-    if (todayClasses.length) {
-      msg += `📚 *${todayClasses.length} محاضرات:*\n`;
-      todayClasses.forEach(c => {
-        msg += `• ${c.start} - ${c.end} · ${courseName(u, c.courseId)}${c.room ? ' · ' + md(c.room) : ''}\n`;
-      });
-    } else {
-      msg += '📚 ما عندك محاضرات اليوم 🎉\n';
-    }
-
-    if (todayExams.length) {
-      msg += `\n📝 *اختبارات اليوم:*\n`;
-      todayExams.forEach(e => {
-        msg += `• ${md(e.title)} · ${courseName(u, e.courseId)}${e.time ? ' · 🕐 ' + e.time : ''}\n`;
-      });
-    }
-    if (todayTasks.length) {
-      msg += `\n✅ *تسليمات اليوم:*\n`;
-      todayTasks.forEach(t => {
-        msg += `• ${md(t.title)} · ${courseName(u, t.courseId)}\n`;
-      });
-    }
-
-    const tips = [];
-    const teeth = ((u.health && u.health.teethLog) || []).find(l => l.date === today) || { morning: false };
-    if (!teeth.morning) tips.push('🦷 لا تنسَ تفريش الصباح');
-    if (todayExams.length) tips.push(`📝 ركّز في اختبار اليوم: ${md(todayExams[0].title)}`);
-    if (todayTasks.length >= 3) tips.push(`⚡ عندك ${todayTasks.length} تسليمات اليوم — ابدأ بالأهم`);
-    if (openTasks > 5) tips.push(`📋 لديك ${openTasks} مهام مفتوحة إجمالاً`);
-
-    if (tips.length) {
-      msg += '\n━━━━━━━━━━━━━━━━━\n';
-      msg += '💡 *تذكيرات سريعة:*\n';
-      tips.forEach(t => (msg += `• ${t}\n`));
-    }
-
-    msg += '\n━━━━━━━━━━━━━━━━━\n';
-    msg += '💪 يومك موفق ومليان إنجاز بإذن الله!';
-
-    if (await sendTG(TOKEN, chatId, [msg])) {
-      await env.UNI_KV.put(key, '1', { expirationTtl: 86400 });
-      totalSent++;
-    }
-  });
-
-  return { ok: true, sent: totalSent, today };
-}
-
 async function weeklyPlan(env, TOKEN) {
   const today = riyadhToday();
   const todayDate = new Date(today + 'T00:00:00Z');
@@ -1751,8 +1638,14 @@ async function absenceWarning(env, TOKEN) {
   let totalSent = 0;
 
   await eachUser(env, async chatId => {
-    const key = `notif_absence_${chatId}_${today}`;
-    if (await env.UNI_KV.get(key)) return;
+    const seenKey = `notif_absence_once_${chatId}`;
+    let seen = {};
+    try {
+      seen = JSON.parse((await env.UNI_KV.get(seenKey)) || '{}');
+      if (!seen || typeof seen !== 'object') seen = {};
+    } catch (_) {
+      seen = {};
+    }
     const u = await getUser(env, chatId);
     const courses = u.courses || [];
     const schedule = u.schedule || [];
@@ -1783,11 +1676,18 @@ async function absenceWarning(env, TOKEN) {
       const remaining = Math.max(0, maxAbsences - absences);
 
       if (percent >= WARN_THRESHOLD) {
-        warnings.push({ course: c, percent, absences, maxAbsences, remaining });
+        if (!seen[c.id]) {
+          warnings.push({ course: c, percent, absences, maxAbsences, remaining });
+        }
+      } else if (seen[c.id]) {
+        delete seen[c.id];
       }
     }
 
-    if (!warnings.length) return;
+    if (!warnings.length) {
+      await env.UNI_KV.put(seenKey, JSON.stringify(seen), { expirationTtl: 180 * 86400 });
+      return;
+    }
 
     let msg = '🚨 *تنبيه مهم: حد الحرمان!*\n\n';
     msg += 'اقتربت من الحد الأقصى للغياب (25%) في المقررات التالية:\n\n';
@@ -1802,7 +1702,8 @@ async function absenceWarning(env, TOKEN) {
     msg += '🚫 احرص على الحضور الكامل في المحاضرات القادمة!';
 
     if (await sendTG(TOKEN, chatId, [msg])) {
-      await env.UNI_KV.put(key, '1', { expirationTtl: 86400 });
+      warnings.forEach(w => { seen[w.course.id] = today; });
+      await env.UNI_KV.put(seenKey, JSON.stringify(seen), { expirationTtl: 180 * 86400 });
       totalSent++;
     }
   });
@@ -1988,62 +1889,6 @@ async function checkClasses(env, TOKEN) {
     }
   });
 
-  return { ok: true, sent };
-}
-
-async function checkSleep(env, TOKEN) {
-  const today = riyadhToday();
-  let sent = 0;
-  await eachUser(env, async chatId => {
-    const key = `notif_sleep_${chatId}_${today}`;
-    if (await env.UNI_KV.get(key)) return;
-    const row = (from, to) => {
-      const r = [];
-      for (let i = from; i <= to; i++) {
-        r.push({ text: i + (i === 1 ? ' ساعة' : ' ساعات'), callback_data: `sleep|${i}|${today}` });
-      }
-      return r;
-    };
-    if (
-      await sendTGWithButtons(
-        TOKEN,
-        chatId,
-        '😴 *كيف كان نومك الليلة؟*\n\nاضغط على عدد الساعات اللي نمتها لتسجيلها في ملفك الصحي:',
-        [row(4, 6), row(7, 9)]
-      )
-    ) {
-      await env.UNI_KV.put(key, '1', { expirationTtl: 86400 });
-      sent++;
-    }
-  });
-  return { ok: true, sent };
-}
-
-async function checkWater(env, TOKEN) {
-  const today = riyadhToday();
-  let sent = 0;
-  await eachUser(env, async chatId => {
-    const key = `notif_water_${chatId}_${today}`;
-    if (await env.UNI_KV.get(key)) return;
-    const row = (from, to) => {
-      const r = [];
-      for (let i = from; i <= to; i++) {
-        r.push({ text: i + ' 🥤', callback_data: `water|${i}|${today}` });
-      }
-      return r;
-    };
-    if (
-      await sendTGWithButtons(
-        TOKEN,
-        chatId,
-        '💧 *كم كوب ماء شربت اليوم؟*\n\nاضغط على العدد لتسجيله في متابع الصحة:',
-        [row(1, 4), row(5, 8)]
-      )
-    ) {
-      await env.UNI_KV.put(key, '1', { expirationTtl: 86400 });
-      sent++;
-    }
-  });
   return { ok: true, sent };
 }
 
